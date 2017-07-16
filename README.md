@@ -22,6 +22,32 @@ C' has some build-in patterns and let you write your compiler extension to insta
 
 ## C11 grammar modifications
 
+'''
+struct-union-specifier:
+ 
+'''
+
 
 ## References
+This section will contain external references
+
+## Videos
+
+Initializers
+
+https://www.youtube.com/watch?v=lIRLijA_n2Q&t=19s
+
+
+Build-in function instanciation destroy , create, delete
+
+https://www.youtube.com/watch?v=yaa6uhHi2Xk
+
+Build-in enum to string
+
+https://www.youtube.com/watch?v=2qvCglaRNDU
+
+### Function and Parametric API documentation
+This section will contain the API reference to access the AST and build your own patterns.
+
+
 
