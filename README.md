@@ -9,11 +9,19 @@ C' keeps your formatting macros and comments. (We can also reformat in the futur
 The task of code abstraction creates patterns and these patterns repeats.
 C' has some build-in patterns and let you write your compiler extension to instanciate new parametrized types and functions.
 
+## Language reference
 
-## Initializers
+### Initializers
 
-## Build-in instanciations Destroy, Delete, Create, Swap
+### Build-in function instanciations Destroy, Delete, Create, Swap
 
-## Buil-in types
+### Buil-in parametrized types and its function instanciations
 
-## Union types
+### Union types
+
+
+## C11 grammar modifications
+
+
+## References
+
