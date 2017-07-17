@@ -105,6 +105,9 @@ void Scanner_GetError(Scanner* pScanner, StrBuilder* str);
 void PrintPreprocessedToFile(const char* fileIn,
   const char* configFileName);
 
+void PrintPreprocessedToConsole(const char* fileIn,
+                                const char* configFileName);
+
 
 //NOVA INTERFACE
 

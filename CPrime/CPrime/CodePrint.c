@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "..\Base\Path.h"
+#include "StdCode.h"
 
 bool bExpandMacros;
 
@@ -31,7 +32,7 @@ static bool TInitializer_CodePrint2(TProgram* program,
 
 static bool TSpecifierQualifierList_CodePrint(TProgram* program, Options * options, TSpecifierQualifierList* pDeclarationSpecifiers, bool b, StrBuilder* fp);
 
-static bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, bool b, StrBuilder* fp);
+bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, bool b, StrBuilder* fp);
 
 static bool TInitializer_CodePrint(TProgram* program,
     Options * options,
@@ -213,7 +214,7 @@ void BuildInitialization2(TProgram* program,
     StrBuilder* strBuilder);
 
 
-static void BuildInitializationForTypedef(TProgram* program,
+void BuildInitializationForTypedef(TProgram* program,
     Options * options,
     const char* typedefName,
     StrBuilder* strBuilder)
@@ -835,22 +836,6 @@ static bool TBlockItem_CodePrint(TProgram* program, Options * options, TBlockIte
     return b;
 }
 
-static bool IsSuffix(const char* s, const char* suffix)
-{
-    bool bResult = false;
-    int len = strlen(s);
-    int len2 = strlen(suffix);
-    if (len > len2)
-    {
-        const char* pEndPart = &s[len - len2];
-        if (strcmp(pEndPart, suffix) == 0)
-        {
-            bResult = true;
-        }
-    }
-    return bResult;
-
-}
 
 
 bool GetType(const char* source,
@@ -1218,23 +1203,7 @@ static bool TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
 
     if (p->TemplateName != NULL)
     {
-        if (strcmp(p->TemplateName, "List") == 0)
-        {
-            if (p->Args.pHead)
-            {
-                Output_Append(fp, " ");
-                Output_Append(fp, "{");
-
-                TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, b, fp);
-                Output_Append(fp, "* pHead, *pTail;");
-
-                Output_Append(fp, "}");
-            }
-            else
-            {
-                //error
-            }
-        }
+        StructTemplate_CodePrint(program, options, p, b, fp);        
     }
     else
     {
@@ -2165,15 +2134,6 @@ bool TInitDeclaratorList_CodePrint(TProgram* program, Options * options,
     //  fprintf(fp, "]");
     return true;
 }
-static bool HasFunction(TProgram* program, const char* prefix, const char* suffix)
-{
-    StrBuilder nameDestroy = STRBUILDER_INIT;
-    StrBuilder_Append(&nameDestroy, prefix);
-    StrBuilder_Append(&nameDestroy, suffix);
-    TDeclaration * pDeclaration2 = TProgram_GetFinalTypeDeclaration(program, nameDestroy.c_str);
-    StrBuilder_Destroy(&nameDestroy);
-    return pDeclaration2 != NULL;
-}
 
 static bool Template_CodePrint(TProgram* program,
     Options * options,
@@ -2181,524 +2141,13 @@ static bool Template_CodePrint(TProgram* program,
     bool b,
     StrBuilder* fp)
 {
-    /*
-      typedef struct Array { int data; ... } Items;
-      void Items_Add(Items* p,int i) {...}
-      void Items_Delete(Items* p,int i) {...}
 
-
-      typedef struct Map { const char* key;
-      int data; ... } Items;
-
-    */
-
-    if (p->InitDeclaratorList.pHead != NULL &&
-        p->InitDeclaratorList.pHead->pNext == NULL)
-    {
-        TInitDeclarator *pInitDeclarator =
-            p->InitDeclaratorList.pHead;
-
-        const char* functionName =
-            pInitDeclarator->pDeclarator->pDirectDeclarator->Identifier;
-
-        if (IsSuffix(functionName, "_Create"))
-        {
-            TSingleTypeSpecifier *pSingleTypeSpecifier =
-                TSpecifier_As_TSingleTypeSpecifier(p->Specifiers.pHead);
-
-            if (pSingleTypeSpecifier != NULL &&
-                pSingleTypeSpecifier->bIsTypeDef)
-            {
-                StrBuilder strBuilder = STRBUILDER_INIT;
-
-                //ve se ja colocou a implementacao do template
-                StrBuilder_Append(fp, "\n");
-                StrBuilder_Append(fp, "    ");
-
-                StrBuilder_Append(fp,
-                                  pSingleTypeSpecifier->TypedefName);
-
-                StrBuilder_Append(fp,
-                                  "* p = (");
-                StrBuilder_Append(fp,
-                                  pSingleTypeSpecifier->TypedefName);
-                StrBuilder_Append(fp,
-                                  "*) malloc(sizeof * p);\n"
-                                  "   if (p)\n"
-                                  "   {\n"
-                                  "      ");
-                ///////
-
-                if (HasFunction(program, pSingleTypeSpecifier->TypedefName, "_Init"))
-                {
-
-                    StrBuilder_Append(fp,
-                                      pSingleTypeSpecifier->TypedefName);
-                    StrBuilder_Append(fp,
-                                      "_Init(p);\n");
-                    //
-
-                }
-                else
-                {
-                    BuildInitializationForTypedef(program,
-                        options,
-                        pSingleTypeSpecifier->TypedefName,
-                        &strBuilder);
-
-                    StrBuilder_Append(fp,
-                                      pSingleTypeSpecifier->TypedefName);
-
-                    StrBuilder_Append(fp,
-                                      " temp = ");
-
-                    StrBuilder_Append(fp, strBuilder.c_str);
-
-                    StrBuilder_Append(fp,
-                                      ";\n"
-                                      "      *p = temp;\n");
-                }
-                StrBuilder_Append(fp,
-                                  "   }\n"
-                                  "   return p; \n");
-
-                StrBuilder_Destroy(&strBuilder);
-            }
-        }
-        else if (IsSuffix(functionName, "_Delete"))
-        {
-            TParameterDeclaration* pParameterDeclaration =
-                pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
-
-            if (pParameterDeclaration != NULL)
-            {
-                TSingleTypeSpecifier *pSingleTypeSpecifier =
-                    TSpecifier_As_TSingleTypeSpecifier(pParameterDeclaration->Specifiers.pHead);
-
-                if (pSingleTypeSpecifier != NULL &&
-                    pSingleTypeSpecifier->bIsTypeDef)
-                {
-
-                    StrBuilder_Append(fp,
-                        "\n"
-                        "   if (p)\n"
-                        "   {\n"
-                        "      ");
-
-                    StrBuilder_Append(fp, pSingleTypeSpecifier->TypedefName);
-
-                    StrBuilder_Append(fp,
-                        "_Destroy(p);\n"
-                        "      free(p);\n"
-                        "   }\n");
-                }
-            }
-
-        }
-        else if (IsSuffix(functionName, "_ToString"))
-        {
-            TParameterDeclaration* pParameterDeclaration =
-                pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
-
-            if (pParameterDeclaration != NULL)
-            {
-                TSingleTypeSpecifier *pSingleTypeSpecifier =
-                    TSpecifier_As_TSingleTypeSpecifier(pParameterDeclaration->Specifiers.pHead);
-
-                if (pSingleTypeSpecifier != NULL &&
-                    pSingleTypeSpecifier->bIsTypeDef)
-                {
-                    const char * typedefName = pSingleTypeSpecifier->TypedefName;
-
-                    TDeclaration * pDeclaration = TProgram_GetFinalTypeDeclaration(program, typedefName);
-                    if (pDeclaration)
-                    {
-                        TEnumSpecifier* pEnumSpecifier =
-                            TSpecifier_As_TEnumSpecifier(pDeclaration->Specifiers.pHead->pNext);
-
-                        if (pEnumSpecifier)
-                        {
-                            StrBuilder_Append(fp, "\n");
-                            StrBuilder_Append(fp, "    switch (e) {\n");
-                            ForEachListItem(TEnumerator, pItem, &pEnumSpecifier->EnumeratorList)
-                            {
-                                StrBuilder_Append(fp, "        case ");
-                                StrBuilder_Append(fp, pItem->Name);
-                                StrBuilder_Append(fp, ": return \"");
-                                StrBuilder_Append(fp, pItem->Name);
-                                StrBuilder_Append(fp, "\";\n");
-                            }
-                            StrBuilder_Append(fp, "    }\n");
-                            StrBuilder_Append(fp, "    return \"\";\n");
-                        }
-                        //Tem que ver se o typedef nao era ponteiro tb
-                        //TDeclarator* pDeclarator = TDeclaration_FindDeclarator(p, typedefName);
-                        //if (pDeclarator)
-                        //{
-
-                        //}
-                    }
-                }
-            }
-        }
-        else if (IsSuffix(functionName, "_Destroy"))
-        {
-            TParameterDeclaration* pParameterDeclaration =
-                pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
-
-            if (pParameterDeclaration != NULL)
-            {
-                TSingleTypeSpecifier *pSingleTypeSpecifier =
-                    TSpecifier_As_TSingleTypeSpecifier(pParameterDeclaration->Specifiers.pHead);
-
-                if (pSingleTypeSpecifier != NULL &&
-                    pSingleTypeSpecifier->bIsTypeDef)
-                {
-                    const char * typedefName = pSingleTypeSpecifier->TypedefName;
-
-                    TDeclaration * pDeclaration = TProgram_GetFinalTypeDeclaration(program, typedefName);
-                    if (pDeclaration)
-                    {
-                        TStructUnionSpecifier* pStructUnionSpecifier =
-                            TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pHead->pNext);
-
-                        if (pStructUnionSpecifier)
-                        {
-                            StrBuilder_Append(fp, "\n");
-
-                            for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
-                            {
-                                TStructDeclaration* pItem =
-                                    TAnyStructDeclaration_As_TStructDeclaration(pStructUnionSpecifier->StructDeclarationList.pItems[i]);
-
-                                if (pItem)
-                                {
-                                    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, &pItem->SpecifierQualifierList)
-                                    {
-                                        TSingleTypeSpecifier* pSingleTypeSpecifier2 =
-                                            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
-                                        if (pSingleTypeSpecifier2 != NULL &&
-                                            pSingleTypeSpecifier2->bIsTypeDef)
-                                        {
-                                            StrBuilder nameDestroy = STRBUILDER_INIT;
-                                            const char* typedefName2 = pSingleTypeSpecifier2->TypedefName;
-
-                                            StrBuilder_Append(&nameDestroy, typedefName2);
-                                            StrBuilder_Append(&nameDestroy, "_Destroy");
-                                            TDeclaration * pDeclaration2 = TProgram_GetFinalTypeDeclaration(program, nameDestroy.c_str);
-
-                                            StrBuilder_Destroy(&nameDestroy);
-                                            if (pDeclaration2)
-                                            {
-
-                                                //if (pDeclaration2->Specifiers.pHead->pNext)
-                                                //{
-                                                    //TStructUnionSpecifier* pStructUnionSpecifier2 =
-                                                        //TSpecifier_As_TStructUnionSpecifier(pDeclaration2->Specifiers.pHead->pNext);
-                                                    //if (pStructUnionSpecifier2)
-                                                    //{
-                                                const char* name = pDeclaration2->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Identifier;
-                                                ForEachListItem(TStructDeclarator, pTStructDeclarator, &pItem->DeclaratorList)
-                                                {
-                                                    StrBuilder_Append(fp, "    ");
-                                                    StrBuilder_Append(fp, typedefName2);
-                                                    StrBuilder_Append(fp, "_Destroy(&p->");
-                                                    StrBuilder_Append(fp, pTStructDeclarator->pDeclarator->pDirectDeclarator->Identifier);
-                                                    StrBuilder_Append(fp, ");\n");
-
-                                                }
-                                                //}
-                                                //else
-                                                //{
-
-                                                //}
-                                            //}
-                                            }
-
-                                        }
-                                    }
-
-                                    StrBuilder_Append(fp, "\n");
-                                }
-                            }
-
-                        }
-
-                        //Tem que ver se o typedef nao era ponteiro tb
-                        //TDeclarator* pDeclarator = TDeclaration_FindDeclarator(p, typedefName);
-                        //if (pDeclarator)
-                        //{
-
-                        //}
-                    }
-                }
-            }
-        }//destroy
-
-        TParameterDeclaration* pParameterDeclaration =
-            pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
-
-        if (pParameterDeclaration != NULL)
-        {
-            StrBuilder strBuilderType = STRBUILDER_INIT;
-            StrBuilder strBuilderFunc =  STRBUILDER_INIT;
-
-            GetTypeAndFunction(functionName,
-                                   &strBuilderType,
-                                   &strBuilderFunc);
-
-            TSingleTypeSpecifier *pSingleTypeSpecifier =
-                TSpecifier_As_TSingleTypeSpecifier(pParameterDeclaration->Specifiers.pHead);
-
-            if (pSingleTypeSpecifier != NULL &&
-                pSingleTypeSpecifier->bIsTypeDef)
-            {
-                const char * typedefName = pSingleTypeSpecifier->TypedefName;
-
-                TDeclaration * pDeclaration = TProgram_GetFinalTypeDeclaration(program, typedefName);
-                if (pDeclaration)
-                {
-                    TStructUnionSpecifier* pTStructUnionSpecifier3 =
-                        TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pHead->pNext);
-
-                    if (pTStructUnionSpecifier3 && pTStructUnionSpecifier3->TemplateName)
-                    {
-                        //eh template tipo
-                        if (strcmp(pTStructUnionSpecifier3->TemplateName, "Union") == 0)
-                        {
-                            StrBuilder_Append(fp, "\n");
-                            StrBuilder_Append(fp, "    switch(p->type) {\n");
-                            ForEachListItem(TTemplateTypeSpecifierArgument, pItem, (TTemplateTypeSpecifierArgumentList*)&pTStructUnionSpecifier3->Args)
-                            {
-                                TSingleTypeSpecifier* pSingleTypeSpecifier =
-                                 TSpecifier_As_TSingleTypeSpecifier(pItem->TypeName.SpecifierQualifierList.pHead);
-                                if (pSingleTypeSpecifier && pSingleTypeSpecifier->bIsTypeDef)
-                                {
-                                    const char* typedefName = pSingleTypeSpecifier->TypedefName;
-                                    TDeclaration * pDeclaration = TProgram_GetFinalTypeDeclaration(program, typedefName);
-                                    if (pDeclaration)
-                                    {
-                                        TStructUnionSpecifier* pStructUnionSpecifier =
-                                            TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pHead->pNext);
-
-                                        if (pStructUnionSpecifier && 
-                                            pStructUnionSpecifier->StructDeclarationList.size > 0)
-                                        {
-                                            TStructDeclaration* pStructDeclaration =
-                                                TAnyStructDeclaration_As_TStructDeclaration(pStructUnionSpecifier->StructDeclarationList.pItems[0]);
-                                            if (pStructDeclaration)
-                                            {
-                                                TPrimaryExpressionValue* pExpression =
-                                                  TExpression_As_TPrimaryExpressionValue(TInitializer_As_TExpression(pStructDeclaration->DeclaratorList.pHead->pInitializer));
-                                                
-                                                if (pExpression)
-                                                {
-
-                                                    StrBuilder_Append(fp, "    case ");
-                                                    StrBuilder_Append(fp, pExpression->lexeme);
-                                                    StrBuilder_Append(fp, ":\n");
-
-                                                    StrBuilder_Append(fp, "        ");
-                                                    
-
-                                                    StrBuilder_Append(fp, typedefName);
-                                                    StrBuilder_Append(fp, strBuilderFunc.c_str);
-                                                    
-                                                    StrBuilder_Append(fp, "(");
-                                                    StrBuilder_Append(fp, "(");
-                                                    StrBuilder_Append(fp, typedefName);
-                                                    StrBuilder_Append(fp, "*) p");
-                                                    StrBuilder_Append(fp, ");\n");
-
-                                                    StrBuilder_Append(fp, "    break;\n");
-
-                                                    
-                                                }
-
-                                            }
-
-                                        }
-                                    }
-                                
-                                 
-                                }
-
-                               
-                            }
-                            StrBuilder_Append(fp, "    }\n");
-                        }
-                    }
-                }
-            }
-
-            StrBuilder_Destroy(&strBuilderType);
-            StrBuilder_Destroy(&strBuilderFunc);
-
-        }
-        //
-        if (IsSuffix(functionName, "_Add") ||
-            IsSuffix(functionName, "_Destroy") ||
-            IsSuffix(functionName, "_Init"))
-        {
-            TParameterDeclaration* pParameterDeclaration =
-                pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
-
-            if (pParameterDeclaration != NULL)
-            {
-                TSingleTypeSpecifier *pSingleTypeSpecifier =
-                    TSpecifier_As_TSingleTypeSpecifier(pParameterDeclaration->Specifiers.pHead);
-
-                if (pSingleTypeSpecifier != NULL &&
-                    pSingleTypeSpecifier->bIsTypeDef)
-                {
-                    const char * typedefName = pSingleTypeSpecifier->TypedefName;
-
-                    TDeclaration * pDeclaration = TProgram_GetFinalTypeDeclaration(program, typedefName);
-                    if (pDeclaration)
-                    {
-                        TStructUnionSpecifier* pStructUnionSpecifier4 =
-                            TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pHead->pNext);
-
-                        if (pStructUnionSpecifier4 && pStructUnionSpecifier4->TemplateName)
-                        {
-                            if (IsSuffix(functionName, "_Add") &&
-                                strcmp(pStructUnionSpecifier4->TemplateName, "List") == 0)
-                            {
-                                StrBuilder_Append(fp, "\n"
-                                "    if (pList->pHead == NULL) {\n"
-                                "        pList->pHead = pItem; \n"
-                                "        pList->pTail = pItem; \n"
-                                "    }\n"
-                                "    else\n"
-                                "    {\n"
-                                "        pList->pTail->pNext = pItem; \n"
-                                "        pList->pTail = pItem; \n"
-                                "    }\n");
-                            }
-                            else if (IsSuffix(functionName, "_Destroy") &&
-                                strcmp(pStructUnionSpecifier4->TemplateName, "List") == 0)
-                            {
-                                StrBuilder strBuilder = STRBUILDER_INIT;
-                                if (pStructUnionSpecifier4->Args.pHead)
-                                {
-                                    TTypeName_CodePrint(program, options, &pStructUnionSpecifier4->Args.pHead->TypeName, false, &strBuilder);
-                                }
-                                StrBuilder_Append(fp, "\n");
-                                StrBuilder_Append(fp,
-                                                  "\n   while (p->pHead) {\n");
-                                StrBuilder_Append(fp, "    ");
-                                StrBuilder_Append(fp, strBuilder.c_str);
-                                StrBuilder_Append(fp,
-                                                  "* pCurrent = p->pHead; \n"
-                                                  "     p->pHead = p->pHead->pNext; \n");
-                                StrBuilder_Append(fp, "    ");
-                                StrBuilder_Append(fp, strBuilder.c_str);
-                                StrBuilder_Append(fp, "_Delete(pCurrent); \n"
-                                                  "    }\n");
-
-                                StrBuilder_Destroy(&strBuilder);
-                            }
-                        }
-                    }
-                }
-            }
-        }//_Add
-
-        if (IsSuffix(functionName, "_Init"))
-        {
-            TParameterDeclaration* pParameterDeclaration =
-                pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
-
-            if (pParameterDeclaration != NULL)
-            {
-                TSingleTypeSpecifier *pSingleTypeSpecifier =
-                    TSpecifier_As_TSingleTypeSpecifier(pParameterDeclaration->Specifiers.pHead);
-
-                if (pSingleTypeSpecifier != NULL &&
-                    pSingleTypeSpecifier->bIsTypeDef)
-                {
-                    const char * typedefName = pSingleTypeSpecifier->TypedefName;
-
-                    TDeclaration * pDeclaration = TProgram_GetFinalTypeDeclaration(program, typedefName);
-                    if (pDeclaration)
-                    {
-                        TStructUnionSpecifier* pStructUnionSpecifier =
-                            TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pHead->pNext);
-
-                        if (pStructUnionSpecifier)
-                        {
-                            StrBuilder_Append(fp, "\n");
-
-                            for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
-                            {
-                                TStructDeclaration* pItem =
-                                    TAnyStructDeclaration_As_TStructDeclaration(pStructUnionSpecifier->StructDeclarationList.pItems[i]);
-
-                                if (pItem)
-                                {
-                                    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, &pItem->SpecifierQualifierList)
-                                    {
-                                        TSingleTypeSpecifier* pSingleTypeSpecifier2 =
-                                            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
-                                        if (pSingleTypeSpecifier2 != NULL &&
-                                            pSingleTypeSpecifier2->bIsTypeDef)
-                                        {
-                                            StrBuilder nameDestroy = STRBUILDER_INIT;
-                                            const char* typedefName2 = pSingleTypeSpecifier2->TypedefName;
-
-                                            StrBuilder_Append(&nameDestroy, typedefName2);
-                                            StrBuilder_Append(&nameDestroy, "_Init");
-                                            TDeclaration * pDeclaration2 = TProgram_GetFinalTypeDeclaration(program, nameDestroy.c_str);
-
-                                            StrBuilder_Destroy(&nameDestroy);
-                                            if (pDeclaration2)
-                                            {
-
-                                                //if (pDeclaration2->Specifiers.pHead->pNext)
-                                                //{
-                                                //TStructUnionSpecifier* pStructUnionSpecifier2 =
-                                                //TSpecifier_As_TStructUnionSpecifier(pDeclaration2->Specifiers.pHead->pNext);
-                                                //if (pStructUnionSpecifier2)
-                                                //{
-                                                const char* name = pDeclaration2->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Identifier;
-                                                ForEachListItem(TStructDeclarator, pTStructDeclarator, &pItem->DeclaratorList)
-                                                {
-                                                    StrBuilder_Append(fp, "    ");
-                                                    StrBuilder_Append(fp, typedefName2);
-                                                    StrBuilder_Append(fp, "_Init(&p->");
-                                                    StrBuilder_Append(fp, pTStructDeclarator->pDeclarator->pDirectDeclarator->Identifier);
-                                                    StrBuilder_Append(fp, ");\n");
-
-                                                }
-                                                //}
-                                                //else
-                                                //{
-
-                                                //}
-                                                //}
-                                            }
-
-                                        }
-                                    }
-
-                                    StrBuilder_Append(fp, "\n");
-                                }
-                            }
-
-                        }
-
-                        //Tem que ver se o typedef nao era ponteiro tb
-                        //TDeclarator* pDeclarator = TDeclaration_FindDeclarator(p, typedefName);
-                        //if (pDeclarator)
-                        //{
-
-                        //}
-                    }
-                }
-            }
-        }//init
-    }
-
+    Std_Template_CodePrint(program,
+                           options,
+                           p,
+                                b,
+                                fp);
+    
 
     return b;
 }
@@ -2785,7 +2234,7 @@ static bool TDeclaration_CodePrint(TProgram* program,
     return true;
 }
 
-static bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, bool b, StrBuilder* fp)
+bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, bool b, StrBuilder* fp)
 {
 
     TSpecifierQualifierList_CodePrint(program, options, &p->SpecifierQualifierList, false, fp);
@@ -3013,6 +2462,13 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
     const char* inputFileName)
 {
     FILE * fp = fopen(outFileName, "w");
+
+    if (fp == NULL)
+    {
+        printf("cannot open output file %s", outFileName);
+       return;
+    }
+
     bool b = false;
 
     int k = 0;

@@ -80,6 +80,12 @@
     <ClCompile Include="CPrime.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CPrime\StdCode.c">
+      <Filter>Source Files\CPrime</Filter>
+    </ClCompile>
+    <ClCompile Include="hello.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base\Array.h">
@@ -147,6 +153,12 @@
     </ClInclude>
     <ClInclude Include="UnitTest.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vs2017.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CPrime\StdCode.h">
+      <Filter>Source Files\CPrime</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

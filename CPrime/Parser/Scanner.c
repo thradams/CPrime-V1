@@ -1711,41 +1711,13 @@ void Scanner_NextVersion2(Scanner* pScanner)
 }
 
 
-
-void PrintPreprocessedToFile(const char* fileIn,
-    const char* configFileName)
+void PrintPreprocessedToFileCore(FILE* fp, Scanner* scanner)
 {
-    String fullFileNamePath = STRING_INIT;
-    GetFullPath(fileIn, &fullFileNamePath);
-    String configFullPath = STRING_INIT;
-    GetFullPath(configFileName, &configFullPath);
-
-    Scanner scanner;
-    Scanner_Init(&scanner);
-
-    Scanner_IncludeFile(&scanner, fullFileNamePath, FileIncludeTypeFullPath, true);
-    Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath, true);
-    Scanner_Match(&scanner);
-
-
-    char drive[_MAX_DRIVE];
-    char dir[_MAX_DIR];
-    char fname[_MAX_FNAME];
-    char ext[_MAX_EXT];
-    SplitPath(fullFileNamePath, drive, dir, fname, ext); // C4996
-
-    char fileNameOut[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT + 1];
-    strcat(fname, "_pre");
-    MakePath(fileNameOut, drive, dir, fname, ".c");
-
-
-    FILE* fp = fopen(fileNameOut, "w");
-
-    while (Scanner_CurrentToken(&scanner) != TK_EOF)
+    while (Scanner_CurrentToken(scanner) != TK_EOF)
     {
-        Tokens token = Scanner_CurrentToken(&scanner);
-        const char* lexeme = Scanner_CurrentLexeme(&scanner);
-        if (Scanner_CurrentTokenIsActive(&scanner))
+        Tokens token = Scanner_CurrentToken(scanner);
+        const char* lexeme = Scanner_CurrentLexeme(scanner);
+        if (Scanner_CurrentTokenIsActive(scanner))
         {
             switch (token)
             {
@@ -1771,6 +1743,9 @@ void PrintPreprocessedToFile(const char* fileIn,
                 fprintf(fp, " ");
                 break;
 
+                case TK_BOF:
+                break;
+
                 case TK_MACRO_CALL:
                 case TK_MACRO_EOF:
                 case TK_FILE_EOF:
@@ -1781,17 +1756,83 @@ void PrintPreprocessedToFile(const char* fileIn,
                 break;
             }
         }
-        //else
-        //{
-          //  printf("%s", lexeme);
-        //}
+
+        Scanner_Match(scanner);
+    }  
+}
+
+
+
+void PrintPreprocessedToFile(const char* fileIn,
+    const char* configFileName)
+{
+    String fullFileNamePath = STRING_INIT;
+    GetFullPath(fileIn, &fullFileNamePath);
+
+    Scanner scanner;
+    Scanner_Init(&scanner);
+
+    Scanner_IncludeFile(&scanner, fullFileNamePath, FileIncludeTypeFullPath, false);
+
+    if (configFileName != NULL)
+    {
+        String configFullPath = STRING_INIT;
+        GetFullPath(configFileName, &configFullPath);
+
+        Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath, true);
         Scanner_Match(&scanner);
+
+        String_Destroy(&configFullPath);
     }
+
+    ///
+    char drive[_MAX_DRIVE];
+    char dir[_MAX_DIR];
+    char fname[_MAX_FNAME];
+    char ext[_MAX_EXT];
+    SplitPath(fullFileNamePath, drive, dir, fname, ext); // C4996
+
+    char fileNameOut[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT + 1];
+    strcat(fname, "_pre");
+    MakePath(fileNameOut, drive, dir, fname, ".c");
+
+    FILE* fp = fopen(fileNameOut, "w");
+    PrintPreprocessedToFileCore(fp, &scanner);
 
     fclose(fp);
     Scanner_Destroy(&scanner);
     String_Destroy(&fullFileNamePath);
-    String_Destroy(&configFullPath);
+}
+
+
+
+void PrintPreprocessedToConsole(const char* fileIn,
+                                const char* configFileName)
+{
+    String fullFileNamePath = STRING_INIT;
+    GetFullPath(fileIn, &fullFileNamePath);
+    
+    Scanner scanner;
+    Scanner_Init(&scanner);
+
+    Scanner_IncludeFile(&scanner, fullFileNamePath, FileIncludeTypeFullPath, false);
+
+    if (configFileName != NULL)
+    {
+      String configFullPath = STRING_INIT;
+      GetFullPath(configFileName, &configFullPath);
+
+      Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath, true);
+      Scanner_Match(&scanner);
+
+      String_Destroy(&configFullPath);
+    }
+   
+    PrintPreprocessedToFileCore(stdout, &scanner);
+    
+    Scanner_Destroy(&scanner);
+    String_Destroy(&fullFileNamePath);
+    
 }
 
 void Scanner_LookAhead(Scanner* pScanner)

@@ -60,31 +60,58 @@ void Compile(const char* configFileName,
     TProgram_Destroy(&program);
 }
 
+void PrintHelp()
+{
+    printf("Syntax: cprime [options] [file ...]\n");
+    printf("\n");
+    printf("Examples: cprime hello.c\n");
+    printf("          cprime -config config.h hello.c\n");
+    printf("          cprime -config config.h -P hello.c\n");
+    printf("          cprime -E hello.c\n");
+    printf("\n");
+    printf("Options:\n");
+    printf("-config FILE                          Configuration file.\n");
+    printf("-help                                 Print this message.\n");
+    printf("-E                                    Preprocess to console.\n");
+    printf("-P                                    Preprocess to file.\n");
 
+}
 int main(int argc, char* argv[])
 {
-    printf("Turbo lint " __DATE__ "\n");
+    printf("\n");
+    printf("Version " __DATE__ "\n");
+    printf("https://github.com/thradams/CPrime\n\n");
 
 
     //AllTests();
 
     if (argc < 2)
     {
-        printf("cprime.exe -config configFile.txt file1.c file2.c");
+        PrintHelp();
         return 1;
     }
 
     const char* configFileName = NULL;
+    
 
+    Options options = OPTIONS_INIT;
+    bool bPrintPreprocessedToFile = false;
+    bool bPrintPreprocessedToConsole = false;
 
-
-    bool bPrintPreprocessed = false;
     for (int i = 1; i < argc; i++)
     {
         const char * option = argv[i];
-        if (strcmp(option, "-E") == 0)
+        if (strcmp(option, "-P") == 0)
         {
-            bPrintPreprocessed = true;
+            bPrintPreprocessedToFile = true;
+        }
+        else if (strcmp(option, "-E") == 0)
+        {
+            bPrintPreprocessedToConsole = true;
+        }
+        else if (strcmp(option, "-help") == 0)
+        {
+            PrintHelp();
         }
         else if (strcmp(option, "-config") == 0)
         {
@@ -98,38 +125,31 @@ int main(int argc, char* argv[])
                 printf("missing file\n");
             }
         }
-    }
-
-    Options options = OPTIONS_INIT;
-
-    for (int i = 1; i < argc; i++)
-    {
-        const char * option = argv[i];
-        if (strcmp(option, "-E") == 0)
-        {
-
-        }
-        else if (strcmp(option, "-config") == 0)
-        {
-            i++;
-        }
         else
         {
             const char* inputFileName = option;
-
-            if (bPrintPreprocessed)
-            {
-                PrintPreprocessedToFile(inputFileName, configFileName);
-            }
-
             String inputFullPath = NULL;
             GetFullPath(inputFileName, &inputFullPath);
 
-            Compile(configFileName, inputFullPath, &options);
-
+            if (bPrintPreprocessedToFile)
+            {
+                PrintPreprocessedToFile(inputFullPath, configFileName);
+            }
+            else if (bPrintPreprocessedToConsole)
+            {
+                PrintPreprocessedToConsole(inputFullPath, configFileName);
+            }
+            else
+            {
+                Compile(configFileName, inputFullPath, &options);
+            }
             String_Destroy(&inputFullPath);
+
         }
     }
+
+
+
 
 
     return 0;

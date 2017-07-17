@@ -2274,7 +2274,7 @@ void Compound_Statement(Parser* ctx, TStatement** ppStatement);
 //void Expression(Parser* ctx, TExpression** pExpression, Tokens endToken1, Tokens endToken2);
 void Parameter_Declaration(Parser* ctx, TParameterDeclaration* pParameterDeclaration);
 bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
-void Type_Qualifier_ListOpt(Parser* ctx, TTypeQualifier* pQualifier);
+void Type_Qualifier_ListOpt(Parser* ctx, TTypeQualifierList* pQualifier);
 void Declaration_Specifiers(Parser* ctx, TDeclarationSpecifiers* pDeclarationSpecifiers);
 void Declarator(Parser* ctx, TDeclarator** pTDeclarator2);
 void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier, int* typedefCount);

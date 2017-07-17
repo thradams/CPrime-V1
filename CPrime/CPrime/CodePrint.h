@@ -25,3 +25,9 @@ void TProgram_PrintCodeToFile(TProgram * pProgram,
                               const char * fileName,	                        
 	                            const char* userpath);
 
+void BuildInitializationForTypedef(TProgram* program,
+                                   Options * options,
+                                   const char* typedefName,
+                                   StrBuilder* strBuilder);
+
+bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, bool b, StrBuilder* fp);
