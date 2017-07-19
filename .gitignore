@@ -4,9 +4,8 @@
 
 /CPrime/Debug
 /CPrime/Release
-/CPrime/Release/CPrime.tlog
-/CPrime/Release
 /CPrime/.vs/CPrime/v15
 /.vs/slnx.sqlite
 /.vs
 /CPrime/hello.json
+/CPrime/out/hello.c
