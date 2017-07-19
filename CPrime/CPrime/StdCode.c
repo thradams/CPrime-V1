@@ -115,7 +115,7 @@ bool InstanciateUnionTypeFunction(TProgram* program,
         const char* functionName =
             pInitDeclarator->pDeclarator->pDirectDeclarator->Identifier;
 
-        TParameterDeclaration* pParameterDeclaration =
+        TParameter* pParameterDeclaration =
             pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
 
         if (pParameterDeclaration != NULL)
@@ -323,7 +323,7 @@ bool Std_Template_CodePrint(TProgram* program,
         }
         else if (IsSuffix(functionName, "_Delete"))
         {
-            TParameterDeclaration* pParameterDeclaration =
+            TParameter* pParameterDeclaration =
                 pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
 
             if (pParameterDeclaration != NULL)
@@ -364,7 +364,7 @@ bool Std_Template_CodePrint(TProgram* program,
         }
         else if (IsSuffix(functionName, "_ToString"))
         {
-            TParameterDeclaration* pParameterDeclaration =
+            TParameter* pParameterDeclaration =
                 pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
 
             if (pParameterDeclaration != NULL)
@@ -410,7 +410,7 @@ bool Std_Template_CodePrint(TProgram* program,
         }
         else if (IsSuffix(functionName, "_Destroy"))
         {
-            TParameterDeclaration* pParameterDeclaration =
+            TParameter* pParameterDeclaration =
                 pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
 
             if (pParameterDeclaration != NULL)
@@ -475,7 +475,7 @@ bool Std_Template_CodePrint(TProgram* program,
             IsSuffix(functionName, "_Destroy") ||
             IsSuffix(functionName, "_Init"))
         {
-            TParameterDeclaration* pParameterDeclaration =
+            TParameter* pParameterDeclaration =
                 pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
 
             if (pParameterDeclaration != NULL)
@@ -529,7 +529,7 @@ bool Std_Template_CodePrint(TProgram* program,
 
         if (IsSuffix(functionName, "_Init"))
         {
-            TParameterDeclaration* pParameterDeclaration =
+            TParameter* pParameterDeclaration =
                 pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
 
             if (pParameterDeclaration != NULL)

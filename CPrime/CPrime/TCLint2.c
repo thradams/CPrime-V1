@@ -11,7 +11,7 @@
 #if 0
 typedef struct
 {
-  TParameterDeclaration *  pParameter;
+  TParameter *  pParameter;
   TDeclaration*  pDeclaration0;
   TDeclarator* pDeclarator0;
 
@@ -168,7 +168,7 @@ static void TInitializer_Analise(TProgram* pProgram,
                                  TVariablesMapStack* pStackNames);
 
 static void TPointer_Analise(TProgram* pProgram, TPointer* pPointer);
-static void TParameterDeclaration_Analise(TProgram* pProgram, TParameterDeclaration* p, TVariablesMapStack* pStackNames);
+static void TParameter_Analise(TProgram* pProgram, TParameterDeclaration* p, TVariablesMapStack* pStackNames);
 
 static void TInitializerListItem_Analise(TProgram* pProgram,
     TDeclaration * pDeclaration,
@@ -1780,9 +1780,9 @@ static void TParameterList_Analise(TProgram* pProgram, TParameterList *p, TVaria
       //fprintf(fp, ",");
     }
 
-    TParameterDeclaration * pItem = p->pItems[i];
+    TParameter * pItem = p->pItems[i];
 
-    TParameterDeclaration_Analise(pProgram, pItem, pStackNames);
+    TParameter_Analise(pProgram, pItem, pStackNames);
   }
 
 
@@ -2287,7 +2287,7 @@ static void TDeclaration_Analise(TProgram* pProgram, TDeclaration* p, TVariables
 }
 
 
-static void TParameterDeclaration_Analise(TProgram* pProgram, TParameterDeclaration* p, TVariablesMapStack* pStackNames)
+static void TParameter_Analise(TProgram* pProgram, TParameter* p, TVariablesMapStack* pStackNames)
 {
   TDeclarationSpecifiers_Analise(pProgram, &p->Specifiers, pStackNames);
 

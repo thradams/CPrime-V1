@@ -145,8 +145,7 @@ typedef enum
     TK__ALINGOF,
 
     ///
-    TK__ASM, //visual c++
-    TK_TEMPLATE,
+    TK__ASM, //visual c++    
     TK_CLASS,
 
       //

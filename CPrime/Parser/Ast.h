@@ -564,11 +564,13 @@ const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDecla
 
 
 
-struct TParameterDeclaration;
-typedef struct TParameterDeclaration TParameterDeclaration;
-typedef List(TParameterDeclaration) TParameterList;
+struct TParameter;
+typedef struct TParameter TParameter;
+typedef List(TParameter) TParameterList;
 
-#define TParameterList_Destroy(x) List_Destroy(TParameterDeclaration, (x))
+#define TParameterList_Destroy(x) List_Destroy(TParameter, (x))
+const char* TParameter_GetName(TParameter* p);
+bool TParameter_IsDirectPointer(TParameter* p);
 
 typedef struct TParameterTypeList
 {
@@ -579,6 +581,7 @@ typedef struct TParameterTypeList
 } TParameterTypeList;
 
 #define TPARAMETERTYPELIST_INIT {TLIST_INIT, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT, false}
+//int TParameterTypeList_GetNumberOfParameters(TParameterTypeList* p);
 
 typedef struct TDesignator
 {
@@ -646,6 +649,9 @@ typedef struct TDeclarator
 #define TDECLARATOR_INIT {LIST_INIT, NULL, TSCANNERITEMLIST_INIT}
 CREATETYPE(TDeclarator, TDECLARATOR_INIT)
 
+bool TDeclarator_IsDirectPointer(TDeclarator* p);
+const char* TDeclarator_GetName(TDeclarator* p);
+
 //typedef struct TAbstractDeclarator
 //{
   //TPointerList PointerList;
@@ -699,7 +705,7 @@ CREATETYPE(TInitDeclarator, TINITDECLARATOR_INIT)
 typedef TInitDeclarator TStructDeclarator;
 typedef List(TInitDeclarator) TInitDeclaratorList;
 
-const char* TDeclarator_FindName(TDeclarator* p);
+const char* TDeclarator_GetName(TDeclarator* p);
 const char* TInitDeclarator_FindName(TInitDeclarator* p);
 
 
@@ -752,16 +758,6 @@ CAST(TTypeSpecifier, TStructUnionSpecifier)
 CAST(TSpecifier, TStructUnionSpecifier)
 CAST(TSpecifierQualifier, TStructUnionSpecifier)
 
-typedef struct TTemplateParameter
-{
-    String Name;
-    struct TTemplateParameter *pNext;
-} TTemplateParameter;
-#define TTEMPLATEPARAMETER_INIT { STRING_INIT , NULL}
-CREATETYPE(TTemplateParameter, TTEMPLATEPARAMETER_INIT)
-//TTemplateParameterList
-
-typedef List(TTemplateParameter) TTemplateParameterList;
 
 typedef struct
 {
@@ -772,7 +768,6 @@ typedef struct
     //se for funcao
     TCompoundStatement* pCompoundStatementOpt;
 
-    TTemplateParameterList TemplateParameters;
     int FileIndex;
     int Line;
 
@@ -783,14 +778,14 @@ typedef struct
 
 
 } TDeclaration;
-#define TFUNCVARDECLARATION_INIT { {TDeclaration_ID}, TDECLARATION_SPECIFIERS_INIT, LIST_INIT, NULL, LIST_INIT, -1, -1, TSCANNERITEMLIST_INIT, false, TSCANNERITEMLIST_INIT}
+#define TFUNCVARDECLARATION_INIT { {TDeclaration_ID}, TDECLARATION_SPECIFIERS_INIT, LIST_INIT, NULL,  -1, -1, TSCANNERITEMLIST_INIT, false, TSCANNERITEMLIST_INIT}
 CREATETYPE(TDeclaration, TFUNCVARDECLARATION_INIT)
 
 void TDeclaration_Destroy(TDeclaration* p);
 
 bool TDeclaration_Is_StructOrUnionDeclaration(TDeclaration* p);
-bool TDeclaration_Is_FunctionDeclaration(TDeclaration* p);
-bool TDeclaration_Is_FunctionDefinition(TDeclaration* p);
+//bool TDeclaration_Is_FunctionDeclaration(TDeclaration* p);
+TCompoundStatement* TDeclaration_Is_FunctionDefinition(TDeclaration* p);
 const char* TDeclaration_GetFunctionThis(TDeclaration* p);
 bool TDeclaration_Is_EnumDeclaration(TDeclaration* p);
 TDeclarator* TDeclaration_FindDeclarator(TDeclaration* p, const char* name);
@@ -805,23 +800,24 @@ bool TAnyDeclaration_Is_StructOrUnionDeclaration(TAnyDeclaration* pDeclaration);
 int TAnyDeclaration_GetFileIndex(TAnyDeclaration* pDeclaration);
 
 
-typedef struct TParameterDeclaration
+typedef struct TParameter
 {
     TDeclarationSpecifiers Specifiers;
     TDeclarator Declarator;
 
-    struct TParameterDeclaration* pNext;
+    struct TParameter* pNext;
     //Anotacoes in out opt geradas automaticamente?
     //para os parametros?
     //para o retorno opt?
     TScannerItemList ClueList0;
     bool bHasComma;
-} TParameterDeclaration;
+} TParameter;
 #define TPARAMETER_DECLARATION_INIT { TDECLARATION_SPECIFIERS_INIT, TDECLARATOR_INIT, NULL, TSCANNERITEMLIST_INIT, false}
-void TParameterDeclaration_Destroy(TParameterDeclaration* p);
-void TParameterDeclaration_Swap(TParameterDeclaration* a, TParameterDeclaration* b);
+void TParameter_Destroy(TParameter* p);
+void TParameter_Swap(TParameter* a, TParameter* b);
+const char* TParameter_GetTypedefName(TParameter* p);
 
-CREATETYPE(TParameterDeclaration, TPARAMETER_DECLARATION_INIT)
+CREATETYPE(TParameter, TPARAMETER_DECLARATION_INIT)
 
 typedef ArrayT(TAnyDeclaration) TDeclarations;
 
@@ -845,9 +841,6 @@ typedef struct
     //arquivos na qual declaracao tem indice
     TFileArray Files2;
 
-    //Diretorios de codigo do usuario
-    StrArray MySourceDir;
-
     //multimap dos simbolos
     DeclarationsMap Symbols;
 
@@ -858,7 +851,7 @@ typedef struct
 
 } TProgram;
 
-#define TPROGRAM_INIT {ARRAYT_INIT, STRARRAY_INIT, STRARRAY_INIT, ARRAYT_INIT, MACROMAP_INIT, MAP_INIT}
+#define TPROGRAM_INIT {ARRAYT_INIT, STRARRAY_INIT, MAP_INIT, MACROMAP_INIT, MAP_INIT}
 void TProgram_Destroy(TProgram* p);
 TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName);
 TDeclaration* TProgram_FindDeclaration(TProgram* p, const char* name);

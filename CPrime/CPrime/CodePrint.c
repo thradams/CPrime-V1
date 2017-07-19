@@ -10,8 +10,8 @@ bool bExpandMacros;
 
 void Options_Destroy(Options* options)
 {
-    StrBuilder_Destroy(&options->TemplateDeclarations);
-    StrBuilder_Destroy(&options->TemplateInstanciation);
+    
+    
 }
 
 static bool TInitializerListItem_CodePrint2(TProgram* program,
@@ -81,7 +81,7 @@ static bool TStatement_CodePrint(TProgram* program, Options * options, TStatemen
 static bool TBlockItem_CodePrint(TProgram* program, Options * options, TBlockItem * p, bool b, StrBuilder* fp);
 
 static bool TPointer_CodePrint(TProgram* program, Options * options, TPointer* pPointer, bool b, StrBuilder* fp);
-static bool TParameterDeclaration_CodePrint(TProgram* program, Options * options, TParameterDeclaration* p, bool b, StrBuilder* fp);
+static bool TParameter_CodePrint(TProgram* program, Options * options, TParameter* p, bool b, StrBuilder* fp);
 //static bool TInitializerListItem_CodePrint(TProgram* program, Options * options, TTypeSpecifier* pTypeSpecifier, bool bIsPointer, TInitializerListItem* p, bool b, StrBuilder* fp);
 
 static bool bInclude = true;
@@ -1612,7 +1612,7 @@ static bool TParameterList_CodePrint(TProgram* program, Options * options, TPara
     b = false;
     
 
-    ForEachListItem(TParameterDeclaration, pItem, p)
+    ForEachListItem(TParameter, pItem, p)
     {
         //if (!List_IsFirstItem(p, pItem))
         //{
@@ -1620,7 +1620,7 @@ static bool TParameterList_CodePrint(TProgram* program, Options * options, TPara
 //            Output_Append(fp, ",");
         //}
         //TParameterDeclaration * pItem = p->pItems[i];
-        b = TParameterDeclaration_CodePrint(program, options, pItem, b, fp);
+        b = TParameter_CodePrint(program, options, pItem, b, fp);
     }
 
 
@@ -2248,9 +2248,9 @@ bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, boo
     return b;
 }
 
-static bool TParameterDeclaration_CodePrint(TProgram* program,
+static bool TParameter_CodePrint(TProgram* program,
     Options * options,
-    TParameterDeclaration* p,
+    TParameter* p,
     bool b,
     StrBuilder* fp)
 {
@@ -2487,21 +2487,7 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 
 
         b = TAnyDeclaration_CodePrint(pProgram, options, pItem, b, &sb);
-#if 0
-        if (options->TemplateDeclarations.size > 0)
-        {
-            fprintf(fp, "\n\n");
-            fprintf(fp, "%s", options->TemplateDeclarations.c_str);
-            fprintf(fp, "\n");
-            StrBuilder_Clear(&options->TemplateDeclarations);
-        }
-        if (options->TemplateInstanciation.size > 0)
-        {
-            fprintf(fp, "%s", options->TemplateInstanciation.c_str);
-            fprintf(fp, "\n\n");
-            StrBuilder_Clear(&options->TemplateInstanciation);
-        }
-#endif
+
 
         fprintf(fp, "%s", sb.c_str);
 

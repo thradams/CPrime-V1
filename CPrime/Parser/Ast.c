@@ -350,6 +350,7 @@ void TTypeSpecifier_Destroy(TTypeSpecifier* p)
   }
 }
 
+
 void TDeclarator_Destroy(TDeclarator* p)
 {
   List_Destroy(TPointer, &p->PointerList);
@@ -383,7 +384,7 @@ void TDirectDeclarator_Destroy(TDirectDeclarator* p)
 }
 
 
-const char* TDeclarator_FindName(TDeclarator*   p)
+const char* TDeclarator_GetName(TDeclarator*   p)
 {
   TDirectDeclarator* pDirectDeclarator = p->pDirectDeclarator;
   while (pDirectDeclarator != NULL)
@@ -393,7 +394,7 @@ const char* TDeclarator_FindName(TDeclarator*   p)
     if (pDirectDeclarator->pDeclarator)
     {
       const char* name =
-        TDeclarator_FindName(pDirectDeclarator->pDeclarator);
+        TDeclarator_GetName(pDirectDeclarator->pDeclarator);
       if (name != NULL)
       {
         return name;
@@ -408,7 +409,7 @@ const char* TDeclarator_FindName(TDeclarator*   p)
 const char* TInitDeclarator_FindName(TInitDeclarator* p)
 {
   ASSERT(p->pDeclarator != NULL);
-  return TDeclarator_FindName(p->pDeclarator);
+  return TDeclarator_GetName(p->pDeclarator);
 }
 
 
@@ -649,42 +650,6 @@ void TFunctionSpecifier_Destroy(TFunctionSpecifier* p)
     TScannerItemList_Destroy(&p->ClueList0);
 }
 
-/*
-bool TDeclaration_Is_FunctionDeclaration(TDeclaration*  p)
-{
-  if (p != NULL && p->Declarators.size == 1)
-  {
-    if (p->Declarators.pItems[0]->pParametersOpt != NULL)
-    {
-      if (p->pCompoundStatementOpt == NULL)
-      {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-*/
-/*
-const char* TDeclaration_GetFunctionThis(TDeclaration*  p)
-{
-  const char*  thisName = NULL;
-  if (p != NULL && p->Declarators.size == 1)
-  {
-    if (p->Declarators.pItems[0]->pParametersOpt != NULL &&
-        p->Declarators.pItems[0]->pParametersOpt->size >= 1)
-    {
-        thisName = p->Declarators.pItems[0]->pParametersOpt->pItems[0]->Declarator.Name;
-    }
-  }
-  return thisName;
-}
-*/
-
-bool TDeclaration_Is_FunctionDefinition(TDeclaration*  p)
-{
-  return p != NULL && p->pCompoundStatementOpt != NULL;
-}
 
 bool TDeclaration_Is_StructOrUnionDeclaration(TDeclaration* p)
 {
@@ -701,35 +666,72 @@ bool TDeclaration_Is_StructOrUnionDeclaration(TDeclaration* p)
     return bIsStructOrUnion;
 }
 
-//bool TDeclaration_Is_EnumDeclaration(TDeclaration* p)
-//{
-  //return
-//    TTypeSpecifier_As_TEnumSpecifier(p->Specifiers.pTypeSpecifierOpt) != NULL;
-//}
-
-
-void TTemplateParameter_Destroy(TTemplateParameter* p)
-{
-  String_Destroy(&p->Name);
-}
 
 void TDeclaration_Destroy(TDeclaration* p)
 {
   TCompoundStatement_Delete(p->pCompoundStatementOpt);
   TDeclarationSpecifiers_Destroy(&p->Specifiers);
   List_Destroy(TInitDeclarator, &p->InitDeclaratorList);
-  List_Destroy(TTemplateParameter, &p->TemplateParameters);
+  
   TScannerItemList_Destroy(&p->ClueList0);
 }
 
-void TParameterDeclaration_Swap(TParameterDeclaration* a, TParameterDeclaration* b)
+void TParameter_Swap(TParameter* a, TParameter* b)
 {
-  TParameterDeclaration temp = *a;
+  TParameter temp = *a;
   *a = *b;
   *b = temp;
 }
 
-void TParameterDeclaration_Destroy(TParameterDeclaration* p)
+const char* TSpecifier_GetTypedefName(TDeclarationSpecifiers* p)
+{
+    const char* typedefName = NULL;
+    ForEachListItem(TSpecifier, pSpecifier, p)
+    {
+        TSingleTypeSpecifier *pSingleTypeSpecifier =
+          TSpecifier_As_TSingleTypeSpecifier(pSpecifier);
+        if (pSingleTypeSpecifier && 
+            pSingleTypeSpecifier->bIsTypeDef)
+        {
+            typedefName = pSingleTypeSpecifier->TypedefName;
+        }
+    }
+    return typedefName;
+}
+
+const char* TParameter_GetTypedefName(TParameter* p)
+{
+    return TSpecifier_GetTypedefName(&p->Specifiers);
+}
+
+bool TDeclarator_IsDirectPointer(TDeclarator* p)
+{
+    int n = 0;
+    ForEachListItem(TPointer, pPointer, &p->PointerList)
+    {
+        if (pPointer->bPointer)
+        {
+            n++;
+            if (n > 1)
+            {
+                break;
+            }
+        }
+    }
+    return n == 1;
+}
+
+bool TParameter_IsDirectPointer(TParameter* p)
+{
+    return TDeclarator_IsDirectPointer(&p->Declarator);
+}
+
+const char* TParameter_GetName(TParameter* p)
+{
+    return TDeclarator_GetName(&p->Declarator);    
+}
+
+void TParameter_Destroy(TParameter* p)
 {
   TDeclarator_Destroy(&p->Declarator);
   TDeclarationSpecifiers_Destroy(&p->Specifiers);
@@ -1062,17 +1064,9 @@ TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName
   return pDeclarationResult;
 }
 
-/*void TDeclarations_Init(TDeclarations* p)
-{
-  TDeclarations temp = TDECLARATIONS_INIT;
-  *p = temp;
-}*/
 
 void TProgram_Destroy(TProgram * p)
 {
-
-  StrArray_Destroy(&p->MySourceDir);
-
   Map_Destroy(&p->EnumMap, NULL);
   ArrayT_Destroy(TAnyDeclaration, &p->Declarations);
   ArrayT_Destroy(TFile, &p->Files2);

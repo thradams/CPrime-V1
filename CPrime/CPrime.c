@@ -10,19 +10,19 @@
 #include "..\CPrime\Base\Path.h"
 #include "UnitTest.h"
 
+void AstPlayground(TProgram* program);
+
 void Compile(const char* configFileName,
     const char* inputFileName,
-    Options* options)
+    Options* options,
+             bool bPrintASTFile)
 {
     TProgram program = TPROGRAM_INIT;
-
 
     printf("Parsing...\n");
     if (GetAST(inputFileName, configFileName, &program))
     {
-
-
-        //TProgram_Analize(&program);
+        AstPlayground(&program);
 
         char drive[_MAX_DRIVE];
         char dir[_MAX_DIR];
@@ -30,30 +30,24 @@ void Compile(const char* configFileName,
         char ext[_MAX_EXT];
         SplitPath(inputFileName, drive, dir, fname, ext); // C4996
 
-        char outjs[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT + 1];
-        MakePath(outjs, drive, dir, fname, ".json");
-
-        if (inputFileName != NULL &&
-            program.MySourceDir.size == 1 &&
-            strcmp(program.MySourceDir.pItems[0], inputFileName) == 0)
+        if (bPrintASTFile)
         {
-            //nao passa o nome eh considera o dir
-            inputFileName = NULL;
+            printf("Generating ast for %s...\n", inputFileName);
+            char outjs[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT + 1];
+            MakePath(outjs, drive, dir, fname, ".json");
+            TProgram_PrintAstToFile(&program, outjs, inputFileName);
         }
-
-        if (program.MySourceDir.size != 0)
+        else
         {
-            //nao passa o nome eh considera o dir
-            inputFileName = NULL;
+            char outc[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT + 1];
+            MakePath(outc, drive, dir, fname, ".json");
+
+            strcat(dir, "\\out\\");
+            MakePath(outc, drive, dir, fname, ext);
+
+            printf("Generating code for %s...\n", inputFileName);
+            TProgram_PrintCodeToFile(&program, options, outc, inputFileName);
         }
-
-        //TProgram_PrintAstToFile(&program, outjs, inputFileName);
-
-        strcat(dir, "\\out\\");
-        MakePath(outjs, drive, dir, fname, ext);
-
-        printf("Generating code for %s...\n", inputFileName);
-        TProgram_PrintCodeToFile(&program, options, outjs, inputFileName);
 
         printf("Done!\n");
     }
@@ -74,6 +68,7 @@ void PrintHelp()
     printf("-help                                 Print this message.\n");
     printf("-E                                    Preprocess to console.\n");
     printf("-P                                    Preprocess to file.\n");
+    printf("-A                                    Output AST to file.\n");
 
 }
 int main(int argc, char* argv[])
@@ -92,11 +87,12 @@ int main(int argc, char* argv[])
     }
 
     const char* configFileName = NULL;
-    
+
 
     Options options = OPTIONS_INIT;
     bool bPrintPreprocessedToFile = false;
     bool bPrintPreprocessedToConsole = false;
+    bool bPrintASTFile = false;
 
     for (int i = 1; i < argc; i++)
     {
@@ -108,6 +104,10 @@ int main(int argc, char* argv[])
         else if (strcmp(option, "-E") == 0)
         {
             bPrintPreprocessedToConsole = true;
+        }
+        else if (strcmp(option, "-A") == 0)
+        {
+            bPrintASTFile = true;
         }
         else if (strcmp(option, "-help") == 0)
         {
@@ -141,17 +141,167 @@ int main(int argc, char* argv[])
             }
             else
             {
-                Compile(configFileName, inputFullPath, &options);
+                Compile(configFileName, inputFullPath, &options, bPrintASTFile);
             }
             String_Destroy(&inputFullPath);
-
         }
     }
-
-
-
 
 
     return 0;
 }
 
+
+TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration* p)
+{
+    TParameterTypeList* pParameterTypeList = NULL;
+
+    if (p->InitDeclaratorList.pHead != NULL)
+    {
+        if (p->InitDeclaratorList.pHead->pNext == NULL)
+        {
+            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
+            {
+                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
+                {
+                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+                    {
+                        pParameterTypeList =
+                            &p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Parameters;
+
+                    }
+                }
+            }
+        }
+    }
+    return pParameterTypeList;
+}
+
+const char* TDeclaration_Is_FunctionDeclaration(TDeclaration* p)
+{
+    const char* functionName = NULL;
+
+    if (p->InitDeclaratorList.pHead != NULL)
+    {
+        if (p->InitDeclaratorList.pHead->pNext == NULL)
+        {
+            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
+            {
+                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
+                {
+                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+                    {
+                        functionName =
+                            p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Identifier;
+                    }
+                }
+            }
+        }
+    }
+    return functionName;
+}
+
+TCompoundStatement* TDeclaration_Is_FunctionDefinition(TDeclaration* p)
+{
+    TCompoundStatement* pCompoundStatement = NULL;
+
+    if (p->InitDeclaratorList.pHead != NULL)
+    {
+        if (p->InitDeclaratorList.pHead->pNext == NULL)
+        {
+            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
+            {
+                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
+                {
+                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+                    {
+                        pCompoundStatement = p->pCompoundStatementOpt;
+                    }
+                }
+            }
+        }
+    }
+    return pCompoundStatement;
+}
+
+TStructUnionSpecifier* TDeclarationSpecifiers_Find_StructUnionSpecifier(TDeclarationSpecifiers* p)
+{
+    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+    ForEachListItem(TSpecifier, pDeclarationSpecifier, p)
+    {
+        pStructUnionSpecifier =
+            TSpecifier_As_TStructUnionSpecifier(pDeclarationSpecifier);
+        if (pStructUnionSpecifier)
+        {
+            break;
+        }
+    }
+    return pStructUnionSpecifier;
+}
+
+TStructUnionSpecifier* TParameter_Is_DirectPointerToStruct(TProgram* program, TParameter* pParameter)
+{
+    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+    if (TParameter_IsDirectPointer(pParameter))
+    {
+        const char* typedefName = TParameter_GetTypedefName(pParameter);
+        if (typedefName != NULL)
+        {
+            TDeclaration* pArgType = TProgram_FindDeclaration(program, TParameter_GetTypedefName(pParameter));
+            if (pArgType)
+            {
+                pStructUnionSpecifier =
+                    TDeclarationSpecifiers_Find_StructUnionSpecifier(&pArgType->Specifiers);
+            }
+        }
+    }
+    return pStructUnionSpecifier;
+}
+
+void AstPlayground(TProgram* program)
+{
+    TDeclaration * p = TProgram_FindDeclaration(program, "F");
+
+    TDeclaration_Is_FunctionDeclaration(p);
+    //    TDeclaration_GetFunctionArguments();
+
+    TDeclaration_Is_FunctionDefinition(p);
+
+    TParameterTypeList * pArgs =
+        TDeclaration_GetFunctionArguments(p);
+    if (pArgs)
+    {
+        ForEachListItem(TParameter, pParameter, &pArgs->ParameterList)
+        {
+            printf("%s\n", TParameter_GetName(pParameter));
+            printf("%s\n", TParameter_GetTypedefName(pParameter));
+            printf(TParameter_IsDirectPointer(pParameter) ? "true" : "false");
+
+            TStructUnionSpecifier* pStruct =
+                TParameter_Is_DirectPointerToStruct(program, pParameter);
+            if (pStruct)
+            {
+                for (int i = 0 ; i < pStruct->StructDeclarationList.size; i++)
+                {
+                    TAnyStructDeclaration* pAnyStructDeclaration =
+                        pStruct->StructDeclarationList.pItems[i];
+
+                    TStructDeclaration* pStructDeclaration =
+                      TAnyStructDeclaration_As_TStructDeclaration(pAnyStructDeclaration);
+
+                    if (pStructDeclaration != NULL)
+                    {
+                        TSpecifierQualifierList *pSpecifierQualifierList  = 
+                            &pStructDeclaration->SpecifierQualifierList;
+
+                        ForEachListItem(TStructDeclarator, pStructDeclarator, &pStructDeclaration->DeclaratorList)
+                        {
+                            printf("%s", TDeclarator_GetName(pStructDeclarator->pDeclarator));
+                        }
+                    }
+                }
+                //pStruct->StructDeclarationList
+            }
+        }
+    }
+}

@@ -20,7 +20,7 @@ bool TStatement_Print(TStatement * p, bool b, FILE* fp);
 bool TBlockItem_Print(TBlockItem * p, bool b, FILE* fp);
 bool TInitializer_Print(TInitializer* p, bool b, FILE* fp);
 bool TPointer_Print(TPointer* pPointer, bool b, FILE* fp);
-bool TParameterDeclaration_Print(TParameterDeclaration* p, bool b, FILE* fp);
+bool TParameter_Print(TParameter* p, bool b, FILE* fp);
 bool TInitializerListItem_Print(TInitializerListItem* p, bool b, FILE* fp);
 
 bool TCompoundStatement_Print(TCompoundStatement * p, bool b, FILE* fp)
@@ -655,21 +655,16 @@ bool TEnumSpecifier_Print(TEnumSpecifier* p, bool b, FILE* fp)
 
 bool TStructUnionSpecifier_Print(TStructUnionSpecifier* p, bool b, FILE* fp)
 {
-    if (b)
-    {
-        fprintf(fp, ",");
-    }
-
     b = true;
-
+    fprintf(fp, "{");
     if (p->bIsStruct)
-        fprintf(fp, "\"struct-specifier\": {");
+        fprintf(fp, "\"type:\":\"struct-specifier\",");
 
     else
-        fprintf(fp, "\"union-specifier\": {");
+        fprintf(fp, "\"type:\":\"union-specifier\",");
 
     fprintf(fp, "\"name\":\"%s\",", p->Name);
-    //fprintf(fp, "\"isstruct\":%s,", p->bIsStruct ? "true" : "false");
+    
     fprintf(fp, "\"struct-declaration-list\":[");
 
     for (size_t i = 0; i < p->StructDeclarationList.size; i++)
@@ -684,112 +679,73 @@ bool TStructUnionSpecifier_Print(TStructUnionSpecifier* p, bool b, FILE* fp)
 
     fprintf(fp, "]");
     fprintf(fp, "}");
+        
     return true;
 }
 
 bool TSingleTypeSpecifier_Print(TSingleTypeSpecifier* p, bool b, FILE* fp)
 {
-    if (b)
-    {
-        fprintf(fp, ",");
-    }
-
+    fprintf(fp, "{");
     b = true;
-    fprintf(fp, "\"type-specifier\":\"");
-    int i = 0;
+    fprintf(fp, "\"type\":\"type-specifier\",");
+    fprintf(fp, "\"lexeme\":");
+
+    fprintf(fp, "\"");
 
     if (p->bIsVoid)
     {
-        if (i > 0)
-            fprintf(fp, " ");
-
         fprintf(fp, "void");
-        i++;
     }
 
     if (p->bIsUnsigned)
     {
-        if (i > 0)
-            fprintf(fp, " ");
-
         fprintf(fp, "unsigned");
-        i++;
     }
 
     if (p->bIsBool)
     {
-        if (i > 0)
-            fprintf(fp, " ");
-
         fprintf(fp, "bool");
-        i++;
     }
 
     if (p->bIsChar)
     {
-        if (i > 0)
-            fprintf(fp, " ");
-
         fprintf(fp, "char");
-        i++;
     }
 
     if (p->bIsShort)
     {
-        if (i > 0)
-            fprintf(fp, " ");
-
         fprintf(fp, "short");
-        i++;
     }
 
     for (int j = 0; j < p->nLong; j++)
     {
-        if (i > 0)
-            fprintf(fp, " ");
-
         fprintf(fp, "long");
-        i++;
     }
 
     if (p->bIsInt)
     {
-        if (i > 0)
-            fprintf(fp, " ");
-
         fprintf(fp, "int");
-        i++;
     }
 
     if (p->bIsDouble)
     {
-        if (i > 0)
-            fprintf(fp, " ");
-
         fprintf(fp, "double");
-        i++;
     }
 
     if (p->bIsFloat)
     {
-        if (i > 0)
-            fprintf(fp, " ");
-
         fprintf(fp, "float");
-        i++;
     }
 
     if (p->bIsTypeDef)
     {
-        if (i > 0)
-            fprintf(fp, " ");
-
         fprintf(fp, "%s", p->TypedefName);
-        i++;
     }
 
     fprintf(fp, "\"");
-    ASSERT(i > 0);
+
+    fprintf(fp, "}");
+
     return b;
 }
 
@@ -937,12 +893,12 @@ bool TParameterList_Print(TParameterList *p, bool b, FILE* fp)
     b = false;
     fprintf(fp, "[");
 
-    ForEachListItem(TParameterDeclaration, pItem, p)
+    ForEachListItem(TParameter, pItem, p)
     {
         if (!List_IsFirstItem(p, pItem))
             fprintf(fp, ",");
 
-        b = TParameterDeclaration_Print(pItem, b, fp);
+        b = TParameter_Print(pItem, b, fp);
     }
 
     fprintf(fp, "]");
@@ -1112,27 +1068,50 @@ bool TInitDeclaratorList_Print(TInitDeclaratorList *p, bool b, FILE* fp)
     return true;
 }
 
+bool SpecifierQualifier_Print(TSpecifierQualifier* pItem, bool b, FILE* fp)
+{
+    switch (pItem->Type)
+    {
+        CASE(TStorageSpecifier) :
+            b = StorageSpecifier_Print((TStorageSpecifier*)pItem, b, fp);
+        break;
+        CASE(TTypeQualifier) :
+            b = TTypeQualifier_Print((TTypeQualifier*)pItem, b, fp);
+        break;
+        CASE(TFunctionSpecifier) :
+            b = TFunctionSpecifier_Print((TFunctionSpecifier*)pItem, b, fp);
+        break;
+
+        CASE(TSingleTypeSpecifier) :
+            b = TSingleTypeSpecifier_Print((TSingleTypeSpecifier*)pItem, b, fp);
+        break;
+
+        CASE(TStructUnionSpecifier) :
+            b = TStructUnionSpecifier_Print((TStructUnionSpecifier*)pItem, b, fp);
+        break;
+
+        CASE(TEnumSpecifier) :
+            b = TEnumSpecifier_Print((TEnumSpecifier*)pItem, b, fp);
+        break;
+
+        //CASE(TAlignmentSpecifier) :
+        //  AlignmentSpecifier_Print((TAlignmentSpecifier*)pItem, b, fp);
+        //break;
+
+    }
+    return b;
+}
 bool SpecifierQualifierList_Print(TSpecifierQualifierList* p, bool b, FILE* fp)
 {
+    fprintf(fp, "\"specifier-qualifier-list\" : [");
     ForEachListItem(TSpecifierQualifier, pItem, p)
     {
-        switch (pItem->Type)
-        {
-            CASE(TStorageSpecifier) :
-                StorageSpecifier_Print((TStorageSpecifier*)pItem, b, fp);
-                break;
-            CASE(TTypeQualifier) :
-                TTypeQualifier_Print((TTypeQualifier*)pItem, b, fp);
-                break;
-            CASE(TFunctionSpecifier) :
-                TFunctionSpecifier_Print((TFunctionSpecifier*)pItem, b, fp);
-                break;
-            //CASE(TAlignmentSpecifier) :
-              //  AlignmentSpecifier_Print((TAlignmentSpecifier*)pItem, b, fp);
-                //break;
+        if (b)
+            fprintf(fp, ",");
 
-        }
+        b = SpecifierQualifier_Print(pItem, b, fp);
     }
+    fprintf(fp, "]");
     return b;
 }
 
@@ -1140,7 +1119,7 @@ bool TStructDeclarationBase_Print(TStructDeclaration* p, bool b, FILE* fp)
 {
     fprintf(fp, "{");
 
-    SpecifierQualifierList_Print(&p->SpecifierQualifierList, b, fp);
+    b = SpecifierQualifierList_Print(&p->SpecifierQualifierList, false, fp);
     //b = TTypeQualifierList_Print(&p->Qualifier, false, fp);
     //b = TTypeSpecifier_Print(p->pSpecifier, b, fp);
 
@@ -1171,79 +1150,41 @@ bool TStructDeclaration_Print(TAnyStructDeclaration* p, bool b, FILE* fp)
 
 bool StorageSpecifier_Print(TStorageSpecifier* p, bool b, FILE* fp)
 {
-    int i = 0;
-
-    if (p->bIsAuto ||
-      p->bIsExtern ||
-      p->bIsRegister ||
-      p->bIsStatic ||
-      p->bIsThread_local ||
-      p->bIsTypedef)
+    b = true;
+    fprintf(fp, "{");
+    fprintf(fp, "\"type\":\"storage-specifer\",");
+    fprintf(fp, "\"lexeme\":\"");
+    if (p->bIsAuto)
     {
-        if (b)
-        {
-            fprintf(fp, ",");
-        }
-
-        b = true;
-        fprintf(fp, "\"storage-specifers\" : {");
-
-        if (p->bIsAuto)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
-
-            fprintf(fp, "\"auto\":true");
-            i++;
-        }
-
-        if (p->bIsExtern)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
-
-            fprintf(fp, "\"extern\":true");
-            i++;
-        }
-
-        if (p->bIsRegister)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
-
-            fprintf(fp, "\"register\":true");
-            i++;
-        }
-
-        if (p->bIsStatic)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
-
-            fprintf(fp, "\"static\":true");
-            i++;
-        }
-
-        if (p->bIsThread_local)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
-
-            fprintf(fp, "\"threadlocal\":true");
-            i++;
-        }
-
-        if (p->bIsTypedef)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
-
-            fprintf(fp, "\"typedef\":true");
-            i++;
-        }
-
-        fprintf(fp, "}");
+        fprintf(fp, "auto");
     }
+
+    if (p->bIsExtern)
+    {
+        fprintf(fp, "extern");
+    }
+
+    if (p->bIsRegister)
+    {
+        fprintf(fp, "register");
+    }
+
+    if (p->bIsStatic)
+    {
+        fprintf(fp, "static");
+    }
+
+    if (p->bIsThread_local)
+    {
+        fprintf(fp, "threadlocal");
+    }
+
+    if (p->bIsTypedef)
+    {
+        fprintf(fp, "typedef");
+    }
+
+    fprintf(fp, "\"}");
 
     return b;
 }
@@ -1281,9 +1222,10 @@ bool TFunctionSpecifier_Print(TFunctionSpecifier* p, bool b, FILE* fp)
             i++;
         }
 
-        fprintf(fp, "}");
+        
     }
-
+    
+    fprintf(fp, "\"}");
     return b;
 }
 
@@ -1291,70 +1233,48 @@ bool TFunctionSpecifier_Print(TFunctionSpecifier* p, bool b, FILE* fp)
 
 bool TTypeQualifier_Print(TTypeQualifier* p, bool b, FILE* fp)
 {
-    int i = 0;
+    fprintf(fp, "{");
+    fprintf(fp, "\"type\": \"type-qualifier\",");
+    fprintf(fp, "\"lexeme\": \"");
 
-    if (p->bIsAtomic ||
-      p->bIsConst ||
-      p->bIsRestrict ||
-      p->bIsVolatile)
+    if (p->bIsAtomic)
+    {
+        fprintf(fp, "atomic");
+    }
+
+    if (p->bIsConst)
+    {
+        fprintf(fp, "const");
+    }
+
+    if (p->bIsRestrict)
+    {
+        fprintf(fp, "restrict");
+    }
+
+    if (p->bIsVolatile)
+    {
+        fprintf(fp, "volatile");
+
+    }
+    fprintf(fp, "\"}");
+
+    return true;
+}
+
+bool TTypeQualifierList_Print(TTypeQualifierList* p, bool b, FILE* fp)
+{
+    fprintf(fp, "\"type-qualifier-list\":[");
+    b = false;
+    ForEachListItem(TTypeQualifier, pItem, p)
     {
         if (b)
         {
             fprintf(fp, ",");
         }
-
-        b = true;
-        fprintf(fp, "\"qualifiers\" : {");
-
-        if (p->bIsAtomic)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
-
-            fprintf(fp, "\"atomic\":true");
-            i++;
-        }
-
-        if (p->bIsConst)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
-
-            fprintf(fp, "\"const\":true");
-            i++;
-        }
-
-        if (p->bIsRestrict)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
-
-            fprintf(fp, "\"restrict\":true");
-            i++;
-        }
-
-        if (p->bIsVolatile)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
-
-            fprintf(fp, "\"volatile\":true");
-            i++;
-        }
-
-        fprintf(fp, "}");
-    }
-
-    return b;
-}
-
-bool TTypeQualifierList_Print(TTypeQualifierList* p, bool b, FILE* fp)
-{
-
-    ForEachListItem(TTypeQualifier, pItem, p)
-    {
         b = TTypeQualifier_Print(pItem, b, fp);
     }
+    fprintf(fp, "]");
     return b;
 }
 
@@ -1368,29 +1288,56 @@ bool TPointer_Print(TPointer* pPointer, bool b, FILE* fp)
     return true;
 }
 
+bool TSpecifier_Print(TSpecifier* pItem, bool b, FILE* fp)
+{
+    switch (pItem->Type)
+    {
+        CASE(TStorageSpecifier) :
+            b = StorageSpecifier_Print((TStorageSpecifier*)pItem, b, fp);
+        break;
+        CASE(TTypeQualifier) :
+            b = TTypeQualifier_Print((TTypeQualifier*)pItem, b, fp);
+        break;
+
+        CASE(TFunctionSpecifier) :
+            b = TFunctionSpecifier_Print((TFunctionSpecifier*)pItem, b, fp);
+        break;
+
+        CASE(TSingleTypeSpecifier) :
+            b = TSingleTypeSpecifier_Print((TSingleTypeSpecifier*)pItem, b, fp);
+        break;
+
+        CASE(TStructUnionSpecifier) :
+            b = TStructUnionSpecifier_Print((TStructUnionSpecifier*)pItem, b, fp);
+        break;
+
+        CASE(TEnumSpecifier) :
+            b = TEnumSpecifier_Print((TEnumSpecifier*)pItem, b, fp);
+        break;
+
+        default:
+        ASSERT(false);
+        break;
+        //CASE(TAlignmentSpecifier) :
+        //  AlignmentSpecifier_Print((TAlignmentSpecifier*)pItem, b, fp);
+        //break;
+
+    }
+    return b;
+}
 bool TDeclarationSpecifiers_Print(TDeclarationSpecifiers* pDeclarationSpecifiers, bool b, FILE* fp)
 {
-
+    fprintf(fp, "\"declarations-specifiers\": [");
+    b = false;
     ForEachListItem(TSpecifier, pItem, pDeclarationSpecifiers)
     {
-        switch (pItem->Type)
+        if (b)
         {
-            CASE(TStorageSpecifier) :
-                StorageSpecifier_Print((TStorageSpecifier*)pItem, b, fp);
-            break;
-            CASE(TTypeQualifier) :
-                TTypeQualifier_Print((TTypeQualifier*)pItem, b, fp);
-            break;
-            CASE(TFunctionSpecifier) :
-                TFunctionSpecifier_Print((TFunctionSpecifier*)pItem, b, fp);
-            break;
-            //CASE(TAlignmentSpecifier) :
-            //  AlignmentSpecifier_Print((TAlignmentSpecifier*)pItem, b, fp);
-            //break;
-
+            fprintf(fp, ",");
         }
+        b = TSpecifier_Print(pItem, b, fp);
     }
-
+    fprintf(fp, "]");
     //b = TFunctionSpecifier_Print(&pDeclarationSpecifiers->FunctionSpecifiers, b, fp);
     //b = StorageSpecifier_Print(&pDeclarationSpecifiers->StorageSpecifiers, b, fp);
     //b = TTypeQualifierList_Print(&pDeclarationSpecifiers->TypeQualifiers, b, fp);
@@ -1419,7 +1366,7 @@ bool TDeclaration_Print(TDeclaration* p, bool b, FILE* fp)
 }
 
 
-bool TParameterDeclaration_Print(TParameterDeclaration* p, bool b, FILE* fp)
+bool TParameter_Print(TParameter* p, bool b, FILE* fp)
 {
     fprintf(fp, "{");
     b = TDeclarationSpecifiers_Print(&p->Specifiers, false, fp);

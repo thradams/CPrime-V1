@@ -2272,7 +2272,7 @@ bool Statement(Parser* ctx, TStatement** ppStatement);
 //void Constant_Expression(Parser* ctx, Tokens endToken1, Tokens endToken2, ScannerItemStack* outStack);
 void Compound_Statement(Parser* ctx, TStatement** ppStatement);
 //void Expression(Parser* ctx, TExpression** pExpression, Tokens endToken1, Tokens endToken2);
-void Parameter_Declaration(Parser* ctx, TParameterDeclaration* pParameterDeclaration);
+void Parameter_Declaration(Parser* ctx, TParameter* pParameterDeclaration);
 bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
 void Type_Qualifier_ListOpt(Parser* ctx, TTypeQualifierList* pQualifier);
 void Declaration_Specifiers(Parser* ctx, TDeclarationSpecifiers* pDeclarationSpecifiers);
@@ -3640,7 +3640,7 @@ void Parameter_List(Parser* ctx,
     */
     Tokens token = Parser_CurrentToken(ctx);
 
-    TParameterDeclaration*  pParameter = TParameterDeclaration_Create();
+    TParameter*  pParameter = TParameter_Create();
     List_Add(pParameterList, pParameter);
     Parameter_Declaration(ctx, pParameter);
 
@@ -3692,7 +3692,7 @@ bool AbstractDeclaratorOpt(Parser* ctx, TDeclarator** ppTDeclarator2)
 
 
 void Parameter_Declaration(Parser* ctx,
-    TParameterDeclaration* pParameterDeclaration)
+    TParameter* pParameterDeclaration)
 {
     /*
     parameter-declaration:
@@ -4969,65 +4969,6 @@ void Init_Declarator_List(Parser* ctx,
 
 }
 
-void TemplateParameter(Parser* ctx,
-    TTemplateParameter** ppTemplateParameter)
-{
-    *ppTemplateParameter = NULL;
-    /*
-    template-parameter:
-     type-parameter
-     parameter-declaration
-    */
-    Tokens token = Parser_CurrentToken(ctx);
-    if (token == TK_CLASS)
-    {
-        Parser_MatchToken(ctx, TK_CLASS, NULL);
-        TTemplateParameter *p = TTemplateParameter_Create();
-        String_Set(&p->Name, Lexeme(ctx));
-        Parser_MatchToken(ctx, TK_IDENTIFIER, NULL);
-        *ppTemplateParameter = p;
-    }
-    else
-    {
-        SetError2(ctx, "e", "e");
-    }
-}
-
-void TemplateParameterList(Parser* ctx, TTemplateParameterList* list)
-{
-    /*
-    template-parameter-list:
-    template-parameter
-    template-parameter-list , template-parameter
-    */
-    TTemplateParameter *pTemplateParameter = NULL;
-
-    TemplateParameter(ctx,
-        &pTemplateParameter);
-
-    List_Add(list, pTemplateParameter);
-
-    Tokens token = Parser_CurrentToken(ctx);
-    if (token == TK_COMMA)
-    {
-        Parser_Match(ctx, NULL);
-        TemplateParameterList(ctx, list);
-    }
-}
-
-void TemplateDeclaration(Parser* ctx, TDeclaration* pFuncVarDeclaration)
-{
-    /*
-    template-declaration:
-    template < template-parameter-list > declaration
-    */
-
-    //template
-    Parser_MatchToken(ctx, TK_TEMPLATE, NULL);
-    Parser_MatchToken(ctx, TK_LESS_THAN_SIGN, NULL);
-    TemplateParameterList(ctx, &pFuncVarDeclaration->TemplateParameters);
-    Parser_MatchToken(ctx, TK_GREATER_THAN_SIGN, NULL);
-}
 
 bool  Declaration(Parser* ctx,
     TAnyDeclaration** ppDeclaration)
@@ -5067,17 +5008,6 @@ bool  Declaration(Parser* ctx,
 
         else
         {
-
-            if (token == TK_TEMPLATE)
-            {
-                //Tem que ter um escopo de tipos aqui
-                //que é passado.
-                //talvez uma map de tipos que seja uma pilha
-                bHasDeclaration = true;
-                TemplateDeclaration(ctx, pFuncVarDeclaration);
-            }
-
-
             if (Declaration_Specifiers_IsFirst(ctx,Parser_CurrentToken(ctx), Lexeme(ctx)))
             {
                 Declaration_Specifiers(ctx, &pFuncVarDeclaration->Specifiers);

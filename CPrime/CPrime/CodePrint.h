@@ -11,13 +11,9 @@ typedef struct Options
 {
     bool bExpandMacros;
     bool bIncludeComments;
-    //MacroMap  Expanded;
-    StrBuilder TemplateDeclarations;
-    StrBuilder TemplateInstanciation;
-    Map  Templates;
 } Options;
 
-#define OPTIONS_INIT {false, true, STRBUILDER_INIT, STRBUILDER_INIT , MAP_INIT}
+#define OPTIONS_INIT {false, true}
 void Options_Destroy(Options* options);
  
 void TProgram_PrintCodeToFile(TProgram * pProgram,
