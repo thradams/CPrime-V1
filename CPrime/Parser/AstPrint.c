@@ -692,54 +692,13 @@ bool TSingleTypeSpecifier_Print(TSingleTypeSpecifier* p, bool b, FILE* fp)
 
     fprintf(fp, "\"");
 
-    if (p->bIsVoid)
-    {
-        fprintf(fp, "void");
-    }
-
-    if (p->bIsUnsigned)
-    {
-        fprintf(fp, "unsigned");
-    }
-
-    if (p->bIsBool)
-    {
-        fprintf(fp, "bool");
-    }
-
-    if (p->bIsChar)
-    {
-        fprintf(fp, "char");
-    }
-
-    if (p->bIsShort)
-    {
-        fprintf(fp, "short");
-    }
-
-    if (p->bIsLong)
-    {
-        fprintf(fp, "long");
-    }
-
-    if (p->bIsInt)
-    {
-        fprintf(fp, "int");
-    }
-
-    if (p->bIsDouble)
-    {
-        fprintf(fp, "double");
-    }
-
-    if (p->bIsFloat)
-    {
-        fprintf(fp, "float");
-    }
-
-    if (p->bIsTypeDef)
+    if (p->Token==TK_IDENTIFIER)
     {
         fprintf(fp, "%s", p->TypedefName);
+    }
+    else
+    {
+        fprintf(fp, TokenToString(p->Token));
     }
 
     fprintf(fp, "\"");

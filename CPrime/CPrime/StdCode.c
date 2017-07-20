@@ -81,7 +81,7 @@ TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifi
             TSpecifier_As_TSingleTypeSpecifier(specifiers->pHead);
 
         if (pSingleTypeSpecifier != NULL &&
-            pSingleTypeSpecifier->bIsTypeDef)
+            pSingleTypeSpecifier->Token == TK_IDENTIFIER)
         {
             const char * typedefName = pSingleTypeSpecifier->TypedefName;
 
@@ -131,7 +131,7 @@ bool InstanciateUnionTypeFunction(TProgram* program,
                 TSpecifier_As_TSingleTypeSpecifier(pParameterDeclaration->Specifiers.pHead);
 
             if (pSingleTypeSpecifier != NULL &&
-                pSingleTypeSpecifier->bIsTypeDef)
+                pSingleTypeSpecifier->Token == TK_IDENTIFIER)
             {
                 const char * typedefName = pSingleTypeSpecifier->TypedefName;
 
@@ -153,7 +153,7 @@ bool InstanciateUnionTypeFunction(TProgram* program,
                             {
                                 TSingleTypeSpecifier* pSingleTypeSpecifier =
                                     TSpecifier_As_TSingleTypeSpecifier(pItem->TypeName.SpecifierQualifierList.pHead);
-                                if (pSingleTypeSpecifier && pSingleTypeSpecifier->bIsTypeDef)
+                                if (pSingleTypeSpecifier && pSingleTypeSpecifier->Token == TK_IDENTIFIER)
                                 {
                                     const char* typedefName = pSingleTypeSpecifier->TypedefName;
                                     TDeclaration * pDeclaration = TProgram_GetFinalTypeDeclaration(program, typedefName);
@@ -263,7 +263,7 @@ bool Std_Template_CodePrint(TProgram* program,
                 TSpecifier_As_TSingleTypeSpecifier(p->Specifiers.pHead);
 
             if (pSingleTypeSpecifier != NULL &&
-                pSingleTypeSpecifier->bIsTypeDef)
+                pSingleTypeSpecifier->Token == TK_IDENTIFIER)
             {
                 StrBuilder strBuilder = STRBUILDER_INIT;
 
@@ -332,7 +332,7 @@ bool Std_Template_CodePrint(TProgram* program,
                     TSpecifier_As_TSingleTypeSpecifier(pParameterDeclaration->Specifiers.pHead);
 
                 if (pSingleTypeSpecifier != NULL &&
-                    pSingleTypeSpecifier->bIsTypeDef)
+                    pSingleTypeSpecifier->Token == TK_IDENTIFIER)
                 {
 
                     StrBuilder_Append(fp,
@@ -373,7 +373,7 @@ bool Std_Template_CodePrint(TProgram* program,
                     TSpecifier_As_TSingleTypeSpecifier(pParameterDeclaration->Specifiers.pHead);
 
                 if (pSingleTypeSpecifier != NULL &&
-                    pSingleTypeSpecifier->bIsTypeDef)
+                    pSingleTypeSpecifier->Token == TK_IDENTIFIER)
                 {
                     const char * typedefName = pSingleTypeSpecifier->TypedefName;
 
@@ -435,7 +435,7 @@ bool Std_Template_CodePrint(TProgram* program,
                                 TSingleTypeSpecifier* pSingleTypeSpecifier2 =
                                     TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
                                 if (pSingleTypeSpecifier2 != NULL &&
-                                    pSingleTypeSpecifier2->bIsTypeDef)
+                                    pSingleTypeSpecifier2->Token == TK_IDENTIFIER)
                                 {
                                     StrBuilder nameDestroy = STRBUILDER_INIT;
                                     const char* typedefName2 = pSingleTypeSpecifier2->TypedefName;
@@ -538,7 +538,7 @@ bool Std_Template_CodePrint(TProgram* program,
                     TSpecifier_As_TSingleTypeSpecifier(pParameterDeclaration->Specifiers.pHead);
 
                 if (pSingleTypeSpecifier != NULL &&
-                    pSingleTypeSpecifier->bIsTypeDef)
+                    pSingleTypeSpecifier->Token == TK_IDENTIFIER)
                 {
                     const char * typedefName = pSingleTypeSpecifier->TypedefName;
 
@@ -564,7 +564,7 @@ bool Std_Template_CodePrint(TProgram* program,
                                         TSingleTypeSpecifier* pSingleTypeSpecifier2 =
                                             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
                                         if (pSingleTypeSpecifier2 != NULL &&
-                                            pSingleTypeSpecifier2->bIsTypeDef)
+                                            pSingleTypeSpecifier2->Token == TK_IDENTIFIER)
                                         {
                                             StrBuilder nameDestroy = STRBUILDER_INIT;
                                             const char* typedefName2 = pSingleTypeSpecifier2->TypedefName;

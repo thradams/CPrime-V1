@@ -9,7 +9,7 @@ typedef struct
      Y y;
     int i, j, k;
     char c;
-    bool b;
+    _Bool b;
     double *d;
 } X;
 

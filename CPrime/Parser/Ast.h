@@ -507,25 +507,12 @@ typedef struct
 {
     TTypePointer Type;
     void *pNext;
-    bool bIsVoid;
-    bool bIsChar;
-    bool bIsShort;
-    bool bIsInt;
-    bool bIsLong; 
-    bool bIsFloat;
-    bool bIsDouble;
-    bool bIsSigned;
-    bool bIsUnsigned;
-    bool bIsBool;
-    bool bIsComplex;
-
-    bool bIsTypeDef;
-    String TypedefName;
-
+    Tokens Token;
+    String TypedefName;  
     TScannerItemList ClueList0;
 } TSingleTypeSpecifier;
 
-#define TBUILDINTYPE_SPECIFIER_INIT { {TSingleTypeSpecifier_ID}, NULL, false, false, false, false, 0, false, false , false, false, false, false, false, STRING_INIT, LIST_INIT}
+#define TBUILDINTYPE_SPECIFIER_INIT { {TSingleTypeSpecifier_ID}, NULL, TK_NONE, STRING_INIT, LIST_INIT}
 CREATETYPE(TSingleTypeSpecifier, TBUILDINTYPE_SPECIFIER_INIT)
 
 typedef TTypePointer TTypeSpecifier;

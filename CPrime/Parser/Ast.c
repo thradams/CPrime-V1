@@ -397,7 +397,7 @@ const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p)
         TSingleTypeSpecifier* pSingleTypeSpecifier =
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
         if (pSingleTypeSpecifier &&
-            pSingleTypeSpecifier->bIsTypeDef)
+            pSingleTypeSpecifier->Token ==TK_IDENTIFIER)
         {
             typedefName = pSingleTypeSpecifier->TypedefName;
             break;
@@ -414,7 +414,7 @@ bool TSpecifierQualifierList_IsChar(TSpecifierQualifierList* p)
         TSingleTypeSpecifier* pSingleTypeSpecifier =
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
         if (pSingleTypeSpecifier &&
-            pSingleTypeSpecifier->bIsChar)
+            pSingleTypeSpecifier->Token==TK_char)
         {
             bResult = true;
             break;
@@ -432,11 +432,11 @@ bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p)
         TSingleTypeSpecifier* pSingleTypeSpecifier =
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
         if (pSingleTypeSpecifier &&
-            pSingleTypeSpecifier->bIsInt ||
-            pSingleTypeSpecifier->bIsShort ||
-            pSingleTypeSpecifier->bIsSigned ||
-            pSingleTypeSpecifier->bIsUnsigned ||
-            pSingleTypeSpecifier->bIsLong)
+            pSingleTypeSpecifier->Token== TK_INT ||
+            pSingleTypeSpecifier->Token == TK_SHORT ||
+            pSingleTypeSpecifier->Token == TK_SIGNED ||
+            pSingleTypeSpecifier->Token == TK_UNSIGNED ||
+            pSingleTypeSpecifier->Token == TK_LONG)
         {
             bResult = true;
             break;
@@ -454,8 +454,8 @@ bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList* p)
         TSingleTypeSpecifier* pSingleTypeSpecifier =
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
         if (pSingleTypeSpecifier &&
-            pSingleTypeSpecifier->bIsFloat||
-            pSingleTypeSpecifier->bIsDouble)
+            pSingleTypeSpecifier->Token == TK_DOUBLE||
+            pSingleTypeSpecifier->Token == TK_FLOAT)
         {
             bResult = true;
             break;
@@ -472,7 +472,7 @@ bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList* p)
         TSingleTypeSpecifier* pSingleTypeSpecifier = 
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
             if (pSingleTypeSpecifier && 
-                pSingleTypeSpecifier->bIsBool)
+                pSingleTypeSpecifier->Token == TK_IDENTIFIER)
             {
                 bResult = true;
                 break;
@@ -672,7 +672,7 @@ const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDecla
             TSpecifier_As_TSingleTypeSpecifier(pItem);
         if (pSingleTypeSpecifier != NULL)
         {
-            if (pSingleTypeSpecifier->bIsTypeDef)
+            if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
             {
                 typeName = pSingleTypeSpecifier->TypedefName;
                 break;
@@ -798,7 +798,7 @@ const char* TSpecifier_GetTypedefName(TDeclarationSpecifiers* p)
         TSingleTypeSpecifier *pSingleTypeSpecifier =
           TSpecifier_As_TSingleTypeSpecifier(pSpecifier);
         if (pSingleTypeSpecifier && 
-            pSingleTypeSpecifier->bIsTypeDef)
+            pSingleTypeSpecifier->Token == TK_IDENTIFIER)
         {
             typedefName = pSingleTypeSpecifier->TypedefName;
         }
@@ -1091,7 +1091,7 @@ TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName
                   TSingleTypeSpecifier *  pSingleTypeSpecifier = TTypeSpecifier_As_TSingleTypeSpecifier(pDeclaration->Specifiers.pHead);
                   if (pSingleTypeSpecifier != NULL)
                   {
-                      if (pSingleTypeSpecifier->bIsTypeDef)
+                      if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
                       {
                           typeName = pSingleTypeSpecifier->TypedefName;
                           break;

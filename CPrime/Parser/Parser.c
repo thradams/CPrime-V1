@@ -4129,8 +4129,7 @@ void Type_Specifier(Parser* ctx,
     enum-specifier
     typedef-name
     */
-    TSingleTypeSpecifier*  pSingleTypeSpecifier = NULL;
-
+    
     
 
     bool bResult = false;
@@ -4141,191 +4140,22 @@ void Type_Specifier(Parser* ctx,
     {
         //type - specifier
         case TK_VOID:
-        {
-            if (pSingleTypeSpecifier == NULL)
-            {
-                pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-            }
-
-            pSingleTypeSpecifier->bIsVoid = true;
-            bResult = true;
-
-            Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-        }
-        break;
-
         case TK_char:
-        {
-            if (pSingleTypeSpecifier == NULL)
-            {
-                pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-
-            }
-
-            pSingleTypeSpecifier->bIsChar = true;
-            bResult = true;
-
-            Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-        }
-        break;
-
         case TK_SHORT:
-        {
-            if (pSingleTypeSpecifier == NULL)
-            {
-                pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-
-            }
-
-            pSingleTypeSpecifier->bIsShort = true;
-            bResult = true;
-
-
-            Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-        }
-        break;
-
         case TK_INT:
-        {
-            if (pSingleTypeSpecifier == NULL)
-            {
-                pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-
-            }
-
-            pSingleTypeSpecifier->bIsInt = true;
-            bResult = true;
-
-
-            Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-        }
-        break;
-
         case TK_LONG:
-        {
-            if (pSingleTypeSpecifier == NULL)
-            {
-                pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-            }
-
-            pSingleTypeSpecifier->bIsLong = true;
-            bResult = true;
-
-
-            Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-        }
-        break;
-
         case TK_FLOAT:
-        {
-            if (pSingleTypeSpecifier == NULL)
-            {
-                pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-
-            }
-
-            pSingleTypeSpecifier->bIsFloat = true;
-            bResult = true;
-
-
-            Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-        }
-        break;
-
         case TK_DOUBLE:
-        {
-            if (pSingleTypeSpecifier == NULL)
-            {
-                pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-
-            }
-
-            pSingleTypeSpecifier->bIsDouble = true;
-            bResult = true;
-
-            Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-        }
-        break;
-
         case TK_SIGNED:
-        {
-            if (pSingleTypeSpecifier == NULL)
-            {
-                pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-
-            }
-
-            pSingleTypeSpecifier->bIsSigned = true;
-            bResult = true;
-
-
-            Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-        }
-        break;
-
         case TK_UNSIGNED:
-        {
-            if (pSingleTypeSpecifier == NULL)
-            {
-                pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-
-            }
-
-            pSingleTypeSpecifier->bIsUnsigned = true;
-            bResult = true;
-
-
-            Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-        }
-        break;
-
         case TK__BOOL:
-        {
-            if (pSingleTypeSpecifier == NULL)
-            {
-                pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-
-            }
-
-            pSingleTypeSpecifier->bIsBool = true;
-            bResult = true;
-
-
-            Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-        }
-        break;
-
         case TK__COMPLEX:
         {
-            if (pSingleTypeSpecifier == NULL)
-            {
-                pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
+            TSingleTypeSpecifier*  pSingleTypeSpecifier =
+                     TSingleTypeSpecifier_Create();
 
-            }
-
-            pSingleTypeSpecifier->bIsComplex = true;
+            pSingleTypeSpecifier->Token = token;
             bResult = true;
-
 
             Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
 
@@ -4387,10 +4217,10 @@ void Type_Specifier(Parser* ctx,
                     {
                         *typedefCount = 1;
 
-                        pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
+                        TSingleTypeSpecifier* pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
 
 
-                        pSingleTypeSpecifier->bIsTypeDef = true;
+                        pSingleTypeSpecifier->Token = token;
                         String_Set(&pSingleTypeSpecifier->TypedefName, lexeme);
                         bResult = true;
 

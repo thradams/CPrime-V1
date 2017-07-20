@@ -248,7 +248,7 @@ void BuildSingleTypeSpecifierInitialization(TProgram* program,
     StrBuilder* strBuilder)
 {
 
-    if (pSingleTypeSpecifier->bIsTypeDef)
+    if (pSingleTypeSpecifier->Token==TK_IDENTIFIER)
     {
         const char* typedefName = pSingleTypeSpecifier->TypedefName;
         TDeclaration * p = TProgram_GetFinalTypeDeclaration(program, typedefName);
@@ -273,9 +273,9 @@ void BuildSingleTypeSpecifierInitialization(TProgram* program,
     }
     else
     {
-        if (pSingleTypeSpecifier->bIsBool)
+        if (pSingleTypeSpecifier->Token==TK__BOOL)
             Output_Append(strBuilder, "false");
-        else if (pSingleTypeSpecifier->bIsDouble)
+        else if (pSingleTypeSpecifier->Token ==TK_DOUBLE)
             Output_Append(strBuilder, "0.0");
         else
             Output_Append(strBuilder, "0");
@@ -1232,72 +1232,17 @@ static bool TSingleTypeSpecifier_CodePrint(TProgram* program, Options * options,
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
-
     b = true;
-
-    int i = 0;
-
-    if (p->bIsVoid)
+    if (p->Token != TK_IDENTIFIER)
     {
-        Output_Append(fp, "void");
-        b = true;
+        Output_Append(fp,
+            TokenToString(p->Token));
     }
-
-    if (p->bIsUnsigned)
-    {
-        Output_Append(fp, "unsigned");
-        b = true;
-    }
-
-    if (p->bIsBool)
-    {
-        Output_Append(fp, "bool");
-        b = true;
-    }
-
-    if (p->bIsChar)
-    {
-        Output_Append(fp, "char");
-        b = true;
-    }
-
-    if (p->bIsShort)
-    {
-        Output_Append(fp, "short");
-        b = true;
-    }
-    
-    if (p->bIsLong)
-    {
-        Output_Append(fp, "long");
-        b = true;
-    }
-
-    if (p->bIsInt)
-    {
-        Output_Append(fp, "int");
-        b = true;
-    }
-
-    if (p->bIsDouble)
-    {
-        Output_Append(fp, "double");
-        b = true;
-    }
-
-    if (p->bIsFloat)
-    {
-        Output_Append(fp, "float");
-        b = true;
-    }
-
-    if (p->bIsTypeDef)
+    else
     {
         Output_Append(fp, p->TypedefName);
-        b = true;
     }
-
-
+    
     return b;
 }
 

@@ -122,55 +122,58 @@ const char* TokenToString(Tokens tk)
         case TK_DEFAULT:
             return "default";
         case TK_DO:
-            return "DO";
+            return "do";
         case TK_DOUBLE:
-            return "DOUBLE";
+            return "double";
         case TK_ELSE:
-            return "ELSE";
+            return "else";
         case TK_ENUM:
-            return "ENUM";
+            return "enum";
         case TK_EXTERN:
-            return "EXTERN";
+            return "extern";
         case TK_FLOAT:
-            return "FLOAT";
+            return "float";
         case TK_FOR:
-            return "FOR";
+            return "for";
         case TK_GOTO:
-            return "GOTO";
+            return "goto";
         case TK_IF:
-            return "IF";
+            return "if";
         case TK_INT:
-            return "INT";
+            return "int";
         case TK_LONG:
-            return "LONG";
+            return "long";
         case TK_REGISTER:
-            return "REGISTER";
+            return "register";
         case TK_RETURN:
-            return "RETURN";
+            return "return";
         case TK_SHORT:
-            return "SHORT";
+            return "short";
         case TK_SIGNED:
-            return "SIGNED";
+            return "signed";
         case TK_SIZEOF:
-            return "SIZEOF";
+            return "sizeof";
         case TK_STATIC:
-            return "STATIC";
+            return "static";
         case TK_STRUCT:
-            return "STRUCT";
+            return "struct";
         case TK_SWITCH:
-            return "SWITCH";
+            return "switch";
         case TK_TYPEDEF:
-            return "TYPEDEF";
+            return "typedef";
         case TK_UNION:
-            return "UNION";
+            return "union";
         case TK_UNSIGNED:
-            return "UNSIGNED";
+            return "unsigned";
         case TK_VOID:
-            return "VOID";
+            return "void";
+        case TK__BOOL:
+            return "_Bool";
+            break;
         case TK_VOLATILE:
-            return "VOLATILE";
+            return "volatile";
         case TK_WHILE:
-            return "WHILE";
+            return "while";
 		case TK_ARROW:
 			return "->";
 
