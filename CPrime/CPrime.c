@@ -258,6 +258,56 @@ TStructUnionSpecifier* TParameter_Is_DirectPointerToStruct(TProgram* program, TP
     return pStructUnionSpecifier;
 }
 
+
+
+
+bool EachStructDeclarator(TStructUnionSpecifier* pStruct,
+                          int *i,
+                          TSpecifierQualifierList **ppSpecifierQualifierList,
+                          TStructDeclarator** ppStructDeclarator)
+{
+    /*
+     Exemplo:
+      TSpecifierQualifierList *pSpecifierQualifierList = NULL;
+      TStructDeclarator* pStructDeclarator = NULL;
+      int i = 0;
+      while (EachStructDeclarator(pStruct, &i, &pSpecifierQualifierList, &pStructDeclarator))
+      {
+            printf("%s\n", TDeclarator_GetName(pStructDeclarator->pDeclarator));
+      }
+    */
+    if (*ppStructDeclarator != NULL)
+    {
+        goto Continue;
+    }
+
+    for (; *i < pStruct->StructDeclarationList.size; (*i)++)
+    {
+        TAnyStructDeclaration* pAnyStructDeclaration =
+            pStruct->StructDeclarationList.pItems[*i];
+
+        TStructDeclaration* pStructDeclaration =
+            TAnyStructDeclaration_As_TStructDeclaration(pAnyStructDeclaration);
+
+        if (pStructDeclaration != NULL)
+        {
+            *ppSpecifierQualifierList =
+                &pStructDeclaration->SpecifierQualifierList;
+            *ppStructDeclarator =
+                pStructDeclaration->DeclaratorList.pHead;
+
+            while (*ppStructDeclarator != NULL)
+            {
+                return true;
+            Continue:
+                *ppStructDeclarator = (*ppStructDeclarator)->pNext;
+            }
+        }
+    }
+    return false;
+}
+
+
 void AstPlayground(TProgram* program)
 {
     TDeclaration * p = TProgram_FindDeclaration(program, "F");
@@ -277,31 +327,63 @@ void AstPlayground(TProgram* program)
             printf("%s\n", TParameter_GetTypedefName(pParameter));
             printf(TParameter_IsDirectPointer(pParameter) ? "true" : "false");
 
+            printf("\n");
+
             TStructUnionSpecifier* pStruct =
                 TParameter_Is_DirectPointerToStruct(program, pParameter);
             if (pStruct)
             {
-                for (int i = 0 ; i < pStruct->StructDeclarationList.size; i++)
-                {
-                    TAnyStructDeclaration* pAnyStructDeclaration =
-                        pStruct->StructDeclarationList.pItems[i];
-
-                    TStructDeclaration* pStructDeclaration =
-                      TAnyStructDeclaration_As_TStructDeclaration(pAnyStructDeclaration);
-
-                    if (pStructDeclaration != NULL)
+                TSpecifierQualifierList *pSpecifierQualifierList = NULL;
+                TStructDeclarator* pStructDeclarator = NULL;
+                int i = 0;
+                while (EachStructDeclarator(pStruct, &i, &pSpecifierQualifierList, &pStructDeclarator))
+                {          
+                    if (TDeclarator_IsPointer(pStructDeclarator->pDeclarator))
                     {
-                        TSpecifierQualifierList *pSpecifierQualifierList  = 
-                            &pStructDeclaration->SpecifierQualifierList;
-
-                        ForEachListItem(TStructDeclarator, pStructDeclarator, &pStructDeclaration->DeclaratorList)
-                        {
-                            printf("%s", TDeclarator_GetName(pStructDeclarator->pDeclarator));
-                        }
+                        printf("%s = NULL\n", TDeclarator_GetName(pStructDeclarator->pDeclarator));
                     }
+                    else
+                    {
+                        if (TSpecifierQualifierList_IsBool(pSpecifierQualifierList))
+                        {
+                            printf("%s = false\n", TDeclarator_GetName(pStructDeclarator->pDeclarator));
+                        }
+                        else if (TSpecifierQualifierList_IsChar(pSpecifierQualifierList))
+                        {
+                            printf("%s = '\0'\n", TDeclarator_GetName(pStructDeclarator->pDeclarator));
+                        }
+                        else if (TSpecifierQualifierList_IsAnyInteger(pSpecifierQualifierList))
+                        {
+                            printf("%s = 0\n", TDeclarator_GetName(pStructDeclarator->pDeclarator));
+                        }
+                        else if (TSpecifierQualifierList_IsAnyFloat(pSpecifierQualifierList))
+                        {
+                            printf("%s = 0.0\n", TDeclarator_GetName(pStructDeclarator->pDeclarator));
+                        }
+                        else
+                        {
+                            const char* typedefName = 
+                                TSpecifierQualifierList_GetTypedefName(pSpecifierQualifierList);
+                            if (typedefName)
+                            {
+                              //ve se tem funcao _Destroy
+                              //typedefName
+                              TDeclaration* pDeclaration2 =
+                                  TProgram_GetFinalTypeDeclaration(program, typedefName);
+                              if (pDeclaration2)
+                              {
+                                  //pDeclaration2->Specifiers
+                              }
+                            }
+                        }
+                        
+                    }
+                    
                 }
-                //pStruct->StructDeclarationList
+
+            
             }
+
         }
     }
 }

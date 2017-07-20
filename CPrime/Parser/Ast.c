@@ -383,6 +383,103 @@ void TDirectDeclarator_Destroy(TDirectDeclarator* p)
   TScannerItemList_Destroy(&p->ClueList3);
 }
 
+bool TDeclarator_IsPointer(TDeclarator* p)
+{
+    return TPointerList_IsPointer(&p->PointerList);
+}
+
+
+const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p)
+{
+    const char* typedefName = NULL;
+    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+    {
+        TSingleTypeSpecifier* pSingleTypeSpecifier =
+            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
+        if (pSingleTypeSpecifier &&
+            pSingleTypeSpecifier->bIsTypeDef)
+        {
+            typedefName = pSingleTypeSpecifier->TypedefName;
+            break;
+        }
+    }
+    return typedefName;
+}
+
+bool TSpecifierQualifierList_IsChar(TSpecifierQualifierList* p)
+{
+    bool bResult = false;
+    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+    {
+        TSingleTypeSpecifier* pSingleTypeSpecifier =
+            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
+        if (pSingleTypeSpecifier &&
+            pSingleTypeSpecifier->bIsChar)
+        {
+            bResult = true;
+            break;
+        }
+    }
+    return bResult;
+}
+
+
+bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p)
+{
+    bool bResult = false;
+    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+    {
+        TSingleTypeSpecifier* pSingleTypeSpecifier =
+            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
+        if (pSingleTypeSpecifier &&
+            pSingleTypeSpecifier->bIsInt ||
+            pSingleTypeSpecifier->bIsShort ||
+            pSingleTypeSpecifier->bIsSigned ||
+            pSingleTypeSpecifier->bIsUnsigned ||
+            pSingleTypeSpecifier->bIsLong)
+        {
+            bResult = true;
+            break;
+        }
+    }
+    return bResult;
+}
+
+
+bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList* p)
+{
+    bool bResult = false;
+    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+    {
+        TSingleTypeSpecifier* pSingleTypeSpecifier =
+            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
+        if (pSingleTypeSpecifier &&
+            pSingleTypeSpecifier->bIsFloat||
+            pSingleTypeSpecifier->bIsDouble)
+        {
+            bResult = true;
+            break;
+        }
+    }
+    return bResult;
+}
+
+bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList* p)
+{
+    bool bResult = false;
+    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+    {
+        TSingleTypeSpecifier* pSingleTypeSpecifier = 
+            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
+            if (pSingleTypeSpecifier && 
+                pSingleTypeSpecifier->bIsBool)
+            {
+                bResult = true;
+                break;
+            }        
+    }
+    return bResult;
+}
 
 const char* TDeclarator_GetName(TDeclarator*   p)
 {
@@ -447,6 +544,25 @@ void TAnyStructDeclaration_Destroy(TAnyStructDeclaration* p)
   }
 }
 
+bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
+{
+    bool bIsPointer = false;
+    bool bIsAuto = false;
+    ForEachListItem(TPointer, pItem, pPointerlist)
+    {
+        if (pItem->bPointer)
+        {
+            bIsPointer = true;
+        }
+        
+        //if (pItem->Qualifier)
+        //{
+            //bIsPointer = true;
+        //}
+    }
+    return bIsPointer;
+}
+
 bool TPointerList_IsPointer(TPointerList* pPointerlist)
 {
   bool bIsPointer = false;
@@ -467,16 +583,7 @@ void TPointer_Destroy(TPointer* p)
   TScannerItemList_Destroy(&p->ClueList0);
 }
 
-bool TSpecifierQualifierList_IsTypedef(TSpecifierQualifierList* p)
-{
-    ASSERT(false);
-    return false;
-}
-const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p)
-{
-    ASSERT(false);
-    return "";
-}
+
 
 void TTypeQualifier_Destroy(TTypeQualifier* p)
 {

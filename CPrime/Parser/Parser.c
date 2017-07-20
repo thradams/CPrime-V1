@@ -44,208 +44,8 @@ static bool IsPreprocessorTokenPhase(Tokens token)
         token == TK_FILE_EOF;
 }
 
-bool IsSuffix(const char* s, const char* suffix)
-{
-    bool bResult = false;
-    int len = strlen(s);
-    int len2 = strlen(suffix);
-    if (len > len2)
-    {
-        const char* pEndPart = &s[len - len2];
-        if (strcmp(pEndPart, suffix) == 0)
-        {
-            bResult = true;
-        }
-    }
-    return bResult;
-}
-////////////////////////////////////////
-bool IsTemplateFunction(const char* lexeme)
-{
-    return false;
-    //_Create
-    //_Delete
-    /*
-    bool bResult = false;
-    if (IsSuffix(lexeme, "_Create"))
-    {
-      bResult = true;
-    }
-    else if (IsSuffix(lexeme, "Array_Push"))
-    {
-      bResult = true;
-    }
-    else if (IsSuffix(lexeme, "Array_Reserve"))
-    {
-      bResult = true;
-    }
-    return bResult;
-    */
-}
-
-bool IsTemplateType(const char* lexeme)
-{
-    return false;
-    /*bool bResult = false;
-    if (IsSuffix(lexeme, "Array"))
-    {
-      bResult = true;
-    }
-    else if (strcmp(lexeme, "string") == 0)
-    {
-      bResult = true;
-    }
-    return bResult;*/
-}
-
-bool InstantiateTemplateType(const char *lexeme, StrBuilder* strBuilder)
-{
-    StrBuilder_Clear(strBuilder);
-
-    bool bResult = false;
-    if (IsSuffix(lexeme, "Array"))
-    {
-        StrBuilder tname = STRBUILDER_INIT;
-        StrBuilder_SetN(&tname, lexeme, strlen(lexeme) - 5);
-
-        StrBuilder_Append(strBuilder,
-            "typedef struct ");
-
-        StrBuilder_Append(strBuilder, tname.c_str);
-        StrBuilder_Append(strBuilder, "Array {");
-        StrBuilder_Append(strBuilder, tname.c_str);
-        StrBuilder_Append(strBuilder, "** pItems; int Size; int Capacity; } ");
-        StrBuilder_Append(strBuilder, tname.c_str);
-        StrBuilder_Append(strBuilder, "Array;");
-
-        bResult = true;
-        StrBuilder_Destroy(&tname);
-    }
-    else if (strcmp(lexeme, "string") == 0)
-    {
-        StrBuilder_Append(strBuilder, "typedef char* string;");
-        bResult = true;
-    }
-
-    return  bResult;
-}
-
-bool InstantiateTemplateFunction(const char *lexeme,
-    StrBuilder* strBuilder,
-    StrBuilder* strBuilder2)
-{
-    StrBuilder_Clear(strBuilder);
-
-    bool bResult = false;
-    if (IsSuffix(lexeme, "_Create"))
-    {
-        StrBuilder tname = STRBUILDER_INIT;
-        StrBuilder_SetN(&tname, lexeme, strlen(lexeme) - 7);
-
-        StrBuilder_Append(strBuilder, "static ");
-        StrBuilder_Append(strBuilder, tname.c_str);
-        StrBuilder_Append(strBuilder, "* ");
-        StrBuilder_Append(strBuilder, lexeme);
-        StrBuilder_Append(strBuilder, "();");
 
 
-        StrBuilder_Append(strBuilder2, "static ");
-        StrBuilder_Append(strBuilder2, tname.c_str);
-        StrBuilder_Append(strBuilder2, "* ");
-        StrBuilder_Append(strBuilder2, lexeme);
-        StrBuilder_Append(strBuilder2, "()");
-        StrBuilder_Append(strBuilder2, "{");
-        StrBuilder_Append(strBuilder2, tname.c_str);
-        StrBuilder_Append(strBuilder2, "* p = malloc(sizeof *p);");
-        StrBuilder_Append(strBuilder2, "if (p) {");
-
-        StrBuilder_Append(strBuilder2, tname.c_str);
-        StrBuilder_Append(strBuilder2, " temp = {};");
-        StrBuilder_Append(strBuilder2, " *p = temp;");
-
-        StrBuilder_Append(strBuilder2, "}");
-        StrBuilder_Append(strBuilder2, "return p;");
-        StrBuilder_Append(strBuilder2, "}");
-
-        StrBuilder_Destroy(&tname);
-
-        bResult = true;
-    }
-    else if (IsSuffix(lexeme, "Array_Push"))
-    {
-        StrBuilder tname = STRBUILDER_INIT;
-        StrBuilder_SetN(&tname, lexeme, strlen(lexeme) - 10);
-
-        bResult = true;
-
-        StrBuilder_Append(strBuilder,
-            "static void ");
-        StrBuilder_Append(strBuilder,
-            tname.c_str);
-        StrBuilder_Append(strBuilder,
-            "Array_Push(");
-        StrBuilder_Append(strBuilder,
-            tname.c_str);
-        StrBuilder_Append(strBuilder,
-            "Array* pArray, ");
-        StrBuilder_Append(strBuilder,
-            tname.c_str);
-        StrBuilder_Append(strBuilder,
-            "* pItem)");
-
-        StrBuilder_Append(strBuilder2,
-            strBuilder->c_str);
-
-        StrBuilder_Append(strBuilder,
-            ";");
-
-        StrBuilder_Append(strBuilder2, "{");
-
-        StrBuilder_Append(strBuilder2,
-            tname.c_str);
-        StrBuilder_Append(strBuilder2, "Array_Reserve(pArray, pArray->Size + 1);");
-
-        StrBuilder_Append(strBuilder2, "}");
-
-        StrBuilder_Destroy(&tname);
-    }
-    else if (IsSuffix(lexeme, "Array_Reserve"))
-    {
-        StrBuilder tname = STRBUILDER_INIT;
-        StrBuilder_SetN(&tname, lexeme, strlen(lexeme) - 13);
-
-        bResult = true;
-
-        StrBuilder_Append(strBuilder,
-            "static void ");
-        StrBuilder_Append(strBuilder,
-            tname.c_str);
-        StrBuilder_Append(strBuilder,
-            "Array_Reserve(");
-        StrBuilder_Append(strBuilder,
-            tname.c_str);
-        StrBuilder_Append(strBuilder,
-            "Array* pArray, ");
-        StrBuilder_Append(strBuilder,
-            tname.c_str);
-        StrBuilder_Append(strBuilder,
-            "* pItem)");
-
-        StrBuilder_Append(strBuilder2,
-            strBuilder->c_str);
-
-        StrBuilder_Append(strBuilder,
-            ";");
-
-        StrBuilder_Append(strBuilder2, "{");
-
-        StrBuilder_Append(strBuilder2, "}");
-
-        StrBuilder_Destroy(&tname);
-    }
-    return  bResult;
-}
-//////////////////////////////////////////////
 
 bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
 void SetSymbolsFromDeclaration(Parser* ctx,
@@ -296,14 +96,7 @@ int DeclarationsMap_IsTypeDef(DeclarationsMap* map, const char* name)
         }
     }
 
-    if (bResult == 0)
-    {
-        if (IsTemplateType(name))
-        {
-            //eh um tipo mas ainda nao foi instanciado
-            bResult = 2;
-        }
-    }
+   
     return bResult;
 }
 
@@ -1171,7 +964,11 @@ static bool IsTypeQualifierToken(Tokens token)
         bResult = true;
         break;
 #ifdef LANGUAGE_EXTENSIONS
+
         //type-qualifier-extensions 
+
+        case TK_AUTO:
+
         case TK_OPT_QUALIFIER:
         case TK_OWN_QUALIFIER:
         case TK_DTOR_QUALIFIER:
@@ -1206,6 +1003,7 @@ bool IsTypeName(Parser* ctx, Tokens token, const char * lexeme)
         case TK__ATOMIC:
 
 #ifdef LANGUAGE_EXTENSIONS
+        case TK_AUTO:
         //type-qualifier-extensions 
         case TK_OPT_QUALIFIER:
         case TK_OWN_QUALIFIER:
@@ -2863,6 +2661,8 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
 
 #ifdef LANGUAGE_EXTENSIONS
         //type-qualifier-extensions 
+        //case TK_AUTO:
+
         case TK_OPT_QUALIFIER:
         case TK_OWN_QUALIFIER:
         case TK_DTOR_QUALIFIER:
@@ -3939,6 +3739,8 @@ static bool TTypeQualifier_IsFirst(Tokens token)
 
 #ifdef LANGUAGE_EXTENSIONS
         //type-qualifier-extensions 
+        case TK_AUTO:
+
         case TK_OPT_QUALIFIER:
         case TK_OWN_QUALIFIER:
         case TK_DTOR_QUALIFIER:
@@ -3996,6 +3798,13 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
         break;
 
 #ifdef LANGUAGE_EXTENSIONS
+
+        case TK_AUTO:
+        pQualifier->bIsOwner = true;
+        Parser_Match(ctx, NULL);
+        bResult = true;
+        break;
+
         //type-qualifier-extensions 
         case TK_OPT_QUALIFIER:
         pQualifier->bIsOpt = true;
@@ -4405,10 +4214,9 @@ void Type_Specifier(Parser* ctx,
             if (pSingleTypeSpecifier == NULL)
             {
                 pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-
             }
 
-            pSingleTypeSpecifier->nLong++;
+            pSingleTypeSpecifier->bIsLong = true;
             bResult = true;
 
 
@@ -4569,34 +4377,6 @@ void Type_Specifier(Parser* ctx,
                 const char* lexeme = Lexeme(ctx);
                 String lexemeCopy = STRING_INIT;
                 String_Set(&lexemeCopy, lexeme);
-                static int expading = 0;
-                if (bIsTypedef == 2 && expading == 0)
-                {
-                    //se ainda nao foi instanciada pegar por 
-                    //bIsTypedef entao criar a declaracao
-                    //que fica numa lista e depois eh inserida antes
-                    //da declaracao atual.
-
-
-                    if (IsTemplateType(lexeme))
-                    {
-                        StrBuilder sb = STRBUILDER_INIT;
-                        InstantiateTemplateType(lexeme, &sb);
-                        //Match(ctx);
-                        expading = 1;
-                        PushExpandedMacro(&ctx->Scanner,
-                            "template",
-                            "",
-                            sb.c_str);
-                        TAnyDeclaration* pDeclaration;
-                        bResult = Declaration(ctx,
-                            &pDeclaration);
-                        expading = 0;
-                        ArrayT_Push(&ctx->Templates, pDeclaration);
-                        SetSymbolsFromDeclaration(ctx, pDeclaration);
-                        StrBuilder_Destroy(&sb);
-                    }
-                }
 
                 lexeme = lexemeCopy;
                 if (*typedefCount == 0 /*&&

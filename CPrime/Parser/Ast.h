@@ -511,7 +511,7 @@ typedef struct
     bool bIsChar;
     bool bIsShort;
     bool bIsInt;
-    int nLong; //long long
+    bool bIsLong; 
     bool bIsFloat;
     bool bIsDouble;
     bool bIsSigned;
@@ -555,6 +555,11 @@ typedef List(TSpecifierQualifier) TSpecifierQualifierList;
 void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecifiers);
 bool TSpecifierQualifierList_IsTypedef(TSpecifierQualifierList* p);
 const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p);
+bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList* p);
+bool TSpecifierQualifierList_IsChar(TSpecifierQualifierList* p);
+bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p);
+bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList* p);
+
 
 typedef List(TSpecifier) TDeclarationSpecifiers;
 #define TDECLARATION_SPECIFIERS_INIT LIST_INIT
@@ -648,7 +653,7 @@ typedef struct TDeclarator
 
 #define TDECLARATOR_INIT {LIST_INIT, NULL, TSCANNERITEMLIST_INIT}
 CREATETYPE(TDeclarator, TDECLARATOR_INIT)
-
+bool TDeclarator_IsPointer(TDeclarator* p);
 bool TDeclarator_IsDirectPointer(TDeclarator* p);
 const char* TDeclarator_GetName(TDeclarator* p);
 

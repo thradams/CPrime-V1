@@ -717,7 +717,7 @@ bool TSingleTypeSpecifier_Print(TSingleTypeSpecifier* p, bool b, FILE* fp)
         fprintf(fp, "short");
     }
 
-    for (int j = 0; j < p->nLong; j++)
+    if (p->bIsLong)
     {
         fprintf(fp, "long");
     }

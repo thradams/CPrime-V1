@@ -846,7 +846,7 @@ bool GetType(const char* source,
            *source != '_')
     {
         StrBuilder_AppendChar(strBuilderType, *source);
-        *source++;
+        source++;
     }
 
 
@@ -863,13 +863,13 @@ bool GetTypeAndFunction(const char* source,
         *source != '_')
     {
         StrBuilder_AppendChar(strBuilderType, *source);
-        *source++;
+        source++;
     }
 
     while (*source)
     {
         StrBuilder_AppendChar(strBuilderFunc, *source);
-        *source++;
+        source++;
     }
 
     return *source == '_';
@@ -1266,8 +1266,8 @@ static bool TSingleTypeSpecifier_CodePrint(TProgram* program, Options * options,
         Output_Append(fp, "short");
         b = true;
     }
-
-    for (int j = 0; j < p->nLong; j++)
+    
+    if (p->bIsLong)
     {
         Output_Append(fp, "long");
         b = true;
