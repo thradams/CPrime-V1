@@ -236,17 +236,7 @@ typedef struct TTypeQualifier
     Type Type;
     struct TTypeQualifier* pNext;
     
-    bool bIsConst;
-    bool bIsRestrict;
-    bool bIsVolatile;
-    bool bIsAtomic;
-
-    //type-qualifier-extensions 
-    bool bIsOpt;
-    bool bIsOwner;
-    bool bIsDestructor;
-    bool bIsMemDestructor;
-    //
+    Tokens Token;
     TScannerItemList ClueList0;
 
 } TTypeQualifier;
@@ -255,7 +245,7 @@ typedef List(TTypeQualifier) TTypeQualifierList;
 #define TTYPEQUALIFIERLIST_INIT LIST_INIT
 #define TTypeQualifierList_Destroy(p) List_Destroy(TTypeQualifier, p)
 
-#define TTYPE_QUALIFIER_INIT {{TTypeQualifier_ID}, NULL, false, false, false, false /*extensoes*/, false, false /**/, false, false, TSCANNERITEMLIST_INIT}
+#define TTYPE_QUALIFIER_INIT {{TTypeQualifier_ID}, NULL, TK_NONE, TSCANNERITEMLIST_INIT}
 CREATETYPE(TTypeQualifier, TTYPE_QUALIFIER_INIT)
 
 ////////////////////////////

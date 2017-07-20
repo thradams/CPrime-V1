@@ -1196,26 +1196,10 @@ bool TTypeQualifier_Print(TTypeQualifier* p, bool b, FILE* fp)
     fprintf(fp, "\"type\": \"type-qualifier\",");
     fprintf(fp, "\"lexeme\": \"");
 
-    if (p->bIsAtomic)
-    {
-        fprintf(fp, "atomic");
-    }
+    
+        fprintf(fp, TokenToString(p->Token));
 
-    if (p->bIsConst)
-    {
-        fprintf(fp, "const");
-    }
-
-    if (p->bIsRestrict)
-    {
-        fprintf(fp, "restrict");
-    }
-
-    if (p->bIsVolatile)
-    {
-        fprintf(fp, "volatile");
-
-    }
+  
     fprintf(fp, "\"}");
 
     return true;

@@ -3774,25 +3774,10 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
     {
 
         case TK_CONST:
-        pQualifier->bIsConst = true;
-        Parser_Match(ctx, &pQualifier->ClueList0);
-        bResult = true;
-        break;
-
         case TK_RESTRICT:
-        pQualifier->bIsRestrict = true;
-        Parser_Match(ctx, &pQualifier->ClueList0);
-        bResult = true;
-        break;
-
         case TK_VOLATILE:
-        pQualifier->bIsVolatile = true;
-        Parser_Match(ctx, &pQualifier->ClueList0);
-        bResult = true;
-        break;
-
         case TK__ATOMIC:
-        pQualifier->bIsAtomic = true;
+        pQualifier->Token = token;
         Parser_Match(ctx, &pQualifier->ClueList0);
         bResult = true;
         break;
@@ -3800,30 +3785,12 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
 #ifdef LANGUAGE_EXTENSIONS
 
         case TK_AUTO:
-        pQualifier->bIsOwner = true;
-        Parser_Match(ctx, NULL);
-        bResult = true;
-        break;
-
         //type-qualifier-extensions 
         case TK_OPT_QUALIFIER:
-        pQualifier->bIsOpt = true;
-        Parser_Match(ctx, NULL);
-        bResult = true;
-        break;
         case TK_OWN_QUALIFIER:
-        pQualifier->bIsOwner = true;
-
-        Parser_Match(ctx, NULL);
-        bResult = true;
-        break;
         case TK_DTOR_QUALIFIER:
-        pQualifier->bIsDestructor = true;
-        Parser_Match(ctx, NULL);
-        bResult = true;
-        break;
         case TK_MDTOR_QUALIFIER:
-        pQualifier->bIsMemDestructor = true;
+        pQualifier->Token = token;
         Parser_Match(ctx, NULL);
         bResult = true;
         break;

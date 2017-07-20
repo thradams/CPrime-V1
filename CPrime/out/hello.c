@@ -16,5 +16,5 @@ typedef struct
 void F(X *p);
 int main()
 {
-  const int *;
+  const int *auto;
  }

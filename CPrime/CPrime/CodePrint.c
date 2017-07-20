@@ -1883,29 +1883,8 @@ static bool TTypeQualifier_CodePrint(TProgram* program, Options * options, TType
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
-    if (p->bIsAtomic)
-    {
-        Output_Append(fp, "_Atomic");
-        b = true;
-    }
-
-
-    if (p->bIsConst)
-    {
-        Output_Append(fp, "const");
-        b = true;
-    }
-
-    if (p->bIsRestrict)
-    {
-        Output_Append(fp, "restrict");
-        b = true;
-    }
-    if (p->bIsVolatile)
-    {
-        Output_Append(fp, "volatile");
-        b = true;
-    }
+    Output_Append(fp, TokenToString(p->Token));
+    b = true; 
     return b;
 }
 
