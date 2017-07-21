@@ -415,6 +415,7 @@ CREATETYPE(TPointer, TPOINTER_INIT)
 
 typedef List(TPointer) TPointerList;
 bool TPointerList_IsPointer(TPointerList* pPointerlist);
+bool TPointerList_IsAutoPointer(TPointerList* pPointerlist);
 
 typedef struct
 {
@@ -523,6 +524,7 @@ CAST(TSpecifierQualifier, TAlignmentSpecifier)
 CAST(TSpecifierQualifier, TSingleTypeSpecifier)
 
 CAST(TSpecifierQualifier, TTypeQualifier)
+CAST(TSpecifierQualifier, TEnumSpecifier)
 
 
 //CAST(TSpecifierQualifier, TTypeQualifier)
@@ -532,6 +534,10 @@ typedef List(TSpecifierQualifier) TSpecifierQualifierList;
 void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecifiers);
 bool TSpecifierQualifierList_IsTypedef(TSpecifierQualifierList* p);
 const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p);
+TSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p);
+bool TSpecifierQualifierList_IsTypedefQualifier(TSpecifierQualifierList* p);
+
+
 bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsChar(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p);

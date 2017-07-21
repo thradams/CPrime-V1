@@ -1,20 +1,28 @@
 
+
+typedef char * auto String;
+
+//void String_Destroy(String* p);
+//void String_Init(String* p);
+
 typedef struct
 {
     int i;
-} Y;
+    String Name;
+     //String stringVar;
+     String * auto pAutoString;
+     int * auto pAutoInt;
+} Z;
+
+//void Z_Destroy(Z* p);
+//void Z_Init(Z* p);
 
 typedef struct
 {
-     Y y;
-    int i, j, k;
-    char c;
-    _Bool b;
-    double *d;
-} X;
+    Z zVar;
+    Z* auto pAutoZ;
+    Z* pZ;
 
-void F(X *p);
-int main()
-{
-  const int * auto i;
- }
+} X;
+//void X_Destroy(X* pX);
+//void X_Init(Z* p);

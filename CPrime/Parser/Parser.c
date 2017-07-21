@@ -2072,7 +2072,7 @@ void Compound_Statement(Parser* ctx, TStatement** ppStatement);
 //void Expression(Parser* ctx, TExpression** pExpression, Tokens endToken1, Tokens endToken2);
 void Parameter_Declaration(Parser* ctx, TParameter* pParameterDeclaration);
 bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
-void Type_Qualifier_ListOpt(Parser* ctx, TTypeQualifierList* pQualifier);
+bool Type_Qualifier_ListOpt(Parser* ctx, TTypeQualifierList* pQualifiers);
 void Declaration_Specifiers(Parser* ctx, TDeclarationSpecifiers* pDeclarationSpecifiers);
 void Declarator(Parser* ctx, TDeclarator** pTDeclarator2);
 void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier, int* typedefCount);
@@ -3842,7 +3842,7 @@ int PointerOpt(Parser* ctx, TPointerList* pPointerList)
     Tokens token = Parser_CurrentToken(ctx);
 
     while (IsTypeQualifierToken(token) ||
-        token == TK_ASTERISK)   //pointer
+           token == TK_ASTERISK)   //pointer
     {
         TPointer* pPointer = TPointer_Create();
         List_Add(pPointerList, pPointer);
@@ -3854,10 +3854,11 @@ int PointerOpt(Parser* ctx, TPointerList* pPointerList)
         }
         else if (token == TK_ASTERISK)
         {
+            Parser_Match(ctx, &pPointer->ClueList0);
             pPointer->bPointer = true;
         }
 
-        Parser_Match(ctx, &pPointer->ClueList0);
+
         token = Parser_CurrentToken(ctx);
         ns++;
     }

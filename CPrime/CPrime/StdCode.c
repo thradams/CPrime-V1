@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void Output_Append(StrBuilder* p,
+                   const char* source);
+
+bool GetTypeAndFunction(const char* source,
+                        StrBuilder* strBuilderType,
+                        StrBuilder* strBuilderFunc);
 
 static bool IsSuffix(const char* s, const char* suffix)
 {
