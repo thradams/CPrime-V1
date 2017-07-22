@@ -302,3 +302,14 @@ Result StrBuilder_AppendUpper(StrBuilder *p, const char*  s)
 
   return RESULT_OK;
 }
+
+void StrBuilder_AppendFmt(StrBuilder * p, const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    char buffer[500];
+    vsnprintf(buffer, 500, fmt, args);
+    StrBuilder_Append(p, buffer);
+    va_end(args);
+    
+}

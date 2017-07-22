@@ -49,6 +49,8 @@ char* StrBuilder_Release(StrBuilder* p);
 Result StrBuilder_AppendInt(StrBuilder * p, int i);
 
 
+void StrBuilder_AppendFmt(StrBuilder * p, const char* fmt, ...);
+
 Result StrBuilder_AppendWChar(StrBuilder * p, wchar_t wch);
 Result StrBuilder_AppendW(StrBuilder * p, const wchar_t* psz);
 Result StrBuilder_AppendChar(StrBuilder * p, char wch);

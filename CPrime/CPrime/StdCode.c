@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "Templates\ListTemplate.h"
+
 void Output_Append(StrBuilder* p,
                    const char* source);
 
@@ -12,7 +14,7 @@ bool GetTypeAndFunction(const char* source,
                         StrBuilder* strBuilderType,
                         StrBuilder* strBuilderFunc);
 
-static bool IsSuffix(const char* s, const char* suffix)
+bool IsSuffix(const char* s, const char* suffix)
 {
     bool bResult = false;
     int len = strlen(s);
@@ -233,6 +235,15 @@ bool Std_Template_CodePrint(TProgram* program,
                                    bool b,
                                    StrBuilder* fp)
 {
+
+    //////////////////PLUGINS///////////////
+    ListPlugin_CodePrint( program,
+                               options,
+                               p,
+                              b,
+                               fp);
+    //////////////////PLUGINS///////////////
+
     /*
     typedef struct Array { int data; ... } Items;
     void Items_Add(Items* p,int i) {...}
@@ -267,6 +278,17 @@ bool Std_Template_CodePrint(TProgram* program,
         {
             TSingleTypeSpecifier *pSingleTypeSpecifier =
                 TSpecifier_As_TSingleTypeSpecifier(p->Specifiers.pHead);
+
+
+            //BuildDestroy(program,
+              //                (TSpecifierQualifierList*) &p->Specifiers,
+                //              TDeclarator* pDeclarator,
+                  //            TInitializer* pInitializer,
+                    //          const char* pVariableName,
+                      //        bool bVariableNameIsPointer,
+                        //      BuildType buildType,
+                          //    fp);
+
 
             if (pSingleTypeSpecifier != NULL &&
                 pSingleTypeSpecifier->Token == TK_IDENTIFIER)

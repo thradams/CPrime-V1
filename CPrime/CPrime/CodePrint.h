@@ -7,6 +7,16 @@
 #include "..\Parser\Macro.h"
 #include "..\Base\Map.h"
 
+typedef enum
+{
+    BuildTypeInit,
+    BuildTypeDestroy,
+    BuildTypeCreate,
+    BuildTypeDelete,
+    BuildTypeStaticInit,
+} BuildType;
+
+
 typedef struct Options
 {
     bool bExpandMacros;
@@ -27,3 +37,12 @@ void BuildInitializationForTypedef(TProgram* program,
                                    StrBuilder* strBuilder);
 
 bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, bool b, StrBuilder* fp);
+
+void BuildDestroy(TProgram* program,
+                  TSpecifierQualifierList* pSpecifierQualifierList,
+                  TDeclarator* pDeclarator,
+                  TInitializer* pInitializer,
+                  const char* pVariableName,
+                  bool bVariableNameIsPointer,
+                  BuildType buildType,
+                  StrBuilder* fp);

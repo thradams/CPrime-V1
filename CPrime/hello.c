@@ -2,27 +2,15 @@
 
 typedef char * auto String;
 
-//void String_Destroy(String* p);
-//void String_Init(String* p);
 
-typedef struct
-{
-    int i;
-    String Name;
-     //String stringVar;
-     String * auto pAutoString;
-     int * auto pAutoInt;
-} Z;
+typedef struct List(String) Z;
 
-//void Z_Destroy(Z* p);
-//void Z_Init(Z* p);
+void Z_Init(Z* pZ) default;
+//void Z_Destroy(Z* pZ) default;
 
-typedef struct
-{
-    Z zVar;
-    Z* auto pAutoZ;
-    Z* pZ;
-
+typedef struct {
+    Z z;
 } X;
-//void X_Destroy(X* pX);
-//void X_Init(Z* p);
+
+
+

@@ -18,6 +18,9 @@
     <Filter Include="Source Files\CPrime">
       <UniqueIdentifier>{3b3e2765-0c07-4713-8d58-db583f98ab6e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\CPrime\Templates">
+      <UniqueIdentifier>{4132fa68-cd4e-4e7d-b7dc-51a696039475}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Array.c">
@@ -85,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="hello.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CPrime\Templates\ListTemplate.c">
+      <Filter>Source Files\CPrime\Templates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +165,9 @@
     </ClInclude>
     <ClInclude Include="CPrime\StdCode.h">
       <Filter>Source Files\CPrime</Filter>
+    </ClInclude>
+    <ClInclude Include="CPrime\Templates\ListTemplate.h">
+      <Filter>Source Files\CPrime\Templates</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

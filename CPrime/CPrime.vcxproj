@@ -152,6 +152,7 @@
     <ClCompile Include="CPrime\CodePrint.c" />
     <ClCompile Include="CPrime\StdCode.c" />
     <ClCompile Include="CPrime\TCLint2.c" />
+    <ClCompile Include="CPrime\Templates\ListTemplate.c" />
     <ClCompile Include="hello.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -181,6 +182,7 @@
     <ClInclude Include="CPrime\CodePrint.h" />
     <ClInclude Include="CPrime\StdCode.h" />
     <ClInclude Include="CPrime\TCLint2.h" />
+    <ClInclude Include="CPrime\Templates\ListTemplate.h" />
     <ClInclude Include="vs2017.h" />
     <ClInclude Include="Parser\Ast.h" />
     <ClInclude Include="Parser\AstPrint.h" />
