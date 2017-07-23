@@ -533,6 +533,10 @@ bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList* p)
 
 const char* TDeclarator_GetName(TDeclarator*   p)
 {
+    if (p == NULL)
+    {
+        return NULL;
+    }
     TDirectDeclarator* pDirectDeclarator = p->pDirectDeclarator;
     while (pDirectDeclarator != NULL)
     {
@@ -1564,5 +1568,113 @@ bool EvaluateConstantExpression(TExpression *  p, int *pResult)
     ASSERT(result != -987654321);
     *pResult = result;
     return b;
+}
+
+
+
+TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration* p)
+{
+    TParameterTypeList* pParameterTypeList = NULL;
+
+    if (p->InitDeclaratorList.pHead != NULL)
+    {
+        if (p->InitDeclaratorList.pHead->pNext == NULL)
+        {
+            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
+            {
+                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
+                {
+                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+                    {
+                        pParameterTypeList =
+                            &p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Parameters;
+
+                    }
+                }
+            }
+        }
+    }
+    return pParameterTypeList;
+}
+
+const char* TDeclaration_Is_FunctionDeclaration(TDeclaration* p)
+{
+    const char* functionName = NULL;
+
+    if (p->InitDeclaratorList.pHead != NULL)
+    {
+        if (p->InitDeclaratorList.pHead->pNext == NULL)
+        {
+            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
+            {
+                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
+                {
+                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+                    {
+                        functionName =
+                            p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Identifier;
+                    }
+                }
+            }
+        }
+    }
+    return functionName;
+}
+
+TCompoundStatement* TDeclaration_Is_FunctionDefinition(TDeclaration* p)
+{
+    TCompoundStatement* pCompoundStatement = NULL;
+
+    if (p->InitDeclaratorList.pHead != NULL)
+    {
+        if (p->InitDeclaratorList.pHead->pNext == NULL)
+        {
+            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
+            {
+                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
+                {
+                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+                    {
+                        pCompoundStatement = p->pCompoundStatementOpt;
+                    }
+                }
+            }
+        }
+    }
+    return pCompoundStatement;
+}
+
+TStructUnionSpecifier* TDeclarationSpecifiers_Find_StructUnionSpecifier(TDeclarationSpecifiers* p)
+{
+    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+    ForEachListItem(TSpecifier, pDeclarationSpecifier, p)
+    {
+        pStructUnionSpecifier =
+            TSpecifier_As_TStructUnionSpecifier(pDeclarationSpecifier);
+        if (pStructUnionSpecifier)
+        {
+            break;
+        }
+    }
+    return pStructUnionSpecifier;
+}
+
+TStructUnionSpecifier* TParameter_Is_DirectPointerToStruct(TProgram* program, TParameter* pParameter)
+{
+    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+    if (TParameter_IsDirectPointer(pParameter))
+    {
+        const char* typedefName = TParameter_GetTypedefName(pParameter);
+        if (typedefName != NULL)
+        {
+            TDeclaration* pArgType = TProgram_FindDeclaration(program, TParameter_GetTypedefName(pParameter));
+            if (pArgType)
+            {
+                pStructUnionSpecifier =
+                    TDeclarationSpecifiers_Find_StructUnionSpecifier(&pArgType->Specifiers);
+            }
+        }
+    }
+    return pStructUnionSpecifier;
 }
 

@@ -536,6 +536,7 @@ bool TSpecifierQualifierList_IsTypedef(TSpecifierQualifierList* p);
 const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p);
 TSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsTypedefQualifier(TSpecifierQualifierList* p);
+bool TSpecifierQualifierList_IsAutoPointer(TSpecifierQualifierList *pSpecifierQualifierList);
 
 
 bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList* p);
@@ -709,6 +710,7 @@ typedef struct
     TScannerItemList ClueList1;
 } TStructDeclaration;
 #define TSTRUCT_DECLARATION_BASE_INIT {{TStructDeclaration_ID}, TSPECIFIERQUALIFIERLIST_INIT,  LIST_INIT, TSCANNERITEMLIST_INIT}
+
 
 CREATETYPE(TStructDeclaration, TSTRUCT_DECLARATION_BASE_INIT)
 
@@ -975,6 +977,8 @@ CREATETYPE(TUnaryExpressionOperator, TUNARY_EXPRESSION_OPERATOR_INIT)
 
 
 bool EvaluateConstantExpression(TExpression * p, int *pResult);
+
+TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration * p);
 
 
 CAST(TExpression, TPrimaryExpressionValue)

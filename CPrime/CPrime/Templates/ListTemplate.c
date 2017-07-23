@@ -8,57 +8,80 @@
 
 //Instancia as funcoes especias new create delete
 void ListPlugin_BuildDestroy(TProgram* program,
-                             TStructUnionSpecifier* pStructUnionSpecifier,
-                             const char* pVariableName,
-                             bool bVariableNameIsPointer,
-                             BuildType buildType)
+    TStructUnionSpecifier* pStructUnionSpecifier,
+    const char* pVariableName,
+    bool bVariableNameIsPointer,
+    BuildType buildType,
+    StrBuilder* fp)
 {
     if (strcmp(pStructUnionSpecifier->TemplateName, "List") == 0)
     {
+        StrBuilder itemTypeStr = STRBUILDER_INIT;
+
+        
+        TTypeName* pTypeName = NULL;
+        Options  options = OPTIONS_INIT;
+        if (pStructUnionSpecifier->Args.pHead)
+        {
+            pTypeName = &pStructUnionSpecifier->Args.pHead->TypeName;
+            TTypeName_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName, false, &itemTypeStr);
+        }
+
         switch (buildType)
         {
-            case BuildTypeInit:
-            printf("%s->pHead = NULL;\n", pVariableName);
-            printf("%s->pTail = NULL;\n", pVariableName);
+        case BuildTypeInit:
+            StrBuilder_AppendFmt(fp, "%s->pHead = NULL;\n", pVariableName);
+            StrBuilder_AppendFmt(fp, "%s->pTail = NULL;\n", pVariableName);
             break;
-            case BuildTypeDestroy:
-            printf("T *pItem = %s->pHead;\n", pVariableName);
-            printf("while (pItem)\n");
-            printf("{\n");
-            printf("  T* pCurrent = pItem;\n");
-            printf("  pItem = pItem->pNext;\n");
-            //printf("  T* pCurrent = pItem;\n");
-            printf("}\n");
+        case BuildTypeDestroy:
+        case BuildTypeDelete:
+        {
+            bool bIsPointer = TDeclarator_IsDirectPointer(&pTypeName->Declarator);
+            bool bAuto =  TPointerList_IsAutoPointer(&pTypeName->Declarator.PointerList);
+
+        //TSpecifierQualifierList_is
+        StrBuilder_AppendFmt(fp, "%s *pItem = %s->pHead;\n", itemTypeStr.c_str, pVariableName);
+        StrBuilder_AppendFmt(fp, "while (pItem)\n");
+        StrBuilder_AppendFmt(fp, "{\n");
+        StrBuilder_AppendFmt(fp, "  %s* pCurrent = pItem;\n", itemTypeStr.c_str);                
+        StrBuilder_AppendFmt(fp, "  pItem = pItem->pNext;\n");
+        if (bIsPointer)
+        {
+            StrBuilder_AppendFmt(fp, "  %s_Delete(pCurrent);\n", itemTypeStr.c_str);
+        }
+        else
+        {
+            StrBuilder_AppendFmt(fp, "  %s_Destroy(pCurrent);\n", itemTypeStr.c_str);
+        }
+
+        //printf("  T* pCurrent = pItem;\n");
+        StrBuilder_AppendFmt(fp, "}\n");
+        }
+        break;
+        case BuildTypeCreate:
+            StrBuilder_AppendFmt(fp, "%s->pHead = NULL;\n", pVariableName);
+            StrBuilder_AppendFmt(fp, "%s->pTail = NULL;\n", pVariableName);
             break;
-            case BuildTypeCreate:
-            printf("%s->pHead = NULL;\n", pVariableName);
-            printf("%s->pTail = NULL;\n", pVariableName);
+        
+        case BuildTypeStaticInit:
+            StrBuilder_AppendFmt(fp, "NULL, NULL");
             break;
-            case BuildTypeDelete:
-            printf("T *pItem = %s->pHead;\n", pVariableName);
-            printf("while (pItem)\n");
-            printf("{\n");
-            printf("  pItem = pItem->pNext;\n");
-            printf("}\n");
-            break;
-            case BuildTypeStaticInit:
-            printf("NULL, NULL");
-            break;
-            default:
+        default:
             break;
         }
+        StrBuilder_Destroy(&itemTypeStr);
     }
 }
 
 
 void Output_Append(StrBuilder* p,
-                   const char* source);
+    const char* source);
 
 //Gera estrutura de ad
 bool ListPlugin_Type_CodePrint(TProgram* program,
-                               Options * options,
-                               TStructUnionSpecifier* p,
-                               bool b, StrBuilder* fp)
+    Options * options,
+    TStructUnionSpecifier* p,
+    bool b, StrBuilder* fp)
 {
     bool bResult = false;
     if (p->TemplateName != NULL)
@@ -92,10 +115,10 @@ TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifi
 
 //Implementa 'default'
 bool ListPlugin_CodePrint(TProgram* program,
-                                 Options * options,
-                                 TDeclaration* p,
-                                 bool b,
-                                 StrBuilder* fp)
+    Options * options,
+    TDeclaration* p,
+    bool b,
+    StrBuilder* fp)
 {
     if (p->InitDeclaratorList.pHead != NULL &&
         p->InitDeclaratorList.pHead->pNext == NULL)
@@ -115,24 +138,23 @@ bool ListPlugin_CodePrint(TProgram* program,
             {
                 TStructUnionSpecifier* pStructUnionSpecifier =
                     GetStructSpecifier(program, &pParameterDeclaration->Specifiers);
-                
+
                 if (pStructUnionSpecifier)
                 {
                     if (IsSuffix(functionName, "_Add") &&
                         strcmp(pStructUnionSpecifier->TemplateName, "List") == 0)
                     {
                         StrBuilder_Append(fp, "\n"
-                                          "    if (pList->pHead == NULL) {\n"
-                                          "        pList->pHead = pItem; \n"
-                                          "        pList->pTail = pItem; \n"
-                                          "    }\n"
-                                          "    else\n"
-                                          "    {\n"
-                                          "        pList->pTail->pNext = pItem; \n"
-                                          "        pList->pTail = pItem; \n"
-                                          "    }\n");
+                            "    if (pList->pHead == NULL) {\n"
+                            "        pList->pHead = pItem; \n"
+                            "    }\n"
+                            "    else\n"
+                            "    {\n"
+                            "        pList->pTail->pNext = pItem; \n"                            
+                            "    }\n"
+                            "    pList->pTail = pItem; \n");
                     }
-                    
+
                 }
             }
         }//_Add

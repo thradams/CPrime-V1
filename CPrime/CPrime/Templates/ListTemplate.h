@@ -7,7 +7,8 @@ void ListPlugin_BuildDestroy(TProgram* program,
                              TStructUnionSpecifier* pStructUnionSpecifier,
                              const char* pVariableName,
                              bool bVariableNameIsPointer,
-                             BuildType buildType);
+                             BuildType buildType,
+    StrBuilder* fp);
 
 //instancia o tipo
 bool ListPlugin_Type_CodePrint(TProgram* program,

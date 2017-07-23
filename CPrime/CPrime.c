@@ -155,114 +155,6 @@ int main(int argc, char* argv[])
 }
 
 
-TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration* p)
-{
-    TParameterTypeList* pParameterTypeList = NULL;
-
-    if (p->InitDeclaratorList.pHead != NULL)
-    {
-        if (p->InitDeclaratorList.pHead->pNext == NULL)
-        {
-            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
-            {
-                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
-                {
-                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
-                    {
-                        pParameterTypeList =
-                            &p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Parameters;
-
-                    }
-                }
-            }
-        }
-    }
-    return pParameterTypeList;
-}
-
-const char* TDeclaration_Is_FunctionDeclaration(TDeclaration* p)
-{
-    const char* functionName = NULL;
-
-    if (p->InitDeclaratorList.pHead != NULL)
-    {
-        if (p->InitDeclaratorList.pHead->pNext == NULL)
-        {
-            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
-            {
-                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
-                {
-                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
-                    {
-                        functionName =
-                            p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Identifier;
-                    }
-                }
-            }
-        }
-    }
-    return functionName;
-}
-
-TCompoundStatement* TDeclaration_Is_FunctionDefinition(TDeclaration* p)
-{
-    TCompoundStatement* pCompoundStatement = NULL;
-
-    if (p->InitDeclaratorList.pHead != NULL)
-    {
-        if (p->InitDeclaratorList.pHead->pNext == NULL)
-        {
-            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
-            {
-                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
-                {
-                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
-                    {
-                        pCompoundStatement = p->pCompoundStatementOpt;
-                    }
-                }
-            }
-        }
-    }
-    return pCompoundStatement;
-}
-
-TStructUnionSpecifier* TDeclarationSpecifiers_Find_StructUnionSpecifier(TDeclarationSpecifiers* p)
-{
-    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
-    ForEachListItem(TSpecifier, pDeclarationSpecifier, p)
-    {
-        pStructUnionSpecifier =
-            TSpecifier_As_TStructUnionSpecifier(pDeclarationSpecifier);
-        if (pStructUnionSpecifier)
-        {
-            break;
-        }
-    }
-    return pStructUnionSpecifier;
-}
-
-TStructUnionSpecifier* TParameter_Is_DirectPointerToStruct(TProgram* program, TParameter* pParameter)
-{
-    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
-    if (TParameter_IsDirectPointer(pParameter))
-    {
-        const char* typedefName = TParameter_GetTypedefName(pParameter);
-        if (typedefName != NULL)
-        {
-            TDeclaration* pArgType = TProgram_FindDeclaration(program, TParameter_GetTypedefName(pParameter));
-            if (pArgType)
-            {
-                pStructUnionSpecifier =
-                    TDeclarationSpecifiers_Find_StructUnionSpecifier(&pArgType->Specifiers);
-            }
-        }
-    }
-    return pStructUnionSpecifier;
-}
-
-
-
 
 bool EachStructDeclarator(TStructUnionSpecifier* pStruct,
                           int *i,
@@ -314,6 +206,7 @@ bool EachStructDeclarator(TStructUnionSpecifier* pStruct,
 
 void AstPlayground(TProgram* program)
 {
+    #if 0 
     TDeclaration * p = TProgram_FindDeclaration(program, "X");
     TDeclarator *pDeclarator = TDeclaration_FindDeclarator(p, "X");
     
@@ -416,5 +309,6 @@ void AstPlayground(TProgram* program)
         //}
     //}
     StrBuilder_Destroy(&sb);
+#endif
         
 }

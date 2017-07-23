@@ -46,3 +46,5 @@ void BuildDestroy(TProgram* program,
                   bool bVariableNameIsPointer,
                   BuildType buildType,
                   StrBuilder* fp);
+
+bool IsSuffix(const char* s, const char* suffix);

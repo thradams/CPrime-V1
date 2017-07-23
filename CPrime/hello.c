@@ -1,16 +1,26 @@
+typedef struct
+{
+    int type = 1;
+    int w;
+    int h;
+} Box;
 
+void Box_Init(Box* pBox) default;
 
-typedef char * auto String;
+Box* Box_Create() default;
+void Box_Delete(Box* p) default;
 
+typedef struct List(Box*) Boxes;
 
-typedef struct List(String) Z;
+void Boxes_Add(Boxes* p, Box* pItem) default;
+//void Boxes_Init(Boxes* p) default;
+//void Boxes_Destroy(Boxes* p) default;
 
-void Z_Init(Z* pZ) default;
-//void Z_Destroy(Z* pZ) default;
-
-typedef struct {
-    Z z;
-} X;
-
+typedef struct
+{
+    Boxes boxes;
+} Z;
+void Z_Init(Z* p) default;
+void Z_Destroy(Z* p) default;
 
 
