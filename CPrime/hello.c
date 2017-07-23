@@ -24,3 +24,8 @@ void Z_Init(Z* p) default;
 void Z_Destroy(Z* p) default;
 
 
+int main()
+{ 
+    Z z = {};
+    z = (Z) {};
+}

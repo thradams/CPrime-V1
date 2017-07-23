@@ -65,3 +65,10 @@ while (pItem)
 }
 
 }
+
+
+int main()
+{ 
+    Z z = {{NULL, NULL}};
+    z =(Z){{NULL, NULL}} ;
+}
