@@ -1,13 +1,4 @@
 
-typedef struct PPToken PPToken;
-
-typedef struct
-{
-    PPToken** pItems;
-    int Size;
-    int Capacity;
-} TokenArray;
-
 
 #include <stdio.h>
 #include <stdlib.h>
