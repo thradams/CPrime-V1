@@ -48,3 +48,8 @@ void BuildDestroy(TProgram* program,
                   StrBuilder* fp);
 
 bool IsSuffix(const char* s, const char* suffix);
+bool TSpecifierQualifierList_CodePrint(TProgram* program,
+                                       Options * options,
+                                       TSpecifierQualifierList* pDeclarationSpecifiers,
+                                       bool b,
+                                       StrBuilder* fp);

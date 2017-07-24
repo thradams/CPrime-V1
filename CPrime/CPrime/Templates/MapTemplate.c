@@ -7,14 +7,14 @@
 
 
 //Instancia as funcoes especias new create delete
-void ListPlugin_BuildDestroy(TProgram* program,
+void MapPlugin_BuildDestroy(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
     BuildType buildType,
     StrBuilder* fp)
 {
-    if (strcmp(pStructUnionSpecifier->TemplateName, "List") == 0)
+    if (strcmp(pStructUnionSpecifier->TemplateName, "Map") == 0)
     {
         StrBuilder itemTypeStr = STRBUILDER_INIT;
 
@@ -85,7 +85,7 @@ void Output_Append(StrBuilder* p,
     const char* source);
 
 //Gera estrutura de ad
-bool ListPlugin_Type_CodePrint(TProgram* program,
+bool MapPlugin_Type_CodePrint(TProgram* program,
     Options * options,
     TStructUnionSpecifier* p,
     bool b, StrBuilder* fp)
@@ -93,7 +93,7 @@ bool ListPlugin_Type_CodePrint(TProgram* program,
     bool bResult = false;
     if (p->TemplateName != NULL)
     {
-        if (strcmp(p->TemplateName, "List") == 0)
+        if (strcmp(p->TemplateName, "Map") == 0)
         {
             if (p->Args.pHead)
             {
@@ -121,7 +121,7 @@ bool IsSuffix(const char* s, const char* suffix);
 TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifiers* specifiers);
 
 //Implementa 'default'
-bool ListPlugin_CodePrint(TProgram* program,
+bool MapPlugin_CodePrint(TProgram* program,
     Options * options,
     TDeclaration* p,
     bool b,

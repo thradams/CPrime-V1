@@ -728,6 +728,10 @@ void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecif
 
 const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDeclarationSpecifiers)
 {
+    if (pDeclarationSpecifiers == NULL)
+    {
+        return NULL;
+    }
     const char* typeName = NULL;
 
     ForEachListItem(TSpecifier, pItem, pDeclarationSpecifiers)

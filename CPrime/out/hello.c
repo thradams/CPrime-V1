@@ -1,74 +1,155 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+//struct Shape;
+
 typedef struct
 {
     int type /* =   1 */;
+    void* pNext;
     int w;
     int h;
-} Box;
-
-void Box_Init(Box* pBox)  /*default*/
-{pBox->type =   1;
-pBox->w = 0;
-pBox->h = 0;
-
-}
+}  Box;
 
 Box* Box_Create()  /*default*/
 {
 
-Box *p = malloc(sizeof * p);
+Box *p = (
+
+Box*) malloc(sizeof * p);
 if (p != NULL) {
-Box_Init(p);
+p->type =   1;
+p->pNext = NULL;
+p->w = 0;
+p->h = 0;
 }
 return p;
 
 }
-void Box_Delete(Box* p)  /*default*/
+void Box_Destroy(Box* p)  /*default*/
+{
+}
+
+void Box_Draw(Box* p)
+{
+    printf("box\n");
+}
+typedef struct
+{
+    int type /* =   2 */;
+    void* pNext;
+    int r;
+}  Circle;
+
+Circle* Circle_Create()  /*default*/
+{
+
+Circle *p = (
+
+Circle*) malloc(sizeof * p);
+if (p != NULL) {
+p->type =   2;
+p->pNext = NULL;
+p->r = 0;
+}
+return p;
+
+}
+void Circle_Destroy(Circle* p)  /*default*/
+{
+}
+
+void Circle_Draw(Circle* p) 
+{
+    printf("circle\n");
+}
+
+typedef struct  {int type;} Shape;
+
+void Shape_Delete(Shape* p)  /*default*/
 {if (p != NULL) {
+
+    switch(p->type) {
+    case 1:
+        Box_Destroy((Box*) p);
+    break;
+    case 2:
+        Circle_Destroy((Circle*) p);
+    break;
+    }
 free(p);
 }
 
 }
-
-typedef struct  {Box** pHead, *pTail;} Boxes;
-
-void Boxes_Add(Boxes* p, Box* pItem)  /*default*/
+void Shape_Draw(Shape* p)  /*default*/
 {
-    if (pList->pHead == NULL) {
-        pList->pHead = pItem; 
+    switch(p->type) {
+    case 1:
+        Box_Draw((Box*) p);
+    break;
+    case 2:
+        Circle_Draw((Circle*) p);
+    break;
     }
-    else
-    {
-        pList->pTail->pNext = pItem; 
-    }
-    pList->pTail = pItem; 
 
 }
-//void Boxes_Init(Boxes* p) default;
-//void Boxes_Destroy(Boxes* p) default;
+
+typedef struct  {Shape**pData; int Size, Capacity;}  Shapes;
+void Shapes_Add(Shapes* p, Shape* pItem)  /*default*/
+{ if (p->Size + 1 > p->Capacity)
+ {
+    int new_nelements = p->Capacity + p->Capacity / 2;
+ 
+ if (new_nelements < 1)
+ {
+     new_nelements = 1;
+ }
+ void** pnew = (void**) p->pData;
+ pnew = (void**)realloc(pnew, new_nelements * sizeof(void*));
+ if (pnew)
+ {
+    p->pData = pnew;
+    p->Capacity = new_nelements;
+ }
+ }
+    p->pData[p->Size] = pItem;
+    p->Size++;
+ 
+
+}
+void Shapes_Destroy(Shapes* p)  /*default*/
+{for (int i =0 ; i < p->Size; i++)
+{
+  Shape *pCurrent = p->pData[i];
+  Shape_Delete(pCurrent);
+}
+
+}
 
 typedef struct
 {
-    Boxes boxes;
+  Shape *auto  p;
 } Z;
-void Z_Init(Z* p)  /*default*/
-{p->boxes->pHead = NULL;
-p->boxes->pTail = NULL;
 
-}
 void Z_Destroy(Z* p)  /*default*/
-{Box* *pItem = p->boxes->pHead;
-while (pItem)
-{
-  Box** pCurrent = pItem;
-  pItem = pItem->pNext;
-  Box*_Delete(pCurrent);
-}
+{Shape_Delete(&p->p);
 
 }
-
 
 int main()
-{ 
-    Z z = {{NULL, NULL}};
-    z =(Z){{NULL, NULL}} ;
+{
+    Shapes shapes = {NULL, 0, 0};
+
+    Shapes_Add(&shapes, (Shape*) Box_Create());
+    
+    Shapes_Add(&shapes, (Shape*)Circle_Create());
+
+    for (int i = 0; i < shapes.Size; i++)
+    {
+        Shape_Draw(shapes.pData[i]);
+
+    }
+
+    Shapes_Destroy(&shapes);
 }

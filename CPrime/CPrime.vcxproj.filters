@@ -83,13 +83,22 @@
     <ClCompile Include="CPrime.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CPrime\StdCode.c">
-      <Filter>Source Files\CPrime</Filter>
-    </ClCompile>
     <ClCompile Include="hello.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CPrime\Templates\ListTemplate.c">
+      <Filter>Source Files\CPrime\Templates</Filter>
+    </ClCompile>
+    <ClCompile Include="CPrime\Templates\MapTemplate.c">
+      <Filter>Source Files\CPrime\Templates</Filter>
+    </ClCompile>
+    <ClCompile Include="CPrime\Templates\UnionTemplate.c">
+      <Filter>Source Files\CPrime\Templates</Filter>
+    </ClCompile>
+    <ClCompile Include="CPrime\Templates\AllTemplates.c">
+      <Filter>Source Files\CPrime\Templates</Filter>
+    </ClCompile>
+    <ClCompile Include="CPrime\Templates\ArrayTemplate.c">
       <Filter>Source Files\CPrime\Templates</Filter>
     </ClCompile>
   </ItemGroup>
@@ -163,10 +172,19 @@
     <ClInclude Include="vs2017.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="CPrime\StdCode.h">
-      <Filter>Source Files\CPrime</Filter>
-    </ClInclude>
     <ClInclude Include="CPrime\Templates\ListTemplate.h">
+      <Filter>Source Files\CPrime\Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="CPrime\Templates\MapTemplate.h">
+      <Filter>Source Files\CPrime\Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="CPrime\Templates\UnionTemplate.h">
+      <Filter>Source Files\CPrime\Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="CPrime\Templates\AllTemplates.h">
+      <Filter>Source Files\CPrime\Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="CPrime\Templates\ArrayTemplate.h">
       <Filter>Source Files\CPrime\Templates</Filter>
     </ClInclude>
   </ItemGroup>

@@ -96,7 +96,7 @@ int DeclarationsMap_IsTypeDef(DeclarationsMap* map, const char* name)
         }
     }
 
-   
+
     return bResult;
 }
 
@@ -872,7 +872,7 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
             *ppExpression = (TExpression*)pPostfixExpressionCore;
 
 
-      
+
             String_Destroy(&lexemeCopy);
         }
         break;
@@ -2143,10 +2143,10 @@ void Selection_Statement(Parser* ctx, TStatement** ppStatement)
             TSwitchStatement* pSelectionStatement = TSwitchStatement_Create();
             *ppStatement = (TStatement*)pSelectionStatement;
 
-            
+
             Parser_Match(ctx, &pSelectionStatement->ClueList0);
 
-            
+
             Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pSelectionStatement->ClueList1);
 
             Expression0(ctx, &pSelectionStatement->pConditionExpression);
@@ -2185,7 +2185,7 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
             *ppStatement = (TStatement*)pJumpStatement;
 
             Parser_Match(ctx, &pJumpStatement->ClueList0);
-            
+
             Parser_MatchToken(ctx, TK_IDENTIFIER, &pJumpStatement->ClueList1);
         }
         break;
@@ -2195,7 +2195,7 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
             TJumpStatement* pJumpStatement = TJumpStatement_Create();
             pJumpStatement->token = token;
             *ppStatement = (TStatement*)pJumpStatement;
-            
+
             Parser_Match(ctx, &pJumpStatement->ClueList0);
             Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList1);
         }
@@ -2254,11 +2254,11 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
             *ppStatement = (TStatement*)pWhileStatement;
 
             Parser_Match(ctx, &pWhileStatement->ClueList0);
-            
+
             Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pWhileStatement->ClueList1);
 
             Expression0(ctx, &pWhileStatement->pExpression);
-            
+
             Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pWhileStatement->ClueList2);
 
             Statement(ctx, &pWhileStatement->pStatement);
@@ -2269,19 +2269,19 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
         {
             TDoStatement* pDoStatement = TDoStatement_Create();
             *ppStatement = (TStatement*)pDoStatement;
-            
+
             Parser_Match(ctx, &pDoStatement->ClueList0); //do
 
             Statement(ctx, &pDoStatement->pStatement);
-            
+
             Parser_MatchToken(ctx, TK_WHILE, &pDoStatement->ClueList1); //while
 
             Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pDoStatement->ClueList2); //(
 
             Expression0(ctx, &pDoStatement->pExpression);
-            
+
             Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pDoStatement->ClueList3); //)
-            
+
             Parser_MatchToken(ctx, TK_SEMICOLON, &pDoStatement->ClueList4); //;
         }
         break;
@@ -2312,7 +2312,7 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
                     {
                         //Esta eh a 2 expressao do for, a declaracao ja comeu 1
                         Expression0(ctx, &pIterationStatement->pExpression2);
-                        
+
                         Parser_MatchToken(ctx, TK_SEMICOLON, &pIterationStatement->ClueList2);
                     }
                     else
@@ -2331,7 +2331,7 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
                         //primeira expressao do for
                         Expression0(ctx, &pIterationStatement->pExpression1);
 
-                        
+
                         Parser_MatchToken(ctx, TK_SEMICOLON, &pIterationStatement->ClueList2);
                     }
 
@@ -2341,7 +2341,7 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
                     {
                         //segunda expressao do for
                         Expression0(ctx, &pIterationStatement->pExpression2);
-                        
+
                         Parser_MatchToken(ctx, TK_SEMICOLON, &pIterationStatement->ClueList3);
                     }
 
@@ -2357,7 +2357,7 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
             else
             {
                 //primeira expressao do for vazia
-                
+
                 Parser_MatchToken(ctx, TK_SEMICOLON, &pIterationStatement->ClueList2);
 
                 token = Parser_CurrentToken(ctx);
@@ -2367,7 +2367,7 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
                     //Esta eh a 2 expressao do for, a declaracao ja comeu 1
                     Expression0(ctx, &pIterationStatement->pExpression2);
 
-                    
+
                     Parser_MatchToken(ctx, TK_SEMICOLON, &pIterationStatement->ClueList3);
                 }
 
@@ -2416,9 +2416,9 @@ void Labeled_Statement(Parser* ctx, TStatement** ppStatement)
     {
         //aqui nao eh um tipo
         String_Set(&pLabeledStatement->Identifier, Lexeme(ctx));
-        
+
         Parser_Match(ctx, &pLabeledStatement->ClueList0);
-        
+
         Parser_MatchToken(ctx, TK_COLON, &pLabeledStatement->ClueList1);
 
         Statement(ctx, &pLabeledStatement->pStatementOpt);
@@ -2426,12 +2426,12 @@ void Labeled_Statement(Parser* ctx, TStatement** ppStatement)
 
     else if (token == TK_CASE)
     {
-        
+
         Parser_Match(ctx, &pLabeledStatement->ClueList0);
 
         ConstantExpression(ctx, &pLabeledStatement->pExpression);
 
-        
+
         Parser_MatchToken(ctx, TK_COLON, &pLabeledStatement->ClueList1);
 
         Statement(ctx, &pLabeledStatement->pStatementOpt);
@@ -2439,9 +2439,9 @@ void Labeled_Statement(Parser* ctx, TStatement** ppStatement)
 
     else if (token == TK_DEFAULT)
     {
-        
+
         Parser_Match(ctx, &pLabeledStatement->ClueList0);
-        
+
         Parser_MatchToken(ctx, TK_COLON, &pLabeledStatement->ClueList1);
 
         Statement(ctx, &pLabeledStatement->pStatementOpt);
@@ -2815,21 +2815,21 @@ void Static_Assert_Declaration(Parser* ctx, TStaticAssertDeclaration* pStaticAss
     Tokens token = Parser_CurrentToken(ctx);
 
     if (token == TK__STATIC_ASSERT)
-    {        
+    {
         Parser_Match(ctx, &pStaticAssertDeclaration->ClueList0);
-        
+
         Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pStaticAssertDeclaration->ClueList1);
 
         ConstantExpression(ctx,
             &pStaticAssertDeclaration->pConstantExpression);
-        
+
         Parser_MatchToken(ctx, TK_COMMA, &pStaticAssertDeclaration->ClueList2);
-        
+
         String_Set(&pStaticAssertDeclaration->Text, Lexeme(ctx));
         Parser_MatchToken(ctx, TK_STRING_LITERAL, &pStaticAssertDeclaration->ClueList3);
-        
+
         Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pStaticAssertDeclaration->ClueList4);
-        
+
         Parser_MatchToken(ctx, TK_SEMICOLON, &pStaticAssertDeclaration->ClueList5);
     }
 }
@@ -2853,12 +2853,12 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
         {
             List_Add(pSpecifierQualifierList, pTypeSpecifier);
         }
-        
+
     }
     else if (TTypeQualifier_IsFirst(token))
     {
         TTypeQualifier* pTypeQualifier = TTypeQualifier_Create();
-        Type_Qualifier(ctx, pTypeQualifier);        
+        Type_Qualifier(ctx, pTypeQualifier);
         List_Add(pSpecifierQualifierList, TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
     }
     else
@@ -2874,7 +2874,7 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
     {
         Specifier_Qualifier_List(ctx, pSpecifierQualifierList);
     }
-   
+
 }
 
 void Struct_Declarator(Parser* ctx,
@@ -2991,7 +2991,7 @@ void Struct_Declaration(Parser* ctx,
     {
         TStructDeclaration* pStructDeclarationBase = TStructDeclaration_Create();
         *ppStructDeclaration = (TAnyStructDeclaration*)pStructDeclarationBase;
-        Specifier_Qualifier_List(ctx, 
+        Specifier_Qualifier_List(ctx,
                                  &pStructDeclarationBase->SpecifierQualifierList);
         token = Parser_CurrentToken(ctx);
 
@@ -3051,7 +3051,7 @@ void Struct_Or_Union_Specifier(Parser* ctx,
     */
 
     /*
-    struct-or-union-specifier:    
+    struct-or-union-specifier:
     struct-or-union { struct-declaration-list }
     struct-or-union identifier
 
@@ -3078,33 +3078,29 @@ void Struct_Or_Union_Specifier(Parser* ctx,
 
             Parser_Match(ctx, NULL);
             TemplateTypeSpecifierArgumentList(ctx,
-                (TTemplateTypeSpecifierArgumentList *) &pStructUnionSpecifier->Args);
+                (TTemplateTypeSpecifierArgumentList *)&pStructUnionSpecifier->Args);
             Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, NULL);
-        }
-        else if (token == TK_LEFT_CURLY_BRACKET)
-        {
-            Parser_Match(ctx, &pStructUnionSpecifier->ClueList2);
-
-            Struct_Declaration_List(ctx,
-                &pStructUnionSpecifier->StructDeclarationList);
-
-            Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET,
-                &pStructUnionSpecifier->ClueList3);
         }
         else if (token == TK_IDENTIFIER)
         {
             String_Set(&pStructUnionSpecifier->TemplateName, Lexeme(ctx));
             Parser_Match(ctx, NULL);
 
-            Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS , NULL);
+            token = Parser_CurrentToken(ctx);
+            if (token == TK_LEFT_PARENTHESIS)
+            {
+                Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, NULL);
 
-            TemplateTypeSpecifierArgumentList(ctx,
-            (TTemplateTypeSpecifierArgumentList *)    &pStructUnionSpecifier->Args);
+                TemplateTypeSpecifierArgumentList(ctx,
+                    (TTemplateTypeSpecifierArgumentList *)&pStructUnionSpecifier->Args);
 
-            Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, NULL);
+                Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, NULL);
+            }
         }
     }
-    else if (token == TK_LEFT_CURLY_BRACKET)
+    
+    token = Parser_CurrentToken(ctx);
+    if (token == TK_LEFT_CURLY_BRACKET)
     {
         Parser_Match(ctx, &pStructUnionSpecifier->ClueList2);
 
@@ -3116,7 +3112,8 @@ void Struct_Or_Union_Specifier(Parser* ctx,
     }
     else
     {
-        SetError2(ctx, "expected name or {", "");
+       //struct X *
+       // SetError2(ctx, "expected name or {", "");
     }
 }
 
@@ -3518,7 +3515,7 @@ void Parameter_Type_List(Parser* ctx,
     parameter-list
     parameter-list , ...
     */
-    
+
     Parameter_List(ctx, &pParameterList->ParameterList);
 
     Tokens token = Parser_CurrentToken(ctx);
@@ -3973,7 +3970,7 @@ bool TTypeSpecifier_IsFirst(Parser* ctx, Tokens token, const char* lexeme)
         break;
 
         case TK_IDENTIFIER:
-            bResult = DeclarationsMap_IsTypeDef(&ctx->Symbols, lexeme);
+        bResult = DeclarationsMap_IsTypeDef(&ctx->Symbols, lexeme);
         break;
 
         default:
@@ -4000,7 +3997,7 @@ void TemplateTypeSpecifierArgumentList(Parser* ctx,
 {
     /*
     template-type-specifier-argument-list:
-    template-type-specifier-argument 
+    template-type-specifier-argument
     template-type-specifier-argument , template-type-specifier-argument-list
     */
 
@@ -4069,9 +4066,9 @@ void AtomicTypeSpecifier(Parser* ctx,
     Parser_MatchToken(ctx, TK__ATOMIC, &pAtomicTypeSpecifier->ClueList0);
 
     Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pAtomicTypeSpecifier->ClueList1);
-    
+
     TypeName(ctx, &pAtomicTypeSpecifier->TypeName);
-    
+
     Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pAtomicTypeSpecifier->ClueList2);
 }
 
@@ -4097,8 +4094,8 @@ void Type_Specifier(Parser* ctx,
     enum-specifier
     typedef-name
     */
-    
-    
+
+
 
     bool bResult = false;
     const char* lexeme = Lexeme(ctx);
@@ -4120,7 +4117,7 @@ void Type_Specifier(Parser* ctx,
         case TK__COMPLEX:
         {
             TSingleTypeSpecifier*  pSingleTypeSpecifier =
-                     TSingleTypeSpecifier_Create();
+                TSingleTypeSpecifier_Create();
 
             pSingleTypeSpecifier->Token = token;
             bResult = true;
@@ -4133,9 +4130,9 @@ void Type_Specifier(Parser* ctx,
 
         //atomic-type-specifier
         case TK__ATOMIC:
-          bResult = true;
-          AtomicTypeSpecifier(ctx, ppTypeSpecifier);
-         break;
+        bResult = true;
+        AtomicTypeSpecifier(ctx, ppTypeSpecifier);
+        break;
 
         //extensao thiago
         //template-type-specifier
@@ -4268,7 +4265,7 @@ bool Declaration_Specifiers_IsFirst(Parser* ctx, Tokens token, const char* lexem
         TTypeQualifier_IsFirst(token) ||
         TFunctionSpecifier_IsFirst(token) ||
         TFunctionSpecifier_IsFirst(token);
-        
+
     return bResult;
 }
 
@@ -4296,7 +4293,7 @@ void Declaration_Specifiers(Parser* ctx,
     }
     else if (TTypeSpecifier_IsFirst(ctx, token, lexeme))
     {
-        
+
         int typedefCount = 0;
         TTypeSpecifier* pTypeSpecifier = NULL;
         Type_Specifier(ctx,
@@ -4335,7 +4332,7 @@ void Declaration_Specifiers(Parser* ctx,
     {
         Declaration_Specifiers(ctx, pDeclarationSpecifiers);
     }
-    
+
 }
 
 
@@ -4558,7 +4555,7 @@ bool  Declaration(Parser* ctx,
     static_assert-declaration
     */
 
-    
+
 
     bool bHasDeclaration = false;
     Tokens token = Parser_CurrentToken(ctx);
@@ -4586,7 +4583,7 @@ bool  Declaration(Parser* ctx,
 
         else
         {
-            if (Declaration_Specifiers_IsFirst(ctx,Parser_CurrentToken(ctx), Lexeme(ctx)))
+            if (Declaration_Specifiers_IsFirst(ctx, Parser_CurrentToken(ctx), Lexeme(ctx)))
             {
                 Declaration_Specifiers(ctx, &pFuncVarDeclaration->Specifiers);
                 bHasDeclaration = true;
@@ -4690,6 +4687,8 @@ void SetSymbolsFromDeclaration(Parser* ctx,
 
             if (pTFuncVarDeclaration->InitDeclaratorList.pHead == NULL)
             {
+                //tODO typedef struct X X;
+                
                 TStructUnionSpecifier * pStructUnionSpecifier =
                     TSpecifier_As_TStructUnionSpecifier(pTFuncVarDeclaration->Specifiers.pHead);
                 if (pStructUnionSpecifier != NULL)
@@ -4703,7 +4702,7 @@ void SetSymbolsFromDeclaration(Parser* ctx,
                         printf("warning: unnamed struct/union that defines no instances");
                     }
                 }
-                
+
             }
         }
     }

@@ -4,12 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "..\Base\Path.h"
-#include "StdCode.h"
 
-///////////////////////////////////////////
-#include "Templates\ListTemplate.h"
 
-///////////////////////////////////////////
+
+#include "Templates\AllTemplates.h"
 
 
 bool bExpandMacros;
@@ -36,7 +34,7 @@ bool TInitializer_CodePrint2(TProgram* program,
     bool b,
     StrBuilder* fp);
 
-static bool TSpecifierQualifierList_CodePrint(TProgram* program, Options * options, TSpecifierQualifierList* pDeclarationSpecifiers, bool b, StrBuilder* fp);
+bool TSpecifierQualifierList_CodePrint(TProgram* program, Options * options, TSpecifierQualifierList* pDeclarationSpecifiers, bool b, StrBuilder* fp);
 
 bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, bool b, StrBuilder* fp);
 
@@ -1211,14 +1209,13 @@ static bool TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
 
     if (p->TemplateName != NULL)
     {
-        ///////PLUGINS
-        ListPlugin_Type_CodePrint(program,
+        
+        AllPlugin_Type_CodePrint(program,
             options,
             p,
-            b, fp);
-        ///////PLUGINS
-
-        //StructTemplate_CodePrint(program, options, p, b, fp);        
+            b, 
+           fp);
+        
     }
     else
     {
@@ -1954,7 +1951,7 @@ static bool TPointer_CodePrint(TProgram* program, Options * options, TPointer* p
     return true;
 }
 
-static bool TSpecifierQualifierList_CodePrint(TProgram* program,
+bool TSpecifierQualifierList_CodePrint(TProgram* program,
     Options * options,
     TSpecifierQualifierList* pDeclarationSpecifiers,
     bool b,
@@ -2235,11 +2232,13 @@ static bool DefaultFunctionDefinition_CodePrint(TProgram* program,
     }
     else
     {
-        ListPlugin_CodePrint(program,
+        
+        AllPlugin_CodePrint(program,
             options,
             p,
             b,
             fp);
+        
     }
     //////////////////////////
 
@@ -3050,7 +3049,8 @@ void TSingleTypeSpecifier_BuildDestroy(TProgram* program,
         //
         pSingleTypeSpecifier->Token == TK__BOOL ||
         //
-        pSingleTypeSpecifier->Token == TK_char
+        pSingleTypeSpecifier->Token == TK_char ||
+        pSingleTypeSpecifier->Token == TK_VOID
         )
     {
         if (buildType == BuildTypeInit ||
@@ -3150,23 +3150,12 @@ void TStructUnionSpecifier_BuildDestroy(TProgram* program,
     if (pStructUnionSpecifier != NULL)
     {
         if (pStructUnionSpecifier->TemplateName != NULL)
-        {
-            //plugin 1
-            ListPlugin_BuildDestroy(program,
+        {            
+            AllPlugin_BuildDestroy(program,
                 pStructUnionSpecifier,
                 pVariableName,
                 bVariableNameIsPointer,
                 buildType, fp);
-
-            //plugin 2
-            //UnionPlugin_BuildDestroy(program,
-            //                      pStructUnionSpecifier,
-            //                    pVariableName,
-            //                  bVariableNameIsPointer,
-            //                buildType);
-            //...
-
-            //printf("template struct %s %s\n", declaratorName, pStructUnionSpecifier->TemplateName);
         }
         else
         {
@@ -3313,7 +3302,9 @@ void BuildDestroy(TProgram* program,
     {
         Options options = OPTIONS_INIT;
         TSpecifierQualifierList_CodePrint(program, &options, pSpecifierQualifierList, false, fp);
-        StrBuilder_Append(fp, " *p = malloc(sizeof * p);\n");
+        StrBuilder_Append(fp, " *p = (");
+        TSpecifierQualifierList_CodePrint(program, &options, pSpecifierQualifierList, false, fp);
+        StrBuilder_Append(fp, "*) malloc(sizeof * p);\n");
         StrBuilder_Append(fp, "if (p != NULL) {\n");
 
         //printf("T p = malloc(sizeof * p);\n");
@@ -3521,4 +3512,50 @@ void BuildDestroy(TProgram* program,
     }
 }
 //}
+
+
+bool IsSuffix(const char* s, const char* suffix)
+{
+    bool bResult = false;
+    int len = strlen(s);
+    int len2 = strlen(suffix);
+    if (len > len2)
+    {
+        const char* pEndPart = &s[len - len2];
+        if (strcmp(pEndPart, suffix) == 0)
+        {
+            bResult = true;
+        }
+    }
+    return bResult;
+
+}
+
+TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifiers* specifiers)
+{
+    TStructUnionSpecifier* pTStructUnionSpecifier =
+        TSpecifier_As_TStructUnionSpecifier(specifiers->pHead);
+
+    if (pTStructUnionSpecifier == NULL)
+    {
+        TSingleTypeSpecifier *pSingleTypeSpecifier =
+            TSpecifier_As_TSingleTypeSpecifier(specifiers->pHead);
+
+        if (pSingleTypeSpecifier != NULL &&
+            pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+        {
+            const char * typedefName = pSingleTypeSpecifier->TypedefName;
+
+            TDeclaration * pDeclaration = TProgram_GetFinalTypeDeclaration(program, typedefName);
+            if (pDeclaration)
+            {
+                pTStructUnionSpecifier =
+                    TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pHead->pNext);
+
+            }
+        }
+    }
+
+    return pTStructUnionSpecifier;
+}
 
