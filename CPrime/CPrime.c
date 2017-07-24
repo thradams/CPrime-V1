@@ -6,7 +6,6 @@
 #include ".\Parser\AstPrint.h"
 #include ".\Parser\Parser.h"
 #include ".\CPrime\CodePrint.h"
-#include ".\CPrime\TCLint2.h"
 #include "..\CPrime\Base\Path.h"
 #include "UnitTest.h"
 
@@ -206,109 +205,6 @@ bool EachStructDeclarator(TStructUnionSpecifier* pStruct,
 
 void AstPlayground(TProgram* program)
 {
-    #if 0 
-    TDeclaration * p = TProgram_FindDeclaration(program, "X");
-    TDeclarator *pDeclarator = TDeclaration_FindDeclarator(p, "X");
-    
-    StrBuilder sb = STRBUILDER_INIT;
-
-    printf("------------------------------------------\n");
-    printf("static init = \n");
-    BuildDestroy(program,
-        (TSpecifierQualifierList*)&p->Specifiers,
-                 pDeclarator,
-                 NULL,
-                 NULL,
-                 false,
-                 BuildTypeStaticInit,
-                 &sb);
-
-    printf("%s", sb.c_str);
-    StrBuilder_Clear(&sb);
-    printf("\n");
-    printf("\n");
-
-    printf("void X_Destroy(X* pX) {\n");
-    BuildDestroy(program,
-        (TSpecifierQualifierList*)&p->Specifiers,
-                 pDeclarator,
-                 NULL,
-                 "pX",
-                 true,
-                 BuildTypeDestroy
-                 ,
-                 &sb);
-
-    printf("%s", sb.c_str);
-    StrBuilder_Clear(&sb);
-    printf("}\n");
-    printf("------------------------------------------\n");
-
-    printf("X* X_Create() {\n");
-    BuildDestroy(program,
-        (TSpecifierQualifierList*)&p->Specifiers,
-                 pDeclarator,
-                 NULL,
-                 "pX",
-                 true,
-                 BuildTypeCreate,
-                 &sb);
-
-    printf("%s",sb.c_str);
-    StrBuilder_Clear(&sb);
-    printf("}\n");
-
-    printf("void X_Delete(X* pX) {\n");
-    BuildDestroy(program,
-        (TSpecifierQualifierList*)&p->Specifiers,
-                 pDeclarator,
-                 NULL,
-                 "pX",
-                 true,
-                 BuildTypeDelete,
-                 &sb);
-
-    printf("}\n");
-    printf("------------------------------------------\n");
-    printf("void X_Init(X* pX) {\n");
-    BuildDestroy(program,
-        (TSpecifierQualifierList*)&p->Specifiers,
-                 pDeclarator,
-                 NULL,
-                 "pX",
-                 true,
-                 BuildTypeInit,
-                 &sb);
-
-    printf("%s", sb.c_str);
-    StrBuilder_Clear(&sb);
-    printf("}\n");
-
-
-    //TDeclaration_Is_FunctionDeclaration(p);
-    //    TDeclaration_GetFunctionArguments();
-
-    //TDeclaration_Is_FunctionDefinition(p);
-
-    //TParameterTypeList * pArgs =
-      //  TDeclaration_GetFunctionArguments(p);
-    //if (pArgs)
-    //{
-      //  ForEachListItem(TParameter, pParameter, &pArgs->ParameterList)
-        //{
-          //  printf("%s\n", TParameter_GetName(pParameter));
-            //printf("%s\n", TParameter_GetTypedefName(pParameter));
-            //printf(TParameter_IsDirectPointer(pParameter) ? "true" : "false");
-
-            //printf("\n");
-
-            //BuildDestroy(program,
-              //  (TSpecifierQualifierList*)&pParameter->Specifiers,
-                //          &pParameter->Declarator,
-                  //        NULL);
-        //}
-    //}
-    StrBuilder_Destroy(&sb);
-#endif
+   
         
 }

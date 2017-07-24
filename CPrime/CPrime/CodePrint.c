@@ -26,13 +26,7 @@ static bool TInitializerListItem_CodePrint2(TProgram* program,
     bool b,
     StrBuilder* fp);
 
-bool TInitializer_CodePrint2(TProgram* program,
-    Options * options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    bool bIsPointer,
-    TInitializer* pTInitializer,
-    bool b,
-    StrBuilder* fp);
+
 
 bool TSpecifierQualifierList_CodePrint(TProgram* program, Options * options, TSpecifierQualifierList* pDeclarationSpecifiers, bool b, StrBuilder* fp);
 
@@ -55,13 +49,6 @@ static bool TInitializerList_CodePrint(TProgram* program,
     bool b,
     StrBuilder* fp);
 
-static bool TInitializerList_CodePrint2(TProgram* program,
-    Options * options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    bool bIsPointer,
-    TInitializerList*p,
-    bool b,
-    StrBuilder* fp);
 
 static bool TInitializerListItem_CodePrint(TProgram* program,
     Options * options,
@@ -2086,32 +2073,6 @@ static bool TDesignatorList_CodePrint(TProgram* program, Options * options, TDes
     return true;
 }
 
-static bool TInitializerListItem_CodePrint2(TProgram* program,
-    Options * options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    bool bIsPointer,
-    TInitializerListItem* p,
-    bool b,
-    StrBuilder* fp)
-{
-
-    b = false;
-
-    if (!List_IsEmpty(&p->DesignatorList))
-    {
-        b = TDesignatorList_CodePrint(program, options, &p->DesignatorList, b, fp);
-    }
-
-    b = TInitializer_CodePrint2(program,
-        options,
-        pSpecifierQualifierList,
-        bIsPointer,
-        p->pInitializer,
-        b,
-        fp);
-
-    return true;
-}
 
 static bool TInitializerListItem_CodePrint(TProgram* program,
     Options * options,

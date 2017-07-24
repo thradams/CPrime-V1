@@ -68,13 +68,7 @@
     <ClCompile Include="Parser\TokenArray.c">
       <Filter>Source Files\Parser</Filter>
     </ClCompile>
-    <ClCompile Include="CPrime\AstMatch.c">
-      <Filter>Source Files\CPrime</Filter>
-    </ClCompile>
     <ClCompile Include="CPrime\CodePrint.c">
-      <Filter>Source Files\CPrime</Filter>
-    </ClCompile>
-    <ClCompile Include="CPrime\TCLint2.c">
       <Filter>Source Files\CPrime</Filter>
     </ClCompile>
     <ClCompile Include="UnitTest.c">
@@ -157,13 +151,7 @@
     <ClInclude Include="Parser\TokenArray.h">
       <Filter>Source Files\Parser</Filter>
     </ClInclude>
-    <ClInclude Include="CPrime\AstMatch.h">
-      <Filter>Source Files\CPrime</Filter>
-    </ClInclude>
     <ClInclude Include="CPrime\CodePrint.h">
-      <Filter>Source Files\CPrime</Filter>
-    </ClInclude>
-    <ClInclude Include="CPrime\TCLint2.h">
       <Filter>Source Files\CPrime</Filter>
     </ClInclude>
     <ClInclude Include="UnitTest.h">

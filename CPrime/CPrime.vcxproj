@@ -148,9 +148,7 @@
     <ClCompile Include="Base\Stream.c" />
     <ClCompile Include="Base\StringEx.c" />
     <ClCompile Include="CPrime.c" />
-    <ClCompile Include="CPrime\AstMatch.c" />
     <ClCompile Include="CPrime\CodePrint.c" />
-    <ClCompile Include="CPrime\TCLint2.c" />
     <ClCompile Include="CPrime\Templates\AllTemplates.c" />
     <ClCompile Include="CPrime\Templates\ArrayTemplate.c" />
     <ClCompile Include="CPrime\Templates\ListTemplate.c" />
@@ -181,9 +179,7 @@
     <ClInclude Include="Base\StrBuilder.h" />
     <ClInclude Include="Base\Stream.h" />
     <ClInclude Include="Base\StringEx.h" />
-    <ClInclude Include="CPrime\AstMatch.h" />
     <ClInclude Include="CPrime\CodePrint.h" />
-    <ClInclude Include="CPrime\TCLint2.h" />
     <ClInclude Include="CPrime\Templates\AllTemplates.h" />
     <ClInclude Include="CPrime\Templates\ArrayTemplate.h" />
     <ClInclude Include="CPrime\Templates\ListTemplate.h" />
