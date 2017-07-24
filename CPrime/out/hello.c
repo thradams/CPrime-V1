@@ -142,6 +142,8 @@ int main()
 {
     Shapes shapes = {NULL, 0, 0};
 
+    shape =(Shapes){NULL, 0, 0} ;
+
     Shapes_Add(&shapes, (Shape*) Box_Create());
     
     Shapes_Add(&shapes, (Shape*)Circle_Create());

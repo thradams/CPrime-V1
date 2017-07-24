@@ -207,248 +207,6 @@ void BuildEnumSpecifierInitialization(TProgram* program, Options * options,
 }
 
 
-void BuildInitialization(TProgram* program,
-    Options * options,
-    TDeclarationSpecifiers* pDeclarationSpecifiers,
-    bool bIsPointer,
-    StrBuilder* strBuilder);
-
-void BuildInitialization2(TProgram* program,
-    Options * options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    bool bIsPointer,
-    StrBuilder* strBuilder);
-
-
-void BuildInitializationForTypedef(TProgram* program,
-    Options * options,
-    const char* typedefName,
-    StrBuilder* strBuilder)
-{
-    TDeclaration * p = TProgram_GetFinalTypeDeclaration(program, typedefName);
-    if (p)
-    {
-        //Tem que ver se o typedef nao era ponteiro tb
-        TDeclarator* pDeclarator = TDeclaration_FindDeclarator(p, typedefName);
-        if (pDeclarator)
-        {
-            BuildInitialization(program,
-                options,
-                &p->Specifiers,
-                false,
-                strBuilder);
-        }
-        else
-        {
-            Output_Append(strBuilder, "0");
-        }
-    }
-}
-
-
-
-void BuildSingleTypeSpecifierInitialization(TProgram* program,
-    Options * options,
-    TSingleTypeSpecifier* pSingleTypeSpecifier,
-    bool bIsPointer,
-    StrBuilder* strBuilder)
-{
-
-    if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
-    {
-        const char* typedefName = pSingleTypeSpecifier->TypedefName;
-        TDeclaration * p = TProgram_GetFinalTypeDeclaration(program, typedefName);
-        if (p)
-        {
-            //Tem que ver se o typedef nao era ponteiro tb
-            TDeclarator* pDeclarator = TDeclaration_FindDeclarator(p, typedefName);
-            if (pDeclarator)
-            {
-                BuildInitialization(program,
-                    options,
-                    &p->Specifiers,
-                    bIsPointer || TPointerList_IsPointer(&pDeclarator->PointerList),
-                    strBuilder);
-            }
-            else
-            {
-                ASSERT(false);
-            }
-
-        }
-    }
-    else
-    {
-        if (pSingleTypeSpecifier->Token == TK__BOOL)
-            Output_Append(strBuilder, "false");
-        else if (pSingleTypeSpecifier->Token == TK_DOUBLE)
-            Output_Append(strBuilder, "0.0");
-        else
-            Output_Append(strBuilder, "0");
-    }
-}
-
-
-void BuildStructUnionSpecifierInitialization(TProgram* program,
-    Options * options,
-    TStructUnionSpecifier* pStructUnionSpecifier,
-    StrBuilder* strBuilder)
-{
-
-    //struct X x = {};
-    if (pStructUnionSpecifier->StructDeclarationList.size == 0)
-    {
-        TDeclaration* pStructDeclaration =
-            TProgram_FindDeclaration(program, pStructUnionSpecifier->Name);
-        if (pStructDeclaration != NULL)
-        {
-            pStructUnionSpecifier =
-                TSpecifier_As_TStructUnionSpecifier(pStructDeclaration->Specifiers.pHead);
-        }
-    }
-
-    if (pStructUnionSpecifier == NULL)
-    {
-        Output_Append(strBuilder, "{0}");
-        return;
-    }
-
-    Output_Append(strBuilder, "{");
-    int k = 0;
-    for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
-    {
-        TAnyStructDeclaration* p =
-            pStructUnionSpecifier->StructDeclarationList.pItems[i];
-        TStructDeclaration* pStructDeclaration =
-            TAnyStructDeclaration_As_TStructDeclaration(p);
-
-        if (pStructDeclaration)
-        {
-            if (k > 0)
-            {
-                Output_Append(strBuilder, ",");
-            }
-
-            ForEachListItem(TInitDeclarator, pDeclarator, &pStructDeclaration->DeclaratorList)
-            {
-                if (pDeclarator->pInitializer)
-                {
-                    bool bExpandMacros = options->bExpandMacros;
-                    bool bIncludeComments = options->bIncludeComments;
-
-                    options->bExpandMacros = true;
-                    options->bIncludeComments = false;
-
-                    TInitializer_CodePrint2(program,
-                        options,
-                        &pStructDeclaration->SpecifierQualifierList,
-                        TPointerList_IsPointer(&pDeclarator->pDeclarator->PointerList),
-                        pDeclarator->pInitializer,
-                        false,
-                        strBuilder);
-
-                    options->bExpandMacros = bExpandMacros;
-                    options->bIncludeComments = bIncludeComments;
-                }
-                else
-                {
-                    BuildInitialization2(program,
-                        options,
-                        &pStructDeclaration->SpecifierQualifierList,
-                        TPointerList_IsPointer(&pDeclarator->pDeclarator->PointerList),
-                        strBuilder);
-                }
-                k++;
-            }
-        }
-    }
-    Output_Append(strBuilder, "}");
-}
-
-void BuildInitialization(TProgram* program,
-    Options * options,
-    TDeclarationSpecifiers* pDeclarationSpecifiers,
-    bool bIsPointer,
-    StrBuilder* strBuilder)
-{
-    if (bIsPointer)
-    {
-        Output_Append(strBuilder, "NULL");
-    }
-    else
-    {
-        TSpecifier *pSpecifier = pDeclarationSpecifiers->pHead;
-
-        TStorageSpecifier *pStorageSpecifier =
-            TSpecifier_As_TStorageSpecifier(pSpecifier);
-        if (pStorageSpecifier)
-        {
-            //Exemplo typedef struct X {};
-            if (pStorageSpecifier->bIsTypedef)
-            {
-                pSpecifier = pDeclarationSpecifiers->pHead->pNext;
-            }
-        }
-
-        if (pSpecifier != NULL)
-        {
-            switch (pSpecifier->Type)
-            {
-            case TSingleTypeSpecifier_ID:
-                BuildSingleTypeSpecifierInitialization(program, options, (TSingleTypeSpecifier*)pSpecifier, bIsPointer, strBuilder);
-                break;
-            case TEnumSpecifier_ID:
-                BuildEnumSpecifierInitialization(program, options, (TEnumSpecifier*)pSpecifier, strBuilder);
-                break;
-            case TStructUnionSpecifier_ID:
-                BuildStructUnionSpecifierInitialization(program, options, (TStructUnionSpecifier*)pSpecifier, strBuilder);
-                break;
-
-
-            case TTemplateTypeSpecifier_ID:
-                Output_Append(strBuilder, "{0}");
-                break;
-
-            default:
-                ASSERT(false);
-                break;
-            }
-        }
-    }
-}
-
-
-void BuildInitialization2(TProgram* program,
-    Options * options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    bool bIsPointer,
-    StrBuilder* strBuilder)
-{
-    if (bIsPointer)
-    {
-        Output_Append(strBuilder, "NULL");
-    }
-    else
-    {
-
-        switch (pSpecifierQualifierList->pHead->Type)
-        {
-        case TSingleTypeSpecifier_ID:
-            BuildSingleTypeSpecifierInitialization(program, options, (TSingleTypeSpecifier*)pSpecifierQualifierList->pHead, bIsPointer, strBuilder);
-            break;
-        case TEnumSpecifier_ID:
-            BuildEnumSpecifierInitialization(program, options, (TEnumSpecifier*)pSpecifierQualifierList->pHead, strBuilder);
-            break;
-        case TStructUnionSpecifier_ID:
-            BuildStructUnionSpecifierInitialization(program, options, (TStructUnionSpecifier*)pSpecifierQualifierList->pHead, strBuilder);
-            break;
-        default:
-            ASSERT(false);
-            break;
-        }
-    }
-}
-
 
 
 
@@ -1371,95 +1129,6 @@ static bool TInitializerList_CodePrint(TProgram* program,
 
     return true;
 }
-
-static bool TInitializerList_CodePrint2(TProgram* program,
-    Options * options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    bool bIsPointer,
-    TInitializerList*p,
-    bool b,
-    StrBuilder* fp)
-{
-
-
-    b = false;
-
-    if (List_HasOneItem(p) &&
-        List_Back(p)->pInitializer == NULL/* &&
-        pSpecifierQualifierList != NULL*/)
-    {
-        //a partir de {} e um tipo consegue gerar o final
-        BuildInitialization2(program, options, pSpecifierQualifierList, bIsPointer, fp);
-        ASSERT(false);
-    }
-    else
-    {
-        //TNodeClueList_CodePrint(&p->ClueList, fp, 0);
-
-        //Output_Append(fp, "{");
-
-        ForEachListItem(TInitializerListItem, pItem, p)
-        {
-            if (!List_IsFirstItem(p, pItem))
-                Output_Append(fp, ",");
-
-            b = TInitializerListItem_CodePrint2(program, options,
-                pSpecifierQualifierList,
-                bIsPointer, pItem, b, fp);
-        }
-
-        //Output_Append(fp, "}");
-    }
-
-
-    return true;
-}
-
-
-static bool TInitializerListType_CodePrint2(TProgram* program,
-    Options * options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    bool bIsPointer,
-    TInitializerListType*p,
-    bool b,
-    StrBuilder* fp)
-{
-
-    if (List_HasOneItem(&p->InitializerList) &&
-        List_Back(&p->InitializerList)->pInitializer == NULL /*&&
-                                                             pSpecifierQualifierList != NULL*/)
-    {
-        //a partir de {} e um tipo consegue gerar o final
-        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-        BuildInitialization2(program,
-            options,
-            pSpecifierQualifierList,
-            bIsPointer,
-            fp);
-    }
-    else
-    {
-        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-        Output_Append(fp, "{");
-
-        b = TInitializerList_CodePrint2(program,
-            options,
-            pSpecifierQualifierList,
-            bIsPointer,
-            &p->InitializerList,
-            b,
-            fp);
-
-        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-        Output_Append(fp, "}");
-    }
-
-
-
-    return true;
-}
-
-
 static bool TInitializerListType_CodePrint(TProgram* program,
     Options * options,
     TDeclarator* pDeclarator,
@@ -1514,35 +1183,6 @@ static bool TInitializerListType_CodePrint(TProgram* program,
     return true;
 }
 
-
-
-bool TInitializer_CodePrint2(TProgram* program,
-    Options * options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    bool bIsPointer,
-    TInitializer* pTInitializer,
-    bool b,
-    StrBuilder* fp)
-{
-    if (pTInitializer == NULL)
-    {
-        return false;
-    }
-    if (pTInitializer->Type == TInitializerListType_ID)
-    {
-        b = TInitializerListType_CodePrint2(program,
-            options,
-            pSpecifierQualifierList,
-            bIsPointer,
-            (TInitializerListType*)pTInitializer, b, fp);
-    }
-    else
-    {
-        b = TExpression_CodePrint(program, options, (TExpression*)pTInitializer, "", false, fp);
-    }
-
-    return b;
-}
 
 
 static bool TInitializer_CodePrint(TProgram* program,
@@ -3021,13 +2661,6 @@ void Typedef_BuildDestroy(TProgram* program,
     StrBuilder_Destroy(&strFuncName);
 }
 
-bool TInitializer_CodePrint2(TProgram* program,
-    Options * options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    bool bIsPointer,
-    TInitializer* pTInitializer,
-    bool b,
-    StrBuilder* fp);
 
 void TSingleTypeSpecifier_BuildDestroy(TProgram* program,
     TSpecifierQualifierList* pSpecifierQualifierList,
@@ -3061,10 +2694,13 @@ void TSingleTypeSpecifier_BuildDestroy(TProgram* program,
                 StrBuilder sb = STRBUILDER_INIT;
                 Options options = OPTIONS_INIT;
                 options.bExpandMacros = true;
-                TInitializer_CodePrint2(program,
+
+
+                TInitializer_CodePrint(program,
                     &options,
-                    pSpecifierQualifierList,
-                    bIsPointer,
+                    NULL,
+                    (TDeclarationSpecifiers*)pSpecifierQualifierList,
+                    false,
                     pInitializer,
                     false,
                     &sb);
@@ -3226,9 +2862,10 @@ void TStructUnionSpecifier_BuildDestroy(TProgram* program,
                                     StrBuilder sb = STRBUILDER_INIT;
                                     Options options = OPTIONS_INIT;
                                     options.bExpandMacros = true;
-                                    TInitializer_CodePrint2(program,
+                                    TInitializer_CodePrint(program,
                                         &options,
-                                        &pStructDeclaration->SpecifierQualifierList,
+                                        pStructDeclarator->pDeclarator,
+                                        (TDeclarationSpecifiers* )&pStructDeclaration->SpecifierQualifierList,
                                         bStructDeclaratorIsPointer,
                                         pStructDeclarator->pInitializer,
                                         false,

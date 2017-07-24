@@ -55,6 +55,8 @@ int main()
 {
     Shapes shapes = {};
 
+    shape = (Shapes) {};
+
     Shapes_Add(&shapes, (Shape*) Box_Create());
     
     Shapes_Add(&shapes, (Shape*)Circle_Create());
