@@ -1,5 +1,6 @@
+typedef struct X X;
 
-
+X * p;
 #include <stdio.h>
 #include <stdlib.h>
 
