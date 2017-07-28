@@ -2323,7 +2323,7 @@ void Typedef_BuildDestroy(TProgram* program,
                     if (pTypedefDeclarator != NULL)
                     {
                         // "inline"
-						options->IdentationLevel++;
+						
                         BuildDestroy(program,
 							options,
                             (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
@@ -2333,7 +2333,7 @@ void Typedef_BuildDestroy(TProgram* program,
                             bVariableNameIsPointer,
                             BuildTypeInit,
                             fp);
-						options->IdentationLevel--;
+					
                     }
                 }
             }
@@ -2448,7 +2448,7 @@ void Typedef_BuildDestroy(TProgram* program,
                     if (pTypedefDeclarator != NULL)
                     {
                         // "inline"
-						options->IdentationLevel++;
+						
                         BuildDestroy(program,
 							options,
                             (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
@@ -2457,7 +2457,7 @@ void Typedef_BuildDestroy(TProgram* program,
                             pVariableName,
                             bVariableNameIsPointer,
                             BuildTypeDestroy, fp);
-						options->IdentationLevel--;
+						
                     }
                 }
             }
@@ -2649,7 +2649,7 @@ void Typedef_BuildDestroy(TProgram* program,
                 if (pTypedefDeclarator != NULL)
                 {
                     // "inline"
-					options->IdentationLevel++;
+
                     BuildDestroy(program,
 						options,
                         (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
@@ -2658,7 +2658,7 @@ void Typedef_BuildDestroy(TProgram* program,
                         pVariableName,
                         bVariableNameIsPointer,
                         BuildTypeStaticInit, fp);
-					options->IdentationLevel--;
+
                 }
             }
         }
@@ -2730,11 +2730,11 @@ void TSingleTypeSpecifier_BuildDestroy(TProgram* program,
             {
                 if (bIsPointer)
                 {
-                    StrBuilder_AppendFmt(fp, "%s = NULL;\n", pVariableName);
+                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = NULL;\n", pVariableName);
                 }
                 else
                 {
-                    StrBuilder_AppendFmt(fp, "%s = 0;\n", pVariableName);
+                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = 0;\n", pVariableName);
                 }
             }
         }
@@ -2767,11 +2767,11 @@ void TSingleTypeSpecifier_BuildDestroy(TProgram* program,
         {
             if (bIsPointer)
             {
-                StrBuilder_AppendFmt(fp, "/*%s*/NULL", pVariableName);
+                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/NULL", pVariableName);
             }
             else
             {
-                StrBuilder_AppendFmt(fp, "/*%s*/0", pVariableName);
+                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/0", pVariableName);
             }
         }
     }
@@ -2896,7 +2896,7 @@ void TStructUnionSpecifier_BuildDestroy(TProgram* program,
                                 }
                                 else
                                 {
-                                    StrBuilder_AppendFmt(fp, "/*%s*/0", pVariableName);
+                                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/0", pVariableName);
                                 }
                             }
                             else
@@ -2937,7 +2937,7 @@ void TStructUnionSpecifier_BuildDestroy(TProgram* program,
 
     if (buildType == BuildTypeStaticInit)
     {
-        StrBuilder_AppendFmt(fp, "}");
+        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "}");
     }
 }
 
@@ -2953,7 +2953,7 @@ void BuildDestroy(TProgram* program,
 {
     if (buildType == BuildTypeDelete)
     {
-        StrBuilder_AppendIdent(fp, 4, "if (");
+        StrBuilder_AppendIdent(fp, options->IdentationLevel * 4, "if (");
         StrBuilder_Append(fp, pVariableName);
         StrBuilder_Append(fp, " != NULL) {\n");
 		options->IdentationLevel++;
@@ -2961,7 +2961,7 @@ void BuildDestroy(TProgram* program,
     }
     else if (buildType == BuildTypeCreate)
     {
-		StrBuilder_AppendIdent(fp, 4, "");
+		StrBuilder_AppendIdent(fp, options->IdentationLevel * 4, "");
 
         
 		bool bDontPrintClueList = options->bDontPrintClueList;
@@ -2972,7 +2972,7 @@ void BuildDestroy(TProgram* program,
         StrBuilder_Append(fp, " *p = (");
         TSpecifierQualifierList_CodePrint(program, options, pSpecifierQualifierList, false, fp);
         StrBuilder_Append(fp, "*) malloc(sizeof * p);\n");
-        StrBuilder_AppendIdent(fp, 4, "if (p != NULL) {\n");
+        StrBuilder_AppendIdent(fp, options->IdentationLevel * 4, "if (p != NULL) {\n");
 		
 		options->bDontPrintClueList = bDontPrintClueList;
 		options->IdentationLevel++;
