@@ -506,6 +506,8 @@ typedef struct
 #define TBUILDINTYPE_SPECIFIER_INIT { {TSingleTypeSpecifier_ID}, NULL, TK_NONE, STRING_INIT, LIST_INIT}
 CREATETYPE(TSingleTypeSpecifier, TBUILDINTYPE_SPECIFIER_INIT)
 
+const char* TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier* p);
+
 typedef TTypePointer TTypeSpecifier;
 
 
@@ -603,9 +605,10 @@ typedef struct TInitializerListItem
     TInitializer* pInitializer;
     struct TInitializerListItem* pNext;
     TScannerItemList ClueList;
+	bool bDefault;
 } TInitializerListItem;
 
-#define TINITIALIZER_LIST_ITEM_INIT { LIST_INIT , NULL, NULL, TSCANNERITEMLIST_INIT}
+#define TINITIALIZER_LIST_ITEM_INIT { LIST_INIT , NULL, NULL, TSCANNERITEMLIST_INIT, false}
 CREATETYPE(TInitializerListItem, TINITIALIZER_LIST_ITEM_INIT)
 
 #define TInitializerList_Destroy(p) List_Destroy(TInitializerListItem, p)
@@ -614,11 +617,13 @@ typedef struct
 {
     TTypePointer Type;
     TInitializerList InitializerList;
+	TScannerItemList ClueList00;
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
+	bool bDefault;
 } TInitializerListType;
 
-#define TINITIALIZER_LIST_TYPE_INIT {{TInitializerListType_ID}, LIST_INIT, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT}
+#define TINITIALIZER_LIST_TYPE_INIT {{TInitializerListType_ID}, LIST_INIT, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT, false}
 CREATETYPE(TInitializerListType, TINITIALIZER_LIST_TYPE_INIT)
 
 
@@ -685,7 +690,9 @@ typedef struct TInitDeclarator
     TDeclarator* pDeclarator;
     TInitializer* pInitializer;
     struct TInitDeclarator * pNext;
-    TScannerItemList ClueList0;
+    TScannerItemList ClueList00;
+	
+	TScannerItemList ClueList1; //defval
 } TInitDeclarator;
 
 #define TINITDECLARATOR_INIT {NULL, NULL, NULL, TSCANNERITEMLIST_INIT}
@@ -761,14 +768,15 @@ typedef struct
     int FileIndex;
     int Line;
 
-    TScannerItemList ClueList0;
+	TScannerItemList ClueList00; //default
+    //TScannerItemList ClueList0;
 
     bool bDefault;
     TScannerItemList ClueList1;
 
 
 } TDeclaration;
-#define TFUNCVARDECLARATION_INIT { {TDeclaration_ID}, TDECLARATION_SPECIFIERS_INIT, LIST_INIT, NULL,  -1, -1, TSCANNERITEMLIST_INIT, false, TSCANNERITEMLIST_INIT}
+#define TFUNCVARDECLARATION_INIT { {TDeclaration_ID}, TDECLARATION_SPECIFIERS_INIT, LIST_INIT, NULL,  -1, -1, TSCANNERITEMLIST_INIT,  false, TSCANNERITEMLIST_INIT}
 CREATETYPE(TDeclaration, TFUNCVARDECLARATION_INIT)
 
 void TDeclaration_Destroy(TDeclaration* p);
@@ -779,7 +787,7 @@ TCompoundStatement* TDeclaration_Is_FunctionDefinition(TDeclaration* p);
 const char* TDeclaration_GetFunctionThis(TDeclaration* p);
 bool TDeclaration_Is_EnumDeclaration(TDeclaration* p);
 TDeclarator* TDeclaration_FindDeclarator(TDeclaration* p, const char* name);
-
+const char* TDeclaration_GetFunctionName(TDeclaration* p);
 
 
 CAST(TAnyDeclaration, TStaticAssertDeclaration)

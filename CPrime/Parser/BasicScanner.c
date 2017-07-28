@@ -109,6 +109,8 @@ const char* TokenToString(Tokens tk)
           break;
         case TK_AUTO:
             return "auto";
+		case TK__AUTO:
+			return "_auto";
         case TK_BREAK:
             return "break";
         case TK_CASE:
@@ -121,6 +123,10 @@ const char* TokenToString(Tokens tk)
             return "continue";
         case TK_DEFAULT:
             return "default";
+		case TK__DEFAULT:
+			return "_default";
+		case TK__DEFVAL:
+			return "_defval";
         case TK_DO:
             return "do";
         case TK_DOUBLE:
@@ -469,12 +475,15 @@ static struct TkPair keywords[] =
 {
     //keywords
     { "auto", TK_AUTO },
+	{ "_auto", TK__AUTO },
     { "break", TK_BREAK },
     { "case", TK_CASE },
     { "char", TK_char },
     { "const", TK_CONST },
     { "continue", TK_CONTINUE },
     { "default", TK_DEFAULT },
+	{ "_default", TK__DEFAULT },
+	{ "_defval", TK__DEFVAL},
     { "do", TK_DO },
     { "double", TK_DOUBLE },
     { "else", TK_ELSE },

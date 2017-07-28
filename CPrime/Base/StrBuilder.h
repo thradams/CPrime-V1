@@ -50,9 +50,14 @@ Result StrBuilder_AppendInt(StrBuilder * p, int i);
 
 
 void StrBuilder_AppendFmt(StrBuilder * p, const char* fmt, ...);
+void StrBuilder_AppendFmtIdent(StrBuilder * p, int nspaces, const char* fmt, ...);
 
 Result StrBuilder_AppendWChar(StrBuilder * p, wchar_t wch);
 Result StrBuilder_AppendW(StrBuilder * p, const wchar_t* psz);
 Result StrBuilder_AppendChar(StrBuilder * p, char wch);
 void StrBuilder_Trim(StrBuilder* p);
 Result StrBuilder_AppendUpper(StrBuilder *p, const char* s);
+
+Result StrBuilder_AppendIdent(StrBuilder* p,
+	int nspaces,
+	const char* source);

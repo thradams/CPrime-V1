@@ -9,3 +9,6 @@
 /.vs
 /CPrime/hello.json
 /CPrime/out/hello.c
+/Hello/Release
+/Hello/Debug
+/Debug

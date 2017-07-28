@@ -16,8 +16,9 @@ void AstPlayground(TProgram* program);
 
 void Compile(const char* configFileName,
     const char* inputFileName,
+	const char* outputFileName,
     Options* options,
-             bool bPrintASTFile)
+    bool bPrintASTFile)
 {
     TProgram program = TPROGRAM_INIT;
 
@@ -44,11 +45,11 @@ void Compile(const char* configFileName,
             char outc[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT + 1];
             MakePath(outc, drive, dir, fname, ".json");
 
-            strcat(dir, "\\out\\");
-            MakePath(outc, drive, dir, fname, ext);
+            //strcat(dir, "\\out\\");
+            //MakePath(outc, drive, dir, fname, ext);
 
             printf("Generating code for %s...\n", inputFileName);
-            TProgram_PrintCodeToFile(&program, options, outc, inputFileName);
+            TProgram_PrintCodeToFile(&program, options, outputFileName, inputFileName);
         }
 
         printf("Done!\n");
@@ -62,12 +63,14 @@ void PrintHelp()
     printf("\n");
     printf("Examples: cprime hello.c\n");
     printf("          cprime -config config.h hello.c\n");
-    printf("          cprime -config config.h -P hello.c\n");
+	printf("          cprime -config config.h hello.c -out hello.c\n");
+    printf("          cprime -config config.h -P hello.c\n");	
     printf("          cprime -E hello.c\n");
     printf("\n");
     printf("Options:\n");
     printf("-config FILE                          Configuration file.\n");
     printf("-help                                 Print this message.\n");
+	printf("-out                                  Sets ouput file name.\n");
     printf("-E                                    Preprocess to console.\n");
     printf("-P                                    Preprocess to file.\n");
     printf("-A                                    Output AST to file.\n");
@@ -90,6 +93,8 @@ int main(int argc, char* argv[])
 
     const char* configFileName = NULL;
 
+	String outputFullPath = NULL;
+	
 
     Options options = OPTIONS_INIT;
     bool bPrintPreprocessedToFile = false;
@@ -117,7 +122,7 @@ int main(int argc, char* argv[])
         }
         else if (strcmp(option, "-config") == 0)
         {
-            if (i + i < argc)
+            if (i + 1 < argc)
             {
                 configFileName = argv[i + 1];
                 i++;
@@ -127,6 +132,18 @@ int main(int argc, char* argv[])
                 printf("missing file\n");
             }
         }
+		else if (strcmp(option, "-out") == 0)
+		{
+			if (i + 1 < argc)
+			{
+				GetFullPath(argv[i + 1], &outputFullPath);
+				i++;
+			}
+			else
+			{
+				printf("missing file\n");
+			}
+		}
         else
         {
             const char* inputFileName = option;
@@ -143,12 +160,14 @@ int main(int argc, char* argv[])
             }
             else
             {
-                Compile(configFileName, inputFullPath, &options, bPrintASTFile);
+                Compile(configFileName, inputFullPath, outputFullPath, &options, bPrintASTFile);
             }
             String_Destroy(&inputFullPath);
-        }
-    }
+		        
+		}
 
+    }
+	String_Destroy(&outputFullPath);
 
     return 0;
 }

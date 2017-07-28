@@ -9,47 +9,51 @@
 
 typedef enum
 {
-    BuildTypeInit,
-    BuildTypeDestroy,
-    BuildTypeCreate,
-    BuildTypeDelete,
-    BuildTypeStaticInit,
+	BuildTypeInit,
+	BuildTypeDestroy,
+	BuildTypeCreate,
+	BuildTypeDelete,
+	BuildTypeStaticInit,
 } BuildType;
 
 
 typedef struct Options
 {
-    bool bExpandMacros;
-    bool bIncludeComments;
+	bool bExpandMacros;
+	bool bIncludeComments;
+	bool bDontPrintClueList;
+	int IdentationLevel;
 } Options;
 
-#define OPTIONS_INIT {false, true}
+#define OPTIONS_INIT {false, true, false, 0}
+
 void Options_Destroy(Options* options);
- 
+
 void TProgram_PrintCodeToFile(TProgram * pProgram,
-                              Options* options,
-                              const char * fileName,	                        
-	                            const char* userpath);
+	Options* options,
+	const char * fileName,
+	const char* userpath);
 
 void BuildInitializationForTypedef(TProgram* program,
-                                   Options * options,
-                                   const char* typedefName,
-                                   StrBuilder* strBuilder);
+	Options * options,
+	const char* typedefName,
+	StrBuilder* strBuilder);
 
 bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, bool b, StrBuilder* fp);
 
 void BuildDestroy(TProgram* program,
-                  TSpecifierQualifierList* pSpecifierQualifierList,
-                  TDeclarator* pDeclarator,
-                  TInitializer* pInitializer,
-                  const char* pVariableName,
-                  bool bVariableNameIsPointer,
-                  BuildType buildType,
-                  StrBuilder* fp);
+	Options * options,
+	TSpecifierQualifierList* pSpecifierQualifierList,
+	TDeclarator* pDeclarator,
+	TInitializer* pInitializer,
+	const char* pVariableName,
+	bool bVariableNameIsPointer,
+	BuildType buildType,
+	StrBuilder* fp);
 
 bool IsSuffix(const char* s, const char* suffix);
 bool TSpecifierQualifierList_CodePrint(TProgram* program,
-                                       Options * options,
-                                       TSpecifierQualifierList* pDeclarationSpecifiers,
-                                       bool b,
-                                       StrBuilder* fp);
+	Options * options,
+	TSpecifierQualifierList* pDeclarationSpecifiers,
+	bool b,
+	StrBuilder* fp);

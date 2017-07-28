@@ -148,6 +148,17 @@ Result StrBuilder_AppendN(StrBuilder* p,
   return r;
 }
 
+Result StrBuilder_AppendIdent(StrBuilder* p,
+	int nspaces, 
+	const char* source)
+{
+	for (int i = 0; i < nspaces; i++)
+	{
+		StrBuilder_Append(p, " ");
+	}
+	return StrBuilder_Append(p, source);
+}
+
 Result StrBuilder_Append(StrBuilder* p,
                          const char* source)
 {
@@ -312,4 +323,20 @@ void StrBuilder_AppendFmt(StrBuilder * p, const char* fmt, ...)
     StrBuilder_Append(p, buffer);
     va_end(args);
     
+}
+
+void StrBuilder_AppendFmtIdent(StrBuilder * p, int nspaces, const char* fmt, ...)
+{
+	for (int i = 0; i < nspaces; i++)
+	{
+		StrBuilder_Append(p, " ");
+	}
+
+	va_list args;
+	va_start(args, fmt);
+	char buffer[500];
+	vsnprintf(buffer, 500, fmt, args);
+	StrBuilder_Append(p, buffer);
+	va_end(args);
+
 }

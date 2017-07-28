@@ -330,6 +330,15 @@ void TSingleTypeSpecifier_Destroy(TSingleTypeSpecifier* p)
     TScannerItemList_Destroy(&p->ClueList0);
 }
 
+const char* TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier* p)
+{
+	const char* result = NULL;
+	if (p->Token == TK_IDENTIFIER)
+	{
+		result = p->TypedefName;
+	}
+	return result;
+}
 
 void TTypeSpecifier_Destroy(TTypeSpecifier* p)
 {
@@ -364,7 +373,9 @@ void TInitDeclarator_Destroy(TInitDeclarator* p)
     //TInitDeclarator_Delete(p->pInitDeclaratorNext);
     TDeclarator_Delete(p->pDeclarator);
     TInitializer_Delete(p->pInitializer);
-    TScannerItemList_Destroy(&p->ClueList0);
+	
+	TScannerItemList_Destroy(&p->ClueList00);	
+    TScannerItemList_Destroy(&p->ClueList1);
 }
 
 
@@ -614,7 +625,7 @@ bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
         }
         ForEachListItem(TTypeQualifier, pQualifier, &pItem->Qualifier)
         {
-            if (pQualifier->Token == TK_AUTO ||
+            if (pQualifier->Token == TK__AUTO ||
                 pQualifier->Token == TK_OWN_QUALIFIER)
             {
                 bIsAuto = true;
@@ -848,7 +859,9 @@ void TDeclaration_Destroy(TDeclaration* p)
     TDeclarationSpecifiers_Destroy(&p->Specifiers);
     List_Destroy(TInitDeclarator, &p->InitDeclaratorList);
 
-    TScannerItemList_Destroy(&p->ClueList0);
+    TScannerItemList_Destroy(&p->ClueList00);
+//	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void TParameter_Swap(TParameter* a, TParameter* b)
@@ -1022,6 +1035,7 @@ void TDesignator_Destroy(TDesignator* p)
 void  TInitializerListType_Destroy(TInitializerListType* pTInitializerListType)
 {
     TInitializerList_Destroy(&pTInitializerListType->InitializerList);
+	TScannerItemList_Destroy(&pTInitializerListType->ClueList00);
     TScannerItemList_Destroy(&pTInitializerListType->ClueList0);
     TScannerItemList_Destroy(&pTInitializerListType->ClueList1);
 }
@@ -1601,7 +1615,7 @@ TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration* p)
     return pParameterTypeList;
 }
 
-const char* TDeclaration_Is_FunctionDeclaration(TDeclaration* p)
+const char* TDeclaration_GetFunctionName(TDeclaration* p)
 {
     const char* functionName = NULL;
 
