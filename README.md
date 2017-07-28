@@ -1,8 +1,36 @@
 # C' (C Prime)
 
-C' is a C11 language with extensions. 
-The ouput is C89 compatible with C++. 
-C' keeps your formatting macros and comments. (We can also reformat in the future)
+C' is a pre-processor for the C language plus some extensions that ouputs C 89 code.
+The language accept for C' can be created using macros in C but C' will collect more informations.
+
+Sample
+```c
+typedef struct 
+{
+   int type _defval(1);
+} Z;
+
+int main()
+{
+   Z z = _default {0};
+}
+
+```
+When you compile this code the following code is generated:
+
+```c
+typedef struct 
+{
+   int type _defval(1);
+} Z;
+
+int main()
+{
+   Z z = _default {1};
+}
+
+```
+
 
 ## How can it help?
 
