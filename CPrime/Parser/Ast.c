@@ -6,328 +6,333 @@
 
 void TCompoundStatement_Destroy(TCompoundStatement *p)
 {
-    ArrayT_Destroy(TBlockItem, &p->BlockItemList);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
+	ArrayT_Destroy(TBlockItem, &p->BlockItemList);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void TLabeledStatement_Destroy(TLabeledStatement *p)
 {
-    TStatement_Delete(p->pStatementOpt);
-    String_Destroy(&p->Identifier);
-    TExpression_Delete(p->pExpression);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
+	TStatement_Delete(p->pStatementOpt);
+	String_Destroy(&p->Identifier);
+	TExpression_Delete(p->pExpression);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void TForStatement_Destroy(TForStatement *p)
 {
-    TAnyDeclaration_Delete(p->pInitDeclarationOpt);
-    TExpression_Delete(p->pExpression1);
-    TExpression_Delete(p->pExpression2);
-    TExpression_Delete(p->pExpression3);
-    TStatement_Delete(p->pStatement);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
-    TScannerItemList_Destroy(&p->ClueList3);
-    TScannerItemList_Destroy(&p->ClueList4);
+	TAnyDeclaration_Delete(p->pInitDeclarationOpt);
+	TExpression_Delete(p->pExpression1);
+	TExpression_Delete(p->pExpression2);
+	TExpression_Delete(p->pExpression3);
+	TStatement_Delete(p->pStatement);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
+	TScannerItemList_Destroy(&p->ClueList3);
+	TScannerItemList_Destroy(&p->ClueList4);
 }
 
 void TWhileStatement_Destroy(TWhileStatement *p)
 {
-    TExpression_Delete(p->pExpression);
-    TStatement_Delete(p->pStatement);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
+	TExpression_Delete(p->pExpression);
+	TStatement_Delete(p->pStatement);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
 }
 
 void TReturnStatement_Destroy(TReturnStatement *p)
 {
-    TExpression_Delete(p->pExpression);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
+	TExpression_Delete(p->pExpression);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void TDoStatement_Destroy(TDoStatement *p)
 {
-    TExpression_Delete(p->pExpression);
-    TStatement_Delete(p->pStatement);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
-    TScannerItemList_Destroy(&p->ClueList3);
-    TScannerItemList_Destroy(&p->ClueList4);
+	TExpression_Delete(p->pExpression);
+	TStatement_Delete(p->pStatement);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
+	TScannerItemList_Destroy(&p->ClueList3);
+	TScannerItemList_Destroy(&p->ClueList4);
 
 }
 
 void TExpressionStatement_Destroy(TExpressionStatement *p)
 {
-    TExpression_Delete(p->pExpression);
-    TScannerItemList_Destroy(&p->ClueList0);
+	TExpression_Delete(p->pExpression);
+	TScannerItemList_Destroy(&p->ClueList0);
 }
 
 void TJumpStatement_Destroy(TJumpStatement *p)
 {
-    TExpression_Delete(p->pExpression);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
+	TExpression_Delete(p->pExpression);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void TAsmStatement_Destroy(TAsmStatement *p)
 {
-    p->Type.Type = TypeNull;
-    TScannerItemList_Destroy(&p->ClueList);
+	p->Type.Type = TypeNull;
+	TScannerItemList_Destroy(&p->ClueList);
 }
 
 void TSwitchStatement_Destroy(TSwitchStatement *p)
 {
-    TExpression_Delete(p->pConditionExpression);
-    TStatement_Delete(p->pExpression);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
+	TExpression_Delete(p->pConditionExpression);
+	TStatement_Delete(p->pExpression);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
 }
 
 void TIfStatement_Destroy(TIfStatement *p)
 {
-    TExpression_Delete(p->pConditionExpression);
-    TStatement_Delete(p->pStatement);
-    TStatement_Delete(p->pElseStatement);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
-    TScannerItemList_Destroy(&p->ClueList3);
+	TExpression_Delete(p->pConditionExpression);
+	TStatement_Delete(p->pStatement);
+	TStatement_Delete(p->pElseStatement);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
+	TScannerItemList_Destroy(&p->ClueList3);
 
 }
 
 void TStatement_Destroy(TStatement* p)
 {
-    switch (p->Type)
-    {
-        case TExpressionStatement_ID:
-        TExpressionStatement_Destroy((TExpressionStatement*)p);
-        break;
-        case TSwitchStatement_ID:
-        TSwitchStatement_Destroy((TSwitchStatement*)p);
-        break;
-        case TLabeledStatement_ID:
-        TLabeledStatement_Destroy((TLabeledStatement*)p);
-        break;
-        case TForStatement_ID:
-        TForStatement_Destroy((TForStatement*)p);
-        break;
-        case TJumpStatement_ID:
-        TJumpStatement_Destroy((TJumpStatement*)p);
-        break;
-        case TAsmStatement_ID:
-        TAsmStatement_Destroy((TAsmStatement*)p);
-        break;
-        case TCompoundStatement_ID:
-        TCompoundStatement_Destroy((TCompoundStatement*)p);
-        break;
-        case TIfStatement_ID:
-        TIfStatement_Destroy((TIfStatement*)p);
-        break;
-        case TDoStatement_ID:
-        TDoStatement_Destroy((TDoStatement*)p);
-        break;
-        case TReturnStatement_ID:
-        TReturnStatement_Destroy((TReturnStatement*)p);
-        break;
-        default:
-        ASSERT(false);
-        break;
-    }
+	switch (p->Type)
+	{
+	case TExpressionStatement_ID:
+		TExpressionStatement_Destroy((TExpressionStatement*)p);
+		break;
+	case TSwitchStatement_ID:
+		TSwitchStatement_Destroy((TSwitchStatement*)p);
+		break;
+	case TLabeledStatement_ID:
+		TLabeledStatement_Destroy((TLabeledStatement*)p);
+		break;
+	case TForStatement_ID:
+		TForStatement_Destroy((TForStatement*)p);
+		break;
+	case TJumpStatement_ID:
+		TJumpStatement_Destroy((TJumpStatement*)p);
+		break;
+	case TAsmStatement_ID:
+		TAsmStatement_Destroy((TAsmStatement*)p);
+		break;
+	case TCompoundStatement_ID:
+		TCompoundStatement_Destroy((TCompoundStatement*)p);
+		break;
+	case TIfStatement_ID:
+		TIfStatement_Destroy((TIfStatement*)p);
+		break;
+	case TDoStatement_ID:
+		TDoStatement_Destroy((TDoStatement*)p);
+		break;
+	case TReturnStatement_ID:
+		TReturnStatement_Destroy((TReturnStatement*)p);
+		break;
+	default:
+		ASSERT(false);
+		break;
+	}
 }
 
 void TBlockItem_Destroy(TBlockItem* p)
 {
 
-    switch (p->Type)
-    {
-        case TDeclaration_ID:
-        TDeclaration_Destroy((TDeclaration*)p);
-        break;
-        case TJumpStatement_ID:
-        TJumpStatement_Destroy((TJumpStatement*)p);
-        break;
-        case TAsmStatement_ID:
-        TAsmStatement_Destroy((TAsmStatement*)p);
-        break;
-        case TSwitchStatement_ID:
-        TSwitchStatement_Destroy((TSwitchStatement*)p);
-        break;
-        case TExpressionStatement_ID:
-        TExpressionStatement_Destroy((TExpressionStatement*)p);
-        break;
-        case TCompoundStatement_ID:
-        TCompoundStatement_Destroy((TCompoundStatement*)p);
-        break;
-        case TLabeledStatement_ID:
-        TLabeledStatement_Destroy((TLabeledStatement*)p);
-        break;
-        case TForStatement_ID:
-        TForStatement_Destroy((TForStatement*)p);
-        break;
-        case TWhileStatement_ID:
-        TWhileStatement_Destroy((TWhileStatement*)p);
-        break;
-        case TIfStatement_ID:
-        TIfStatement_Destroy((TIfStatement*)p);
-        break;
-        case TReturnStatement_ID:
-        TReturnStatement_Destroy((TReturnStatement*)p);
-        break;
-        case TDoStatement_ID:
-        TDoStatement_Destroy((TDoStatement*)p);
-        break;
-        //Statement
-        default:
-        ASSERT(false);
-        break;
-    }
+	switch (p->Type)
+	{
+	case TDeclaration_ID:
+		TDeclaration_Destroy((TDeclaration*)p);
+		break;
+	case TJumpStatement_ID:
+		TJumpStatement_Destroy((TJumpStatement*)p);
+		break;
+	case TAsmStatement_ID:
+		TAsmStatement_Destroy((TAsmStatement*)p);
+		break;
+	case TSwitchStatement_ID:
+		TSwitchStatement_Destroy((TSwitchStatement*)p);
+		break;
+	case TExpressionStatement_ID:
+		TExpressionStatement_Destroy((TExpressionStatement*)p);
+		break;
+	case TCompoundStatement_ID:
+		TCompoundStatement_Destroy((TCompoundStatement*)p);
+		break;
+	case TLabeledStatement_ID:
+		TLabeledStatement_Destroy((TLabeledStatement*)p);
+		break;
+	case TForStatement_ID:
+		TForStatement_Destroy((TForStatement*)p);
+		break;
+	case TWhileStatement_ID:
+		TWhileStatement_Destroy((TWhileStatement*)p);
+		break;
+	case TIfStatement_ID:
+		TIfStatement_Destroy((TIfStatement*)p);
+		break;
+	case TReturnStatement_ID:
+		TReturnStatement_Destroy((TReturnStatement*)p);
+		break;
+	case TDoStatement_ID:
+		TDoStatement_Destroy((TDoStatement*)p);
+		break;
+		//Statement
+	default:
+		ASSERT(false);
+		break;
+	}
 
 }
 
 void TPrimaryExpressionValue_Destroy(TPrimaryExpressionValue* p)
 {
-    TExpression_Delete(p->pExpressionOpt);
-    String_Destroy(&p->lexeme);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
+	TExpression_Delete(p->pExpressionOpt);
+	String_Destroy(&p->lexeme);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void TPostfixExpressionCore_Destroy(TPostfixExpressionCore* p)
 {
-    TInitializerList_Destroy(&p->InitializerList);
-    String_Destroy(&p->Identifier);
-    String_Destroy(&p->lexeme);
-    TExpression_Delete(p->pExpressionLeft);
-    TExpression_Delete(p->pExpressionRight);
-    TTypeName_Delete(p->pTypeName);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
-    TScannerItemList_Destroy(&p->ClueList3);
-    TScannerItemList_Destroy(&p->ClueList4);
+	TInitializerList_Destroy(&p->InitializerList);
+	String_Destroy(&p->Identifier);
+	String_Destroy(&p->lexeme);
+	TExpression_Delete(p->pExpressionLeft);
+	TExpression_Delete(p->pExpressionRight);
+	TTypeName_Delete(p->pTypeName);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
+	TScannerItemList_Destroy(&p->ClueList3);
+	TScannerItemList_Destroy(&p->ClueList4);
 }
 
 void TBinaryExpression_Destroy(TBinaryExpression* p)
 {
-    TExpression_Delete(p->pExpressionLeft);
-    TExpression_Delete(p->pExpressionRight);
-    TScannerItemList_Destroy(&p->ClueList0);
-
+	TExpression_Delete(p->pExpressionLeft);
+	TExpression_Delete(p->pExpressionRight);
+	TScannerItemList_Destroy(&p->ClueList00);
 }
 
 void TUnaryExpressionOperator_Destroy(TUnaryExpressionOperator* p)
 {
-    TExpression_Delete(p->pExpressionLeft);
-    TTypeName_Destroy(&p->TypeName);
-    TScannerItemList_Destroy(&p->ClueList0);
+	TExpression_Delete(p->pExpressionRight);
+	TTypeName_Destroy(&p->TypeName);
+	TScannerItemList_Destroy(&p->ClueList00);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
 }
 
 void TCastExpressionType_Destroy(TCastExpressionType* p)
 {
-    TExpression_Delete(p->pExpression);
-    TTypeName_Destroy(&p->TypeName);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
+	TExpression_Delete(p->pExpression);
+	TTypeName_Destroy(&p->TypeName);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void TTernaryExpression_Destroy(TTernaryExpression* p)
 {
-    TExpression_Delete(p->pExpressionLeft);
-    TExpression_Delete(p->pExpressionMiddle);
-    TExpression_Delete(p->pExpressionRight);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
+	TExpression_Delete(p->pExpressionLeft);
+	TExpression_Delete(p->pExpressionMiddle);
+	TExpression_Delete(p->pExpressionRight);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void TExpression_Destroy(TExpression* p)
 {
-    switch (p->Type)
-    {
-        CASE(TPrimaryExpressionValue) :
-            TPrimaryExpressionValue_Destroy((TPrimaryExpressionValue*)p);
-        break;
-        CASE(TPostfixExpressionCore) :
-            TPostfixExpressionCore_Destroy((TPostfixExpressionCore*)p);
-        break;
-        CASE(TBinaryExpression) :
-            TBinaryExpression_Destroy((TBinaryExpression*)p);
-        break;
-        CASE(TUnaryExpressionOperator) :
-            TUnaryExpressionOperator_Destroy((TUnaryExpressionOperator*)p);
-        break;
-        CASE(TCastExpressionType) :
-            TCastExpressionType_Destroy((TCastExpressionType*)p);
-        break;
+	switch (p->Type)
+	{
+		CASE(TPrimaryExpressionValue) :
+			TPrimaryExpressionValue_Destroy((TPrimaryExpressionValue*)p);
+		break;
+		CASE(TPostfixExpressionCore) :
+			TPostfixExpressionCore_Destroy((TPostfixExpressionCore*)p);
+		break;
+		CASE(TBinaryExpression) :
+			TBinaryExpression_Destroy((TBinaryExpression*)p);
+		break;
+		CASE(TUnaryExpressionOperator) :
+			TUnaryExpressionOperator_Destroy((TUnaryExpressionOperator*)p);
+		break;
+		CASE(TCastExpressionType) :
+			TCastExpressionType_Destroy((TCastExpressionType*)p);
+		break;
 
-        CASE(TTernaryExpression) :
-            TTernaryExpression_Destroy((TTernaryExpression*)p);
-        break;
+		CASE(TTernaryExpression) :
+			TTernaryExpression_Destroy((TTernaryExpression*)p);
+		break;
 
-        default:
-        ASSERT(false);
-        break;
-    }
+	default:
+		ASSERT(false);
+		break;
+	}
 
 }
 
+void TEofDeclaration_Destroy(TEofDeclaration* p)
+{
+	TScannerItemList_Destroy(&p->ClueList0);
+}
 
 void TStaticAssertDeclaration_Destroy(TStaticAssertDeclaration* p)
 {
-    p->Type.Type = TypeNull;
-    TExpression_Delete(p->pConstantExpression);
-    String_Destroy(&p->Text);
+	p->Type.Type = TypeNull;
+	TExpression_Delete(p->pConstantExpression);
+	String_Destroy(&p->Text);
 
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
-    TScannerItemList_Destroy(&p->ClueList3);
-    TScannerItemList_Destroy(&p->ClueList4);
-    TScannerItemList_Destroy(&p->ClueList5);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
+	TScannerItemList_Destroy(&p->ClueList3);
+	TScannerItemList_Destroy(&p->ClueList4);
+	TScannerItemList_Destroy(&p->ClueList5);
 }
 
 void TEnumerator_Destroy(TEnumerator* p)
 {
-    String_Destroy(&p->Name);
-    TExpression_Delete(p->pExpression);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
+	String_Destroy(&p->Name);
+	TExpression_Delete(p->pExpression);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
 }
 
 void TEnumSpecifier_Destroy(TEnumSpecifier* p)
 {
-    String_Destroy(&p->Name);
-    List_Destroy(TEnumerator, &p->EnumeratorList);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
-    TScannerItemList_Destroy(&p->ClueList3);
+	String_Destroy(&p->Name);
+	List_Destroy(TEnumerator, &p->EnumeratorList);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
+	TScannerItemList_Destroy(&p->ClueList3);
 
 }
 
 void TStructUnionSpecifier_Destroy(TStructUnionSpecifier* p)
 {
-    String_Destroy(&p->Name);
-    String_Destroy(&p->TemplateName);
-    ArrayT_Destroy(TAnyStructDeclaration, &p->StructDeclarationList);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
-    TScannerItemList_Destroy(&p->ClueList3);
-    TTemplateTypeSpecifierArgumentList_Destroy((TTemplateTypeSpecifierArgumentList*)&p->Args);
+	String_Destroy(&p->Name);
+	String_Destroy(&p->TemplateName);
+	ArrayT_Destroy(TAnyStructDeclaration, &p->StructDeclarationList);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
+	TScannerItemList_Destroy(&p->ClueList3);
+	TTemplateTypeSpecifierArgumentList_Destroy((TTemplateTypeSpecifierArgumentList*)&p->Args);
 }
 
 void TSingleTypeSpecifier_Destroy(TSingleTypeSpecifier* p)
 {
-    String_Destroy(&p->TypedefName);
-    TScannerItemList_Destroy(&p->ClueList0);
+	String_Destroy(&p->TypedefName);
+	TScannerItemList_Destroy(&p->ClueList0);
 }
 
 const char* TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier* p)
@@ -342,248 +347,248 @@ const char* TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier* p)
 
 void TTypeSpecifier_Destroy(TTypeSpecifier* p)
 {
-    switch (p->Type)
-    {
-        case TSingleTypeSpecifier_ID:
-        TSingleTypeSpecifier_Destroy((TSingleTypeSpecifier*)p);
-        break;
-        case TEnumSpecifier_ID:
-        TEnumSpecifier_Destroy((TEnumSpecifier*)p);
-        break;
-        case TStructUnionSpecifier_ID:
-        TStructUnionSpecifier_Destroy((TStructUnionSpecifier*)p);
-        break;
-        default:
-        ASSERT(false);
-        break;
-    }
+	switch (p->Type)
+	{
+	case TSingleTypeSpecifier_ID:
+		TSingleTypeSpecifier_Destroy((TSingleTypeSpecifier*)p);
+		break;
+	case TEnumSpecifier_ID:
+		TEnumSpecifier_Destroy((TEnumSpecifier*)p);
+		break;
+	case TStructUnionSpecifier_ID:
+		TStructUnionSpecifier_Destroy((TStructUnionSpecifier*)p);
+		break;
+	default:
+		ASSERT(false);
+		break;
+	}
 }
 
 
 void TDeclarator_Destroy(TDeclarator* p)
 {
-    List_Destroy(TPointer, &p->PointerList);
-    TDirectDeclarator_Delete(p->pDirectDeclarator);
-    TScannerItemList_Destroy(&p->ClueList);
+	List_Destroy(TPointer, &p->PointerList);
+	TDirectDeclarator_Delete(p->pDirectDeclarator);
+	TScannerItemList_Destroy(&p->ClueList);
 }
 
 void TInitDeclarator_Destroy(TInitDeclarator* p)
 {
-    //nao deletar aqui
-    //TInitDeclarator_Delete(p->pInitDeclaratorNext);
-    TDeclarator_Delete(p->pDeclarator);
-    TInitializer_Delete(p->pInitializer);
-	
-	TScannerItemList_Destroy(&p->ClueList00);	
-    TScannerItemList_Destroy(&p->ClueList1);
+	//nao deletar aqui
+	//TInitDeclarator_Delete(p->pInitDeclaratorNext);
+	TDeclarator_Delete(p->pDeclarator);
+	TInitializer_Delete(p->pInitializer);
+
+	TScannerItemList_Destroy(&p->ClueList00);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 
 
 void TDirectDeclarator_Destroy(TDirectDeclarator* p)
 {
-    String_Destroy(&p->Identifier);
-    //TParameterList_Delete(p->pParametersOpt);
-    //T/PointerList_Destroy(&p->PointerList);
-    TDeclarator_Delete(p->pDeclarator);
-    //TInitializer_Delete(p->pInitializer);
-    //TExpression_Delete(p->pExpression);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
-    TScannerItemList_Destroy(&p->ClueList3);
+	String_Destroy(&p->Identifier);
+	//TParameterList_Delete(p->pParametersOpt);
+	//T/PointerList_Destroy(&p->PointerList);
+	TDeclarator_Delete(p->pDeclarator);
+	//TInitializer_Delete(p->pInitializer);
+	//TExpression_Delete(p->pExpression);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
+	TScannerItemList_Destroy(&p->ClueList3);
 }
 
 bool TDeclarator_IsPointer(TDeclarator* p)
 {
-    return TPointerList_IsPointer(&p->PointerList);
+	return TPointerList_IsPointer(&p->PointerList);
 }
 
 TSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p)
 {
-    TSpecifier* pSpecifier = NULL;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
-    {
-        TSingleTypeSpecifier* pSingleTypeSpecifier =
-            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
+	TSpecifier* pSpecifier = NULL;
+	ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+	{
+		TSingleTypeSpecifier* pSingleTypeSpecifier =
+			TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
 
-        if (pSingleTypeSpecifier != NULL)
-        {
-            pSpecifier = TSingleTypeSpecifier_As_TSpecifier(pSingleTypeSpecifier);
-            break;
-        }
+		if (pSingleTypeSpecifier != NULL)
+		{
+			pSpecifier = TSingleTypeSpecifier_As_TSpecifier(pSingleTypeSpecifier);
+			break;
+		}
 
-        TStructUnionSpecifier* pStructUnionSpecifier =
-            TSpecifierQualifier_As_TStructUnionSpecifier(pSpecifierQualifier);
-        if (pStructUnionSpecifier != NULL)
-        {
-            pSpecifier = TStructUnionSpecifier_As_TSpecifier(pStructUnionSpecifier);
-            break;
-        }
+		TStructUnionSpecifier* pStructUnionSpecifier =
+			TSpecifierQualifier_As_TStructUnionSpecifier(pSpecifierQualifier);
+		if (pStructUnionSpecifier != NULL)
+		{
+			pSpecifier = TStructUnionSpecifier_As_TSpecifier(pStructUnionSpecifier);
+			break;
+		}
 
-        TEnumSpecifier* pEnumSpecifier =
-            TSpecifierQualifier_As_TEnumSpecifier(pSpecifierQualifier);
-        if (pEnumSpecifier != NULL)
-        {
-            pSpecifier = TEnumSpecifier_As_TSpecifier(pEnumSpecifier);
-            break;
-        }
+		TEnumSpecifier* pEnumSpecifier =
+			TSpecifierQualifier_As_TEnumSpecifier(pSpecifierQualifier);
+		if (pEnumSpecifier != NULL)
+		{
+			pSpecifier = TEnumSpecifier_As_TSpecifier(pEnumSpecifier);
+			break;
+		}
 
-    }
-    return pSpecifier;
+	}
+	return pSpecifier;
 }
 
 const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p)
 {
-    const char* typedefName = NULL;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
-    {
-        TSingleTypeSpecifier* pSingleTypeSpecifier =
-            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
-        if (pSingleTypeSpecifier &&
-            pSingleTypeSpecifier->Token == TK_IDENTIFIER)
-        {
-            typedefName = pSingleTypeSpecifier->TypedefName;
-            break;
-        }
-    }
-    return typedefName;
+	const char* typedefName = NULL;
+	ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+	{
+		TSingleTypeSpecifier* pSingleTypeSpecifier =
+			TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
+		if (pSingleTypeSpecifier &&
+			pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+		{
+			typedefName = pSingleTypeSpecifier->TypedefName;
+			break;
+		}
+	}
+	return typedefName;
 }
 
 bool TSpecifierQualifierList_IsTypedefQualifier(TSpecifierQualifierList* p)
 {
-    bool bResult = false;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
-    {
-        TStorageSpecifier* pStorageSpecifier =
-            TSpecifierQualifier_As_TStorageSpecifier(pSpecifierQualifier);
-        if (pStorageSpecifier &&
-            pStorageSpecifier->bIsTypedef)
-        {
-            bResult = true;
-            break;
-        }
-    }
-    return bResult;
+	bool bResult = false;
+	ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+	{
+		TStorageSpecifier* pStorageSpecifier =
+			TSpecifierQualifier_As_TStorageSpecifier(pSpecifierQualifier);
+		if (pStorageSpecifier &&
+			pStorageSpecifier->bIsTypedef)
+		{
+			bResult = true;
+			break;
+		}
+	}
+	return bResult;
 }
 
 bool TSpecifierQualifierList_IsChar(TSpecifierQualifierList* p)
 {
-    bool bResult = false;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
-    {
-        TSingleTypeSpecifier* pSingleTypeSpecifier =
-            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
-        if (pSingleTypeSpecifier &&
-            pSingleTypeSpecifier->Token == TK_char)
-        {
-            bResult = true;
-            break;
-        }
-    }
-    return bResult;
+	bool bResult = false;
+	ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+	{
+		TSingleTypeSpecifier* pSingleTypeSpecifier =
+			TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
+		if (pSingleTypeSpecifier &&
+			pSingleTypeSpecifier->Token == TK_char)
+		{
+			bResult = true;
+			break;
+		}
+	}
+	return bResult;
 }
 
 
 bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p)
 {
-    bool bResult = false;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
-    {
-        TSingleTypeSpecifier* pSingleTypeSpecifier =
-            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
-        if (pSingleTypeSpecifier &&
-            pSingleTypeSpecifier->Token == TK_INT ||
-            pSingleTypeSpecifier->Token == TK_SHORT ||
-            pSingleTypeSpecifier->Token == TK_SIGNED ||
-            pSingleTypeSpecifier->Token == TK_UNSIGNED ||
-            pSingleTypeSpecifier->Token == TK_LONG)
-        {
-            bResult = true;
-            break;
-        }
-    }
-    return bResult;
+	bool bResult = false;
+	ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+	{
+		TSingleTypeSpecifier* pSingleTypeSpecifier =
+			TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
+		if (pSingleTypeSpecifier &&
+			pSingleTypeSpecifier->Token == TK_INT ||
+			pSingleTypeSpecifier->Token == TK_SHORT ||
+			pSingleTypeSpecifier->Token == TK_SIGNED ||
+			pSingleTypeSpecifier->Token == TK_UNSIGNED ||
+			pSingleTypeSpecifier->Token == TK_LONG)
+		{
+			bResult = true;
+			break;
+		}
+	}
+	return bResult;
 }
 
 
 bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList* p)
 {
-    bool bResult = false;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
-    {
-        TSingleTypeSpecifier* pSingleTypeSpecifier =
-            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
-        if (pSingleTypeSpecifier &&
-            pSingleTypeSpecifier->Token == TK_DOUBLE ||
-            pSingleTypeSpecifier->Token == TK_FLOAT)
-        {
-            bResult = true;
-            break;
-        }
-    }
-    return bResult;
+	bool bResult = false;
+	ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+	{
+		TSingleTypeSpecifier* pSingleTypeSpecifier =
+			TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
+		if (pSingleTypeSpecifier &&
+			pSingleTypeSpecifier->Token == TK_DOUBLE ||
+			pSingleTypeSpecifier->Token == TK_FLOAT)
+		{
+			bResult = true;
+			break;
+		}
+	}
+	return bResult;
 }
 
 bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList* p)
 {
-    bool bResult = false;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
-    {
-        TSingleTypeSpecifier* pSingleTypeSpecifier =
-            TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
-        if (pSingleTypeSpecifier &&
-            pSingleTypeSpecifier->Token == TK_IDENTIFIER)
-        {
-            bResult = true;
-            break;
-        }
-    }
-    return bResult;
+	bool bResult = false;
+	ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+	{
+		TSingleTypeSpecifier* pSingleTypeSpecifier =
+			TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
+		if (pSingleTypeSpecifier &&
+			pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+		{
+			bResult = true;
+			break;
+		}
+	}
+	return bResult;
 }
 
 const char* TDeclarator_GetName(TDeclarator*   p)
 {
-    if (p == NULL)
-    {
-        return NULL;
-    }
-    TDirectDeclarator* pDirectDeclarator = p->pDirectDeclarator;
-    while (pDirectDeclarator != NULL)
-    {
-        if (pDirectDeclarator->Identifier != NULL &&
-            pDirectDeclarator->Identifier[0] != 0)
-        {
-            return pDirectDeclarator->Identifier;
-        }
+	if (p == NULL)
+	{
+		return NULL;
+	}
+	TDirectDeclarator* pDirectDeclarator = p->pDirectDeclarator;
+	while (pDirectDeclarator != NULL)
+	{
+		if (pDirectDeclarator->Identifier != NULL &&
+			pDirectDeclarator->Identifier[0] != 0)
+		{
+			return pDirectDeclarator->Identifier;
+		}
 
-        if (pDirectDeclarator->pDeclarator)
-        {
-            const char* name =
-                TDeclarator_GetName(pDirectDeclarator->pDeclarator);
-            if (name != NULL)
-            {
-                return name;
-            }
-        }
-        pDirectDeclarator =
-            pDirectDeclarator->pDirectDeclarator;
-    }
-    return NULL;
+		if (pDirectDeclarator->pDeclarator)
+		{
+			const char* name =
+				TDeclarator_GetName(pDirectDeclarator->pDeclarator);
+			if (name != NULL)
+			{
+				return name;
+			}
+		}
+		pDirectDeclarator =
+			pDirectDeclarator->pDirectDeclarator;
+	}
+	return NULL;
 }
 
 const char* TInitDeclarator_FindName(TInitDeclarator* p)
 {
-    ASSERT(p->pDeclarator != NULL);
-    return TDeclarator_GetName(p->pDeclarator);
+	ASSERT(p->pDeclarator != NULL);
+	return TDeclarator_GetName(p->pDeclarator);
 }
 
 
 
 void TAlignmentSpecifier_Destroy(TAlignmentSpecifier* p)
 {
-    String_Destroy(&p->TypeName);
-    //TScannerItemList_Destroy(&p->ClueList);
+	String_Destroy(&p->TypeName);
+	//TScannerItemList_Destroy(&p->ClueList);
 
 }
 
@@ -591,676 +596,683 @@ void TAlignmentSpecifier_Destroy(TAlignmentSpecifier* p)
 
 void TStructDeclaration_Destroy(TStructDeclaration* p)
 {
-    List_Destroy(TInitDeclarator, &p->DeclaratorList);
-    TSpecifierQualifierList_Destroy(&p->SpecifierQualifierList);
-    //TTypeQualifier_Destroy(&p->Qualifier);
-    TScannerItemList_Destroy(&p->ClueList1);
+	List_Destroy(TInitDeclarator, &p->DeclaratorList);
+	TSpecifierQualifierList_Destroy(&p->SpecifierQualifierList);
+	//TTypeQualifier_Destroy(&p->Qualifier);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void TAnyStructDeclaration_Destroy(TAnyStructDeclaration* p)
 {
-    switch (p->Type)
-    {
-        case TStructDeclaration_ID:
-        TStructDeclaration_Destroy((TStructDeclaration*)p);
-        break;
-        case TStaticAssertDeclaration_ID:
-        TStaticAssertDeclaration_Destroy((TStaticAssertDeclaration*)p);
-        break;
-        default:
-        ASSERT(false);
-        break;
-    }
+	switch (p->Type)
+	{
+	case TStructDeclaration_ID:
+		TStructDeclaration_Destroy((TStructDeclaration*)p);
+		break;
+	case TEofDeclaration_ID:
+		TEofDeclaration_Destroy((TEofDeclaration*)p);
+		break;
+	case TStaticAssertDeclaration_ID:
+		TStaticAssertDeclaration_Destroy((TStaticAssertDeclaration*)p);
+		break;
+	default:
+		ASSERT(false);
+		break;
+	}
 }
 
 bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
 {
-    bool bIsPointer = false;
-    bool bIsAuto = false;
-    ForEachListItem(TPointer, pItem, pPointerlist)
-    {
-        if (pItem->bPointer)
-        {
-            bIsPointer = true;
-        }
-        ForEachListItem(TTypeQualifier, pQualifier, &pItem->Qualifier)
-        {
-            if (pQualifier->Token == TK__AUTO ||
-                pQualifier->Token == TK_OWN_QUALIFIER)
-            {
-                bIsAuto = true;
-                break;
-            }
-        }
-        if (bIsAuto && bIsPointer)
-            break;
-    }
-return bIsAuto;
+	bool bIsPointer = false;
+	bool bIsAuto = false;
+	ForEachListItem(TPointer, pItem, pPointerlist)
+	{
+		if (pItem->bPointer)
+		{
+			bIsPointer = true;
+		}
+		ForEachListItem(TTypeQualifier, pQualifier, &pItem->Qualifier)
+		{
+			if (pQualifier->Token == TK__AUTO ||
+				pQualifier->Token == TK_OWN_QUALIFIER)
+			{
+				bIsAuto = true;
+				break;
+			}
+		}
+		if (bIsAuto && bIsPointer)
+			break;
+	}
+	return bIsAuto;
 }
 
 bool TPointerList_IsPointer(TPointerList* pPointerlist)
 {
-    bool bIsPointer = false;
-    ForEachListItem(TPointer, pItem, pPointerlist)
-    {
-        if (pItem->bPointer)
-        {
-            bIsPointer = true;
-            break;
-        }
-    }
-    return bIsPointer;
+	bool bIsPointer = false;
+	ForEachListItem(TPointer, pItem, pPointerlist)
+	{
+		if (pItem->bPointer)
+		{
+			bIsPointer = true;
+			break;
+		}
+	}
+	return bIsPointer;
 }
 
 void TPointer_Destroy(TPointer* p)
 {
-    //p->Qualifier.
-    TScannerItemList_Destroy(&p->ClueList0);
+	//p->Qualifier.
+	TScannerItemList_Destroy(&p->ClueList0);
 }
 
 
 
 void TTypeQualifier_Destroy(TTypeQualifier* p)
 {
-    TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList0);
 }
 
 void TStorageSpecifier_Destroy(TStorageSpecifier* p)
 {
-    TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList0);
 }
 
 void TAtomicTypeSpecifier_Destroy(TAtomicTypeSpecifier* p)
 {
-    TTypeName_Destroy(&p->TypeName);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
-    TScannerItemList_Destroy(&p->ClueList2);
+	TTypeName_Destroy(&p->TypeName);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
+	TScannerItemList_Destroy(&p->ClueList2);
 
 }
 
 void TTemplateTypeSpecifierArgument_Destroy(TTemplateTypeSpecifierArgument* p)
 {
-    TTypeName_Destroy(&p->TypeName);
+	TTypeName_Destroy(&p->TypeName);
 }
 
 void TTemplateTypeSpecifier_Destroy(TTemplateTypeSpecifier* p)
 {
-    TTemplateTypeSpecifierArgumentList_Destroy(&p->Args);
-    TScannerItemList_Destroy(&p->ClueList0);
-    String_Destroy(&p->Identifier);
+	TTemplateTypeSpecifierArgumentList_Destroy(&p->Args);
+	TScannerItemList_Destroy(&p->ClueList0);
+	String_Destroy(&p->Identifier);
 }
 
 
 void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecifiers)
 {
-    ForEachListItem(TTypeSpecifier, pItem, pDeclarationSpecifiers)
-    {
-        TTypeSpecifier* pNext = pItem->pNext;
-        switch (pItem->Type)
-        {
-            CASE(TSingleTypeSpecifier) :
-                TSingleTypeSpecifier_Delete((TSingleTypeSpecifier*)pItem);
-            break;
+	ForEachListItem(TTypeSpecifier, pItem, pDeclarationSpecifiers)
+	{
+		TTypeSpecifier* pNext = pItem->pNext;
+		switch (pItem->Type)
+		{
+			CASE(TSingleTypeSpecifier) :
+				TSingleTypeSpecifier_Delete((TSingleTypeSpecifier*)pItem);
+			break;
 
-            CASE(TStructUnionSpecifier) :
-                TStructUnionSpecifier_Delete((TStructUnionSpecifier*)pItem);
-            break;
+			CASE(TStructUnionSpecifier) :
+				TStructUnionSpecifier_Delete((TStructUnionSpecifier*)pItem);
+			break;
 
-            CASE(TEnumSpecifier) :
-                TEnumSpecifier_Delete((TEnumSpecifier*)pItem);
-            break;
+			CASE(TEnumSpecifier) :
+				TEnumSpecifier_Delete((TEnumSpecifier*)pItem);
+			break;
 
-            CASE(TStorageSpecifier) :
-                TStorageSpecifier_Delete((TStorageSpecifier*)pItem);
-            break;
-            CASE(TTypeQualifier) :
-                TTypeQualifier_Delete((TTypeQualifier*)pItem);
-            break;
-            CASE(TFunctionSpecifier) :
-                TFunctionSpecifier_Delete((TFunctionSpecifier*)pItem);
-            break;
-            CASE(TAlignmentSpecifier) :
-                TAlignmentSpecifier_Delete((TAlignmentSpecifier*)pItem);
-            break;
-            default:
-            ASSERT(false);
-            break;
-        }
-        pItem = pNext;
-        if (pItem == NULL)
-        {
-            break;
-        }
-    }
+			CASE(TStorageSpecifier) :
+				TStorageSpecifier_Delete((TStorageSpecifier*)pItem);
+			break;
+			CASE(TTypeQualifier) :
+				TTypeQualifier_Delete((TTypeQualifier*)pItem);
+			break;
+			CASE(TFunctionSpecifier) :
+				TFunctionSpecifier_Delete((TFunctionSpecifier*)pItem);
+			break;
+			CASE(TAlignmentSpecifier) :
+				TAlignmentSpecifier_Delete((TAlignmentSpecifier*)pItem);
+			break;
+		default:
+			ASSERT(false);
+			break;
+		}
+		pItem = pNext;
+		if (pItem == NULL)
+		{
+			break;
+		}
+	}
 }
 
 
 
 const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDeclarationSpecifiers)
 {
-    if (pDeclarationSpecifiers == NULL)
-    {
-        return NULL;
-    }
-    const char* typeName = NULL;
+	if (pDeclarationSpecifiers == NULL)
+	{
+		return NULL;
+	}
+	const char* typeName = NULL;
 
-    ForEachListItem(TSpecifier, pItem, pDeclarationSpecifiers)
-    {
-        TSingleTypeSpecifier* pSingleTypeSpecifier =
-            TSpecifier_As_TSingleTypeSpecifier(pItem);
-        if (pSingleTypeSpecifier != NULL)
-        {
-            if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
-            {
-                typeName = pSingleTypeSpecifier->TypedefName;
-                break;
-            }
-        }
-    }
-    return typeName;
+	ForEachListItem(TSpecifier, pItem, pDeclarationSpecifiers)
+	{
+		TSingleTypeSpecifier* pSingleTypeSpecifier =
+			TSpecifier_As_TSingleTypeSpecifier(pItem);
+		if (pSingleTypeSpecifier != NULL)
+		{
+			if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+			{
+				typeName = pSingleTypeSpecifier->TypedefName;
+				break;
+			}
+		}
+	}
+	return typeName;
 }
 
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers)
 {
-    ForEachListItem(TTypeSpecifier, pItem, pDeclarationSpecifiers)
-    {
-        TTypeSpecifier* pNext = pItem->pNext;
-        switch (pItem->Type)
-        {
-            CASE(TSingleTypeSpecifier) :
-                TSingleTypeSpecifier_Delete((TSingleTypeSpecifier*)pItem);
-            break;
+	ForEachListItem(TTypeSpecifier, pItem, pDeclarationSpecifiers)
+	{
+		TTypeSpecifier* pNext = pItem->pNext;
+		switch (pItem->Type)
+		{
+			CASE(TSingleTypeSpecifier) :
+				TSingleTypeSpecifier_Delete((TSingleTypeSpecifier*)pItem);
+			break;
 
-            CASE(TStructUnionSpecifier) :
-                TStructUnionSpecifier_Delete((TStructUnionSpecifier*)pItem);
-            break;
+			CASE(TStructUnionSpecifier) :
+				TStructUnionSpecifier_Delete((TStructUnionSpecifier*)pItem);
+			break;
 
-            CASE(TEnumSpecifier) :
-                TEnumSpecifier_Delete((TEnumSpecifier*)pItem);
-            break;
+			CASE(TEnumSpecifier) :
+				TEnumSpecifier_Delete((TEnumSpecifier*)pItem);
+			break;
 
-            CASE(TStorageSpecifier) :
-                TStorageSpecifier_Delete((TStorageSpecifier*)pItem);
-            break;
-            CASE(TTypeQualifier) :
-                TTypeQualifier_Delete((TTypeQualifier*)pItem);
-            break;
-            CASE(TFunctionSpecifier) :
-                TFunctionSpecifier_Delete((TFunctionSpecifier*)pItem);
-            break;
+			CASE(TStorageSpecifier) :
+				TStorageSpecifier_Delete((TStorageSpecifier*)pItem);
+			break;
+			CASE(TTypeQualifier) :
+				TTypeQualifier_Delete((TTypeQualifier*)pItem);
+			break;
+			CASE(TFunctionSpecifier) :
+				TFunctionSpecifier_Delete((TFunctionSpecifier*)pItem);
+			break;
 
-            CASE(TAlignmentSpecifier) :
-                TAlignmentSpecifier_Delete((TAlignmentSpecifier*)pItem);
-            break;
+			CASE(TAlignmentSpecifier) :
+				TAlignmentSpecifier_Delete((TAlignmentSpecifier*)pItem);
+			break;
 
-            CASE(TTemplateTypeSpecifier) :
-                TTemplateTypeSpecifier_Delete((TTemplateTypeSpecifier*)pItem);
-            break;
-            default:
-            ASSERT(false);
-            break;
-        }
-        pItem = pNext;
-        if (pItem == NULL)
-            break;
-    }
+			CASE(TTemplateTypeSpecifier) :
+				TTemplateTypeSpecifier_Delete((TTemplateTypeSpecifier*)pItem);
+			break;
+		default:
+			ASSERT(false);
+			break;
+		}
+		pItem = pNext;
+		if (pItem == NULL)
+			break;
+	}
 }
 
 TDeclarator* TDeclaration_FindDeclarator(TDeclaration*  p, const char* name)
 {
-    if (p == NULL)
-    {
-        return NULL;
-    }
-    TDeclarator*  pResult = NULL;
+	if (p == NULL)
+	{
+		return NULL;
+	}
+	TDeclarator*  pResult = NULL;
 
-    ForEachListItem(TInitDeclarator, pInitDeclarator, &p->InitDeclaratorList)
-    {
-        if (pInitDeclarator->pDeclarator &&
-          pInitDeclarator->pDeclarator->pDirectDeclarator &&
-          pInitDeclarator->pDeclarator->pDirectDeclarator->Identifier)
-        {
-            if (strcmp(pInitDeclarator->pDeclarator->pDirectDeclarator->Identifier, name) == 0)
-            {
-                pResult = pInitDeclarator->pDeclarator;
-                break;
-            }
-        }
-    }
-    return pResult;
+	ForEachListItem(TInitDeclarator, pInitDeclarator, &p->InitDeclaratorList)
+	{
+		if (pInitDeclarator->pDeclarator &&
+			pInitDeclarator->pDeclarator->pDirectDeclarator &&
+			pInitDeclarator->pDeclarator->pDirectDeclarator->Identifier)
+		{
+			if (strcmp(pInitDeclarator->pDeclarator->pDirectDeclarator->Identifier, name) == 0)
+			{
+				pResult = pInitDeclarator->pDeclarator;
+				break;
+			}
+		}
+	}
+	return pResult;
 }
 
 void TFunctionSpecifier_Destroy(TFunctionSpecifier* p)
 {
-    TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList0);
 }
 
 
 bool TDeclaration_Is_StructOrUnionDeclaration(TDeclaration* p)
 {
-    bool bIsStructOrUnion = false;
-    ForEachListItem(TSpecifier, pItem, &p->Specifiers)
-    {
-        if (TTypeSpecifier_As_TStructUnionSpecifier(pItem))
-        {
-            bIsStructOrUnion = true;
-            break;
-        }
+	bool bIsStructOrUnion = false;
+	ForEachListItem(TSpecifier, pItem, &p->Specifiers)
+	{
+		if (TTypeSpecifier_As_TStructUnionSpecifier(pItem))
+		{
+			bIsStructOrUnion = true;
+			break;
+		}
 
-    }
-    return bIsStructOrUnion;
+	}
+	return bIsStructOrUnion;
 }
 
 
 void TDeclaration_Destroy(TDeclaration* p)
 {
-    TCompoundStatement_Delete(p->pCompoundStatementOpt);
-    TDeclarationSpecifiers_Destroy(&p->Specifiers);
-    List_Destroy(TInitDeclarator, &p->InitDeclaratorList);
+	TCompoundStatement_Delete(p->pCompoundStatementOpt);
+	TDeclarationSpecifiers_Destroy(&p->Specifiers);
+	List_Destroy(TInitDeclarator, &p->InitDeclaratorList);
 
-    TScannerItemList_Destroy(&p->ClueList00);
-//	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList00);
+	//	TScannerItemList_Destroy(&p->ClueList0);
 	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void TParameter_Swap(TParameter* a, TParameter* b)
 {
-    TParameter temp = *a;
-    *a = *b;
-    *b = temp;
+	TParameter temp = *a;
+	*a = *b;
+	*b = temp;
 }
 
 const char* TSpecifier_GetTypedefName(TDeclarationSpecifiers* p)
 {
-    const char* typedefName = NULL;
-    ForEachListItem(TSpecifier, pSpecifier, p)
-    {
-        TSingleTypeSpecifier *pSingleTypeSpecifier =
-            TSpecifier_As_TSingleTypeSpecifier(pSpecifier);
-        if (pSingleTypeSpecifier &&
-            pSingleTypeSpecifier->Token == TK_IDENTIFIER)
-        {
-            typedefName = pSingleTypeSpecifier->TypedefName;
-        }
-    }
-    return typedefName;
+	const char* typedefName = NULL;
+	ForEachListItem(TSpecifier, pSpecifier, p)
+	{
+		TSingleTypeSpecifier *pSingleTypeSpecifier =
+			TSpecifier_As_TSingleTypeSpecifier(pSpecifier);
+		if (pSingleTypeSpecifier &&
+			pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+		{
+			typedefName = pSingleTypeSpecifier->TypedefName;
+		}
+	}
+	return typedefName;
 }
 
 const char* TParameter_GetTypedefName(TParameter* p)
 {
-    return TSpecifier_GetTypedefName(&p->Specifiers);
+	return TSpecifier_GetTypedefName(&p->Specifiers);
 }
 
 bool TDeclarator_IsDirectPointer(TDeclarator* p)
 {
-    int n = 0;
-    ForEachListItem(TPointer, pPointer, &p->PointerList)
-    {
-        if (pPointer->bPointer)
-        {
-            n++;
-            if (n > 1)
-            {
-                break;
-            }
-        }
-    }
-    return n == 1;
+	int n = 0;
+	ForEachListItem(TPointer, pPointer, &p->PointerList)
+	{
+		if (pPointer->bPointer)
+		{
+			n++;
+			if (n > 1)
+			{
+				break;
+			}
+		}
+	}
+	return n == 1;
 }
 
 bool TParameter_IsDirectPointer(TParameter* p)
 {
-    return TDeclarator_IsDirectPointer(&p->Declarator);
+	return TDeclarator_IsDirectPointer(&p->Declarator);
 }
 
 const char* TParameter_GetName(TParameter* p)
 {
-    return TDeclarator_GetName(&p->Declarator);
+	return TDeclarator_GetName(&p->Declarator);
 }
 
 void TParameter_Destroy(TParameter* p)
 {
-    TDeclarator_Destroy(&p->Declarator);
-    TDeclarationSpecifiers_Destroy(&p->Specifiers);
-    TScannerItemList_Destroy(&p->ClueList0);
+	TDeclarator_Destroy(&p->Declarator);
+	TDeclarationSpecifiers_Destroy(&p->Specifiers);
+	TScannerItemList_Destroy(&p->ClueList00);
 }
 
 void TParameterTypeList_Destroy(TParameterTypeList* p)
 {
-    TParameterList_Destroy(&p->ParameterList);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
+	TParameterList_Destroy(&p->ParameterList);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 bool TAnyDeclaration_Is_StructOrUnionDeclaration(TAnyDeclaration* pAnyDeclaration)
 {
-    TDeclaration *  pDeclaration = TAnyDeclaration_As_TDeclaration(pAnyDeclaration);
-    if (pDeclaration != NULL)
-    {
-        return TDeclaration_Is_StructOrUnionDeclaration(pDeclaration);
-    }
+	TDeclaration *  pDeclaration = TAnyDeclaration_As_TDeclaration(pAnyDeclaration);
+	if (pDeclaration != NULL)
+	{
+		return TDeclaration_Is_StructOrUnionDeclaration(pDeclaration);
+	}
 
-    return false;
+	return false;
 }
 
 
 bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecifiers)
 {
-    bool bResult = false;
-    ForEachListItem(TTypeSpecifier, pItem, pDeclarationSpecifiers)
-    {
+	bool bResult = false;
+	ForEachListItem(TTypeSpecifier, pItem, pDeclarationSpecifiers)
+	{
 
-        switch (pItem->Type)
-        {
-            CASE(TStorageSpecifier) :
-                if (((TStorageSpecifier*)pItem)->bIsTypedef)
-                {
-                    bResult = true;
-                }
-            break;
-        }
+		switch (pItem->Type)
+		{
+			CASE(TStorageSpecifier) :
+				if (((TStorageSpecifier*)pItem)->bIsTypedef)
+				{
+					bResult = true;
+				}
+			break;
+		}
 
-        if (bResult)
-        {
-            break;
-        }
-    }
-    return bResult;
+		if (bResult)
+		{
+			break;
+		}
+	}
+	return bResult;
 }
 
 bool TAnyDeclaration_IsTypedef(TAnyDeclaration* pDeclaration)
 {
-    bool bResult = false;
-    switch (pDeclaration->Type)
-    {
-        case TDeclaration_ID:
-        {
-            TDeclaration* p = (TDeclaration*)pDeclaration;
-            bResult = TDeclarationSpecifiers_IsTypedef(&p->Specifiers);
-        }
-        break;
-        default:
-        ASSERT(false);
-        break;
-    }
-    return bResult;
+	bool bResult = false;
+	switch (pDeclaration->Type)
+	{
+	case TDeclaration_ID:
+	{
+		TDeclaration* p = (TDeclaration*)pDeclaration;
+		bResult = TDeclarationSpecifiers_IsTypedef(&p->Specifiers);
+	}
+	break;
+	default:
+		ASSERT(false);
+		break;
+	}
+	return bResult;
 }
 
 int TAnyDeclaration_GetFileIndex(TAnyDeclaration* pDeclaration)
 {
-    int result = -1;
-    switch (pDeclaration->Type)
-    {
-        case TDeclaration_ID:
-        result = ((TDeclaration*)pDeclaration)->FileIndex;
-        break;
-        case TStaticAssertDeclaration_ID:
-        break;
-        default:
-        ASSERT(false);
-        break;
-    }
-    return result;
+	int result = -1;
+	switch (pDeclaration->Type)
+	{
+	case TDeclaration_ID:
+		result = ((TDeclaration*)pDeclaration)->FileIndex;
+		break;
+	case TStaticAssertDeclaration_ID:
+		break;
+	default:
+		ASSERT(false);
+		break;
+	}
+	return result;
 }
 void TAnyDeclaration_Destroy(TAnyDeclaration* pDeclaration)
 {
-    switch (pDeclaration->Type)
-    {
-        case TDeclaration_ID:
-        TDeclaration_Destroy((TDeclaration*)pDeclaration);
-        break;
-        default:
-        ASSERT(false);
-        break;
-    }
+	switch (pDeclaration->Type)
+	{
+	case TEofDeclaration_ID:
+		TEofDeclaration_Destroy((TEofDeclaration*)pDeclaration);
+		break;
+
+	case TDeclaration_ID:
+		TDeclaration_Destroy((TDeclaration*)pDeclaration);
+		break;
+	default:
+		ASSERT(false);
+		break;
+	}
 }
 
 void TDesignation_Destroy(TDesignation* pDesignation)
 {
 
-    List_Destroy(TDesignator, &pDesignation->DesignatorList);
-    TScannerItemList_Destroy(&pDesignation->ClueList0);
+	List_Destroy(TDesignator, &pDesignation->DesignatorList);
+	TScannerItemList_Destroy(&pDesignation->ClueList0);
 
 }
 
 void TDesignator_Destroy(TDesignator* p)
 {
-    TExpression_Delete(p->pExpression);
-    String_Destroy(&p->Name);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
+	TExpression_Delete(p->pExpression);
+	String_Destroy(&p->Name);
+	TScannerItemList_Destroy(&p->ClueList0);
+	TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void  TInitializerListType_Destroy(TInitializerListType* pTInitializerListType)
 {
-    TInitializerList_Destroy(&pTInitializerListType->InitializerList);
+	TInitializerList_Destroy(&pTInitializerListType->InitializerList);
 	TScannerItemList_Destroy(&pTInitializerListType->ClueList00);
-    TScannerItemList_Destroy(&pTInitializerListType->ClueList0);
-    TScannerItemList_Destroy(&pTInitializerListType->ClueList1);
+	TScannerItemList_Destroy(&pTInitializerListType->ClueList0);
+	TScannerItemList_Destroy(&pTInitializerListType->ClueList1);
 }
 
 void TInitializer_Destroy(TInitializer* p)
 {
-    if (p->Type == TInitializerListType_ID)
-    {
-        TInitializerListType_Destroy((TInitializerListType*)p);
+	if (p->Type == TInitializerListType_ID)
+	{
+		TInitializerListType_Destroy((TInitializerListType*)p);
 
-    }
-    else
-    {
-        TExpression_Destroy((TExpression*)p);
-    }
+	}
+	else
+	{
+		TExpression_Destroy((TExpression*)p);
+	}
 
 }
 
 void TInitializerListItem_Destroy(TInitializerListItem* p)
 {
-    List_Destroy(TDesignator, &p->DesignatorList);
-    TInitializer_Delete(p->pInitializer);
-    TScannerItemList_Destroy(&p->ClueList);
+	List_Destroy(TDesignator, &p->DesignatorList);
+	TInitializer_Delete(p->pInitializer);
+	TScannerItemList_Destroy(&p->ClueList);
 }
 
 
 Result DeclarationsMap_Add(DeclarationsMap* p, const char* name, TAnyDeclaration* pData)
 {
-    return MultiMap_Add(p, name, pData);
+	return MultiMap_Add(p, name, pData);
 }
 
 TDeclaration* DeclarationsMap_FindDeclaration(DeclarationsMap* p, const char* name)
 {
-    if (name == NULL)
-    {
-        return NULL;
-    }
+	if (name == NULL)
+	{
+		return NULL;
+	}
 
-    Bucket *  pBucket =
-        MultiMap_FindBucket(p, name);
-    if (pBucket)
-    {
-        for (size_t j = 0; j < pBucket->size; j++)
-        {
-            if (strcmp(pBucket->data[j]->key, name) == 0)
-            {
-                return TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
-            }
-        }
-    }
-    return NULL;
+	Bucket *  pBucket =
+		MultiMap_FindBucket(p, name);
+	if (pBucket)
+	{
+		for (size_t j = 0; j < pBucket->size; j++)
+		{
+			if (strcmp(pBucket->data[j]->key, name) == 0)
+			{
+				return TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
+			}
+		}
+	}
+	return NULL;
 }
 
 TDeclaration* TProgram_FindDeclaration(TProgram* p, const char* name)
 {
-    return DeclarationsMap_FindDeclaration(&p->Symbols, name);
+	return DeclarationsMap_FindDeclaration(&p->Symbols, name);
 }
 
 TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name)
 {
-    TDeclaration*  pDeclaration = NULL;
+	TDeclaration*  pDeclaration = NULL;
 
 
-    Bucket *  pBucket =
-        MultiMap_FindBucket(&p->Symbols, name);
-    if (pBucket)
-    {
-        for (size_t j = 0; j < pBucket->size; j++)
-        {
-            if (strcmp(pBucket->data[j]->key, name) == 0)
-            {
-                TDeclaration*  pDeclaration0 =
-                    TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
+	Bucket *  pBucket =
+		MultiMap_FindBucket(&p->Symbols, name);
+	if (pBucket)
+	{
+		for (size_t j = 0; j < pBucket->size; j++)
+		{
+			if (strcmp(pBucket->data[j]->key, name) == 0)
+			{
+				TDeclaration*  pDeclaration0 =
+					TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
 
-                if (pDeclaration0 != NULL /* &&
-                    pDeclaration0->pCompoundStatementOpt == NULL*/)
-                {
-                    pDeclaration = pDeclaration0;
-                    break;
-                }
-            }
-        }
-    }
-    return pDeclaration;
+				if (pDeclaration0 != NULL /* &&
+					pDeclaration0->pCompoundStatementOpt == NULL*/)
+				{
+					pDeclaration = pDeclaration0;
+					break;
+				}
+			}
+		}
+	}
+	return pDeclaration;
 }
 
 
 TDeclaration* TProgram_FindFunctionDefinition(TProgram* p, const char* name)
 {
-    TDeclaration*  pDeclaration = NULL;
-    Bucket *  pBucket = MultiMap_FindBucket(&p->Symbols, name);
-    if (pBucket)
-    {
-        for (size_t j = 0; j < pBucket->size; j++)
-        {
-            if (strcmp(pBucket->data[j]->key, name) == 0)
-            {
-                TDeclaration*  pDeclaration0 =
-                    TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
+	TDeclaration*  pDeclaration = NULL;
+	Bucket *  pBucket = MultiMap_FindBucket(&p->Symbols, name);
+	if (pBucket)
+	{
+		for (size_t j = 0; j < pBucket->size; j++)
+		{
+			if (strcmp(pBucket->data[j]->key, name) == 0)
+			{
+				TDeclaration*  pDeclaration0 =
+					TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
 
-                if (pDeclaration0 != NULL &&
-                  pDeclaration0->pCompoundStatementOpt != NULL)
-                {
-                    pDeclaration = pDeclaration0;
-                    break;
-                }
-            }
-        }
-    }
-    return pDeclaration;
+				if (pDeclaration0 != NULL &&
+					pDeclaration0->pCompoundStatementOpt != NULL)
+				{
+					pDeclaration = pDeclaration0;
+					break;
+				}
+			}
+		}
+	}
+	return pDeclaration;
 }
 
 
 //Retorna a declaracao final do tipo entrando em cada typedef. 
 TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName)
 {
-    TDeclaration*  pDeclarationResult = NULL;
-    for (;;)
-    {
-        Bucket *  pBucket =
-            MultiMap_FindBucket(&p->Symbols, typeName);
-        if (pBucket)
-        {
-            TDeclaration*  pDeclaration = NULL;
-            for (size_t j = 0; j < pBucket->size; j++)
-            {
-                pDeclaration = NULL;
-                if (strcmp(pBucket->data[j]->key, typeName) == 0)
-                {
-                    pDeclaration = TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
-                    if (pDeclaration != NULL)
-                    {
-                        if (TDeclarationSpecifiers_IsTypedef(&pDeclaration->Specifiers))
-                        {
-                            TSingleTypeSpecifier *  pSingleTypeSpecifier = TTypeSpecifier_As_TSingleTypeSpecifier(pDeclaration->Specifiers.pHead);
-                            if (pSingleTypeSpecifier != NULL)
-                            {
-                                if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
-                                {
-                                    typeName = pSingleTypeSpecifier->TypedefName;
-                                    break;
-                                }
-                                else
-                                {
-                                    //int etc..
-                                    pDeclarationResult = pDeclaration;
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                pDeclarationResult = pDeclaration;
-                                //enum or struct union
-                                TStructUnionSpecifier* pTStructUnionSpecifier = NULL;
-                                if (pDeclarationResult->Specifiers.pHead->pNext)
-                                {
-                                    pTStructUnionSpecifier =
-                                        TSpecifier_As_TStructUnionSpecifier(pDeclarationResult->Specifiers.pHead->pNext);
-                                }
+	TDeclaration*  pDeclarationResult = NULL;
+	for (;;)
+	{
+		Bucket *  pBucket =
+			MultiMap_FindBucket(&p->Symbols, typeName);
+		if (pBucket)
+		{
+			TDeclaration*  pDeclaration = NULL;
+			for (size_t j = 0; j < pBucket->size; j++)
+			{
+				pDeclaration = NULL;
+				if (strcmp(pBucket->data[j]->key, typeName) == 0)
+				{
+					pDeclaration = TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
+					if (pDeclaration != NULL)
+					{
+						if (TDeclarationSpecifiers_IsTypedef(&pDeclaration->Specifiers))
+						{
+							TSingleTypeSpecifier *  pSingleTypeSpecifier = TTypeSpecifier_As_TSingleTypeSpecifier(pDeclaration->Specifiers.pHead);
+							if (pSingleTypeSpecifier != NULL)
+							{
+								if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+								{
+									typeName = pSingleTypeSpecifier->TypedefName;
+									break;
+								}
+								else
+								{
+									//int etc..
+									pDeclarationResult = pDeclaration;
+									break;
+								}
+							}
+							else
+							{
+								pDeclarationResult = pDeclaration;
+								//enum or struct union
+								TStructUnionSpecifier* pTStructUnionSpecifier = NULL;
+								if (pDeclarationResult->Specifiers.pHead->pNext)
+								{
+									pTStructUnionSpecifier =
+										TSpecifier_As_TStructUnionSpecifier(pDeclarationResult->Specifiers.pHead->pNext);
+								}
 
-                                if (pTStructUnionSpecifier)
-                                {
-                                    if (pTStructUnionSpecifier->StructDeclarationList.size > 0)
-                                        break;
-                                }
-                                else
-                                {
-                                    pDeclarationResult = pDeclaration;
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            pDeclarationResult = pDeclaration;
-                            TStructUnionSpecifier* pTStructUnionSpecifier = NULL;
-                            if (pDeclarationResult->Specifiers.pHead->pNext)
-                            {
-                                pTStructUnionSpecifier = TSpecifier_As_TStructUnionSpecifier(pDeclarationResult->Specifiers.pHead->pNext);
-                            }
-                            if (pTStructUnionSpecifier)
-                            {
-                                if (pTStructUnionSpecifier->StructDeclarationList.size > 0)
-                                    break;
-                            }
-                            else
-                            {
-                                pDeclarationResult = pDeclaration;
-                                break;
-                            }
-                        }
-                    }//declaration
-                    else
-                    {
-                        //nao achou
-                        break;
-                    }
-                }//key
-            }//for
-            if (pDeclarationResult != NULL)
-            {
-                break; //ok achou
-            }
+								if (pTStructUnionSpecifier)
+								{
+									if (pTStructUnionSpecifier->StructDeclarationList.size > 0)
+										break;
+								}
+								else
+								{
+									pDeclarationResult = pDeclaration;
+									break;
+								}
+							}
+						}
+						else
+						{
+							pDeclarationResult = pDeclaration;
+							TStructUnionSpecifier* pTStructUnionSpecifier = NULL;
+							if (pDeclarationResult->Specifiers.pHead->pNext)
+							{
+								pTStructUnionSpecifier = TSpecifier_As_TStructUnionSpecifier(pDeclarationResult->Specifiers.pHead->pNext);
+							}
+							if (pTStructUnionSpecifier)
+							{
+								if (pTStructUnionSpecifier->StructDeclarationList.size > 0)
+									break;
+							}
+							else
+							{
+								pDeclarationResult = pDeclaration;
+								break;
+							}
+						}
+					}//declaration
+					else
+					{
+						//nao achou
+						break;
+					}
+				}//key
+			}//for
+			if (pDeclarationResult != NULL)
+			{
+				break; //ok achou
+			}
 
-            if (pDeclaration == NULL)
-            {
-                break;
-            }
-        }
-        else
-        {
-            break;
-        }
-    }//for
-    return pDeclarationResult;
+			if (pDeclaration == NULL)
+			{
+				break;
+			}
+		}
+		else
+		{
+			break;
+		}
+	}//for
+	return pDeclarationResult;
 }
 
 
 void TProgram_Destroy(TProgram * p)
 {
-    Map_Destroy(&p->EnumMap, NULL);
-    ArrayT_Destroy(TAnyDeclaration, &p->Declarations);
-    ArrayT_Destroy(TFile, &p->Files2);
-    DeclarationsMap_Destroy(&p->Symbols);
-    MacroMap_Destroy(&p->Defines);
+	Map_Destroy(&p->EnumMap, NULL);
+	ArrayT_Destroy(TAnyDeclaration, &p->Declarations);
+	ArrayT_Destroy(TFile, &p->Files2);
+	DeclarationsMap_Destroy(&p->Symbols);
+	MacroMap_Destroy(&p->Defines);
 }
 
 
@@ -1268,431 +1280,430 @@ void TProgram_Destroy(TProgram * p)
 ///////////////////////////////////////////
 
 static bool TPostfixExpressionCore_CodePrint2(TPostfixExpressionCore * p,
-  int *pResult)
+	int *pResult)
 {
 
-    int result = *pResult;
+	int result = *pResult;
 
-    if (p->pExpressionLeft)
-    {
-        int left;
-        EvaluateConstantExpression(p->pExpressionLeft, &left);
-    }
+	if (p->pExpressionLeft)
+	{
+		int left;
+		EvaluateConstantExpression(p->pExpressionLeft, &left);
+	}
 
-    //if (p->pInitializerList)
-    {
-        //falta imprimeir typename
-        //TTypeName_Print*
-        //b = TInitializerList_CodePrint(p->pInitializerList, b, fp);
-    }
+	//if (p->pInitializerList)
+	{
+		//falta imprimeir typename
+		//TTypeName_Print*
+		//b = TInitializerList_CodePrint(p->pInitializerList, b, fp);
+	}
 
-    switch (p->token)
-    {
-        case TK_FULL_STOP:
-        //fprintf(fp, ".%s", p->Identifier);
-        ASSERT(false);
-        break;
-        case TK_ARROW:
-        //fprintf(fp, "->%s", p->Identifier);
-        //b = true;
-        ASSERT(false);
-        break;
+	switch (p->token)
+	{
+	case TK_FULL_STOP:
+		//fprintf(fp, ".%s", p->Identifier);
+		ASSERT(false);
+		break;
+	case TK_ARROW:
+		//fprintf(fp, "->%s", p->Identifier);
+		//b = true;
+		ASSERT(false);
+		break;
 
-        case TK_LEFT_SQUARE_BRACKET:
-        {
-            int index;
-            //fprintf(fp, "[");
-            EvaluateConstantExpression(p->pExpressionRight, &index);
-            //fprintf(fp, "]");
-            ASSERT(false);
-        }
-        break;
+	case TK_LEFT_SQUARE_BRACKET:
+	{
+		int index;
+		//fprintf(fp, "[");
+		EvaluateConstantExpression(p->pExpressionRight, &index);
+		//fprintf(fp, "]");
+		ASSERT(false);
+	}
+	break;
 
-        case TK_LEFT_PARENTHESIS:
-        {
-            EvaluateConstantExpression(p->pExpressionRight, &result);
-        }
-        break;
+	case TK_LEFT_PARENTHESIS:
+	{
+		EvaluateConstantExpression(p->pExpressionRight, &result);
+	}
+	break;
 
-        case TK_PLUSPLUS:
-        ASSERT(false);
-        break;
-        case TK_MINUSMINUS:
-        ASSERT(false);
-        break;
-    }
+	case TK_PLUSPLUS:
+		ASSERT(false);
+		break;
+	case TK_MINUSMINUS:
+		ASSERT(false);
+		break;
+	}
 
 
 
-    if (p->pNext)
-    {
-        int result2 = result;
-        TPostfixExpressionCore_CodePrint2(p->pNext, &result2);
-        result = result2;
-    }
+	if (p->pNext)
+	{
+		int result2 = result;
+		TPostfixExpressionCore_CodePrint2(p->pNext, &result2);
+		result = result2;
+	}
 
-    return true;
+	return true;
 }
 
 //Criado para avaliacao do #if
 //Tem que arrumar para fazer os casts do enum
 bool EvaluateConstantExpression(TExpression *  p, int *pResult)
 {
-    int result = -987654321;
+	int result = -987654321;
 
-    if (p == NULL)
-    {
-        return false;
-    }
-    bool b = false;
+	if (p == NULL)
+	{
+		return false;
+	}
+	bool b = false;
 
-    switch (p->Type)
-    {
-        CASE(TBinaryExpression) :
-        {
-            TBinaryExpression* pBinaryExpression =
-                (TBinaryExpression*)p;
+	switch (p->Type)
+	{
+		CASE(TBinaryExpression) :
+		{
+			TBinaryExpression* pBinaryExpression =
+				(TBinaryExpression*)p;
 
-            int left;
-            b = EvaluateConstantExpression(pBinaryExpression->pExpressionLeft, &left);
+			int left;
+			b = EvaluateConstantExpression(pBinaryExpression->pExpressionLeft, &left);
 
-            int right;
-            b = EvaluateConstantExpression(pBinaryExpression->pExpressionRight, &right);
+			int right;
+			b = EvaluateConstantExpression(pBinaryExpression->pExpressionRight, &right);
 
-            switch (pBinaryExpression->token)
-            {
-                case TK_ASTERISK:
-                result = (left * right);
-                b = true;
-                break;
-                case TK_PLUS_SIGN:
-                result = (left + right);
-                b = true;
-                break;
-                case TK_HYPHEN_MINUS:
-                result = (left - right);
-                b = true;
-                break;
-                case TK_ANDAND:
-                result = (left && right);
-                b = true;
-                break;
-                case TK_OROR:
-                result = (left || right);
-                b = true;
-                break;
-                case TK_NOTEQUAL:
-                result = (left != right);
-                b = true;
-                break;
-                case TK_EQUALEQUAL:
-                result = (left == right);
-                b = true;
-                break;
-                case TK_GREATEREQUAL:
-                result = (left >= right);
-                b = true;
-                break;
-                case TK_LESSEQUAL:
-                result = (left <= right);
-                b = true;
-                break;
-                case TK_GREATER_THAN_SIGN:
-                result = (left > right);
-                b = true;
-                break;
-                case TK_LESS_THAN_SIGN:
-                result = (left < right);
-                b = true;
-                break;
-                case TK_AMPERSAND:
-                result = (left & right);
-                b = true;
-                break;
-                case TK_GREATERGREATER:
-                result = (left >> right);
-                b = true;
-                break;
-                case TK_LESSLESS:
-                result = (left << right);
-                b = true;
-                break;
-                case TK_VERTICAL_LINE:
-                result = (left | right);
-                b = true;
-                break;
+			switch (pBinaryExpression->token)
+			{
+			case TK_ASTERISK:
+				result = (left * right);
+				b = true;
+				break;
+			case TK_PLUS_SIGN:
+				result = (left + right);
+				b = true;
+				break;
+			case TK_HYPHEN_MINUS:
+				result = (left - right);
+				b = true;
+				break;
+			case TK_ANDAND:
+				result = (left && right);
+				b = true;
+				break;
+			case TK_OROR:
+				result = (left || right);
+				b = true;
+				break;
+			case TK_NOTEQUAL:
+				result = (left != right);
+				b = true;
+				break;
+			case TK_EQUALEQUAL:
+				result = (left == right);
+				b = true;
+				break;
+			case TK_GREATEREQUAL:
+				result = (left >= right);
+				b = true;
+				break;
+			case TK_LESSEQUAL:
+				result = (left <= right);
+				b = true;
+				break;
+			case TK_GREATER_THAN_SIGN:
+				result = (left > right);
+				b = true;
+				break;
+			case TK_LESS_THAN_SIGN:
+				result = (left < right);
+				b = true;
+				break;
+			case TK_AMPERSAND:
+				result = (left & right);
+				b = true;
+				break;
+			case TK_GREATERGREATER:
+				result = (left >> right);
+				b = true;
+				break;
+			case TK_LESSLESS:
+				result = (left << right);
+				b = true;
+				break;
+			case TK_VERTICAL_LINE:
+				result = (left | right);
+				b = true;
+				break;
 
-                case TK_SOLIDUS:
-                if (right != 0)
-                {
-                    result = (left / right);
-                    b = true;
-                }
-                else
-                {
-                    b = false;
-                    //SetError
-                }
-                break;
-
-
-                default:
-                //TODO ADD THE OPERADOR?
-                ASSERT(false);
-                b = false;
-            }
-
-            //if (pBinaryExpression->)
-        }
-        break;
-
-        CASE(TTernaryExpression) :
-        {
-            int e1, e2, e3;
-            b = EvaluateConstantExpression(((TTernaryExpression*)p)->pExpressionLeft, &e1);
-
-            b = EvaluateConstantExpression(((TTernaryExpression*)p)->pExpressionMiddle, &e2);
-
-            b = EvaluateConstantExpression(((TTernaryExpression*)p)->pExpressionRight, &e3);
-            ASSERT(false);
-        }
-        break;
-
-        CASE(TPrimaryExpressionValue) :
-        {
-            TPrimaryExpressionValue* pPrimaryExpressionValue =
-                (TPrimaryExpressionValue*)p;
-
-            if (pPrimaryExpressionValue->pExpressionOpt != NULL)
-            {
-                b = EvaluateConstantExpression(pPrimaryExpressionValue->pExpressionOpt, &result);
-            }
-            else
-            {
-                switch (pPrimaryExpressionValue->token)
-                {
-                    case TK_IDENTIFIER:
-                    result = 0; //para macro
-                    b = true;
-                    break;
-
-                    case TK_DECIMAL_INTEGER:
-                    result = atoi(pPrimaryExpressionValue->lexeme);
-                    b = true;
-                    break;
-
-                    case TK_HEX_INTEGER:
-                    result = strtol(pPrimaryExpressionValue->lexeme, NULL, 16);
-                    b = true;
-                    break;
-
-                    case TK_CHAR_LITERAL:
-                    if (pPrimaryExpressionValue->lexeme != NULL)
-                    {
-                        //vem com 'A'
-                        result = pPrimaryExpressionValue->lexeme[1];
-                        b = true;
-                    }
-                    else
-                    {
-                        result = 0;
-                    }
-                    break;
-                    default:
-                    b = false;
-                    ASSERT(0);
-                    break;
-                }
-
-            }
-        }
-        break;
-
-        CASE(TPostfixExpressionCore) :
-        {
-            TPostfixExpressionCore* pPostfixExpressionCore =
-                (TPostfixExpressionCore*)p;
-            b = TPostfixExpressionCore_CodePrint2(pPostfixExpressionCore, &result);
-            ASSERT(false);
-        }
-        break;
-
-        CASE(TUnaryExpressionOperator) :
-        {
-
-            TUnaryExpressionOperator* pTUnaryExpressionOperator =
-                (TUnaryExpressionOperator*)p;
-
-            if (pTUnaryExpressionOperator->token == TK_SIZEOF)
-            {
-
-                //if (TDeclarationSpecifiers_IsTypedef(pTUnaryExpressionOperator->TypeName.SpecifierQualifierList))
-                {
-
-                    //b = TTypeQualifier_CodePrint2(&pTUnaryExpressionOperator->TypeName.qualifiers, false, fp);
-                    //b = TTypeSpecifier_CodePrint2(pTUnaryExpressionOperator->TypeName.pTypeSpecifier, b, fp);
-                    // b = TDeclarator_CodePrint(&pTUnaryExpressionOperator->TypeName.declarator, b, fp);
+			case TK_SOLIDUS:
+				if (right != 0)
+				{
+					result = (left / right);
+					b = true;
+				}
+				else
+				{
+					b = false;
+					//SetError
+				}
+				break;
 
 
-                }
-                //else
-                {
-                    b = EvaluateConstantExpression(pTUnaryExpressionOperator->pExpressionLeft, &result);
-                }
-            }
-            else
-            {
-                int localResult;
-                b = EvaluateConstantExpression(pTUnaryExpressionOperator->pExpressionLeft, &localResult);
-                switch (pTUnaryExpressionOperator->token)
-                {
-                    case TK_EXCLAMATION_MARK:
-                    result = !localResult;
-                    b = true;
-                    break;
-                    case TK_HYPHEN_MINUS:
-                    result = -localResult;
-                    b = true;
-                    break;
-                    default:
-                    ASSERT(false);
-                }
-            }
+			default:
+				//TODO ADD THE OPERADOR?
+				ASSERT(false);
+				b = false;
+			}
+
+			//if (pBinaryExpression->)
+		}
+		break;
+
+		CASE(TTernaryExpression) :
+		{
+			int e1, e2, e3;
+			b = EvaluateConstantExpression(((TTernaryExpression*)p)->pExpressionLeft, &e1);
+
+			b = EvaluateConstantExpression(((TTernaryExpression*)p)->pExpressionMiddle, &e2);
+
+			b = EvaluateConstantExpression(((TTernaryExpression*)p)->pExpressionRight, &e3);
+			ASSERT(false);
+		}
+		break;
+
+		CASE(TPrimaryExpressionValue) :
+		{
+			TPrimaryExpressionValue* pPrimaryExpressionValue =
+				(TPrimaryExpressionValue*)p;
+
+			if (pPrimaryExpressionValue->pExpressionOpt != NULL)
+			{
+				b = EvaluateConstantExpression(pPrimaryExpressionValue->pExpressionOpt, &result);
+			}
+			else
+			{
+				switch (pPrimaryExpressionValue->token)
+				{
+				case TK_IDENTIFIER:
+					result = 0; //para macro
+					b = true;
+					break;
+
+				case TK_DECIMAL_INTEGER:
+					result = atoi(pPrimaryExpressionValue->lexeme);
+					b = true;
+					break;
+
+				case TK_HEX_INTEGER:
+					result = strtol(pPrimaryExpressionValue->lexeme, NULL, 16);
+					b = true;
+					break;
+
+				case TK_CHAR_LITERAL:
+					if (pPrimaryExpressionValue->lexeme != NULL)
+					{
+						//vem com 'A'
+						result = pPrimaryExpressionValue->lexeme[1];
+						b = true;
+					}
+					else
+					{
+						result = 0;
+					}
+					break;
+				default:
+					b = false;
+					ASSERT(0);
+					break;
+				}
+
+			}
+		}
+		break;
+
+		CASE(TPostfixExpressionCore) :
+		{
+			TPostfixExpressionCore* pPostfixExpressionCore =
+				(TPostfixExpressionCore*)p;
+			b = TPostfixExpressionCore_CodePrint2(pPostfixExpressionCore, &result);
+			ASSERT(false);
+		}
+		break;
+
+		CASE(TUnaryExpressionOperator) :
+		{
+
+			TUnaryExpressionOperator* pTUnaryExpressionOperator =
+				(TUnaryExpressionOperator*)p;
+
+			if (pTUnaryExpressionOperator->token == TK_SIZEOF)
+			{
+
+				//if (TDeclarationSpecifiers_IsTypedef(pTUnaryExpressionOperator->TypeName.SpecifierQualifierList))
+				{
+
+					//b = TTypeQualifier_CodePrint2(&pTUnaryExpressionOperator->TypeName.qualifiers, false, fp);
+					//b = TTypeSpecifier_CodePrint2(pTUnaryExpressionOperator->TypeName.pTypeSpecifier, b, fp);
+					// b = TDeclarator_CodePrint(&pTUnaryExpressionOperator->TypeName.declarator, b, fp);
 
 
-        }
-        break;
+				}
+				//else
+				{
+					b = EvaluateConstantExpression(pTUnaryExpressionOperator->pExpressionRight, &result);
+				}
+			}
+			else
+			{
+				int localResult;
+				b = EvaluateConstantExpression(pTUnaryExpressionOperator->pExpressionRight, &localResult);
+				switch (pTUnaryExpressionOperator->token)
+				{
+				case TK_EXCLAMATION_MARK:
+					result = !localResult;
+					b = true;
+					break;
+				case TK_HYPHEN_MINUS:
+					result = -localResult;
+					b = true;
+					break;
+				default:
+					ASSERT(false);
+				}
+			}
 
-        CASE(TCastExpressionType) :
-        {
-            TCastExpressionType * pCastExpressionType =
-                (TCastExpressionType*)p;
+
+		}
+		break;
+
+		CASE(TCastExpressionType) :
+		{
+			TCastExpressionType * pCastExpressionType =
+				(TCastExpressionType*)p;
 
 
-            //b = TTypeQualifier_CodePrint2(&pCastExpressionType->TypeName.qualifiers, false, fp);
-            //b = TTypeSpecifier_CodePrint2(pCastExpressionType->TypeName.pTypeSpecifier, b, fp);
-            //b = TDeclarator_CodePrint(&pCastExpressionType->TypeName.declarator, b, fp);
+			//b = TTypeQualifier_CodePrint2(&pCastExpressionType->TypeName.qualifiers, false, fp);
+			//b = TTypeSpecifier_CodePrint2(pCastExpressionType->TypeName.pTypeSpecifier, b, fp);
+			//b = TDeclarator_CodePrint(&pCastExpressionType->TypeName.declarator, b, fp);
 
-            b = EvaluateConstantExpression(pCastExpressionType->pExpression, &result);
-            ASSERT(false);
+			b = EvaluateConstantExpression(pCastExpressionType->pExpression, &result);
+			ASSERT(false);
 
-        }
-        break;
+		}
+		break;
 
-        default:
-        ASSERT(false);
-    }
+	default:
+		ASSERT(false);
+	}
 
-    ASSERT(result != -987654321);
-    *pResult = result;
-    return b;
+	ASSERT(result != -987654321);
+	*pResult = result;
+	return b;
 }
 
 
 
 TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration* p)
 {
-    TParameterTypeList* pParameterTypeList = NULL;
+	TParameterTypeList* pParameterTypeList = NULL;
 
-    if (p->InitDeclaratorList.pHead != NULL)
-    {
-        if (p->InitDeclaratorList.pHead->pNext == NULL)
-        {
-            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
-            {
-                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
-                {
-                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
-                    {
-                        pParameterTypeList =
-                            &p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Parameters;
+	if (p->InitDeclaratorList.pHead != NULL)
+	{
+		if (p->InitDeclaratorList.pHead->pNext == NULL)
+		{
+			if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
+			{
+				if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
+				{
+					if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+					{
+						pParameterTypeList =
+							&p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Parameters;
 
-                    }
-                }
-            }
-        }
-    }
-    return pParameterTypeList;
+					}
+				}
+			}
+		}
+	}
+	return pParameterTypeList;
 }
 
 const char* TDeclaration_GetFunctionName(TDeclaration* p)
 {
-    const char* functionName = NULL;
+	const char* functionName = NULL;
 
-    if (p->InitDeclaratorList.pHead != NULL)
-    {
-        if (p->InitDeclaratorList.pHead->pNext == NULL)
-        {
-            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
-            {
-                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
-                {
-                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
-                    {
-                        functionName =
-                            p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Identifier;
-                    }
-                }
-            }
-        }
-    }
-    return functionName;
+	if (p->InitDeclaratorList.pHead != NULL)
+	{
+		if (p->InitDeclaratorList.pHead->pNext == NULL)
+		{
+			if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
+			{
+				if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
+				{
+					if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+					{
+						functionName =
+							p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Identifier;
+					}
+				}
+			}
+		}
+	}
+	return functionName;
 }
 
 TCompoundStatement* TDeclaration_Is_FunctionDefinition(TDeclaration* p)
 {
-    TCompoundStatement* pCompoundStatement = NULL;
+	TCompoundStatement* pCompoundStatement = NULL;
 
-    if (p->InitDeclaratorList.pHead != NULL)
-    {
-        if (p->InitDeclaratorList.pHead->pNext == NULL)
-        {
-            if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
-            {
-                if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
-                {
-                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
-                    {
-                        pCompoundStatement = p->pCompoundStatementOpt;
-                    }
-                }
-            }
-        }
-    }
-    return pCompoundStatement;
+	if (p->InitDeclaratorList.pHead != NULL)
+	{
+		if (p->InitDeclaratorList.pHead->pNext == NULL)
+		{
+			if (p->InitDeclaratorList.pHead->pDeclarator != NULL)
+			{
+				if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
+				{
+					if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+					{
+						pCompoundStatement = p->pCompoundStatementOpt;
+					}
+				}
+			}
+		}
+	}
+	return pCompoundStatement;
 }
 
 TStructUnionSpecifier* TDeclarationSpecifiers_Find_StructUnionSpecifier(TDeclarationSpecifiers* p)
 {
-    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
-    ForEachListItem(TSpecifier, pDeclarationSpecifier, p)
-    {
-        pStructUnionSpecifier =
-            TSpecifier_As_TStructUnionSpecifier(pDeclarationSpecifier);
-        if (pStructUnionSpecifier)
-        {
-            break;
-        }
-    }
-    return pStructUnionSpecifier;
+	TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+	ForEachListItem(TSpecifier, pDeclarationSpecifier, p)
+	{
+		pStructUnionSpecifier =
+			TSpecifier_As_TStructUnionSpecifier(pDeclarationSpecifier);
+		if (pStructUnionSpecifier)
+		{
+			break;
+		}
+	}
+	return pStructUnionSpecifier;
 }
 
 TStructUnionSpecifier* TParameter_Is_DirectPointerToStruct(TProgram* program, TParameter* pParameter)
 {
-    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
-    if (TParameter_IsDirectPointer(pParameter))
-    {
-        const char* typedefName = TParameter_GetTypedefName(pParameter);
-        if (typedefName != NULL)
-        {
-            TDeclaration* pArgType = TProgram_FindDeclaration(program, TParameter_GetTypedefName(pParameter));
-            if (pArgType)
-            {
-                pStructUnionSpecifier =
-                    TDeclarationSpecifiers_Find_StructUnionSpecifier(&pArgType->Specifiers);
-            }
-        }
-    }
-    return pStructUnionSpecifier;
+	TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+	if (TParameter_IsDirectPointer(pParameter))
+	{
+		const char* typedefName = TParameter_GetTypedefName(pParameter);
+		if (typedefName != NULL)
+		{
+			TDeclaration* pArgType = TProgram_FindDeclaration(program, TParameter_GetTypedefName(pParameter));
+			if (pArgType)
+			{
+				pStructUnionSpecifier =
+					TDeclarationSpecifiers_Find_StructUnionSpecifier(&pArgType->Specifiers);
+			}
+		}
+	}
+	return pStructUnionSpecifier;
 }
-

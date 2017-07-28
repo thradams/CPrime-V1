@@ -155,10 +155,6 @@
     <ClCompile Include="CPrime\Templates\ListTemplate.c" />
     <ClCompile Include="CPrime\Templates\MapTemplate.c" />
     <ClCompile Include="CPrime\Templates\UnionTemplate.c" />
-    <ClCompile Include="hello.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Parser\Ast.c" />
     <ClCompile Include="Parser\AstPrint.c" />
     <ClCompile Include="Parser\BasicScanner.c" />

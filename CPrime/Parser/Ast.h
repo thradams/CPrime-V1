@@ -35,6 +35,7 @@ typedef enum
     TypeNull,
     TDeclaration_ID,
     TStaticAssertDeclaration_ID,
+	TEofDeclaration_ID,
 
     TSingleTypeSpecifier_ID,
     TEnumSpecifier_ID,
@@ -145,12 +146,19 @@ typedef struct
     TScannerItemList ClueList4;
     TScannerItemList ClueList5;
 
-
-
 } TStaticAssertDeclaration;
 #define TSTATIC_ASSERT_DECLARATION_INIT { {TStaticAssertDeclaration_ID} , NULL, STRING_INIT, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT}
 CREATETYPE(TStaticAssertDeclaration, TSTATIC_ASSERT_DECLARATION_INIT)
 
+
+typedef struct
+{
+	TTypePointer Type;
+	TScannerItemList ClueList0;
+} TEofDeclaration;
+
+#define TEOFDECLARATION_INIT { {TEofDeclaration_ID} , TSCANNERITEMLIST_INIT}
+CREATETYPE(TEofDeclaration, TEOFDECLARATION_INIT)
 
 
 typedef TTypePointer TStatement;
@@ -208,7 +216,7 @@ typedef struct
     TExpression*  pExpressionRight;
     TPosition Position;
 
-    TScannerItemList ClueList0;
+    TScannerItemList ClueList00;
 
 } TBinaryExpression;
 #define TBINARYEXPRESSION_INIT { {TBinaryExpression_ID}, TK_NONE, NULL, NULL, TPOSITION_INIT, TSCANNERITEMLIST_INIT}
@@ -725,6 +733,7 @@ CREATETYPE(TStructDeclaration, TSTRUCT_DECLARATION_BASE_INIT)
 CREATETYPEOR(TAnyStructDeclaration)
 CAST(TAnyStructDeclaration, TStructDeclaration)
 CAST(TAnyStructDeclaration, TStaticAssertDeclaration)
+CAST(TAnyStructDeclaration, TEofDeclaration)
 
 typedef ArrayT(TAnyStructDeclaration) TStructDeclarationList;
 
@@ -792,6 +801,7 @@ const char* TDeclaration_GetFunctionName(TDeclaration* p);
 
 CAST(TAnyDeclaration, TStaticAssertDeclaration)
 CAST(TAnyDeclaration, TDeclaration)
+CAST(TAnyDeclaration, TEofDeclaration)
 
 bool TAnyDeclaration_IsTypedef(TAnyDeclaration* pDeclaration);
 bool TAnyDeclaration_Is_StructOrUnionDeclaration(TAnyDeclaration* pDeclaration);
@@ -807,7 +817,7 @@ typedef struct TParameter
     //Anotacoes in out opt geradas automaticamente?
     //para os parametros?
     //para o retorno opt?
-    TScannerItemList ClueList0;
+    TScannerItemList ClueList00; //, do parametro
     bool bHasComma;
 } TParameter;
 #define TPARAMETER_DECLARATION_INIT { TDECLARATION_SPECIFIERS_INIT, TDECLARATOR_INIT, NULL, TSCANNERITEMLIST_INIT, false}
@@ -869,6 +879,7 @@ CAST(TBlockItem, TSwitchStatement)
 
 CAST(TBlockItem, TDeclaration)
 CAST(TBlockItem, TStaticAssertDeclaration)
+
 
 
 typedef struct TTypeName
@@ -975,9 +986,11 @@ typedef struct
 {
     TTypePointer Type;
     Tokens token;
-    TExpression*  pExpressionLeft;
+    TExpression*  pExpressionRight;
     TTypeName TypeName;
-    TScannerItemList ClueList0;
+    TScannerItemList ClueList00;
+	TScannerItemList ClueList1; //sizeof (
+	TScannerItemList ClueList2; //sizeof ( )
 } TUnaryExpressionOperator;
 
 #define TUNARY_EXPRESSION_OPERATOR_INIT { {TUnaryExpressionOperator_ID}, TK_NONE,  NULL, TTYPENAME_INIT, TSCANNERITEMLIST_INIT}

@@ -557,12 +557,12 @@ bool TExpression_Print(TExpression *  p, const char* name, bool b, FILE* fp)
                 }
                 else
                 {
-                    b = TExpression_Print(pTUnaryExpressionOperator->pExpressionLeft, "expr", b, fp);
+                    b = TExpression_Print(pTUnaryExpressionOperator->pExpressionRight, "expr", b, fp);
                 }
             }
             else
             {
-                b = TExpression_Print(pTUnaryExpressionOperator->pExpressionLeft, "expr", b, fp);
+                b = TExpression_Print(pTUnaryExpressionOperator->pExpressionRight, "expr", b, fp);
             }
 
             fprintf(fp, ",\"unary\":\"%s\"", TokenToString(((TBinaryExpression*)p)->token));
@@ -1324,6 +1324,9 @@ bool TAnyDeclaration_Print(TAnyDeclaration *pDeclaration, bool b, FILE* fp)
 {
     switch (pDeclaration->Type)
     {
+	case TEofDeclaration_ID:
+		break;
+
         case TStaticAssertDeclaration_ID:
         break;
 

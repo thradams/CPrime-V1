@@ -77,9 +77,6 @@
     <ClCompile Include="CPrime.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hello.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CPrime\Templates\ListTemplate.c">
       <Filter>Source Files\CPrime\Templates</Filter>
     </ClCompile>
