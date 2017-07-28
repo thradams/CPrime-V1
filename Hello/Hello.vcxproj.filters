@@ -10,15 +10,9 @@
     <ClCompile Include="Hello.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Line.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="settings.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Line.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

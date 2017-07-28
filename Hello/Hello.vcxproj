@@ -99,7 +99,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>"..\CPrime\Release\CPrime" -config "..\CPrime\vs2017.h"  -out hello.c hello.c</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -145,10 +146,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Hello.c" />
-    <ClCompile Include="Line.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Line.h" />
     <ClInclude Include="settings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
