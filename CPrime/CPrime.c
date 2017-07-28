@@ -79,7 +79,7 @@ void PrintHelp()
 int main(int argc, char* argv[])
 {
     printf("\n");
-    printf("Version " __DATE__ "\n");
+    printf("C' Version " __DATE__ "\n");
     printf("https://github.com/thradams/CPrime\n\n");
 
 
