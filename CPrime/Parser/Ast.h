@@ -139,7 +139,7 @@ typedef struct
 
     TExpression* pConstantExpression;
     String Text;
-    TScannerItemList ClueList0;
+	TScannerItemList ClueList0;
     TScannerItemList ClueList1;
     TScannerItemList ClueList2;
     TScannerItemList ClueList3;

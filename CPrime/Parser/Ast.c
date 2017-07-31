@@ -502,7 +502,12 @@ bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p)
 			pSingleTypeSpecifier->Token == TK_SHORT ||
 			pSingleTypeSpecifier->Token == TK_SIGNED ||
 			pSingleTypeSpecifier->Token == TK_UNSIGNED ||
-			pSingleTypeSpecifier->Token == TK_LONG)
+			pSingleTypeSpecifier->Token == TK__INT8 ||
+            pSingleTypeSpecifier->Token == TK__INT16 ||
+            pSingleTypeSpecifier->Token == TK__INT32 ||
+            pSingleTypeSpecifier->Token == TK__INT64 ||
+            pSingleTypeSpecifier->Token == TK__WCHAR_T
+            )
 		{
 			bResult = true;
 			break;

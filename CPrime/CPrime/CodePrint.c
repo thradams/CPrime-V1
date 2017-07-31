@@ -2789,6 +2789,13 @@ void TSingleTypeSpecifier_BuildDestroy(TProgram* program,
 {
 	if (pSingleTypeSpecifier->Token == TK_INT ||
 		pSingleTypeSpecifier->Token == TK_LONG ||
+        //
+        pSingleTypeSpecifier->Token == TK__INT8 ||
+        pSingleTypeSpecifier->Token == TK__INT16 ||
+        pSingleTypeSpecifier->Token == TK__INT32 ||
+        pSingleTypeSpecifier->Token == TK__INT64 ||
+        pSingleTypeSpecifier->Token == TK__WCHAR_T ||
+        //
 		pSingleTypeSpecifier->Token == TK_SHORT ||
 		pSingleTypeSpecifier->Token == TK_UNSIGNED ||
 		//

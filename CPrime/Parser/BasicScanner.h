@@ -21,6 +21,7 @@ typedef enum
     TK_FLOAT_NUMBER,
     TK_MACROPLACEHOLDER,
     TK_BREAKLINE,
+	TK_BACKSLASHBREAKLINE,
     CHAR1, // '/' ,
     CHARACTER_TABULATION,// = '\t';
     TK_PREPROCESSOR,
@@ -120,6 +121,14 @@ typedef enum
     TK_IF,
     TK_INT,
     TK_LONG,
+    ////////////////
+    //Microsoft - specific
+    TK__INT8,
+    TK__INT16,
+    TK__INT32,
+    TK__INT64,
+    TK__WCHAR_T,
+    ////////////////
     TK_REGISTER,
     TK_RETURN,
     TK_SHORT,
@@ -141,6 +150,7 @@ typedef enum
     TK_RESTRICT,
     TK__STATIC_ASSERT,
     TK_INLINE,
+    TK__INLINE,
     TK__NORETURN,
     TK__ALIGNAS,
     TK__GENERIC,
