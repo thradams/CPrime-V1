@@ -791,6 +791,19 @@ static bool TExpression_CodePrint(TProgram* program, Options * options, TExpress
 		}
 		break;
 
+        CASE(TPrimaryExpressionLiteral) :
+        {
+            TPrimaryExpressionLiteral* pPrimaryExpressionLiteral
+                = (TPrimaryExpressionLiteral*) p;
+
+            ForEachListItem(TPrimaryExpressionLiteralItem, pItem, &pPrimaryExpressionLiteral->List)
+            {
+                TNodeClueList_CodePrint(options, &pItem->ClueList0, fp);
+                Output_Append(fp, pItem->lexeme);
+            }
+        }
+        break;
+
 		CASE(TPrimaryExpressionValue) :
 		{
 			TPrimaryExpressionValue* pPrimaryExpressionValue =
@@ -909,6 +922,12 @@ static   bool TEnumerator_CodePrint(TProgram* program, Options * options, TEnume
 		//vou criar uma expressionp enum?
 	}
 
+    if (pTEnumerator->bHasComma)
+    {
+        TNodeClueList_CodePrint(options, &pTEnumerator->ClueList2, fp);
+        Output_Append(fp, ",");
+    }
+
 	return true;
 }
 
@@ -929,16 +948,6 @@ static bool TEnumSpecifier_CodePrint(TProgram* program, Options * options, TEnum
 	ForEachListItem(TEnumerator, pTEnumerator, &p->EnumeratorList)
 	{
 		TEnumerator_CodePrint(program, options, pTEnumerator, false, fp);
-
-		if (List_IsLastItem(&p->EnumeratorList, pTEnumerator))
-		{
-			//Output_Append(fp, "\n");
-		}
-		else
-		{
-			TNodeClueList_CodePrint(options, &pTEnumerator->ClueList2, fp);
-			Output_Append(fp, ",");
-		}
 	}
 
 	TNodeClueList_CodePrint(options, &p->ClueList3, fp);

@@ -1,10 +1,5 @@
-
-#define NULL ((void *)0)
-
-//void F(int a, int b, int c);
+#define false 0
 int main()
 {
-	//F(a, NULL, c);
-	//int result = strtol(pPrimaryExpressionValue->lexeme, NULL 16);
-
+    return (false);
 }

@@ -488,6 +488,70 @@ void Parser_Test4()
     Parser_Destroy(&parser);
 }
 
+
+void Parser_Test5()
+{
+    const char* code =
+        "#define false 0\n"
+        "int main()\n"
+        "{\n"
+        "return (false);\n"
+        "}\n";
+
+    Parser parser;
+    Parser_InitString(&parser, "a", code);
+    ParserMatch(&parser, TK_INT);
+    
+    ParserMatch(&parser, TK_IDENTIFIER);
+    ParserMatch(&parser, TK_LEFT_PARENTHESIS);
+    ParserMatch(&parser, TK_RIGHT_PARENTHESIS);
+    ParserMatch(&parser, TK_LEFT_CURLY_BRACKET);
+    ParserMatch(&parser, TK_RETURN);
+
+    TEST(Scanner_LookAheadToken(&parser.Scanner, 1) == TK_MACRO_CALL);
+    TEST(Scanner_LookAheadToken(&parser.Scanner, 2) == TK_DECIMAL_INTEGER);
+    TEST(Scanner_LookAheadToken(&parser.Scanner, 3) == TK_MACRO_EOF);
+
+    TEST(Parser_LookAheadToken(&parser) == TK_DECIMAL_INTEGER);
+    ParserMatch(&parser, TK_LEFT_PARENTHESIS);
+    
+
+    ParserMatch(&parser, TK_DECIMAL_INTEGER);
+    ParserMatch(&parser, TK_RIGHT_PARENTHESIS);
+    ParserMatch(&parser, TK_SEMICOLON);
+    ParserMatch(&parser, TK_RIGHT_CURLY_BRACKET);
+    ParserMatch(&parser, TK_EOF);
+    Parser_Destroy(&parser);
+}
+
+void Parser_Test6()
+{
+    const char* code =
+        "#define false 0\n"
+        "int main()\n"
+        "{\n"
+        "return (false);\n"
+        "}\n";
+
+    Parser parser;
+    Parser_InitString(&parser, "a", code);
+    ParserMatch(&parser, TK_INT);
+
+    ParserMatch(&parser, TK_IDENTIFIER);
+    ParserMatch(&parser, TK_LEFT_PARENTHESIS);
+    ParserMatch(&parser, TK_RIGHT_PARENTHESIS);
+    ParserMatch(&parser, TK_LEFT_CURLY_BRACKET);
+    ParserMatch(&parser, TK_RETURN);
+    ParserMatch(&parser, TK_LEFT_PARENTHESIS);
+    ParserMatch(&parser, TK_DECIMAL_INTEGER);
+    ParserMatch(&parser, TK_RIGHT_PARENTHESIS);
+    ParserMatch(&parser, TK_SEMICOLON);
+    ParserMatch(&parser, TK_RIGHT_CURLY_BRACKET);
+    ParserMatch(&parser, TK_EOF);
+    Parser_Destroy(&parser);
+}
+
+
 void AllTests()
 {
     printf("RUNNING TESTS ...\n");
@@ -519,6 +583,8 @@ void AllTests()
     Parser_Test2();
     Parser_Test3();
     Parser_Test4();
+    Parser_Test5();
+    Parser_Test6();
 
     if (error_count == 0)
     {

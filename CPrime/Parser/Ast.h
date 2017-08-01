@@ -65,6 +65,7 @@ typedef enum
     TUnaryExpressionOperator_ID,
     TCastExpressionType_ID,
     TPrimaryExpressionValue_ID,
+    TPrimaryExpressionLiteral_ID,
     TPostfixExpressionCore_ID,
     TBinaryExpression_ID,
     TTernaryExpression_ID
@@ -201,6 +202,27 @@ typedef struct
 
 #define TPRIMARY_EXPRESSION_VALUE { {TPrimaryExpressionValue_ID}, TK_NONE, STRING_INIT, NULL, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT}
 CREATETYPE(TPrimaryExpressionValue, TPRIMARY_EXPRESSION_VALUE)
+
+typedef struct TPrimaryExpressionLiteralItem
+{
+    struct TPrimaryExpressionLiteralItem* pNext;
+    String lexeme;
+    TScannerItemList ClueList0;
+} TPrimaryExpressionLiteralItem;
+
+#define TPRIMARYEXPRESSIONLITERALITEM_INIT {NULL, STRING_INIT, TSCANNERITEMLIST_INIT}
+CREATETYPE(TPrimaryExpressionLiteralItem, TPRIMARYEXPRESSIONLITERALITEM_INIT)
+
+typedef List(TPrimaryExpressionLiteralItem) TPrimaryExpressionLiteralItemList;
+#define TPRIMARYEXPRESSIONLITERALITEMLIST_INIT LIST_INIT
+typedef struct
+{
+    TTypePointer Type;
+    TPrimaryExpressionLiteralItemList List;
+} TPrimaryExpressionLiteral;
+
+#define TPRIMARYEXPRESSIONLITERAL_INIT { {TPrimaryExpressionLiteral_ID}, LIST_INIT}
+CREATETYPE(TPrimaryExpressionLiteral, TPRIMARYEXPRESSIONLITERAL_INIT)
 
 
 typedef  struct TInitializerListItem TInitializerListItem;
@@ -480,9 +502,10 @@ typedef struct TEnumerator
     TScannerItemList ClueList0;
     TScannerItemList ClueList1; // =
     TScannerItemList ClueList2; // ,
+    bool bHasComma;
 } TEnumerator;
 
-#define TENUMERATOR_INIT { STRING_INIT , NULL, NULL, TSCANNERITEMLIST_INIT}
+#define TENUMERATOR_INIT { STRING_INIT , NULL, NULL, TSCANNERITEMLIST_INIT, false}
 CREATETYPE(TEnumerator, TENUMERATOR_INIT)
 
 typedef List(TEnumerator) TEnumeratorList;
@@ -698,12 +721,11 @@ typedef struct TInitDeclarator
     TDeclarator* pDeclarator;
     TInitializer* pInitializer;
     struct TInitDeclarator * pNext;
-    TScannerItemList ClueList00;
-	
+    TScannerItemList ClueList00;	
 	TScannerItemList ClueList1; //defval
 } TInitDeclarator;
 
-#define TINITDECLARATOR_INIT {NULL, NULL, NULL, TSCANNERITEMLIST_INIT}
+#define TINITDECLARATOR_INIT {NULL, NULL, NULL, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT}
 CREATETYPE(TInitDeclarator, TINITDECLARATOR_INIT)
 
 typedef TInitDeclarator TStructDeclarator;
@@ -1001,7 +1023,7 @@ bool EvaluateConstantExpression(TExpression * p, int *pResult);
 
 TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration * p);
 
-
+CAST(TExpression, TPrimaryExpressionLiteral)
 CAST(TExpression, TPrimaryExpressionValue)
 CAST(TExpression, TBinaryExpression)
 CAST(TExpression, TUnaryExpressionOperator)

@@ -247,10 +247,24 @@ void TTernaryExpression_Destroy(TTernaryExpression* p)
 	TScannerItemList_Destroy(&p->ClueList1);
 }
 
+void TPrimaryExpressionLiteralItem_Destroy(TPrimaryExpressionLiteralItem *p)
+{
+    String_Destroy(&p->lexeme);
+    TScannerItemList_Destroy(&p->ClueList0);
+}
+
+void TPrimaryExpressionLiteral_Destroy(TPrimaryExpressionLiteral* p)
+{
+    List_Destroy(TPrimaryExpressionLiteralItem, &p->List);    
+}
+
 void TExpression_Destroy(TExpression* p)
 {
 	switch (p->Type)
 	{
+        CASE(TPrimaryExpressionLiteral) :
+            TPrimaryExpressionLiteral_Destroy((TPrimaryExpressionLiteral*)p);
+        break;
 		CASE(TPrimaryExpressionValue) :
 			TPrimaryExpressionValue_Destroy((TPrimaryExpressionValue*)p);
 		break;

@@ -471,10 +471,9 @@ bool IsFirstOfPrimaryExpression(Tokens token)
 
 void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 {
-    if (Parser_HasError(ctx))
-    {
-        return;
-    }
+    *ppPrimaryExpression = NULL;
+
+  
 
     /*
     (6.5.1) primary-expression:
@@ -503,27 +502,24 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
     {
     case TK_STRING_LITERAL:
     {
-        TPrimaryExpressionValue *  pPrimaryExpressionValue
-            = TPrimaryExpressionValue_Create();
+        TPrimaryExpressionLiteral *  pPrimaryExpressionLiteral
+            = TPrimaryExpressionLiteral_Create();
 
-        pPrimaryExpressionValue->token = token;
+        *ppPrimaryExpression = (TExpression*)pPrimaryExpressionLiteral;
 
-        StrBuilder adjacentStrings = STRBUILDER_INIT;
-        StrBuilder_Append(&adjacentStrings, "\"");
         while (token == TK_STRING_LITERAL)
         {
+            TPrimaryExpressionLiteralItem *  pPrimaryExpressionLiteralItem
+                = TPrimaryExpressionLiteralItem_Create();
             const char* lexeme = Lexeme(ctx);
-            int len = strlen(lexeme);
-            StrBuilder_AppendN(&adjacentStrings, lexeme + 1, len - 2);
+            String_Set(&pPrimaryExpressionLiteralItem->lexeme, lexeme);
 
             token = Parser_Match(ctx,
-                &pPrimaryExpressionValue->ClueList0);
-        }
-        StrBuilder_Append(&adjacentStrings, "\"");
-        String_Set(&pPrimaryExpressionValue->lexeme, adjacentStrings.c_str);
-        *ppPrimaryExpression = (TExpression*)pPrimaryExpressionValue;
+                &pPrimaryExpressionLiteralItem->ClueList0);
 
-        StrBuilder_Destroy(&adjacentStrings);
+            List_Add(&pPrimaryExpressionLiteral->List, pPrimaryExpressionLiteralItem);
+        }
+
     }
     break;
 
@@ -3110,6 +3106,11 @@ void Struct_Or_Union_Specifier(Parser* ctx,
                 //typedef struct X X;
                 //                  ^
             }
+            else  if (tokenAhead == TK_LEFT_SQUARE_BRACKET)
+            {
+                //typedef struct X {;
+                //                 ^
+            }
             else
             {
                 SetError2(ctx, "unexpected struct ", "");
@@ -3173,66 +3174,36 @@ bool EnumeratorC(Parser* ctx, TEnumerator* pEnumerator2)
 void Enumerator_List(Parser* ctx,
     TEnumeratorList* pEnumeratorList2)
 {
+    if (ErrorOrEof(ctx))
+    {
+        return;
+    }
+
     /*
     enumerator-list:
     enumerator
     enumerator-list , enumerator
     */
-    int currentValue = 0;
-    //pelo menos 1
+
     TEnumerator* pEnumerator2 = TEnumerator_Create();
     List_Add(pEnumeratorList2, pEnumerator2);
 
-    if (!EnumeratorC(ctx, pEnumerator2))
+    EnumeratorC(ctx, pEnumerator2);
+    
+    Tokens token = Parser_CurrentToken(ctx);
+
+    //tem mais?
+    if (token == TK_COMMA)
     {
-        //atribui um valor
-        //pEnumerator2->Value = currentValue;
-        currentValue++;
-    }
+        Parser_Match(ctx, &pEnumerator2->ClueList2);
+        token = Parser_CurrentToken(ctx);   
+        pEnumerator2->bHasComma = true;
 
-    else
-    {
-        //TODO
-        //comeca com o valor do primeiro?
-        //currentValue = pEnumerator2->Value;
-        currentValue++;
-    }
-
-    for (; ;)
-    {
-        if (ErrorOrEof(ctx))
-            break;
-
-        Tokens token = Parser_CurrentToken(ctx);
-
-        if (token == TK_COMMA)
+        if (token != TK_RIGHT_CURLY_BRACKET)
         {
-            Parser_Match(ctx, &pEnumerator2->ClueList2);
-
-            token = Parser_CurrentToken(ctx);
-
-            //o enum aceita uma , no fim
-            if (token != TK_RIGHT_CURLY_BRACKET)
-            {
-                TEnumerator* pEnumerator3 = TEnumerator_Create();
-                List_Add(pEnumeratorList2, pEnumerator3);
-
-                if (!EnumeratorC(ctx, pEnumerator3))
-                {
-                    //atribui um valor
-                    //pEnumerator2->Value = currentValue;
-                    currentValue++;
-                }
-            }
+            Enumerator_List(ctx, pEnumeratorList2);
         }
-
-        else
-        {
-            ASSERT(token == TK_RIGHT_CURLY_BRACKET);
-            //acabou
-            break;
-        }
-    }
+    }    
 }
 
 void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
@@ -3563,19 +3534,19 @@ void Direct_Abstract_Declarator(Parser* ctx, TDeclarator** ppDeclarator2)
 
 void Direct_Declarator(Parser* ctx, TDirectDeclarator** ppDeclarator2)
 {
-     *ppDeclarator2 = NULL; //out
+    *ppDeclarator2 = NULL; //out
 
-    /*
-    direct-declarator:
-    identifier
-    ( declarator )
-    direct-declarator [ type-qualifier-listopt assignment-expressionopt ]
-    direct-declarator [ static type-qualifier-listopt assignment-expression ]
-    direct-declarator [ type-qualifier-list static assignment-expression ]
-    direct-declarator [ type-qualifier-listopt * ]
-    direct-declarator ( parameter-type-list )
-    direct-declarator ( identifier-listopt )
-    */
+   /*
+   direct-declarator:
+   identifier
+   ( declarator )
+   direct-declarator [ type-qualifier-listopt assignment-expressionopt ]
+   direct-declarator [ static type-qualifier-listopt assignment-expression ]
+   direct-declarator [ type-qualifier-list static assignment-expression ]
+   direct-declarator [ type-qualifier-listopt * ]
+   direct-declarator ( parameter-type-list )
+   direct-declarator ( identifier-listopt )
+   */
     TDirectDeclarator *pDirectDeclarator = NULL;
 
     if (ErrorOrEof(ctx))

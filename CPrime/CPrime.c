@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
     printf("https://github.com/thradams/CPrime\n\n");
 
 
-    //AllTests();
+    AllTests();
 
     if (argc < 2)
     {

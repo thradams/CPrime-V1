@@ -810,16 +810,14 @@ int EvalExpression(const char* s, Scanner* pScanner)
 
 
 
-bool GetNewMacroCallString(Scanner* pScanner,
+static bool GetNewMacroCallString(Scanner* pScanner,
   Macro* pMacro,
   TokenArray* ppTokenArray,
   StrBuilder* strBuilder)
 {
     //StrBuilder_Append(strBuilderResult, Scanner_CurrentLexeme(pScanner));
-
+    //TODO aqui nao pode ser o current
     const char* lexeme = Scanner_CurrentLexeme(pScanner);
-
-
 
     //verificar se tem parametros
     int nArgsExpected = pMacro->FormalArguments.Size;// pMacro->bIsFunction;
@@ -1258,7 +1256,7 @@ void Scanner_NextVersion2(Scanner* pScanner)
     while ((token == TK_EOF) &&
            pScanner->stack->pPrevious != NULL)
     {
-		ASSERT(pScanner->AcumulatedTokens.pHead == NULL);
+		//ASSERT(pScanner->AcumulatedTokens.pHead == NULL);
         BasicScannerStack_PopIfNotLast(&pScanner->stack);
         pTopScanner = Scanner_Top(pScanner);
         token = pTopScanner->currentItem.token;
@@ -1700,6 +1698,7 @@ void Scanner_NextVersion2(Scanner* pScanner)
 
                 StrBuilder callString = STRBUILDER_INIT;
                 //confirma realmente se eh p expandir
+                //aqui tem que pegar no head do stream nao no acumulado
                 bool bIsMacro = GetNewMacroCallString(pScanner,
                   pMacro2,
                   &ppTokenArray,
@@ -1989,6 +1988,33 @@ bool Scanner_CurrentTokenIsActive(Scanner* pScanner)
 }
 
 
+
+Tokens Scanner_AheadToken(Scanner* pScanner)
+{
+    Tokens token = TK_EOF;
+
+    if (!pScanner->bError)
+    {
+        if (pScanner->stack != NULL)
+        {
+            token = pScanner->stack->currentItem.token;
+        }
+    }
+
+    return token;
+}
+
+const char* Scanner_AheadLexeme(Scanner* pScanner)
+{
+    const char* lexeme = NULL;
+
+    if (!pScanner->bError && pScanner->stack)
+    {        
+        lexeme = pScanner->stack->currentItem.lexeme.c_str;        
+    }
+
+    return lexeme;
+}
 
 const char* Scanner_CurrentLexeme(Scanner* pScanner)
 {
