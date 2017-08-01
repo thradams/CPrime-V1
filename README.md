@@ -62,10 +62,15 @@ This section will contain external references
 
 ## Videos
 
+
+
+https://www.youtube.com/edit?o=U&video_id=LmUebDRGE1A
+
 Initializers
 
 https://www.youtube.com/watch?v=lIRLijA_n2Q&t=19s
 
+https://www.youtube.com/edit?o=U&video_id=mMHyeDZ0iA8
 
 Build-in function instanciation destroy , create, delete
 
