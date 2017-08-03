@@ -14,33 +14,32 @@
 #include <stdio.h>
 
 
-Macro* Macro_Create()
+Macro* Macro_Create() _default
 {
-  Macro* p = (Macro*)malloc(sizeof(Macro));
-
-  if (p != 0)
-  {
-    Macro t = MACRO_INIT;
-    *p = t;
-  }
-
-  return p;
+    Macro *p = (Macro*) malloc(sizeof * p);
+    if (p != NULL) {
+        String_Init(&p->Name);
+        p->bIsFunction = false;
+        TokenArray_Init(&p->TokenSequence);
+        TokenArray_Init(&p->FormalArguments);
+        p->FileIndex = 0;
+    }
+    return p;
 }
 
-void Macro_Destroy(Macro * p)
+void Macro_Destroy(Macro * p) _default
 {
-  TokenArray_Destroy(&p->FormalArguments);
-  String_Destroy(&p->Name);
-  TokenArray_Destroy(&p->TokenSequence);
+    String_Destroy(&p->Name);
+    TokenArray_Destroy(&p->TokenSequence);
+    TokenArray_Destroy(&p->FormalArguments);
 }
 
-void Macro_Delete(Macro * p)
+void Macro_Delete(Macro * p) _default
 {
-  if (p != 0)
-  {
-    Macro_Destroy(p);
-    free(p);
-  }
+    if (p != NULL) {
+        Macro_Destroy(p);
+        free(p);
+    }
 }
 
 
