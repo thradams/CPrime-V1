@@ -172,5 +172,8 @@
     <ClInclude Include="CPrime\Templates\ArrayTemplate.h">
       <Filter>Source Files\CPrime\Templates</Filter>
     </ClInclude>
+    <ClInclude Include="settings.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

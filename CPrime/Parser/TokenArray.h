@@ -7,9 +7,9 @@ typedef struct PPToken PPToken;
 
 typedef struct
 {
-  PPToken** pItems;
-  int Size;
-  int Capacity;
+    PPToken** pItems;
+    int Size;
+    int Capacity;
 } TokenArray;
 
 #define TOKENARRAY_INIT {0, 0, 0}
@@ -53,32 +53,32 @@ void TokenArray_Erase(TokenArray *pArray, int begin, int end);
 
 typedef struct TokenArrayMapItem
 {
-  struct MapItem2* pNext;
-  unsigned int HashValue;
-  String Key;
-  TokenArray* pValue;
+    struct MapItem2* pNext;
+    unsigned int HashValue;
+    String Key;
+    TokenArray* pValue;
 } TokenArrayMapItem;
 
 typedef struct
 {
-  TokenArrayMapItem** pHashTable;
-  unsigned int nHashTableSize;
-  size_t  nCount;
+    TokenArrayMapItem** pHashTable;
+    unsigned int nHashTableSize;
+    size_t  nCount;
 } TokenArrayMap;
 
 
 #define TOKENARRAYMAP_INIT { NULL, 0, 0 }
 
 int TokenArrayMap_SetAt(TokenArrayMap* pMap,
-                        const char* Key,
-                        TokenArray* newValue);
+    const char* Key,
+    TokenArray* newValue);
 
 bool TokenArrayMap_Lookup(const TokenArrayMap* pMap,
-                          const char*  Key,
-                          TokenArray** rValue);
+    const char*  Key,
+    TokenArray** rValue);
 
 bool TokenArrayMap_RemoveKey(TokenArrayMap* pMap,
-                             const char*  Key);
+    const char*  Key);
 
 void TokenArrayMap_Init(TokenArrayMap* p);
 void TokenArrayMap_Destroy(TokenArrayMap* p);
@@ -90,9 +90,9 @@ void TokenArrayMap_Swap(TokenArrayMap * pA, TokenArrayMap * pB);
 
 typedef struct
 {
-  PPToken** pItems;
-  int Size;
-  int Capacity;
+    PPToken** pItems;
+    int Size;
+    int Capacity;
 } TokenSet;
 #define TOKENSET_INIT { NULL, 0, 0 }
 
@@ -102,5 +102,5 @@ PPToken* TokenSet_Find(const TokenSet *pArray, const char * lexeme);
 void TokenSet_Destroy(TokenSet *pArray);
 
 void SetIntersection(const TokenSet *p1,
-                     const TokenSet *p2,
-                     TokenSet *pResult);
+    const TokenSet *p2,
+    TokenSet *pResult);

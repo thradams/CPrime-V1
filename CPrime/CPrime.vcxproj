@@ -90,6 +90,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_auto=;Array(x)=;_defval(x)=;_default=;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CompileAs>CompileAsCpp</CompileAs>
+      <ForcedIncludeFiles>$(ProjectDir)settings.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -117,6 +118,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_defval(x)=;Array(x)=;_auto=;_default=;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ForcedIncludeFiles>$(ProjectDir)settings.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -182,6 +184,7 @@
     <ClInclude Include="CPrime\Templates\ListTemplate.h" />
     <ClInclude Include="CPrime\Templates\MapTemplate.h" />
     <ClInclude Include="CPrime\Templates\UnionTemplate.h" />
+    <ClInclude Include="settings.h" />
     <ClInclude Include="vs2017.h" />
     <ClInclude Include="Parser\Ast.h" />
     <ClInclude Include="Parser\AstPrint.h" />

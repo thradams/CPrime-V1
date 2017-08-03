@@ -12,10 +12,8 @@
 
 bool bExpandMacros;
 
-void Options_Destroy(Options* options)
+void Options_Destroy(Options* options) _default
 {
-
-
 }
 
 static bool TInitializerListItem_CodePrint2(TProgram* program,
