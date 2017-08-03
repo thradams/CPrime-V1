@@ -89,15 +89,6 @@ void TokenArray_Delete(TokenArray* st)
   }
 }
 
-PPToken* TokenArray_Begin(TokenArray* p)
-{
-  return p->pItems[0];
-}
-
-PPToken* TokenArray_End(TokenArray* p)
-{
-  return p->pItems[p->Size];
-}
 
 void TokenArray_RemoveAt(TokenArray* p, int index)
 {

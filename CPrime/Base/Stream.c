@@ -118,11 +118,11 @@ Result SStream_Init(SStream* pStream, const char* name, const char*  text)
 }
 
 
-void SStream_Destroy(SStream* pStream)
+void SStream_Destroy(SStream* pStream) _default
 {
-  String_Destroy(&pStream->text);
-  String_Destroy(&pStream->NameOrFullPath);
-  String_Destroy(&pStream->FullDir2);
+    String_Destroy(&pStream->NameOrFullPath);
+    String_Destroy(&pStream->FullDir2);
+    String_Destroy(&pStream->text);
 }
 
 

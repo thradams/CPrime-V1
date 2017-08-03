@@ -29,9 +29,6 @@ void     TokenArray_Destroy(TokenArray* st);
 void     TokenArray_Delete(TokenArray* st);
 void     TokenArray_Swap(TokenArray* p1, TokenArray* p2);
 
-PPToken*      TokenArray_Begin(TokenArray* p);
-PPToken*      TokenArray_End(TokenArray* p);
-
 //
 
 
