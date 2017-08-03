@@ -105,13 +105,18 @@ static void TNodeClueList_CodePrint(Options* options, TScannerItemList* list,
 		switch (pNodeClue->token)
 		{
 		case TK_PRE_INCLUDE:
+            
 			Output_Append(fp, pNodeClue->lexeme.c_str);
 			Output_Append(fp, "\n");
-			IncludeLevel++;
+            //if (pNodeClue->bActive)
+            //{
+                IncludeLevel++;
+            //}
 			break;
 
 		case TK_FILE_EOF:
 			IncludeLevel--;
+            //ASSERT(IncludeLevel > 0);
 			//bInclude = true;
 			break;
 		case TK_PRE_DEFINE:

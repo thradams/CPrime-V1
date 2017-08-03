@@ -24,25 +24,25 @@ else\
 
 
 #define MATCH(scanner, TK) \
- TEST(Scanner_CurrentToken((scanner)) == TK&& \
-      Scanner_CurrentTokenIsActive((scanner)));\
+ TEST(Scanner_TokenAt((scanner), 0) == TK&& \
+      Scanner_IsActiveAt((scanner), 0));\
  Scanner_Match((scanner));
 
 #define MATCH_INACTIVE(scanner, TK) \
- TEST(Scanner_CurrentToken((scanner)) == TK && \
-      !Scanner_CurrentTokenIsActive((scanner)));\
+ TEST(Scanner_TokenAt((scanner), 0) == TK && \
+      !Scanner_IsActiveAt((scanner), 0));\
  Scanner_Match((scanner));
 
 #define  MATCH_INACTIVE2(scanner, TK, lexeme)\
-TEST(Scanner_CurrentToken((scanner)) == TK &&\
-     strcmp(Scanner_CurrentLexeme(scanner), lexeme) == 0 &&\
-     !Scanner_CurrentTokenIsActive((scanner)));\
+TEST(Scanner_TokenAt((scanner),0) == TK &&\
+     strcmp(Scanner_LexemeAt(scanner, 0), lexeme) == 0 &&\
+     !Scanner_IsActiveAt((scanner), 0));\
 Scanner_Match((scanner));
 
 #define  MATCH2(scanner, TK, lexeme)\
-TEST(Scanner_CurrentToken((scanner)) == TK &&\
-     strcmp(Scanner_CurrentLexeme(scanner), lexeme) == 0 &&\
-     Scanner_CurrentTokenIsActive((scanner)));\
+TEST(Scanner_TokenAt((scanner),0) == TK &&\
+     strcmp(Scanner_LexemeAt(scanner,0), lexeme) == 0 &&\
+     Scanner_IsActiveAt((scanner),0));\
 Scanner_Match((scanner));
 
 void Scanner_Test1()
@@ -52,20 +52,21 @@ void Scanner_Test1()
     Scanner_IncludeFile(&scanner2, ".\\Test\\Test1.h", FileIncludeTypeQuoted, false);
 
     MATCH(&scanner2, TK_BOF)
-        MATCH(&scanner2, TK_PRE_DEFINE)
+    MATCH(&scanner2, TK_PRE_DEFINE)
 
-        TEST(Scanner_LookAheadToken(&scanner2, 1) == TK_DECIMAL_INTEGER);
-    TEST(Scanner_LookAheadToken(&scanner2, 1) == TK_DECIMAL_INTEGER);
-    TEST(Scanner_LookAheadToken(&scanner2, 2) == TK_MACRO_EOF);
-    TEST(Scanner_LookAheadToken(&scanner2, 3) == TK_BREAKLINE);
-    TEST(Scanner_LookAheadToken(&scanner2, 4) == TK_EOF);
-    TEST(Scanner_LookAheadToken(&scanner2, 5) == TK_EOF);
-    TEST(Scanner_LookAheadToken(&scanner2, 6) == TK_EOF);
+    TEST(Scanner_TokenAt(&scanner2, 0) == TK_MACRO_CALL);
+    TEST(Scanner_TokenAt(&scanner2, 1) == TK_DECIMAL_INTEGER);
+    TEST(Scanner_TokenAt(&scanner2, 2) == TK_MACRO_EOF);
+    TEST(Scanner_TokenAt(&scanner2, 3) == TK_BREAKLINE);
+    //TEST(Scanner_TokenAt(&scanner2, 4) == TK_FILE_EOF);
+    TEST(Scanner_TokenAt(&scanner2, 5) == TK_EOF);
+    TEST(Scanner_TokenAt(&scanner2, 6) == TK_EOF);
 
     MATCH(&scanner2, TK_MACRO_CALL)
         MATCH(&scanner2, TK_DECIMAL_INTEGER)
         MATCH(&scanner2, TK_MACRO_EOF)
         MATCH(&scanner2, TK_BREAKLINE)
+        //MATCH(&scanner2, TK_FILE_EOF)
         MATCH(&scanner2, TK_EOF)
 
         Scanner_Destroy(&scanner2);
@@ -83,6 +84,7 @@ void Scanner_Test2()
         MATCH(&scanner2, TK_DECIMAL_INTEGER)
         MATCH(&scanner2, TK_MACRO_EOF)
         MATCH(&scanner2, TK_BREAKLINE)
+        //MATCH(&scanner2, TK_FILE_EOF)
         MATCH(&scanner2, TK_EOF)
 
         Scanner_Destroy(&scanner2);
@@ -94,14 +96,9 @@ void Scanner_Test3()
     Scanner_IncludeFile(&scanner2, ".\\Test\\Test3.h", FileIncludeTypeQuoted, false);
 
     MATCH(&scanner2, TK_BOF)
+        
         MATCH(&scanner2, TK_PRE_DEFINE)
-
-    
         MATCH(&scanner2, TK_MACRO_CALL)
-
-   
-
-
         MATCH(&scanner2, TK_DECIMAL_INTEGER)
         MATCH(&scanner2, TK_SPACES)
         MATCH(&scanner2, TK_DECIMAL_INTEGER)
@@ -113,6 +110,7 @@ void Scanner_Test3()
         MATCH(&scanner2, TK_STRING_LITERAL)
         MATCH(&scanner2, TK_MACRO_EOF)
         MATCH(&scanner2, TK_BREAKLINE)
+        //MATCH(&scanner2, TK_FILE_EOF)
         MATCH(&scanner2, TK_EOF)
 
 
@@ -138,6 +136,7 @@ void Scanner_Test4()
         MATCH(&scanner2, TK_SPACES)
         MATCH(&scanner2, TK_PLUS_SIGN)
         MATCH(&scanner2, TK_SPACES)
+        
         MATCH2(&scanner2, TK_IDENTIFIER, "foo")
         MATCH(&scanner2, TK_RIGHT_PARENTHESIS)
         MATCH(&scanner2, TK_MACRO_EOF)
@@ -176,7 +175,7 @@ void Scanner_Test6()
         MATCH(&scanner2, TK_SPACES)
         MATCH2(&scanner2, TK_IDENTIFIER, "B")
         MATCH(&scanner2, TK_BREAKLINE)
-        MATCH(&scanner2, TK_PRE_ELSE)
+        MATCH_INACTIVE(&scanner2, TK_PRE_ELSE)
 
         //MATCH_INACTIVE(&scanner2, TK_BREAKLINE) //#else
         MATCH_INACTIVE2(&scanner2, TK_IDENTIFIER, "B")
@@ -188,6 +187,7 @@ void Scanner_Test6()
 
         MATCH2(&scanner2, TK_IDENTIFIER, "END")
         MATCH(&scanner2, TK_BREAKLINE)
+        //MATCH(&scanner2, TK_FILE_EOF)
         MATCH(&scanner2, TK_EOF)
         Scanner_Destroy(&scanner2);
     ///////////////////////////
@@ -211,6 +211,7 @@ void Scanner_Test7()
         MATCH(&scanner2, TK_RIGHT_PARENTHESIS)
         MATCH(&scanner2, TK_SEMICOLON)
         MATCH(&scanner2, TK_BREAKLINE)
+        //MATCH(&scanner2, TK_FILE_EOF)
         MATCH(&scanner2, TK_EOF)
         //Test7.h
         Scanner_Destroy(&scanner2);
@@ -244,7 +245,7 @@ void Scanner_Test7()
         MATCH(&scanner2, TK_RIGHT_PARENTHESIS)
         MATCH(&scanner2, TK_SEMICOLON)
         MATCH(&scanner2, TK_BREAKLINE)
-
+        //MATCH(&scanner2, TK_FILE_EOF)
         MATCH(&scanner2, TK_EOF)
         Scanner_Destroy(&scanner2);
 
@@ -265,9 +266,9 @@ void Scanner_Test9()
         MATCH2(&scanner2, TK_IDENTIFIER, "B")
         MATCH(&scanner2, TK_BREAKLINE)
         
-        TEST(Scanner_LookAheadTokenActive(&scanner2, 1) == 0);
+        TEST(Scanner_IsActiveAt(&scanner2, 1) == 0);
 
-        MATCH(&scanner2, TK_PRE_ELSE)
+        MATCH_INACTIVE(&scanner2, TK_PRE_ELSE)
 
         //MATCH_INACTIVE(&scanner2, TK_BREAKLINE) //#else
         MATCH_INACTIVE2(&scanner2, TK_IDENTIFIER, "B")
@@ -279,6 +280,7 @@ void Scanner_Test9()
 
         MATCH2(&scanner2, TK_IDENTIFIER, "END")
         MATCH(&scanner2, TK_BREAKLINE)
+        //MATCH(&scanner2, TK_FILE_EOF)
         MATCH(&scanner2, TK_EOF)
         Scanner_Destroy(&scanner2);
     ///////////////////////////
@@ -296,6 +298,7 @@ void Scanner_Test8()
         //Test8.h
         MATCH(&scanner2, TK_BREAKLINE)
         MATCH(&scanner2, TK_PRE_DEFINE)
+        //MATCH(&scanner2, TK_FILE_EOF)
         MATCH(&scanner2, TK_EOF)
         //Test7.h
         Scanner_Destroy(&scanner2);
@@ -319,6 +322,7 @@ void Scanner_Test8()
         MATCH(&scanner2, TK_IDENTIFIER)
         MATCH(&scanner2, TK_SEMICOLON)
         MATCH(&scanner2, TK_BREAKLINE)
+        //MATCH(&scanner2, TK_FILE_EOF)
         MATCH(&scanner2, TK_EOF)
         Scanner_Destroy(&scanner2);
 
@@ -348,6 +352,7 @@ void BasicScanner_Test1()
 
     TEST(BasicScanner_MatchToken(&scanner, TK_BOF));
     TEST(BasicScanner_MatchToken(&scanner, TK_PRE_IF));
+    
     TEST(BasicScanner_MatchToken(&scanner, TK_EOF));
 
     BasicScanner_Destroy(&scanner);
@@ -426,7 +431,6 @@ void Parser_Test1()
     ParserMatch(&parser, TK_DECIMAL_INTEGER);
     ParserMatch(&parser, TK_SEMICOLON);
     ParserMatch(&parser, TK_EOF);
-    ParserMatch(&parser, TK_EOF);
     Parser_Destroy(&parser);
 }
 
@@ -484,6 +488,7 @@ void Parser_Test4()
     ParserMatch(&parser, TK_IDENTIFIER);
     TEST(Parser_LookAheadToken(&parser) == TK_INT);
     ParserMatch(&parser, TK_EQUALS_SIGN);    
+    ParserMatch(&parser, TK_INT);
     ParserMatch(&parser, TK_EOF);
     Parser_Destroy(&parser);
 }
@@ -508,9 +513,17 @@ void Parser_Test5()
     ParserMatch(&parser, TK_LEFT_CURLY_BRACKET);
     ParserMatch(&parser, TK_RETURN);
 
-    TEST(Scanner_LookAheadToken(&parser.Scanner, 1) == TK_MACRO_CALL);
-    TEST(Scanner_LookAheadToken(&parser.Scanner, 2) == TK_DECIMAL_INTEGER);
-    TEST(Scanner_LookAheadToken(&parser.Scanner, 3) == TK_MACRO_EOF);
+    
+    TEST(Scanner_TokenAt(&parser.Scanner, 0) == TK_LEFT_PARENTHESIS);
+
+    TEST(Scanner_TokenAt(&parser.Scanner, 1) == TK_MACRO_CALL);
+    
+
+    TEST(Scanner_TokenAt(&parser.Scanner, 2) == TK_DECIMAL_INTEGER);
+
+    
+
+    TEST(Scanner_TokenAt(&parser.Scanner, 3) == TK_MACRO_EOF);
 
     TEST(Parser_LookAheadToken(&parser) == TK_DECIMAL_INTEGER);
     ParserMatch(&parser, TK_LEFT_PARENTHESIS);
@@ -564,13 +577,13 @@ void AllTests()
     BasicScanner_Test4();
     BasicScanner_Test5();
 
-    Scanner_Test8();
-    Scanner_Test7();
-    Scanner_Test3();
+    
+
 
 
     Scanner_Test1();
     Scanner_Test2();
+    Scanner_Test3();
 
     Scanner_Test4();
     Scanner_Test5();

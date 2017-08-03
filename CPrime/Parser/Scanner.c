@@ -12,62 +12,62 @@ PPTokenType TokenToPPToken(Tokens token)
 
     switch (token)
     {
-        case TK_IDENTIFIER:
+    case TK_IDENTIFIER:
         result = PPTokenType_Identifier;
         break;
 
-        case TK_LINE_COMMENT:
-        case TK_COMMENT:
-        case TK_SPACES:
+    case TK_LINE_COMMENT:
+    case TK_COMMENT:
+    case TK_SPACES:
         result = PPTokenType_Spaces;
         break;
 
-        case TK_HEX_INTEGER:
-        case TK_DECIMAL_INTEGER:
-        case TK_FLOAT_NUMBER:
+    case TK_HEX_INTEGER:
+    case TK_DECIMAL_INTEGER:
+    case TK_FLOAT_NUMBER:
         result = PPTokenType_Number;
         break;
 
-        case TK_CHAR_LITERAL:
+    case TK_CHAR_LITERAL:
         result = PPTokenType_CharConstant;
         break;
 
-        case TK_STRING_LITERAL:
+    case TK_STRING_LITERAL:
         result = PPTokenType_StringLiteral;
         break;
 
-        case TK_ARROW:
-        case TK_PLUSPLUS:
-        case TK_MINUSMINUS:
-        case TK_LESSLESS:
-        case TK_GREATERGREATER:
-        case TK_LESSEQUAL:
-        case TK_GREATEREQUAL:
-        case TK_EQUALEQUAL:
-        case TK_NOTEQUAL:
-        case TK_ANDAND:
-        case TK_OROR:
-        case TK_MULTIEQUAL:
-        case TK_DIVEQUAL:
-        case TK_PERCENT_EQUAL:
-        case TK_PLUSEQUAL:
-        case TK_MINUS_EQUAL:
-        case TK_ANDEQUAL:
-        case TK_CARETEQUAL:
-        case TK_OREQUAL:
-        case TK_NUMBERNUMBER:
-        case TK_LESSCOLON:
-        case TK_COLONGREATER:
-        case TK_LESSPERCENT:
-        case TK_PERCENTGREATER:
-        case TK_PERCENTCOLON:
-        case TK_DOTDOTDOT:
-        case TK_GREATERGREATEREQUAL:
-        case TK_LESSLESSEQUAL:
-        case TK_PERCENTCOLONPERCENTCOLON:
+    case TK_ARROW:
+    case TK_PLUSPLUS:
+    case TK_MINUSMINUS:
+    case TK_LESSLESS:
+    case TK_GREATERGREATER:
+    case TK_LESSEQUAL:
+    case TK_GREATEREQUAL:
+    case TK_EQUALEQUAL:
+    case TK_NOTEQUAL:
+    case TK_ANDAND:
+    case TK_OROR:
+    case TK_MULTIEQUAL:
+    case TK_DIVEQUAL:
+    case TK_PERCENT_EQUAL:
+    case TK_PLUSEQUAL:
+    case TK_MINUS_EQUAL:
+    case TK_ANDEQUAL:
+    case TK_CARETEQUAL:
+    case TK_OREQUAL:
+    case TK_NUMBERNUMBER:
+    case TK_LESSCOLON:
+    case TK_COLONGREATER:
+    case TK_LESSPERCENT:
+    case TK_PERCENTGREATER:
+    case TK_PERCENTCOLON:
+    case TK_DOTDOTDOT:
+    case TK_GREATERGREATEREQUAL:
+    case TK_LESSLESSEQUAL:
+    case TK_PERCENTCOLONPERCENTCOLON:
 
 
-        case TK_NUMBER_SIGN:
+    case TK_NUMBER_SIGN:
         result = PPTokenType_Punctuator;
         break;
 
@@ -192,7 +192,7 @@ void Scanner_SetError(Scanner* pScanner, const char* message)
         if (Scanner_Top(pScanner) != NULL)
         {
             StrBuilder_Set(&pScanner->ErrorString,
-              Scanner_Top(pScanner)->stream.NameOrFullPath);
+                Scanner_Top(pScanner)->stream.NameOrFullPath);
         }
 
         StrBuilder_Append(&pScanner->ErrorString, "(");
@@ -220,8 +220,8 @@ void Scanner_PrintDebug(Scanner* pScanner)
 }
 
 static Result AddStandardMacro(Scanner* pScanner,
-  const char* name,
-  const char* value)
+    const char* name,
+    const char* value)
 {
     Macro* pDefine1 = Macro_Create();
     String_Set(&pDefine1->Name, name);
@@ -231,6 +231,9 @@ static Result AddStandardMacro(Scanner* pScanner,
     MacroMap_SetAt(&pScanner->Defines2, name, pDefine1);
     return RESULT_OK;
 }
+static void Scanner_PushToken(Scanner* pScanner,
+    Tokens token,
+    const char* lexeme, bool bActive);
 
 static Result Scanner_InitCore(Scanner* pScanner)
 {
@@ -268,12 +271,15 @@ static Result Scanner_InitCore(Scanner* pScanner)
     AddStandardMacro(pScanner, "__STDC__", "1");
     AddStandardMacro(pScanner, "__COUNTER__", "0");
     //AddStandardMacro(pScanner, "__STD_HOSTED__", "1");
+
+    Scanner_PushToken(pScanner, TK_BOF, "", true);
+
     return RESULT_OK;
 }
 
 Result Scanner_InitString(Scanner* pScanner,
-  const char* name,
-  const char* text)
+    const char* name,
+    const char* text)
 {
     Scanner_InitCore(pScanner);
 
@@ -285,20 +291,20 @@ Result Scanner_InitString(Scanner* pScanner,
 
 
 Result PushExpandedMacro(Scanner* pScanner,
-  const char* defineName,
-  const char* callString,
-  const char* defineContent)
+    const char* defineName,
+    const char* callString,
+    const char* defineContent)
 {
-	if (pScanner->bError)
-	{
-		return RESULT_FAIL;
-	}
+    if (pScanner->bError)
+    {
+        return RESULT_FAIL;
+    }
 
     BasicScanner* pNewScanner;
     Result result = BasicScanner_Create(&pNewScanner,
-      callString, /*defineName*/
-      defineContent,
-      BasicScannerType_Macro);
+        callString, /*defineName*/
+        defineContent,
+        BasicScannerType_Macro);
 
     if (result == RESULT_OK)
     {
@@ -311,14 +317,14 @@ Result PushExpandedMacro(Scanner* pScanner,
 }
 
 bool Scanner_GetFullPath(Scanner* pScanner,
-  const char* fileName,
-  bool bQuotedForm,
-  String* fullPathOut)
+    const char* fileName,
+    bool bQuotedForm,
+    String* fullPathOut)
 {
-	if (pScanner->bError)
-	{
-		return false;
-	}
+    if (pScanner->bError)
+    {
+        return false;
+    }
 
     bool bFullPathFound = false;
 
@@ -424,20 +430,18 @@ bool Scanner_GetFullPath(Scanner* pScanner,
     return bFullPathFound;
 }
 
-static void Scanner_PushToken(Scanner* pScanner,
-    Tokens token,
-    const char* lexeme);
+
 
 
 void Scanner_IncludeFile(Scanner* pScanner,
-  const char* includeFileName,
-  FileIncludeType fileIncludeType,
+    const char* includeFileName,
+    FileIncludeType fileIncludeType,
     bool bSkipBof)
 {
-	if (pScanner->bError)
-	{
-		return;
-	}
+    if (pScanner->bError)
+    {
+        return;
+    }
 
     bool bDirectInclude = false;
 
@@ -450,15 +454,15 @@ void Scanner_IncludeFile(Scanner* pScanner,
 
     switch (fileIncludeType)
     {
-        case FileIncludeTypeQuoted:
-        case FileIncludeTypeIncludes:
+    case FileIncludeTypeQuoted:
+    case FileIncludeTypeIncludes:
         bHasFullPath = Scanner_GetFullPath(pScanner,
-          includeFileName,
-          fileIncludeType == FileIncludeTypeQuoted,
-          &fullPath);
+            includeFileName,
+            fileIncludeType == FileIncludeTypeQuoted,
+            &fullPath);
         break;
 
-        case FileIncludeTypeFullPath:
+    case FileIncludeTypeFullPath:
         String_Set(&fullPath, includeFileName);
         bHasFullPath = true;
         break;
@@ -472,7 +476,7 @@ void Scanner_IncludeFile(Scanner* pScanner,
         {
             //foi marcado como pragma once.. nao faz nada
             //tenho q enviar um comando
-            Scanner_PushToken(pScanner, TK_FILE_EOF, "pragma once file");
+            Scanner_PushToken(pScanner, TK_FILE_EOF, "pragma once file", true);
         }
         else
         {
@@ -626,7 +630,7 @@ int Scanner_GetFileIndex(Scanner* pScanner)
 
 
 
-/*const char* Scanner_CurrentLexeme(Scanner* pScanner)
+/*const char* Scanner_LexemeAt(Scanner* pScanner)
 {
     if (pScanner->bHasLookAhead)
     {
@@ -661,22 +665,20 @@ BasicScanner* Scanner_Top(Scanner* pScanner)
 
 
 
-void IgnorePreProcessorv2(Scanner* pScanner, StrBuilder* strBuilder)
+void IgnorePreProcessorv2(BasicScanner* pBasicScanner, StrBuilder* strBuilder)
 {
-    BasicScanner* pTop = Scanner_Top(pScanner);
 
-    // ASSERT(pTop->currentItem.token != TK_BREAKLINE);
-    while (pTop->currentItem.token != TK_EOF &&
-           pTop->currentItem.token != TK_FILE_EOF)
+    while (pBasicScanner->currentItem.token != TK_EOF &&
+        pBasicScanner->currentItem.token != TK_FILE_EOF)
     {
-        if (pTop->currentItem.token == TK_BREAKLINE)
+        if (pBasicScanner->currentItem.token == TK_BREAKLINE)
         {
             //StrBuilder_Append(strBuilder, pTop->currentItem.lexeme.c_str);
-            BasicScanner_Match(pTop);
+            BasicScanner_Match(pBasicScanner);
             break;
         }
-        StrBuilder_Append(strBuilder, pTop->currentItem.lexeme.c_str);
-        BasicScanner_Match(pTop);
+        StrBuilder_Append(strBuilder, pBasicScanner->currentItem.lexeme.c_str);
+        BasicScanner_Match(pBasicScanner);
     }
 }
 
@@ -717,7 +719,7 @@ void GetDefineString(Scanner* pScanner, StrBuilder* strBuilder)
         }
 
         if (token == TK_COMMENT ||
-          token == TK_LINE_COMMENT)
+            token == TK_LINE_COMMENT)
         {
             //transforma em espaços
             StrBuilder_Append(strBuilder, " ");
@@ -732,14 +734,14 @@ void GetDefineString(Scanner* pScanner, StrBuilder* strBuilder)
     }
 }
 
-//static Tokens Scanner_CurrentToken(Scanner* pScanner)
+//static Tokens Scanner_TokenAt(Scanner* pScanner)
 //{
   //  return Scanner_Top(pScanner)->currentItem.token;
 //}
 
 
 Macro*  Scanner_FindPreprocessorItem2(Scanner* pScanner,
-  const char* key)
+    const char* key)
 {
     Macro* pMacro = MacroMap_Find(&pScanner->Defines2, key);
     return pMacro;
@@ -811,13 +813,16 @@ int EvalExpression(const char* s, Scanner* pScanner)
 
 
 static bool GetNewMacroCallString(Scanner* pScanner,
-  Macro* pMacro,
-  TokenArray* ppTokenArray,
-  StrBuilder* strBuilder)
+    BasicScanner* pBasicScanner,
+    Macro* pMacro,
+    TokenArray* ppTokenArray,
+    StrBuilder* strBuilder)
 {
-    //StrBuilder_Append(strBuilderResult, Scanner_CurrentLexeme(pScanner));
+
+    //StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
     //TODO aqui nao pode ser o current
-    const char* lexeme = Scanner_CurrentLexeme(pScanner);
+    const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
+    Tokens token = pBasicScanner->currentItem.token;
 
     //verificar se tem parametros
     int nArgsExpected = pMacro->FormalArguments.Size;// pMacro->bIsFunction;
@@ -827,54 +832,64 @@ static bool GetNewMacroCallString(Scanner* pScanner,
     if (nArgsExpected > 0)
     {
         //Olha adiante para ver se tem (
+        StrBuilder macroName = STRBUILDER_INIT;
+        StrBuilder_Append(&macroName, lexeme);
+        //Match do nome da macro
+        BasicScanner_Match(pBasicScanner);
 
         //MACRONAME   (
-        int lookAheadIndex = 1;
-        Tokens lookAheadToken = Scanner_LookAheadToken(pScanner, lookAheadIndex);
-        while (lookAheadToken == TK_SPACES ||
-               lookAheadToken == TK_COMMENT)
+
+        //ignorar espacos (mas reservar a compra)
+        token = pBasicScanner->currentItem.token;
+        while (token == TK_SPACES || token == TK_COMMENT)
         {
-            lookAheadIndex++;
-            lookAheadToken = Scanner_LookAheadToken(pScanner, lookAheadIndex);
+            
+            //Scanner_PushToken(pScanner, token, lexeme, true);
+            //ASSERT(false);
+            BasicScanner_Match(pBasicScanner);
+            token = pBasicScanner->currentItem.token;
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
         }
 
-        if (lookAheadToken == TK_LEFT_PARENTHESIS)
+        token = pBasicScanner->currentItem.token;
+        lexeme = pBasicScanner->currentItem.lexeme.c_str;
+
+        if (token == TK_LEFT_PARENTHESIS)
         {
-            //Este é o nome da macro MACRO(
-            lexeme = Scanner_CurrentLexeme(pScanner);
-            PPToken *ppTokenName = PPToken_Create(lexeme,
-              PPTokenType_Identifier);
+            //Adiciona o nome da macro
+            PPToken *ppTokenName = PPToken_Create(macroName.c_str,
+                PPTokenType_Identifier);
             TokenArray_Push(ppTokenArray, ppTokenName);
 
-            //Match do nome da macro
-            Scanner_MatchDontExpand(pScanner);
+            token = pBasicScanner->currentItem.token;
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
-            //lexeme = Scanner_CurrentLexeme(pScanner);
-            //Match do nome do (
-      //      Scanner_Next(pScanner);
-            //lexeme = Scanner_CurrentLexeme(pScanner);
-
-            PPToken *ppToken = PPToken_Create(Scanner_CurrentLexeme(pScanner), TokenToPPToken(Scanner_CurrentToken(pScanner)));
+            //Match do (
+            PPToken *ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
             TokenArray_Push(ppTokenArray, ppToken);
-            //StrBuilder_Append(strBuilderResult, Scanner_CurrentLexeme(pScanner));
-            Scanner_MatchDontExpand(pScanner);
 
-            //Scanner_Match(pScanner);
+            BasicScanner_Match(pBasicScanner);
+
+            token = pBasicScanner->currentItem.token;
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
+
             //comeca com 1
             nArgsFound = 1;
             int iInsideParentesis = 1;
 
             for (;;)
             {
-                Tokens token = Scanner_CurrentToken(pScanner);
-
                 if (token == TK_LEFT_PARENTHESIS)
                 {
-                    //StrBuilder_Append(strBuilderResult, Scanner_CurrentLexeme(pScanner));
-                    PPToken *ppToken = PPToken_Create(Scanner_CurrentLexeme(pScanner), TokenToPPToken(Scanner_CurrentToken(pScanner)));
-                    TokenArray_Push(ppTokenArray, ppToken);
 
-                    Scanner_MatchDontExpand(pScanner);
+                    PPToken *ppToken = PPToken_Create(lexeme,
+                        TokenToPPToken(token));
+
+                    TokenArray_Push(ppTokenArray, ppToken);
+                    BasicScanner_Match(pBasicScanner);
+
+                    token = pBasicScanner->currentItem.token;
+                    lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
                     iInsideParentesis++;
                 }
@@ -883,21 +898,25 @@ static bool GetNewMacroCallString(Scanner* pScanner,
                 {
                     if (iInsideParentesis == 1)
                     {
-                        //StrBuilder_Append(strBuilderResult, Scanner_CurrentLexeme(pScanner));
-                        PPToken *ppToken = PPToken_Create(Scanner_CurrentLexeme(pScanner), TokenToPPToken(Scanner_CurrentToken(pScanner)));
+                        PPToken *ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
                         TokenArray_Push(ppTokenArray, ppToken);
 
-                        Scanner_MatchDontExpand(pScanner);
+                        BasicScanner_Match(pBasicScanner);
+
+                        token = pBasicScanner->currentItem.token;
+                        lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
                         break;
                     }
 
                     iInsideParentesis--;
-                    //StrBuilder_Append(strBuilderResult, Scanner_CurrentLexeme(pScanner));
-                    PPToken *ppToken = PPToken_Create(Scanner_CurrentLexeme(pScanner), TokenToPPToken(Scanner_CurrentToken(pScanner)));
+                    //StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
+                    PPToken *ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
                     TokenArray_Push(ppTokenArray, ppToken);
 
-                    Scanner_MatchDontExpand(pScanner);
+                    BasicScanner_Match(pBasicScanner);
+                    token = pBasicScanner->currentItem.token;
+                    lexeme = pBasicScanner->currentItem.lexeme.c_str;
                 }
 
                 else if (token == TK_COMMA)
@@ -912,20 +931,24 @@ static bool GetNewMacroCallString(Scanner* pScanner,
                         //continuar...
                     }
 
-                    //StrBuilder_Append(strBuilderResult, Scanner_CurrentLexeme(pScanner));
-                    PPToken *ppToken = PPToken_Create(Scanner_CurrentLexeme(pScanner), TokenToPPToken(Scanner_CurrentToken(pScanner)));
+                    //StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
+                    PPToken *ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
                     TokenArray_Push(ppTokenArray, ppToken);
 
-                    Scanner_MatchDontExpand(pScanner);
+                    BasicScanner_Match(pBasicScanner);
+                    token = pBasicScanner->currentItem.token;
+                    lexeme = pBasicScanner->currentItem.lexeme.c_str;
                 }
 
                 else
                 {
-                    //StrBuilder_Append(strBuilderResult, Scanner_CurrentLexeme(pScanner));
-                    PPToken *ppToken = PPToken_Create(Scanner_CurrentLexeme(pScanner), TokenToPPToken(Scanner_CurrentToken(pScanner)));
+                    //StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
+                    PPToken *ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
                     TokenArray_Push(ppTokenArray, ppToken);
 
-                    Scanner_MatchDontExpand(pScanner);
+                    BasicScanner_Match(pBasicScanner);
+                    token = pBasicScanner->currentItem.token;
+                    lexeme = pBasicScanner->currentItem.lexeme.c_str;
                 }
             }
         }
@@ -935,15 +958,14 @@ static bool GetNewMacroCallString(Scanner* pScanner,
             //teria que colocar MACRO de volta
             //oops
         }
+        StrBuilder_Destroy(&macroName);
     }
     else
     {
         //o nome eh a propria expansao
-        PPToken *ppTokenName = PPToken_Create(lexeme,
-          TokenToPPToken(Scanner_CurrentToken(pScanner)));
+        PPToken *ppTokenName = PPToken_Create(lexeme, TokenToPPToken(token));
         TokenArray_Push(ppTokenArray, ppTokenName);
-
-        Scanner_MatchDontExpand(pScanner);
+        BasicScanner_Match(pBasicScanner);
     }
 
     bool bIsMacro = true;
@@ -965,15 +987,15 @@ static bool GetNewMacroCallString(Scanner* pScanner,
         {
             if (nArgsExpected > nArgsFound)
             {
-                Scanner_SetError(pScanner, "Illegal macro call. Too few arguments error");
+                //Scanner_SetError(pScanner, "Illegal macro call. Too few arguments error");
             }
             else
             {
-                Scanner_SetError(pScanner, "Illegal macro call. Too many arguments error.");
+                //Scanner_SetError(pScanner, "Illegal macro call. Too many arguments error.");
             }
             ASSERT(false);
             //JObj_PrintDebug(pMacro);
-            Scanner_PrintDebug(pScanner);
+           // Scanner_PrintDebug(pScanner);
         }
     }
 
@@ -1047,85 +1069,98 @@ Tokens FindPreToken(const char* lexeme)
     return token;
 }
 
-void GetPPTokens(Scanner* pScanner, TokenArray* pptokens, StrBuilder* strBuilder)
+void GetPPTokens(BasicScanner* pBasicScanner, TokenArray* pptokens, StrBuilder* strBuilder)
 {
+    Tokens token = pBasicScanner->currentItem.token;
+    const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
+
     //Corpo da macro
-    while (Scanner_CurrentToken(pScanner) != TK_BREAKLINE &&
-           Scanner_CurrentToken(pScanner) != TK_EOF &&
-           Scanner_CurrentToken(pScanner) != TK_FILE_EOF)
+    while (token != TK_BREAKLINE &&
+        token != TK_EOF &&
+        token != TK_FILE_EOF)
     {
-        const char* lexeme = Scanner_CurrentLexeme(pScanner);
         StrBuilder_Append(strBuilder, lexeme);
 
-		if (Scanner_CurrentToken(pScanner) != TK_BACKSLASHBREAKLINE)
-		{
-			//TODO comentarios entram como espaco 
-			PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(Scanner_CurrentToken(pScanner)));
-			TokenArray_Push(pptokens, ppToken);
-		}
-        Scanner_MatchDontExpand(pScanner);
+        if (token != TK_BACKSLASHBREAKLINE)
+        {
+            //TODO comentarios entram como espaco 
+            PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+            TokenArray_Push(pptokens, ppToken);
+        }
+        BasicScanner_Match(pBasicScanner);
+        token = pBasicScanner->currentItem.token;
+        lexeme = pBasicScanner->currentItem.lexeme.c_str;
     }
 
     //Remove os espaços do fim
     while (pptokens->Size > 0 &&
-           pptokens->pItems[pptokens->Size - 1]->Token == PPTokenType_Spaces)
+        pptokens->pItems[pptokens->Size - 1]->Token == PPTokenType_Spaces)
     {
         TokenArray_Pop(pptokens);
     }
 
 }
 
-static void Scanner_MatchAllPreprocessorSpaces(Scanner* pScanner, StrBuilder* strBuilder)
+static void Scanner_MatchAllPreprocessorSpaces(BasicScanner* pBasicScanner,
+    StrBuilder* strBuilder)
 {
-    Tokens token = Scanner_CurrentToken(pScanner);
+    Tokens token = pBasicScanner->currentItem.token;
     while (token == TK_SPACES ||
-		   token == TK_BACKSLASHBREAKLINE ||
-           token == TK_COMMENT)
+        token == TK_BACKSLASHBREAKLINE ||
+        token == TK_COMMENT)
     {
-        StrBuilder_Append(strBuilder, Scanner_CurrentLexeme(pScanner));
-        Scanner_MatchDontExpand(pScanner);
-        token = Scanner_CurrentToken(pScanner);
+        StrBuilder_Append(strBuilder, pBasicScanner->currentItem.lexeme.c_str);
+
+        BasicScanner_Match(pBasicScanner);
+        token = pBasicScanner->currentItem.token;
     }
 }
 
 void ParsePreDefinev2(Scanner* pScanner, StrBuilder* strBuilder)
 {
+    BasicScanner* pBasicScanner =
+        Scanner_Top(pScanner);
+
     //objetivo eh montar a macro e colocar no mapa
     Macro* pNewMacro = Macro_Create();
 
-    const char* lexeme = Scanner_Top(pScanner)->currentItem.lexeme.c_str;
+    Tokens token = pBasicScanner->currentItem.token;
+    const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
     String_Set(&pNewMacro->Name, lexeme);
+    StrBuilder_Append(strBuilder, lexeme);
 
-    StrBuilder_Append(strBuilder, Scanner_CurrentLexeme(pScanner));
+    //Match nome da macro
+    BasicScanner_Match(pBasicScanner);
 
-    //Match do nome da macro
-    Scanner_MatchDontExpand(pScanner);
+    token = pBasicScanner->currentItem.token;
+    lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
 
-
-    //Se vier ( é macro sem parâmetros
-    if (Scanner_CurrentToken(pScanner) == TK_LEFT_PARENTHESIS)
+    //Se vier ( é macro com parâmetros
+    if (token == TK_LEFT_PARENTHESIS)
     {
-
-
         pNewMacro->bIsFunction = true;
 
-        StrBuilder_Append(strBuilder, Scanner_CurrentLexeme(pScanner));
+        StrBuilder_Append(strBuilder, lexeme);
 
-        Scanner_MatchDontExpand(pScanner); // (
+        //Match (
+        BasicScanner_Match(pBasicScanner);
 
 
         for (;;)
         {
-            Scanner_MatchAllPreprocessorSpaces(pScanner, strBuilder);
+            Scanner_MatchAllPreprocessorSpaces(pBasicScanner, strBuilder);
 
-            Tokens token = Scanner_CurrentToken(pScanner);
+            token = pBasicScanner->currentItem.token;
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
+
 
             if (token == TK_RIGHT_PARENTHESIS)
             {
-                StrBuilder_Append(strBuilder, Scanner_CurrentLexeme(pScanner));
-                Scanner_MatchDontExpand(pScanner);
+                //Match )
+                StrBuilder_Append(strBuilder, lexeme);
+                BasicScanner_Match(pBasicScanner);
                 break;
             }
 
@@ -1136,37 +1171,40 @@ void ParsePreDefinev2(Scanner* pScanner, StrBuilder* strBuilder)
                 break;
             }
 
-            lexeme = BasicScanner_Lexeme(Scanner_Top(pScanner));
-            PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(Scanner_CurrentToken(pScanner)));
+            token = pBasicScanner->currentItem.token;
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
+
+            PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
             TokenArray_Push(&pNewMacro->FormalArguments, ppToken);
 
 
-            StrBuilder_Append(strBuilder, Scanner_CurrentLexeme(pScanner));
-            Scanner_MatchDontExpand(pScanner);
+            StrBuilder_Append(strBuilder, lexeme);
+            BasicScanner_Match(pBasicScanner);
 
-            Scanner_MatchAllPreprocessorSpaces(pScanner, strBuilder);
+            Scanner_MatchAllPreprocessorSpaces(pBasicScanner, strBuilder);
 
-            token = Scanner_CurrentToken(pScanner);
+            token = pBasicScanner->currentItem.token;
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
             if (token == TK_COMMA)
             {
-                StrBuilder_Append(strBuilder, Scanner_CurrentLexeme(pScanner));
-                Scanner_MatchDontExpand(pScanner); // ,
+                //Match ,
+                StrBuilder_Append(strBuilder, lexeme);
+                BasicScanner_Match(pBasicScanner);
                 //tem mais
             }
         }
     }
     else
     {
-        Scanner_MatchAllPreprocessorSpaces(pScanner, strBuilder);
+        Scanner_MatchAllPreprocessorSpaces(pBasicScanner, strBuilder);
     }
 
 
 
-    Scanner_MatchAllPreprocessorSpaces(pScanner, strBuilder);
+    Scanner_MatchAllPreprocessorSpaces(pBasicScanner, strBuilder);
 
-    GetPPTokens(pScanner, &pNewMacro->TokenSequence, strBuilder);
-
+    GetPPTokens(pBasicScanner, &pNewMacro->TokenSequence, strBuilder);
 
 
     MacroMap_SetAt(&pScanner->Defines2, pNewMacro->Name, pNewMacro);
@@ -1177,25 +1215,27 @@ void ParsePreDefinev2(Scanner* pScanner, StrBuilder* strBuilder)
 
 int EvalPre(Scanner* pScanner, StrBuilder* sb)
 {
-	if (pScanner->bError)
-	{
-		return 0;
-	}
+    if (pScanner->bError)
+    {
+        return 0;
+    }
 
 
     //pega todos os tokens ate o final da linha expande e
     //avalia
     //usado no #if #elif etc.
+    BasicScanner* pBasicScanner =
+        Scanner_Top(pScanner);
 
     TokenArray pptokens = TOKENARRAY_INIT;
-    GetPPTokens(pScanner, &pptokens, sb);
+    GetPPTokens(pBasicScanner, &pptokens, sb);
     StrBuilder strBuilder = STRBUILDER_INIT;
     ExpandMacroToText(&pptokens,
-      &pScanner->Defines2,
-      false,
-      true,
-      NULL,
-      &strBuilder);
+        &pScanner->Defines2,
+        false,
+        true,
+        NULL,
+        &strBuilder);
 
     int iRes = EvalExpression(strBuilder.c_str, pScanner);
 
@@ -1211,68 +1251,94 @@ int EvalPre(Scanner* pScanner, StrBuilder* sb)
 //}
 
 static void Scanner_PushToken(Scanner* pScanner,
-                       Tokens token,
-                       const char* lexeme)
-{
-	if (pScanner->bError)
-	{
-		return;
-	}
-
-
-    BasicScanner* pNewScanner;
-    Result result = BasicScanner_Create(&pNewScanner,
-                                        "TOKEN", /*defineName*/
-                                        lexeme,
-                                        BasicScannerType_Token);
-
-    if (result == RESULT_OK)
-    {
-        pNewScanner->m_Token = token;
-        BasicScanner_Match(pNewScanner); //sai do bof
-        BasicScannerStack_Push(&pScanner->stack, pNewScanner);
-    }
-}
-
-void Scanner_NextVersion2(Scanner* pScanner)
+    Tokens token,
+    const char* lexeme,
+    bool bActive)
 {
     if (pScanner->bError)
     {
         return;
     }
 
-    BasicScanner* pTopScanner = Scanner_Top(pScanner);
-    if (pTopScanner == NULL)
+    ScannerItem* pNew = ScannerItem_Create();
+    StrBuilder_Set(&pNew->lexeme, lexeme);
+    pNew->token = token;
+    pNew->bActive = bActive;//;
+    List_Add(&pScanner->AcumulatedTokens, pNew);
+
+}
+
+void Scanner_BuyTokens(Scanner* pScanner)
+{
+    if (pScanner->bError)
     {
         return;
     }
 
-
-    BasicScanner_Match(pTopScanner);
-
-    Tokens token = pTopScanner->currentItem.token;
-
-
-    while ((token == TK_EOF) &&
-           pScanner->stack->pPrevious != NULL)
+    BasicScanner* pBasicScanner = Scanner_Top(pScanner);
+    if (pBasicScanner == NULL)
     {
-		//ASSERT(pScanner->AcumulatedTokens.pHead == NULL);
-        BasicScannerStack_PopIfNotLast(&pScanner->stack);
-        pTopScanner = Scanner_Top(pScanner);
-        token = pTopScanner->currentItem.token;
-    }
-
-    //se eh o unico arquivo TK_FILE_EOF vira eof
-    if (token == TK_FILE_EOF &&
-        pScanner->stack->pPrevious == NULL)
-    {
-        pTopScanner->currentItem.token = TK_EOF;
+        //acabaram todos os montes de tokens (cartas do baralho)
         return;
     }
 
+    //if (pScanner->AcumulatedTokens.pTail->token == TK_EOF)
+    //{
+    //}
+    //Tem um baralho
+
+    //puxar a carta de cima
+    //BasicScanner_Match(pBasicScanner);
+
+    Tokens token = pBasicScanner->currentItem.token;
+    const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
+
+    if (token == TK_BOF)
+    {
+        BasicScanner_Match(pBasicScanner);
+        token = pBasicScanner->currentItem.token;
+        lexeme = pBasicScanner->currentItem.lexeme.c_str;
+    }
+
+
+
+    while (token == TK_EOF)
+    {
+        //ok remove este baralho vazio
+        BasicScannerStack_Pop(&pScanner->stack);
+
+        //proximo baralho
+        pBasicScanner = Scanner_Top(pScanner);
+
+        if (pBasicScanner != NULL)
+        {
+            //vai removendo enquanto sao baralhos vazios
+            token = pBasicScanner->currentItem.token;
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    if (token == TK_FILE_EOF)
+    {
+        if (pScanner->stack->pPrevious == NULL)
+        {
+            //se eh o unico arquivo TK_FILE_EOF vira eof
+            token = TK_EOF;
+        }
+    }
 
     if (token == TK_EOF)
     {
+        //não sobrou nenhum baralho nao tem o que comprar
+        ScannerItem* pNew = ScannerItem_Create();
+        pNew->token = TK_EOF;
+        pNew->bActive = true;
+        List_Add(&pScanner->AcumulatedTokens, pNew);
+
         return;
     }
 
@@ -1280,105 +1346,120 @@ void Scanner_NextVersion2(Scanner* pScanner)
 
 
     State state = StateTop(pScanner);
-    pTopScanner->currentItem.bActive = IsIncludeState(state);
+    bool bActive0 = IsIncludeState(state);
+    //pBasicScanner->currentItem.bActive = IsIncludeState(state);
 
 
     if (token == TK_PREPROCESSOR)
     {
-		//Match #
-        StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);        
-        BasicScanner_Match(pTopScanner);
+        //Match #
+        StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
+        BasicScanner_Match(pBasicScanner);
 
-		//Match ' '
-        Scanner_MatchAllPreprocessorSpaces(pScanner, &strBuilder);
+        //Match ' '
+        Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
 
+        lexeme = pBasicScanner->currentItem.lexeme.c_str;
+        token = pBasicScanner->currentItem.token;
 
-        const char* lexeme = Scanner_Top(pScanner)->currentItem.lexeme.c_str;
-        token = Scanner_CurrentToken(pScanner);
         Tokens preToken = FindPreToken(lexeme);
 
         if (preToken == TK_PRE_INCLUDE)
         {
-			//Match include
-			StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
-			Scanner_MatchDontExpand(pScanner);
+            //Match include
+            StrBuilder_Append(&strBuilder, lexeme);
+            BasicScanner_Match(pBasicScanner);
+
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
+            token = pBasicScanner->currentItem.token;
 
             if (IsIncludeState(state))
             {
-                Scanner_MatchAllPreprocessorSpaces(pScanner, &strBuilder);//[ ] 
+                //Match espacos
+                Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
 
-                if (Scanner_CurrentToken(pScanner) == TK_STRING_LITERAL)
+                lexeme = pBasicScanner->currentItem.lexeme.c_str;
+                token = pBasicScanner->currentItem.token;
+
+                if (token == TK_STRING_LITERAL)
                 {
                     String fileName;
-                    String_Init(&fileName, Scanner_CurrentLexeme(pScanner) + 1);
+                    String_Init(&fileName, lexeme + 1);
 
-                    StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
-                    Scanner_Match(pScanner);
+                    StrBuilder_Append(&strBuilder, lexeme);
+                    BasicScanner_Match(pBasicScanner);
 
                     fileName[strlen(fileName) - 1] = 0;
 
                     //tem que ser antes de colocar o outro na pilha
-                    IgnorePreProcessorv2(pScanner, &strBuilder);
+                    IgnorePreProcessorv2(pBasicScanner, &strBuilder);
 
-                    //IgnorePreProcessorv2(pScanner, &strBuilder);
-                    //pode ou nao incluir depende do pragma once
+                    
+                    Scanner_PushToken(pScanner, TK_PRE_INCLUDE, strBuilder.c_str, true);
                     Scanner_IncludeFile(pScanner, fileName, FileIncludeTypeQuoted, true);
                     String_Destroy(&fileName);
                     //break;
                 }
 
-                else if (Scanner_CurrentToken(pScanner) == TK_LESS_THAN_SIGN)
+                else if (token == TK_LESS_THAN_SIGN)
                 {
-                    StrBuilder_Append(&strBuilder, Scanner_CurrentLexeme(pScanner));
+                    StrBuilder_Append(&strBuilder, lexeme);
 
-                    Scanner_MatchDontExpand(pScanner);
-
+                    BasicScanner_Match(pBasicScanner);
+                    lexeme = pBasicScanner->currentItem.lexeme.c_str;
+                    token = pBasicScanner->currentItem.token;
                     StrBuilder path = STRBUILDER_INIT;
 
                     //StrBuilder_Init(&path, 200);
                     for (;;)
                     {
-                        StrBuilder_Append(&strBuilder, Scanner_CurrentLexeme(pScanner));
+                        StrBuilder_Append(&strBuilder, lexeme);
 
-                        if (Scanner_CurrentToken(pScanner) == TK_GREATER_THAN_SIGN)
+                        if (token == TK_GREATER_THAN_SIGN)
                         {
-                            Scanner_MatchDontExpand(pScanner);
+                            BasicScanner_Match(pBasicScanner);
+                            lexeme = pBasicScanner->currentItem.lexeme.c_str;
+                            token = pBasicScanner->currentItem.token;
                             break;
                         }
 
-                        if (Scanner_CurrentToken(pScanner) == TK_BREAKLINE)
+                        if (token == TK_BREAKLINE)
                         {
                             //oopps
                             break;
                         }
 
-                        StrBuilder_Append(&path, Scanner_CurrentLexeme(pScanner));
-                        Scanner_MatchDontExpand(pScanner);
-
+                        StrBuilder_Append(&path, lexeme);
+                        BasicScanner_Match(pBasicScanner);
+                        lexeme = pBasicScanner->currentItem.lexeme.c_str;
+                        token = pBasicScanner->currentItem.token;
                     }
-                    IgnorePreProcessorv2(pScanner, &strBuilder);
-                    //pode ou nao incluir depende do pragma once
+
+                    IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+                    
+                    Scanner_PushToken(pScanner, TK_PRE_INCLUDE, strBuilder.c_str, true);
                     Scanner_IncludeFile(pScanner, path.c_str, FileIncludeTypeIncludes, true);
                     StrBuilder_Destroy(&path);
                 }
-				Scanner_PushToken(pScanner, TK_PRE_INCLUDE, strBuilder.c_str);
+                
             }
-			else
-			{
-				Scanner_PushToken(pScanner, TK_SPACES, strBuilder.c_str);
-			}						
+            else
+            {
+                //TODO active
+                Scanner_PushToken(pScanner, TK_SPACES, strBuilder.c_str, false);
+            }
         }
         else if (preToken == TK_PRE_PRAGMA)
         {
-			//Match pragma
-			StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
-			Scanner_MatchDontExpand(pScanner);
+            //Match pragma
+            StrBuilder_Append(&strBuilder, lexeme);
+            BasicScanner_Match(pBasicScanner);
 
             if (IsIncludeState(state))
             {
-                Scanner_MatchAllPreprocessorSpaces(pScanner, &strBuilder);
+                Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
 
-                if (BasicScanner_IsLexeme(Scanner_Top(pScanner), "once"))
+                if (BasicScanner_IsLexeme(pBasicScanner, "once"))
                 {
                     const char* fullPath = Scanner_Top(pScanner)->stream.NameOrFullPath;
                     TFile* pFile = TFileMap_Find(&pScanner->FilesIncluded, fullPath);
@@ -1398,122 +1479,118 @@ void Scanner_NextVersion2(Scanner* pScanner)
 
                 else if (BasicScanner_IsLexeme(Scanner_Top(pScanner), "dir"))
                 {
-                    StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
+                    StrBuilder_Append(&strBuilder, lexeme);
 
-                    Scanner_MatchDontExpand(pScanner);
-                    Scanner_MatchAllPreprocessorSpaces(pScanner, &strBuilder);
-
+                    BasicScanner_Match(pBasicScanner);
+                    Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
+                    lexeme = pBasicScanner->currentItem.lexeme.c_str;
                     String fileName;
-                    String_Init(&fileName, Scanner_CurrentLexeme(pScanner) + 1);
+                    String_Init(&fileName, lexeme + 1);
                     Scanner_Match(pScanner);
                     fileName[strlen(fileName) - 1] = 0;
                     StrArray_Push(&pScanner->IncludeDir, fileName);
                     String_Destroy(&fileName);
                 }
-                IgnorePreProcessorv2(pScanner, &strBuilder);
-                Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str);
+                IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+                Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
             }
-			else
-			{
-				IgnorePreProcessorv2(pScanner, &strBuilder);
-				Scanner_PushToken(pScanner, preToken, strBuilder.c_str);
-			}
+            else
+            {
+                IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+                Scanner_PushToken(pScanner, preToken, strBuilder.c_str, false);
+            }
         }
 
         else if (preToken == TK_PRE_IF ||
-          preToken == TK_PRE_IFDEF ||
-          preToken == TK_PRE_IFNDEF)
+            preToken == TK_PRE_IFDEF ||
+            preToken == TK_PRE_IFNDEF)
         {
-            StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
+            StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
 
-            Scanner_MatchDontExpand(pScanner);
-            Scanner_MatchAllPreprocessorSpaces(pScanner, &strBuilder);
+            BasicScanner_Match(pBasicScanner);
+            Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
+
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
             switch (state)
             {
-                case NONE:
-                case I1:
-                case E1:
+            case NONE:
+            case I1:
+            case E1:
+            {
+                int iRes = 0;
+
+                if (preToken == TK_PRE_IF)
                 {
-                    int iRes = 0;
+                    iRes = EvalPre(pScanner, &strBuilder);
+                }
 
-                    if (preToken == TK_PRE_IF)
+                else
+                {
+                    bool bFound = Scanner_FindPreprocessorItem2(pScanner, lexeme) != NULL;
+
+                    if (preToken == TK_PRE_IFDEF)
                     {
-                        iRes = EvalPre(pScanner, &strBuilder);
+                        iRes = bFound ? 1 : 0;
                     }
 
-                    else
+                    else //if (preToken == TK_PRE_IFNDEF)
                     {
-                        bool bFound = Scanner_FindPreprocessorItem2(pScanner, lexeme) != NULL;
-
-                        if (preToken == TK_PRE_IFDEF)
-                        {
-                            iRes = bFound ? 1 : 0;
-                        }
-
-                        else //if (preToken == TK_PRE_IFNDEF)
-                        {
-                            iRes = !bFound ? 1 : 0;
-                        }
-                    }
-
-                    if (iRes != 0)
-                    {
-                        StatePush(pScanner, I1);
-                    }
-
-                    else
-                    {
-                        StatePush(pScanner, I0);
+                        iRes = !bFound ? 1 : 0;
                     }
                 }
-                break;
 
-                case I0:
+                if (iRes != 0)
+                {
+                    StatePush(pScanner, I1);
+                }
+
+                else
+                {
+                    StatePush(pScanner, I0);
+                }
+            }
+            break;
+
+            case I0:
                 StatePush(pScanner, I0);
                 break;
 
-                case E0:
+            case E0:
                 StatePush(pScanner, E0);
                 break;
             }
 
-            IgnorePreProcessorv2(pScanner, &strBuilder);
-            Scanner_PushToken(pScanner, preToken, strBuilder.c_str);
+            state = StateTop(pScanner);
+            bool bActive = IsIncludeState(state);
+
+            IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+            Scanner_PushToken(pScanner, preToken, strBuilder.c_str, bActive);
         }
 
         else if (preToken == TK_PRE_ELIF)
         {
             //Match elif
-            StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
+            StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
 
-            Scanner_MatchDontExpand(pScanner);
-            Scanner_MatchAllPreprocessorSpaces(pScanner, &strBuilder);
+            BasicScanner_Match(pBasicScanner);
+            Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
 
             switch (state)
             {
-                case NONE:
-                case I1:
+            case NONE:
+            case I1:
                 pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 1] = E0;
                 break;
 
-                case I0:
+            case I0:
+            {
+                int iRes = EvalPre(pScanner, &strBuilder);
+
+                if (pScanner->StackIfDef.size >= 2)
                 {
-                    int iRes = EvalPre(pScanner, &strBuilder);
-
-                    if (pScanner->StackIfDef.size >= 2)
-                    {
-                        if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 2] == I1 ||
-                             pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 2] == E1))
-                        {
-                            if (iRes)
-                            {
-                                pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 1] = I1;
-                            }
-                        }
-                    }
-
-                    else
+                    if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 2] == I1 ||
+                        pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 2] == E1))
                     {
                         if (iRes)
                         {
@@ -1521,55 +1598,72 @@ void Scanner_NextVersion2(Scanner* pScanner)
                         }
                     }
                 }
+
+                else
+                {
+                    if (iRes)
+                    {
+                        pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 1] = I1;
+                    }
+                }
+            }
+            break;
+
+            case E0:
                 break;
 
-                case E0:
-                break;
-
-                case E1:
+            case E1:
                 ASSERT(0);
                 break;
             }
 
-            IgnorePreProcessorv2(pScanner, &strBuilder);
-            Scanner_PushToken(pScanner, TK_PRE_ELIF, strBuilder.c_str);
+            state = StateTop(pScanner);
+            bool bActive = IsIncludeState(state);
+
+
+            IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+            Scanner_PushToken(pScanner, TK_PRE_ELIF, strBuilder.c_str, bActive);
         }
 
         else if (preToken == TK_PRE_ENDIF)
         {
             //Match elif
-            StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
+            StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
 
-            Scanner_MatchDontExpand(pScanner);
-            Scanner_MatchAllPreprocessorSpaces(pScanner, &strBuilder);
+            BasicScanner_Match(pBasicScanner);
+            Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
 
-            IgnorePreProcessorv2(pScanner, &strBuilder);
+            IgnorePreProcessorv2(pBasicScanner, &strBuilder);
             StatePop(pScanner);
-            Scanner_PushToken(pScanner, TK_PRE_ENDIF, strBuilder.c_str);
+
+            state = StateTop(pScanner);
+            bool bActive = IsIncludeState(state);
+
+            Scanner_PushToken(pScanner, TK_PRE_ENDIF, strBuilder.c_str, bActive);
         }
 
         else if (preToken == TK_PRE_ELSE)
         {
 
             //Match else
-            StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
-            BasicScanner_Match(pTopScanner);
+            StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
+            BasicScanner_Match(pBasicScanner);
 
             switch (state)
             {
-                case NONE:
+            case NONE:
                 ASSERT(0);
                 break;
 
-                case I1:
+            case I1:
                 pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 1] = E0;
                 break;
 
-                case I0:
+            case I0:
                 if (pScanner->StackIfDef.size >= 2)
                 {
                     if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 2] == I1 ||
-                         pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 2] == E1))
+                        pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 2] == E1))
                     {
                         pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 1] = E1;
                     }
@@ -1582,23 +1676,27 @@ void Scanner_NextVersion2(Scanner* pScanner)
 
                 break;
 
-                case E0:
+            case E0:
                 break;
 
-                case E1:
+            case E1:
                 ASSERT(false);
                 break;
             }
 
-            IgnorePreProcessorv2(pScanner, &strBuilder);
-            Scanner_PushToken(pScanner, TK_PRE_ELSE, strBuilder.c_str);
+            state = StateTop(pScanner);
+            bool bActive = IsIncludeState(state);
+
+
+            IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+            Scanner_PushToken(pScanner, TK_PRE_ELSE, strBuilder.c_str, bActive);
         }
 
         else if (preToken == TK_PRE_ERROR)
         {
-			//Match error
-			StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
-			Scanner_MatchDontExpand(pScanner);
+            //Match error
+            StrBuilder_Append(&strBuilder, lexeme);
+            BasicScanner_Match(pBasicScanner);
 
             if (IsIncludeState(state))
             {
@@ -1608,13 +1706,13 @@ void Scanner_NextVersion2(Scanner* pScanner)
                 Scanner_SetError(pScanner, str.c_str);
                 StrBuilder_Destroy(&str);
 
-                IgnorePreProcessorv2(pScanner, &strBuilder);
-                Scanner_PushToken(pScanner, TK_PRE_ERROR, strBuilder.c_str);
+                IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+                Scanner_PushToken(pScanner, TK_PRE_ERROR, strBuilder.c_str, true);
             }
-			else
-			{
-				Scanner_PushToken(pScanner, preToken, strBuilder.c_str);
-			}
+            else
+            {
+                Scanner_PushToken(pScanner, preToken, strBuilder.c_str, false);
+            }
         }
 
         else if (preToken == TK_PRE_LINE)
@@ -1622,16 +1720,16 @@ void Scanner_NextVersion2(Scanner* pScanner)
             if (IsIncludeState(state))
             {
                 //Match line
-                StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
-                BasicScanner_Match(pTopScanner);
+                StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
+                BasicScanner_Match(pBasicScanner);
 
-                IgnorePreProcessorv2(pScanner, &strBuilder);
-                Scanner_PushToken(pScanner, TK_PRE_LINE, strBuilder.c_str);
+                IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+                Scanner_PushToken(pScanner, TK_PRE_LINE, strBuilder.c_str, true);
             }
-			else
-			{
-				Scanner_PushToken(pScanner, preToken, strBuilder.c_str);
-			}
+            else
+            {
+                Scanner_PushToken(pScanner, preToken, strBuilder.c_str, false);
+            }
         }
 
         else if (preToken == TK_PRE_UNDEF)
@@ -1639,35 +1737,38 @@ void Scanner_NextVersion2(Scanner* pScanner)
             if (IsIncludeState(state))
             {
                 //Match undef
-                StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
-                BasicScanner_Match(pTopScanner);
+                StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
+                BasicScanner_Match(pBasicScanner);
 
                 lexeme = BasicScanner_Lexeme(Scanner_Top(pScanner));
 
                 MacroMap_RemoveKey(&pScanner->Defines2, lexeme);
 
-                IgnorePreProcessorv2(pScanner, &strBuilder);
-                Scanner_PushToken(pScanner, TK_PRE_UNDEF, strBuilder.c_str);
+                IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+                Scanner_PushToken(pScanner, TK_PRE_UNDEF, strBuilder.c_str, true);
             }
-			else
-			{
-				Scanner_PushToken(pScanner, preToken, strBuilder.c_str);
-			}
+            else
+            {
+                Scanner_PushToken(pScanner, preToken, strBuilder.c_str, false);
+            }
         }
 
         else if (preToken == TK_PRE_DEFINE)
         {
-            StrBuilder_Append(&strBuilder, pTopScanner->currentItem.lexeme.c_str);
-            Scanner_MatchDontExpand(pScanner);
-            Scanner_MatchAllPreprocessorSpaces(pScanner, &strBuilder);
+            //Match define
+            StrBuilder_Append(&strBuilder, lexeme);
+            BasicScanner_Match(pBasicScanner);
 
-            if (IsIncludeState(state))
+            //Match all ' '
+            Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
+            bool bActive = IsIncludeState(state);
+            if (bActive)
             {
                 ParsePreDefinev2(pScanner, &strBuilder);
             }
 
-            IgnorePreProcessorv2(pScanner, &strBuilder);
-            Scanner_PushToken(pScanner, TK_PRE_DEFINE, strBuilder.c_str);
+            IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+            Scanner_PushToken(pScanner, TK_PRE_DEFINE, strBuilder.c_str, bActive);
         }
 
         //break;
@@ -1676,9 +1777,6 @@ void Scanner_NextVersion2(Scanner* pScanner)
     {
         if (IsIncludeState(state))
         {
-
-            const char* lexeme = BasicScanner_Lexeme(pTopScanner);
-
             Macro* pMacro2 = Scanner_FindPreprocessorItem2(pScanner, lexeme);
 
             //Nao pode ter nenhuma macro sendo expandida
@@ -1691,7 +1789,7 @@ void Scanner_NextVersion2(Scanner* pScanner)
             */
 
             if (pMacro2 != NULL &&
-              !pTopScanner->bMacroExpanded)
+                !pBasicScanner->bMacroExpanded)
             {
                 StrBuilder strBuilder = STRBUILDER_INIT;
                 TokenArray ppTokenArray = TOKENARRAY_INIT;
@@ -1700,20 +1798,21 @@ void Scanner_NextVersion2(Scanner* pScanner)
                 //confirma realmente se eh p expandir
                 //aqui tem que pegar no head do stream nao no acumulado
                 bool bIsMacro = GetNewMacroCallString(pScanner,
-                  pMacro2,
-                  &ppTokenArray,
-                  &callString);
+                    pBasicScanner,
+                    pMacro2,
+                    &ppTokenArray,
+                    &callString);
 
                 if (bIsMacro)
                 {
                     //Se eh macro ja fez todos os matchs
 
                     ExpandMacroToText(&ppTokenArray,
-                      &pScanner->Defines2,
-                      false,
-                      false,
-                      NULL,
-                      &strBuilder);
+                        &pScanner->Defines2,
+                        false,
+                        false,
+                        NULL,
+                        &strBuilder);
 
                     if (strBuilder.size == 0)
                     {
@@ -1724,17 +1823,18 @@ void Scanner_NextVersion2(Scanner* pScanner)
                         StrBuilder_Append(&strBuilder, " ");
                     }
 
+                    //Poe mais cartas no baralho
                     PushExpandedMacro(pScanner,
-                      pMacro2->Name,
-                      callString.c_str,
-                      strBuilder.c_str);
+                        pMacro2->Name,
+                        callString.c_str,
+                        strBuilder.c_str);
 
                     //ScannerItem* pNew = ScannerItem_Create();
                     //StrBuilder_Set(&pNew->lexeme, callString.c_str);
                     //pNew->token = TK_MACRO_CALL;
                     //List_Add(&pScanner->AcumulatedTokens, pNew);
 
-                    Scanner_PushToken(pScanner, TK_MACRO_CALL, callString.c_str);
+                    Scanner_PushToken(pScanner, TK_MACRO_CALL, callString.c_str, true);
                 }
                 else
                 {
@@ -1745,13 +1845,41 @@ void Scanner_NextVersion2(Scanner* pScanner)
                 StrBuilder_Destroy(&strBuilder);
                 StrBuilder_Destroy(&callString);
             }
+            else
+            {
+                //Scanner_PushToken(pScanner, TK_MACRO_CALL, callString.c_str, true);
+
+                ScannerItem* pNew = ScannerItem_Create();
+                StrBuilder_Set(&pNew->lexeme, pBasicScanner->currentItem.lexeme.c_str);
+                pNew->token = pBasicScanner->currentItem.token;
+                pNew->bActive = true;
+                List_Add(&pScanner->AcumulatedTokens, pNew);
+
+                BasicScanner_Match(pBasicScanner);
+            }
+        }
+        else
+        {
+            ScannerItem* pNew = ScannerItem_Create();
+            StrBuilder_Set(&pNew->lexeme, pBasicScanner->currentItem.lexeme.c_str);
+            pNew->token = pBasicScanner->currentItem.token;
+            pNew->bActive = false;
+            List_Add(&pScanner->AcumulatedTokens, pNew);
+
+            BasicScanner_Match(pBasicScanner);
         }
         //break;
     }//TK_IDENTIFIER
-    //else
-    //{
-//      break;
-  //  }
+    else
+    {
+        ScannerItem* pNew = ScannerItem_Create();
+        StrBuilder_Set(&pNew->lexeme, pBasicScanner->currentItem.lexeme.c_str);
+        pNew->token = pBasicScanner->currentItem.token;
+        pNew->bActive = bActive0;
+        List_Add(&pScanner->AcumulatedTokens, pNew);
+
+        BasicScanner_Match(pBasicScanner);
+    }
     StrBuilder_Destroy(&strBuilder);
     //}//for
 
@@ -1762,52 +1890,52 @@ void Scanner_NextVersion2(Scanner* pScanner)
 
 void PrintPreprocessedToFileCore(FILE* fp, Scanner* scanner)
 {
-    while (Scanner_CurrentToken(scanner) != TK_EOF)
+    while (Scanner_TokenAt(scanner, 0) != TK_EOF)
     {
-        Tokens token = Scanner_CurrentToken(scanner);
-        const char* lexeme = Scanner_CurrentLexeme(scanner);
-        if (Scanner_CurrentTokenIsActive(scanner))
+        Tokens token = Scanner_TokenAt(scanner, 0);
+        const char* lexeme = Scanner_LexemeAt(scanner, 0);
+        if (Scanner_IsActiveAt(scanner, 0))
         {
             switch (token)
             {
                 //Tokens para linhas do pre processador
-                case TK_PRE_INCLUDE:
-                case TK_PRE_PRAGMA:
-                case TK_PRE_IF:
-                case TK_PRE_ELIF:
-                case TK_PRE_IFNDEF:
-                case TK_PRE_IFDEF:
-                case TK_PRE_ENDIF:
-                case TK_PRE_ELSE:
-                case TK_PRE_ERROR:
-                case TK_PRE_LINE:
-                case TK_PRE_UNDEF:
-                case TK_PRE_DEFINE:
+            case TK_PRE_INCLUDE:
+            case TK_PRE_PRAGMA:
+            case TK_PRE_IF:
+            case TK_PRE_ELIF:
+            case TK_PRE_IFNDEF:
+            case TK_PRE_IFDEF:
+            case TK_PRE_ENDIF:
+            case TK_PRE_ELSE:
+            case TK_PRE_ERROR:
+            case TK_PRE_LINE:
+            case TK_PRE_UNDEF:
+            case TK_PRE_DEFINE:
                 fprintf(fp, "\n");
                 break;
 
                 //fim tokens preprocessador
-                case TK_LINE_COMMENT:
-                case TK_COMMENT:
+            case TK_LINE_COMMENT:
+            case TK_COMMENT:
                 fprintf(fp, " ");
                 break;
 
-                case TK_BOF:
+            case TK_BOF:
                 break;
 
-                case TK_MACRO_CALL:
-                case TK_MACRO_EOF:
-                case TK_FILE_EOF:
+            case TK_MACRO_CALL:
+            case TK_MACRO_EOF:
+            case TK_FILE_EOF:
                 break;
 
-                default:
+            default:
                 fprintf(fp, "%s", lexeme);
                 break;
             }
         }
 
         Scanner_Match(scanner);
-    }  
+    }
 }
 
 
@@ -1856,11 +1984,11 @@ void PrintPreprocessedToFile(const char* fileIn,
 
 
 void PrintPreprocessedToConsole(const char* fileIn,
-                                const char* configFileName)
+    const char* configFileName)
 {
     String fullFileNamePath = STRING_INIT;
     GetFullPath(fileIn, &fullFileNamePath);
-    
+
     Scanner scanner;
     Scanner_Init(&scanner);
 
@@ -1868,305 +1996,151 @@ void PrintPreprocessedToConsole(const char* fileIn,
 
     if (configFileName != NULL)
     {
-      String configFullPath = STRING_INIT;
-      GetFullPath(configFileName, &configFullPath);
+        String configFullPath = STRING_INIT;
+        GetFullPath(configFileName, &configFullPath);
 
-      Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath, true);
-      Scanner_Match(&scanner);
+        Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath, true);
+        Scanner_Match(&scanner);
 
-      String_Destroy(&configFullPath);
+        String_Destroy(&configFullPath);
     }
-   
+
     PrintPreprocessedToFileCore(stdout, &scanner);
-    
+
     Scanner_Destroy(&scanner);
     String_Destroy(&fullFileNamePath);
-    
+
 }
 
-void Scanner_LookAhead(Scanner* pScanner)
+int Scanner_GetNumberOfScannerItems(Scanner* pScanner)
 {
-    BasicScanner* pTop =
-        Scanner_Top(pScanner);
-    if (pTop != NULL)
+    int nCount = 1; //contando com o "normal"
+    ForEachListItem(ScannerItem, pItem, &pScanner->AcumulatedTokens)
     {
-        if (pTop->currentItem.token != TK_EOF)
-        {
-            const char* currentLexeme =
-                pScanner->stack->currentItem.lexeme.c_str;
-
-            Tokens currentToken =
-                pScanner->stack->currentItem.token;
-            bool bActive =
-                pScanner->stack->currentItem.bActive;
-
-            ScannerItem* pNew = ScannerItem_Create();
-            StrBuilder_Set(&pNew->lexeme, currentLexeme);
-            pNew->token = currentToken;
-            pNew->bActive = bActive;
-            List_Add(&pScanner->AcumulatedTokens, pNew);
-            Scanner_NextVersion2(pScanner);
-        }
+        nCount++;
     }
+    return nCount;
 }
 
 
-int Scanner_CurrentFileIndex(Scanner * pScanner)
+ScannerItem* Scanner_ScannerItemAt(Scanner* pScanner, int index)
 {
-    int fileIndex = 0;
+
+    //item0 item1 ..itemN
+    //^
+    //posicao atual
+
+    ScannerItem* pScannerItem = NULL;
 
     if (!pScanner->bError)
     {
-        if (pScanner->AcumulatedTokens.pHead)
-        {
-            fileIndex = pScanner->AcumulatedTokens.pHead->FileIndex;
-        }
-        else if (pScanner->stack != NULL)
-        {
-            fileIndex = pScanner->stack->currentItem.FileIndex;
-        }
-    }
-
-    return fileIndex;
-}
-
-
-int Scanner_CurrentLine(Scanner * pScanner)
-{
-    int line = 0;
-
-    if (!pScanner->bError)
-    {
-        if (pScanner->AcumulatedTokens.pHead)
-        {
-            line = pScanner->AcumulatedTokens.pHead->Line;
-        }
-        else if (pScanner->stack != NULL)
-        {
-            line = pScanner->stack->currentItem.Line;
-        }
-    }
-
-    return line;
-}
-Tokens Scanner_CurrentToken(Scanner* pScanner)
-{
-    Tokens token = TK_EOF;
-
-    if (!pScanner->bError)
-    {
-        if (pScanner->AcumulatedTokens.pHead)
-        {
-            token = pScanner->AcumulatedTokens.pHead->token;
-        }
-        else if (pScanner->stack != NULL)
-        {
-            token = pScanner->stack->currentItem.token;
-        }
-    }
-
-    return token;
-}
-
-bool Scanner_CurrentTokenIsActive(Scanner* pScanner)
-{
-    bool bActive = false;
-
-    if (!pScanner->bError)
-    {
-        if (pScanner->AcumulatedTokens.pHead)
-        {
-            bActive = pScanner->AcumulatedTokens.pHead->bActive;
-        }
-        else if (pScanner->stack != NULL)
-        {
-            bActive = pScanner->stack->currentItem.bActive;
-        }
-    }
-
-    return bActive;
-}
-
-
-
-Tokens Scanner_AheadToken(Scanner* pScanner)
-{
-    Tokens token = TK_EOF;
-
-    if (!pScanner->bError)
-    {
-        if (pScanner->stack != NULL)
-        {
-            token = pScanner->stack->currentItem.token;
-        }
-    }
-
-    return token;
-}
-
-const char* Scanner_AheadLexeme(Scanner* pScanner)
-{
-    const char* lexeme = NULL;
-
-    if (!pScanner->bError && pScanner->stack)
-    {        
-        lexeme = pScanner->stack->currentItem.lexeme.c_str;        
-    }
-
-    return lexeme;
-}
-
-const char* Scanner_CurrentLexeme(Scanner* pScanner)
-{
-    const char* lexeme = NULL;
-
-    if (!pScanner->bError)
-    {
-        if (pScanner->AcumulatedTokens.pHead)
-        {
-            lexeme = pScanner->AcumulatedTokens.pHead->lexeme.c_str;
-        }
-        else if (pScanner->stack != NULL)
-        {
-            lexeme = pScanner->stack->currentItem.lexeme.c_str;
-        }
-    }
-
-    return lexeme;
-}
-
-
-bool Scanner_LookAheadTokenActive(Scanner* pScanner, int nLookAhead)
-{
-    bool bActive = false;
-    ASSERT(nLookAhead > 0);
-
-    Tokens token = TK_EOF;
-
-    if (!pScanner->bError)
-    {
-
+        //conta o numero de itens empilhados
         int nCount = 0;
         ForEachListItem(ScannerItem, pItem, &pScanner->AcumulatedTokens)
         {
             nCount++;
         }
 
-        if (nLookAhead > nCount)
+        //precisa comprar tokens?
+        if (index >= nCount)
         {
-            //Vou precisar ver mais adiante
-            for (int i = nCount; i < nLookAhead; i++)
+            for (int i = nCount; i <= index; i++)
             {
-                Scanner_LookAhead(pScanner);
+                //comprar mais tokens
+                Scanner_BuyTokens(pScanner);
             }
-            bActive = pScanner->stack->currentItem.bActive;
-        }
-        else if (nLookAhead == nCount)
-        {
-            bActive = pScanner->stack->currentItem.bActive;
+            pScannerItem = pScanner->AcumulatedTokens.pTail;
         }
         else
         {
+            //nao precisa comprar eh so pegar
             int n = 0;
             ForEachListItem(ScannerItem, pItem, &pScanner->AcumulatedTokens)
             {
-                if (n == nLookAhead)
+                if (n == index)
                 {
-                    bActive = pItem->bActive;
+                    pScannerItem = pItem;
                     break;
                 }
+                n++;
             }
         }
     }
 
-    return bActive;
+    ASSERT(pScannerItem != NULL);
+    return pScannerItem;
 }
 
-Tokens Scanner_LookAheadToken(Scanner* pScanner, int nLookAhead)
+void Scanner_PrintItems(Scanner* pScanner)
 {
-    ASSERT(nLookAhead > 0);
-
-    Tokens token = TK_EOF;
-
-    if (!pScanner->bError)
+    printf("-----\n");
+    int n = Scanner_GetNumberOfScannerItems(pScanner);
+    for (int i = 0; i < n; i++)
     {
-
-        int nCount = 0;
-        ForEachListItem(ScannerItem, pItem, &pScanner->AcumulatedTokens)
-        {
-            nCount++;
-        }
-
-        if (nLookAhead > nCount)
-        {
-            //Vou precisar ver mais adiante
-            for (int i = nCount; i < nLookAhead; i++)
-            {
-                Scanner_LookAhead(pScanner);
-            }
-            token = pScanner->stack->currentItem.token;
-        }
-        else if (nLookAhead == nCount)
-        {
-            token = pScanner->stack->currentItem.token;
-        }
-        else
-        {
-            int n = 0;
-            ForEachListItem(ScannerItem, pItem, &pScanner->AcumulatedTokens)
-            {
-                if (n == nLookAhead)
-                {
-                    token = pItem->token;
-                    break;
-                }
-            }
-        }
+        ScannerItem* pItem =
+            Scanner_ScannerItemAt(pScanner, i);
+        printf("%d : %s %s\n", i, pItem->lexeme.c_str, TokenToString(pItem->token));
     }
-
-    return token;
+    printf("-----\n");
 }
 
-
-const char* Scanner_LookAheadLexeme(Scanner* pScanner, int nLookAhead)
+int Scanner_FileIndexAt(Scanner* pScanner, int index)
 {
-    const char* lexeme = NULL;
-
-    ASSERT(nLookAhead > 0);
-
-    Tokens token = TK_EOF;
-
-    if (!pScanner->bError)
+    ScannerItem* pScannerItem =
+        Scanner_ScannerItemAt(pScanner, index);
+    if (pScannerItem)
     {
-
-        //nLookAhead
-        int n = 0;
-        ForEachListItem(ScannerItem, pItem, &pScanner->AcumulatedTokens)
-        {
-            if (n == nLookAhead)
-            {
-                lexeme = pItem->lexeme.c_str;
-                break;
-            }
-            n++;
-        }
-        if (token != TK_EOF)
-        {
-            //achou
-        }
-        else if (n < nLookAhead)
-        {
-            //Vou precisar ver mais adiante
-            for (int i = n; i < nLookAhead; i++)
-            {
-                Scanner_LookAhead(pScanner);
-            }
-            lexeme = pScanner->stack->currentItem.lexeme.c_str;
-        }
+        return pScannerItem->FileIndex;
     }
-
-    return lexeme;
+    return 0;
 }
+
+int Scanner_LineAt(Scanner* pScanner, int index)
+{
+    ScannerItem* pScannerItem =
+        Scanner_ScannerItemAt(pScanner, index);
+    if (pScannerItem)
+    {
+        return pScannerItem->Line;
+    }
+    return 0;
+}
+
+bool Scanner_IsActiveAt(Scanner* pScanner, int index)
+{
+    ScannerItem* pScannerItem =
+        Scanner_ScannerItemAt(pScanner, index);
+    if (pScannerItem)
+    {
+        return pScannerItem->bActive;
+    }
+    return false;
+}
+
+Tokens Scanner_TokenAt(Scanner* pScanner, int index)
+{
+    ScannerItem* pScannerItem =
+        Scanner_ScannerItemAt(pScanner, index);
+    if (pScannerItem)
+    {
+        return pScannerItem->token;
+    }
+    return TK_NONE;
+}
+
+const char* Scanner_LexemeAt(Scanner* pScanner, int index)
+{
+    ScannerItem* pScannerItem =
+        Scanner_ScannerItemAt(pScanner, index);
+    if (pScannerItem)
+    {
+        return pScannerItem->lexeme.c_str;
+    }
+    return "";
+}
+
+
+
 
 #define List_PopFront(ITEM, pList) \
 do {\
@@ -2197,9 +2171,9 @@ void Scanner_MatchDontExpand(Scanner * pScanner)
             Tokens token = pTopScanner->currentItem.token;
 
             while (token == TK_EOF &&
-                   pScanner->stack->pPrevious != NULL)
+                pScanner->stack->pPrevious != NULL)
             {
-				ASSERT(pScanner->AcumulatedTokens.pHead == NULL);
+                ASSERT(pScanner->AcumulatedTokens.pHead == NULL);
                 BasicScannerStack_PopIfNotLast(&pScanner->stack);
                 pTopScanner = Scanner_Top(pScanner);
                 token = pTopScanner->currentItem.token;
@@ -2210,30 +2184,27 @@ void Scanner_MatchDontExpand(Scanner * pScanner)
 }
 void Scanner_Match(Scanner * pScanner)
 {
-    if (!pScanner->bError)
+    if (pScanner->AcumulatedTokens.pHead != NULL)
     {
-        if (pScanner->AcumulatedTokens.pHead != NULL)
+        List_PopFront(ScannerItem, &pScanner->AcumulatedTokens);
+        if (pScanner->AcumulatedTokens.pHead == NULL)
         {
-            List_PopFront(ScannerItem, &pScanner->AcumulatedTokens);
-        }
-        else
-        {
-            Scanner_NextVersion2(pScanner);
+            Scanner_BuyTokens(pScanner);
         }
     }
 }
 
 bool Scanner_MatchToken(Scanner * pScanner,
-                        Tokens token,
-                        bool bActive)
+    Tokens token,
+    bool bActive)
 {
-	if (pScanner->bError)
-	{
-		return false;
-	}
+    if (pScanner->bError)
+    {
+        return false;
+    }
 
 
-    bool b = Scanner_CurrentToken(pScanner) == token;
+    bool b = Scanner_TokenAt(pScanner, 0) == token;
     Scanner_Match(pScanner);
     return b;
 }

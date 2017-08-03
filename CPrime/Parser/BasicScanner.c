@@ -260,6 +260,20 @@ const char* TokenToString(Tokens tk)
     case TK_PERCENTCOLONPERCENTCOLON:
         return "/%:/%:";
 
+    case TK_PRE_INCLUDE:
+        return "TK_PRE_INCLUDE";
+
+    case TK_PRE_DEFINE:
+        return "TK_PRE_DEFINE";
+        //
+    case TK_MACRO_CALL:
+        return "TK_MACRO_CALL";
+
+    case TK_MACRO_EOF:
+        return "TK_MACRO_EOF";
+
+    case TK_FILE_EOF:
+        return "TK_FILE_EOF";
     default:
         ASSERT(false);
         break;

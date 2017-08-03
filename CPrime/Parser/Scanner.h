@@ -108,18 +108,17 @@ void PrintPreprocessedToFile(const char* fileIn,
 void PrintPreprocessedToConsole(const char* fileIn,
                                 const char* configFileName);
 
+int Scanner_GetNumberOfScannerItems(Scanner * pScanner);
+
 
 //NOVA INTERFACE
 
-Tokens Scanner_CurrentToken(Scanner * pScanner);
-int Scanner_CurrentLine(Scanner * pScanner);
-int Scanner_CurrentFileIndex(Scanner * pScanner);
-const char * Scanner_CurrentLexeme(Scanner * pScanner);
-bool Scanner_CurrentTokenIsActive(Scanner* pScanner);
-
-Tokens Scanner_LookAheadToken(Scanner * pScanner, int nLookAhead);
-const char * Scanner_LookAheadLexeme(Scanner * pScanner, int nLookAhead);
-bool Scanner_LookAheadTokenActive(Scanner* pScanner, int nLookAhead);
+int Scanner_FileIndexAt(Scanner * pScanner, int index);
+int Scanner_LineAt(Scanner * pScanner, int index);
+bool Scanner_IsActiveAt(Scanner* pScanner, int index);
+Tokens Scanner_TokenAt(Scanner * pScanner, int index);
+const char * Scanner_LexemeAt(Scanner * pScanner, int index);
+void Scanner_PrintItems(Scanner* pScanner);
 
 void Scanner_Match(Scanner * pScanner);
 bool Scanner_MatchToken(Scanner * pScanner, Tokens token, bool bActive);

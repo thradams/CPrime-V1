@@ -236,7 +236,7 @@ void SetError2(Parser* parser, const char* message, const char* message2)
         Scanner_GetError(&parser->Scanner, &parser->ErrorMessage);
         parser->bError = true;
         StrBuilder_Append(&parser->ErrorMessage, "(");
-        StrBuilder_AppendInt(&parser->ErrorMessage, Scanner_CurrentLine(&parser->Scanner));
+        StrBuilder_AppendInt(&parser->ErrorMessage, Scanner_LineAt(&parser->Scanner,0));
         StrBuilder_Append(&parser->ErrorMessage, ") : error :");
         StrBuilder_Append(&parser->ErrorMessage, message);
         StrBuilder_Append(&parser->ErrorMessage, message2);
@@ -269,7 +269,7 @@ int GetCurrentLine(Parser* parser)
         return -1;
     }
 
-    return Scanner_CurrentLine(&parser->Scanner);
+    return Scanner_LineAt(&parser->Scanner, 0);
 }
 
 int GetFileIndex(Parser* parser)
@@ -279,7 +279,7 @@ int GetFileIndex(Parser* parser)
         return -1;
     }
 
-    return Scanner_CurrentFileIndex(&parser->Scanner);
+    return Scanner_FileIndexAt(&parser->Scanner, 0);
 }
 
 static void GetPosition(Parser* ctx, TPosition* pPosition)
@@ -297,8 +297,8 @@ Tokens Parser_LookAheadToken(Parser* parser)
     {
         for (int i = 1; i < 10; i++)
         {
-            token = Scanner_LookAheadToken(&parser->Scanner, i);
-            bool bActive = Scanner_LookAheadTokenActive(&parser->Scanner, i);
+            token = Scanner_TokenAt(&parser->Scanner, i);
+            bool bActive = Scanner_IsActiveAt(&parser->Scanner, i);
             if (bActive && !IsPreprocessorTokenPhase(token))
             {
                 break;
@@ -317,7 +317,23 @@ const char* Parser_LookAheadLexeme(Parser* parser)
         return "";
     }
 
-    return Scanner_LookAheadLexeme(&parser->Scanner, 1);
+    const char* lexeme = NULL;
+
+    if (!Parser_HasError(parser))
+    {
+        for (int i = 1; i < 10; i++)
+        {
+            Tokens token = Scanner_TokenAt(&parser->Scanner, i);
+            bool bActive = Scanner_IsActiveAt(&parser->Scanner, i);
+            if (bActive && !IsPreprocessorTokenPhase(token))
+            {
+                lexeme = Scanner_LexemeAt(&parser->Scanner, i);
+                break;
+            }
+        }
+    }
+
+    return lexeme;    
 }
 
 
@@ -328,7 +344,7 @@ Tokens Parser_CurrentToken(Parser* parser)
         return TK_ERROR;
     }
 
-    Tokens token = Scanner_CurrentToken(&parser->Scanner);
+    Tokens token = Scanner_TokenAt(&parser->Scanner, 0);
 
     if (IsPreprocessorTokenPhase(token))
     {
@@ -352,18 +368,18 @@ Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt)
 
         Scanner_Match(&parser->Scanner);
 
-        token = Scanner_CurrentToken(&parser->Scanner);
+        token = Scanner_TokenAt(&parser->Scanner, 0);
         while (token != TK_EOF &&
-            (!Scanner_CurrentTokenIsActive(&parser->Scanner) ||
+            (!Scanner_IsActiveAt(&parser->Scanner, 0) ||
                 IsPreprocessorTokenPhase(token)))
         {
             ScannerItem* pNew = ScannerItem_Create();
-            StrBuilder_Set(&pNew->lexeme, Scanner_CurrentLexeme(&parser->Scanner));
-            pNew->token = Scanner_CurrentToken(&parser->Scanner);
+            StrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
+            pNew->token = Scanner_TokenAt(&parser->Scanner, 0);
             List_Add(&parser->ClueList, pNew);
 
             Scanner_Match(&parser->Scanner);
-            token = Scanner_CurrentToken(&parser->Scanner);
+            token = Scanner_TokenAt(&parser->Scanner, 0);
         }
     }
 
@@ -419,7 +435,7 @@ const char* Lexeme(Parser* parser)
         return "";
     }
 
-    return Scanner_CurrentLexeme(&parser->Scanner);
+    return Scanner_LexemeAt(&parser->Scanner, 0);
 }
 
 bool ErrorOrEof(Parser* parser)
@@ -3113,7 +3129,7 @@ void Struct_Or_Union_Specifier(Parser* ctx,
             }
             else
             {
-                SetError2(ctx, "unexpected struct ", "");
+               // SetError2(ctx, "unexpected struct ", "");
             }
         }
     }
@@ -4961,7 +4977,7 @@ void PrintString(const char* psz)
 
 void PrintTokens(Scanner* scanner)
 {
-    while (Scanner_CurrentToken(scanner) != TK_EOF)
+    while (Scanner_TokenAt(scanner) != TK_EOF)
     {
         printf("%s : ", Scanner_TokenString(scanner));
         PrintString(Scanner_Lexeme(scanner));
@@ -4987,7 +5003,7 @@ void PrintPreprocessedToConsole(const char* fileIn)
     Scanner_IncludeFile(&scanner, fileIn, FileIncludeTypeFullPath);
     scanner.bIncludeSpaces = true;
 
-    while (Scanner_CurrentToken(&scanner) != TK_EOF)
+    while (Scanner_TokenAt(&scanner) != TK_EOF)
     {
         Tokens token = Scanner_Top(&scanner)->currentItem.token;
         const char* lexeme = Scanner_Top(&scanner)->currentItem.lexeme.c_str;
@@ -5038,9 +5054,9 @@ void GetProcessedTokens2(const char* fileIn/*, JObj* pOutArray*/)
     Scanner_Init(&scanner);
     Scanner_IncludeFile(&scanner, fileIn, FileIncludeTypeFullPath);
 
-    while (Scanner_CurrentToken(&scanner) != TK_EOF)
+    while (Scanner_TokenAt(&scanner) != TK_EOF)
     {
-        Tokens token = Scanner_CurrentToken(&scanner);
+        Tokens token = Scanner_TokenAt(&scanner);
         const char* lexeme = Scanner_Lexeme(&scanner);
         //JObj *pNew = JObj_PushNewArray(pOutArray);
         //JObj_PushString(pNew, TokenToString(token));
@@ -5058,7 +5074,7 @@ void GetProcessedTokens(const char* fileIn/*, JObj* pOutArray*/)
     scanner.bIncludeSpaces = true;
     Scanner_IncludeFile(&scanner, fileIn, FileIncludeTypeFullPath);
 
-    while (Scanner_CurrentToken(&scanner) != TK_EOF)
+    while (Scanner_TokenAt(&scanner) != TK_EOF)
     {
         Tokens token = Scanner_Top(&scanner)->currentItem.token;
         const char* lexeme = Scanner_Top(&scanner)->currentItem.lexeme.c_str;

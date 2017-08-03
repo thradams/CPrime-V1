@@ -70,7 +70,7 @@ void PrintHelp()
     printf("Options:\n");
     printf("-config FILE                          Configuration file.\n");
     printf("-help                                 Print this message.\n");
-	printf("-out                                  Sets ouput file name.\n");
+	printf("-o                                    Sets ouput file name.\n");
     printf("-E                                    Preprocess to console.\n");
     printf("-P                                    Preprocess to file.\n");
     printf("-A                                    Output AST to file.\n");
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
     printf("https://github.com/thradams/CPrime\n\n");
 
 
-   // AllTests();
+    //AllTests();
 
     if (argc < 2)
     {
@@ -94,6 +94,7 @@ int main(int argc, char* argv[])
     const char* configFileName = NULL;
 
 	String outputFullPath = NULL;
+    String inputFullPath = NULL;
 	
 
     Options options = OPTIONS_INIT;
@@ -132,7 +133,7 @@ int main(int argc, char* argv[])
                 printf("missing file\n");
             }
         }
-		else if (strcmp(option, "-out") == 0)
+		else if (strcmp(option, "-o") == 0)
 		{
 			if (i + 1 < argc)
 			{
@@ -146,28 +147,32 @@ int main(int argc, char* argv[])
 		}
         else
         {
-            const char* inputFileName = option;
-            String inputFullPath = NULL;
-            GetFullPath(inputFileName, &inputFullPath);
+            //const char* inputFileName = option;
+            //String inputFullPath = NULL;
+            GetFullPath(option, &inputFullPath);
 
-            if (bPrintPreprocessedToFile)
-            {
-                PrintPreprocessedToFile(inputFullPath, configFileName);
-            }
-            else if (bPrintPreprocessedToConsole)
-            {
-                PrintPreprocessedToConsole(inputFullPath, configFileName);
-            }
-            else
-            {
-                Compile(configFileName, inputFullPath, outputFullPath, &options, bPrintASTFile);
-            }
-            String_Destroy(&inputFullPath);
+            
+            //String_Destroy(&inputFullPath);
 		        
 		}
 
     }
+
+    if (bPrintPreprocessedToFile)
+    {
+        PrintPreprocessedToFile(inputFullPath, configFileName);
+    }
+    else if (bPrintPreprocessedToConsole)
+    {
+        PrintPreprocessedToConsole(inputFullPath, configFileName);
+    }
+    else
+    {
+        Compile(configFileName, inputFullPath, outputFullPath, &options, bPrintASTFile);
+    }
+
 	String_Destroy(&outputFullPath);
+    String_Destroy(&inputFullPath);
 
     return 0;
 }
