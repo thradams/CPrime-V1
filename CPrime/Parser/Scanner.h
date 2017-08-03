@@ -17,7 +17,7 @@ typedef struct
   bool bDirectInclude;
   bool bSystemLikeInclude;
 } TFile;
-#define TFILE_INIT {STRING_INIT, STRING_INIT, 0, false, false, false}
+
 void TFile_Delete(TFile* p);
 
 typedef Map TFileMap;

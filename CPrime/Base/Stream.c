@@ -54,8 +54,8 @@ Result SStream_InitFile(SStream* pStream,
                         const char* fullPath)
 {
   ASSERT(IsFullPath(fullPath));
-  String_Init(&pStream->NameOrFullPath, fullPath);
-  String_Init(&pStream->FullDir2, NULL);
+  String_InitWith(&pStream->NameOrFullPath, fullPath);
+  String_InitWith(&pStream->FullDir2, NULL);
   pStream->currentLine = 1;
   pStream->currentCol = 1;
   pStream->position = 0;
@@ -88,9 +88,9 @@ Result SStream_Init(SStream* pStream, const char* name, const char*  text)
   pStream->currentLine = 1;
   pStream->currentCol = 1;
   pStream->position = 0;
-  String_Init(&pStream->text, text);
-  String_Init(&pStream->NameOrFullPath, name);
-  String_Init(&pStream->FullDir2, "");
+  String_InitWith(&pStream->text, text);
+  String_InitWith(&pStream->NameOrFullPath, name);
+  String_InitWith(&pStream->FullDir2, "");
 
   if (text != NULL)
   {

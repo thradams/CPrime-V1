@@ -41,7 +41,7 @@ Result BucketItem_InitMoveKey(BucketItem* node,
     node->data = data;
     node->hash = hash;
 
-    String_Init(&node->key, NULL);
+    String_InitWith(&node->key, NULL);
     String_Swap(&node->key, key);
 
     return RESULT_OK;
@@ -53,7 +53,7 @@ Result BucketItem_Init(BucketItem* node,
                        const char* key,
                        void* data)
 {
-    Result result = String_Init(&node->key, key);
+    Result result = String_InitWith(&node->key, key);
     node->data = data;
     node->hash = hash;
     return result;
@@ -432,7 +432,7 @@ Result Map_Set(Map* map, const char* key, void* data)
 
     ASSERT(key != NULL);
     String localkey;
-    String_Init(&localkey, key);
+    String_InitWith(&localkey, key);
 
     result = Map_SetMoveKey(map, &localkey, data);
 

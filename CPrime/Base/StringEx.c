@@ -8,7 +8,7 @@
 void String_Reset(String* pString)
 {
   String_Destroy(pString);
-  String_Init(pString, NULL);
+  String_InitWith(pString, NULL);
 }
 
 void String_Destroy(String*  pString)
@@ -37,7 +37,7 @@ Result String_Set(String *pS1, const char* psz1)
 {
   Result result;
   String s1_Moved;
-  result = String_Init(&s1_Moved, psz1);
+  result = String_InitWith(&s1_Moved, psz1);
 
   if (result == RESULT_OK)
   {
@@ -48,7 +48,7 @@ Result String_Set(String *pS1, const char* psz1)
   return result;
 }
 
-Result String_Init(String* pString, const char*  sourceOpt)
+Result String_InitWith(String* pString, const char*  sourceOpt)
 {
   if (sourceOpt != NULL)
   {

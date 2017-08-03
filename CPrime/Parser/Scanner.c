@@ -76,28 +76,29 @@ PPTokenType TokenToPPToken(Tokens token)
     return result;
 }
 
-TFile* TFile_Create()
+TFile* TFile_Create() _default
 {
-    TFile* p = (TFile*)malloc(sizeof * p);
-
-    if (p)
-    {
-        TFile temp = TFILE_INIT;
-        *p = temp;
+    TFile *p = (TFile*) malloc(sizeof * p);
+    if (p != NULL) {
+        String_Init(&p->FullPath);
+        String_Init(&p->IncludePath);
+        p->FileIndex = 0;
+        p->PragmaOnce = false;
+        p->bDirectInclude = false;
+        p->bSystemLikeInclude = false;
     }
-
     return p;
 }
 
-void TFile_Destroy(TFile* p)
+void TFile_Destroy(TFile* p) _default
 {
     String_Destroy(&p->FullPath);
+    String_Destroy(&p->IncludePath);
 }
 
-void TFile_Delete(TFile* p)
+void TFile_Delete(TFile* p) _default
 {
-    if (p)
-    {
+    if (p != NULL) {
         TFile_Destroy(p);
         free(p);
     }
@@ -382,7 +383,7 @@ bool Scanner_GetFullPath(Scanner* pScanner,
             {
                 //nao abriu nenhum, faz o full path do nome do arquivo
                 String fullPath;
-                String_Init(&fullPath, NULL);
+                String_InitWith(&fullPath, NULL);
                 GetFullPath(fileName, &fullPath);
                 bool bFileExists = FileExists(fullPath);
 
@@ -446,7 +447,7 @@ void Scanner_IncludeFile(Scanner* pScanner,
     bool bDirectInclude = false;
 
     String fullPath = STRING_INIT;
-    String_Init(&fullPath, "");
+    String_InitWith(&fullPath, "");
     //Faz a procura nos diretorios como se tivesse adicinando o include
     //seguindo as mesmas regras. Caso o include seja possivel ele retorna o path completo
     //este path completo que eh usado para efeitos do pragma once.
@@ -556,22 +557,15 @@ static void Delete_Scanner(void* pv)
     BasicScanner_Delete((BasicScanner*)pv);
 }
 
-void Scanner_Destroy(Scanner* pScanner)
+void Scanner_Destroy(Scanner* pScanner) _default
 {
-
-    MacroMap_Destroy(&pScanner->Defines2);
-    StrBuilder_Destroy(&pScanner->DebugString);
-    //StrBuilder_Destroy(&pScanner->PreprocessorAndCommentsString);
-//    List_Destroy(ScannerItem, &pScanner->ClueList);
-    //List_Destroy(ScannerItem, &pScanner->AcumulatedTokens);
-    StrBuilder_Destroy(&pScanner->ErrorString);
-    ArrayInt_Destroy(&pScanner->StackIfDef);
     BasicScannerStack_Destroy(&pScanner->stack);
+    MacroMap_Destroy(&pScanner->Defines2);
+    ArrayInt_Destroy(&pScanner->StackIfDef);
     TFileMap_Destroy(&pScanner->FilesIncluded);
     StrArray_Destroy(&pScanner->IncludeDir);
-
-    //Valor lido na leitura especulativa
-    //ScannerItem_Destroy(&pScanner->LookAhead);
+    StrBuilder_Destroy(&pScanner->DebugString);
+    StrBuilder_Destroy(&pScanner->ErrorString);
 }
 
 /*int Scanner_GetCurrentLine(Scanner* pScanner)
@@ -1384,7 +1378,7 @@ void Scanner_BuyTokens(Scanner* pScanner)
                 if (token == TK_STRING_LITERAL)
                 {
                     String fileName;
-                    String_Init(&fileName, lexeme + 1);
+                    String_InitWith(&fileName, lexeme + 1);
 
                     StrBuilder_Append(&strBuilder, lexeme);
                     BasicScanner_Match(pBasicScanner);
@@ -1485,7 +1479,7 @@ void Scanner_BuyTokens(Scanner* pScanner)
                     Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
                     lexeme = pBasicScanner->currentItem.lexeme.c_str;
                     String fileName;
-                    String_Init(&fileName, lexeme + 1);
+                    String_InitWith(&fileName, lexeme + 1);
                     Scanner_Match(pScanner);
                     fileName[strlen(fileName) - 1] = 0;
                     StrArray_Push(&pScanner->IncludeDir, fileName);

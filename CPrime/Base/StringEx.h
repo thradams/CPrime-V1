@@ -8,8 +8,9 @@
 
 typedef char * String;
 #define STRING_INIT NULL
+inline String_Init(String* s) { *s = NULL; }
 
-Result String_Init(String* pString, const char* source);
+Result String_InitWith(String* pString, const char* source);
 void   String_Destroy(String* pString);
 void   String_Reset(String* pString);
 void   String_Attach(String* pString, char* psz);

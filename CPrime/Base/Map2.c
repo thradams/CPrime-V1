@@ -224,7 +224,7 @@ int Map2_SetAt(Map2* pMap,
       pKeyValue = (MapItem2*)malloc(sizeof(MapItem2) * 1);
       pKeyValue->HashValue = HashValue;
       pKeyValue->pValue = newValue;
-      String_Init(&pKeyValue->Key, Key);
+      String_InitWith(&pKeyValue->Key, Key);
       pKeyValue->pNext = pMap->pHashTable[nHashBucket];
       pMap->pHashTable[nHashBucket] = pKeyValue;
       pMap->nCount++;

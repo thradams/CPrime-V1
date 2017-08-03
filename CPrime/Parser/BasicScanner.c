@@ -281,25 +281,23 @@ const char* TokenToString(Tokens tk)
     return "???";
 }
 
-ScannerItem* ScannerItem_Create()
+ScannerItem* ScannerItem_Create() _default
 {
-    ScannerItem* p = (ScannerItem*)malloc(sizeof * p);
-    if (p)
-    {
+    ScannerItem *p = (ScannerItem*) malloc(sizeof * p);
+    if (p != NULL) {
         ScannerItem_Init(p);
     }
     return p;
 }
-void ScannerItem_Delete(ScannerItem* pScannerItem)
+void ScannerItem_Delete(ScannerItem* pScannerItem) _default
 {
-    if (pScannerItem)
-    {
+    if (pScannerItem != NULL) {
         ScannerItem_Destroy(pScannerItem);
         free(pScannerItem);
     }
 }
 
-void ScannerItem_Init(ScannerItem* scannerItem)
+void ScannerItem_Init(ScannerItem* scannerItem) 
 {
     //scannerItem->lexeme = STRBUILDER_INIT;
     StrBuilder_Init(&scannerItem->lexeme, 100);
@@ -332,7 +330,7 @@ void ScannerItem_Swap(ScannerItem* scannerItem,
     StrBuilder_Swap(&scannerItem->lexeme, &other->lexeme);
 }
 
-void ScannerItem_Destroy(ScannerItem* scannerItem)
+void ScannerItem_Destroy(ScannerItem* scannerItem) _default
 {
     StrBuilder_Destroy(&scannerItem->lexeme);
 }
@@ -408,16 +406,15 @@ Result BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
 }
 
 
-void BasicScanner_Destroy(BasicScanner* pBasicScanner)
+void BasicScanner_Destroy(BasicScanner* pBasicScanner) _default
 {
     SStream_Destroy(&pBasicScanner->stream);
     ScannerItem_Destroy(&pBasicScanner->currentItem);
 }
 
-void BasicScanner_Delete(BasicScanner* pBasicScanner)
+void BasicScanner_Delete(BasicScanner* pBasicScanner) _default
 {
-    if (pBasicScanner != NULL)
-    {
+    if (pBasicScanner != NULL) {
         BasicScanner_Destroy(pBasicScanner);
         free(pBasicScanner);
     }

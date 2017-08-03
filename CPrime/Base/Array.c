@@ -227,7 +227,7 @@ Result StrArray_Reserve(StrArray* p, size_t nelements)
 Result StrArray_Push(StrArray* p, const char* pItem)
 {
     String s;
-    Result result = String_Init(&s, pItem);
+    Result result = String_InitWith(&s, pItem);
     if(result == RESULT_OK)
     {
         result = Array_Push((Array*)p, s);
