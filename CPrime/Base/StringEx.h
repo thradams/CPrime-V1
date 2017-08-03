@@ -8,7 +8,7 @@
 
 typedef char * String;
 #define STRING_INIT NULL
-inline String_Init(String* s) { *s = NULL; }
+inline void String_Init(String* s) { *s = NULL; }
 
 Result String_InitWith(String* pString, const char* source);
 void   String_Destroy(String* pString);

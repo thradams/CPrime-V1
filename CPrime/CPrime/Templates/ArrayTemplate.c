@@ -217,31 +217,50 @@ bool ArrayPlugin_CodePrint(TProgram* program,
                 //TDeclarationSpecifiers_CodePrint(program, options&, pMainType->Args.pHead->TypeName)
 
                 bInstanciated = true;
-                StrBuilder_AppendFmtIdent(fp, 4, "if (%s->Size + 1 > %s->Capacity)\n", firstParameterName, firstParameterName);
-                StrBuilder_AppendIdent(fp, 4, " {\n");
-                StrBuilder_AppendFmtIdent(fp, 4 * 2, "int new_nelements = %s->Capacity + %s->Capacity / 2;\n", firstParameterName, firstParameterName);
-                StrBuilder_Append(fp, "\n");
-                StrBuilder_AppendIdent(fp, 4 * 2, "if (new_nelements < 1)\n");
-                StrBuilder_AppendIdent(fp, 4 * 2, "{\n");
-                StrBuilder_AppendIdent(fp, 4 * 3, "new_nelements = 1;\n");
-                StrBuilder_AppendIdent(fp, 4 * 2, "}\n");
-
-                StrBuilder_AppendFmtIdent(fp, 4 * 2, "void** pnew = (void**) %s->pData;\n", firstParameterName, firstParameterName);
-                StrBuilder_AppendIdent(fp, 4 * 2, "pnew = (void**)realloc(pnew, new_nelements * sizeof(void*));\n");
-                StrBuilder_AppendIdent(fp, 4 * 2, "if (pnew)\n");
-                StrBuilder_AppendIdent(fp, 4 * 2, "{\n");
-                StrBuilder_AppendFmtIdent(fp, 4 * 3, "%s->pData = (%s**)pnew;\n", firstParameterName, itemTypeStr.c_str);
-                StrBuilder_AppendFmtIdent(fp, 4 * 3, "%s->Capacity = new_nelements;\n", firstParameterName);
-                StrBuilder_AppendIdent(fp, 4 * 2, "}\n");
+                StrBuilder_AppendFmtIdent(fp, 4, "if (Items_Reserve(%s, %s->Size + 1) > 0)\n", firstParameterName, firstParameterName);
+                
+                StrBuilder_AppendIdent(fp, 4, "{\n");                
+                StrBuilder_AppendFmtIdent(fp, 4 *2, "%s->pData[%s->Size] = %s;\n", firstParameterName, firstParameterName, secondParameterName);
+                StrBuilder_AppendFmtIdent(fp, 4*2, "%s->Size++;\n", firstParameterName);
                 StrBuilder_AppendIdent(fp, 4, "}\n");
-                StrBuilder_AppendFmtIdent(fp, 4, "%s->pData[%s->Size] = %s;\n", firstParameterName, firstParameterName, secondParameterName);
-                StrBuilder_AppendFmtIdent(fp, 4, "%s->Size++;\n", firstParameterName);
-                //StrBuilder_Append(fp, "\n");
+                
 
                 StrBuilder_Destroy(&itemTypeStr);
             }
         }
     }//_Add
+    else if (IsSuffix(funcName, "_Reserve"))
+    {
+        TParameter* pSecondParameter = pArguments->ParameterList.pHead->pNext;
+        if (pSecondParameter != NULL)
+        {
+            const char* secondParameterName = TParameter_GetName(pSecondParameter);
+            if (secondParameterName != NULL)
+            {
+                StrBuilder itemTypeStr = STRBUILDER_INIT;
+                Options  options = OPTIONS_INIT;
+                TSpecifierQualifierList_CodePrint(program, &options, &pMainType->Args.pHead->TypeName.SpecifierQualifierList, false, &itemTypeStr);
+
+
+                bInstanciated = true;
+                StrBuilder_AppendIdent(fp, 4, "int iResult = 0;\n");
+                StrBuilder_AppendFmtIdent(fp, 4, "if (%s > %s->Capacity)\n", secondParameterName, firstParameterName);
+                StrBuilder_AppendIdent(fp, 4, "{\n");                
+                StrBuilder_AppendFmtIdent(fp, 4 * 2, "%s** pNew = %s->pData;\n", itemTypeStr.c_str, firstParameterName, firstParameterName);
+                StrBuilder_AppendFmtIdent(fp, 4 * 2, "pNew = (%s**)realloc(pNew, %s * sizeof(%s*));\n", itemTypeStr.c_str, secondParameterName, itemTypeStr.c_str);
+                StrBuilder_AppendIdent(fp, 4 * 2, "if (pNew != NULL)\n");
+                StrBuilder_AppendIdent(fp, 4 * 2, "{\n");
+                StrBuilder_AppendFmtIdent(fp, 4 * 3, "%s->pData = pNew;\n", firstParameterName);
+                StrBuilder_AppendFmtIdent(fp, 4 * 3, "%s->Capacity = %s;\n", firstParameterName, secondParameterName);
+                StrBuilder_AppendFmtIdent(fp, 4 * 3, "iResult = %s;\n", secondParameterName);
+                StrBuilder_AppendIdent(fp, 4 * 2, "}\n");                
+                StrBuilder_AppendIdent(fp, 4, "}\n");
+                StrBuilder_AppendIdent(fp, 4, "return iResult;\n");
+                
+                StrBuilder_Destroy(&itemTypeStr);
+            }
+        }
+    }//Grow
 
 
     return bInstanciated;
