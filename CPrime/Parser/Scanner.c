@@ -1861,7 +1861,7 @@ void Scanner_BuyTokens(Scanner* pScanner)
         else
         {
             ScannerItem* pNew = ScannerItem_Create();
-            StrBuilder_Set(&pNew->lexeme, pBasicScanner->currentItem.lexeme.c_str);
+            StrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
             pNew->token = pBasicScanner->currentItem.token;
             pNew->bActive = false;
             List_Add(&pScanner->AcumulatedTokens, pNew);
@@ -1873,7 +1873,7 @@ void Scanner_BuyTokens(Scanner* pScanner)
     else
     {
         ScannerItem* pNew = ScannerItem_Create();
-        StrBuilder_Set(&pNew->lexeme, pBasicScanner->currentItem.lexeme.c_str);
+        StrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
         pNew->token = pBasicScanner->currentItem.token;
         pNew->bActive = bActive0;
         List_Add(&pScanner->AcumulatedTokens, pNew);
