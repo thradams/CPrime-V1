@@ -1,5 +1,6 @@
-#define false 0
+#include <stdio.h>
+
 int main()
 {
-    return (false);
+    return 1;
 }

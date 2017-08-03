@@ -2,7 +2,7 @@
 
 
 #include <stdio.h>
-
+#include <time.h>  
 #include ".\Parser\AstPrint.h"
 #include ".\Parser\Parser.h"
 #include ".\CPrime\CodePrint.h"
@@ -21,6 +21,7 @@ void Compile(const char* configFileName,
     bool bPrintASTFile)
 {
     TProgram program = TPROGRAM_INIT;
+    clock_t tstart = clock();
 
     printf("Parsing...\n");
     if (GetAST(inputFileName, configFileName, &program))
@@ -53,6 +54,9 @@ void Compile(const char* configFileName,
         }
 
         printf("Done!\n");
+        clock_t tend = clock();
+        printf("%d seconds", (tend - tstart) / CLOCKS_PER_SEC);
+
     }
     TProgram_Destroy(&program);
 }
