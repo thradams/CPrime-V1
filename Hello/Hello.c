@@ -1,89 +1,28 @@
+#include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
-//typedef struct X X;
-typedef enum E
-{
-    A
-} E;
 
-typedef struct X
+int sum(int, ...);
+
+int main(void)
 {
-    E e;
+    printf("Sum of 10, 20 and 30 = %d\n", sum(3, 10, 20, 30));
+    printf("Sum of 4, 20, 25 and 30 = %d\n", sum(4, 4, 20, 25, 30));
+
+    return 0;
+}
+
+int sum(int num_args, ...)
+{
+    int val = 0;
+    va_list ap;
     int i;
-} X;
 
-X* X_Create();
-void X_Delete(X* pX);
-
-typedef struct Array(X*_auto) {X**pData; int Size, Capacity;}  Items;
-int  Items_Reserve(Items* pItems, int newSize);
-void Items_Destroy(Items* pItems);
-void Items_Add(Items* pItems, X* pX);
-
-int main()
-{
-    Items items = _default{NULL, 0, 0};
-    
-    Items_Add(&items, X_Create());
-    for (int i = 0; i < items.Size; i++)
+    va_start(ap, num_args);
+    for (i = 0; i < num_args; i++)
     {
-        //items.pData[i]->e
+        val += va_arg(ap, int);
     }
-    Items_Destroy(&items);
-    return 1;
-}
- 
-#pragma region instatiations
+    va_end(ap);
 
-
-X* X_Create() _default
-{
-    X *p = (X*) malloc(sizeof * p);
-    if (p != NULL) {
-        p->e = 0;
-        p->i = 0;
-    }
-    return p;
+    return val;
 }
-void X_Delete(X* pX) _default
-{
-    if (pX != NULL) {
-        free(pX);
-    }
-}
-
-
-int  Items_Reserve(Items* pItems, int newSize) _default
-{
-    int iResult = 0;
-    if (newSize > pItems->Capacity)
-    {
-        X** pNew = pItems->pData;
-        pNew = (X**)realloc(pNew, newSize * sizeof(X*));
-        if (pNew != NULL)
-        {
-            pItems->pData = pNew;
-            pItems->Capacity = newSize;
-            iResult = newSize;
-        }
-    }
-    return iResult;
-}
-void Items_Destroy(Items* pItems) _default
-{
-    for (int i = 0 ; i < pItems->Size; i++)
-    {
-        X_Delete(pItems->pData[i]);
-    }
-    free(pItems->pData);
-}
-void Items_Add(Items* pItems, X* pX) _default
-{
-    if (Items_Reserve(pItems, pItems->Size + 1) > 0)
-    {
-        pItems->pData[pItems->Size] = pX;
-        pItems->Size++;
-    }
-}
-
-#pragma endregion

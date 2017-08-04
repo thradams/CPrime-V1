@@ -43,13 +43,6 @@ void TWhileStatement_Destroy(TWhileStatement *p)
 	TScannerItemList_Destroy(&p->ClueList2);
 }
 
-void TReturnStatement_Destroy(TReturnStatement *p)
-{
-	TExpression_Delete(p->pExpression);
-	TScannerItemList_Destroy(&p->ClueList0);
-	TScannerItemList_Destroy(&p->ClueList1);
-}
-
 void TDoStatement_Destroy(TDoStatement *p)
 {
 	TExpression_Delete(p->pExpression);
@@ -70,9 +63,11 @@ void TExpressionStatement_Destroy(TExpressionStatement *p)
 
 void TJumpStatement_Destroy(TJumpStatement *p)
 {
+    String_Destroy(&p->Identifier);
 	TExpression_Delete(p->pExpression);
 	TScannerItemList_Destroy(&p->ClueList0);
 	TScannerItemList_Destroy(&p->ClueList1);
+    TScannerItemList_Destroy(&p->ClueList2);
 }
 
 void TAsmStatement_Destroy(TAsmStatement *p)
@@ -132,10 +127,11 @@ void TStatement_Destroy(TStatement* p)
 		break;
 	case TDoStatement_ID:
 		TDoStatement_Destroy((TDoStatement*)p);
-		break;
-	case TReturnStatement_ID:
-		TReturnStatement_Destroy((TReturnStatement*)p);
-		break;
+		break;	
+
+    case TWhileStatement_ID:
+        TWhileStatement_Destroy((TWhileStatement*)p);
+        break;
 	default:
 		ASSERT(false);
 		break;
@@ -176,10 +172,7 @@ void TBlockItem_Destroy(TBlockItem* p)
 		break;
 	case TIfStatement_ID:
 		TIfStatement_Destroy((TIfStatement*)p);
-		break;
-	case TReturnStatement_ID:
-		TReturnStatement_Destroy((TReturnStatement*)p);
-		break;
+		break;	
 	case TDoStatement_ID:
 		TDoStatement_Destroy((TDoStatement*)p);
 		break;

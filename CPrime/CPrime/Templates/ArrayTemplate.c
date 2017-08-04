@@ -31,9 +31,9 @@ void ArrayPlugin_BuildDestroy(TProgram* program,
         switch (buildType)
         {
         case BuildTypeInit:
-            StrBuilder_AppendFmtIdent(fp, 4, "%s->pData = NULL;\n", pVariableName);
-            StrBuilder_AppendFmtIdent(fp, 4, "%s->Size = 0;\n", pVariableName);
-            StrBuilder_AppendFmtIdent(fp, 4, "%s->Capacity = 0;\n", pVariableName);
+            StrBuilder_AppendFmtLn(fp, 4, "%s->pData = NULL;", pVariableName);
+            StrBuilder_AppendFmtLn(fp, 4, "%s->Size = 0;", pVariableName);
+            StrBuilder_AppendFmtLn(fp, 4, "%s->Capacity = 0;", pVariableName);
             break;
         case BuildTypeDestroy:
         case BuildTypeDelete:
@@ -44,8 +44,8 @@ void ArrayPlugin_BuildDestroy(TProgram* program,
             
                 if (bIsPointer && bAuto)
                 {
-                    StrBuilder_AppendFmtIdent(fp, 4, "for (int i = 0 ; i < %s->Size; i++)\n", pVariableName);
-                    StrBuilder_AppendIdent(fp, 4, "{\n");
+                    StrBuilder_AppendFmtLn(fp, 4, "for (int i = 0 ; i < %s->Size; i++)", pVariableName);
+                    StrBuilder_AppendFmtLn(fp, 4, "{");
                     /*
                     BuildDestroy(program,
                         &options,
@@ -58,27 +58,22 @@ void ArrayPlugin_BuildDestroy(TProgram* program,
                         fp);
                         */
                     //StrBuilder_AppendFmtIdent(fp, 2 * 4, "%s *pCurrent = ;\n", itemTypeStr.c_str, pVariableName);
-                    StrBuilder_AppendFmtIdent(fp, 2 * 4, "%s_Delete(%s->pData[i]);\n", itemTypeStr.c_str, pVariableName);
-                    StrBuilder_AppendFmtIdent(fp, 4, "}\n");
+                    StrBuilder_AppendFmtLn(fp, 2 * 4, "%s_Delete(%s->pData[i]);", itemTypeStr.c_str, pVariableName);
+                    StrBuilder_AppendFmtLn(fp, 4, "}");
                 }
                 else if (!bIsPointer)
                 {
-                    StrBuilder_AppendFmtIdent(fp, 4, "for (int i = 0 ; i < %s->Size; i++)\n", pVariableName);
-                    //StrBuilder_AppendFmtIdent(fp, 2 * 4, "%s *pCurrent = %s->pData[i];\n", itemTypeStr.c_str, pVariableName);
-                    //StrBuilder_AppendFmtIdent(fp, 2 * 4, "%s_Destroy(pCurrent);\n", itemTypeStr.c_str);
-                    StrBuilder_AppendFmtIdent(fp, 2 * 4, "%s_Destroy(&%s->pData[i]);\n", itemTypeStr.c_str, pVariableName);
-                    StrBuilder_AppendFmtIdent(fp, 4, "}\n");
+                    StrBuilder_AppendFmtLn(fp, 4, "for (int i = 0 ; i < %s->Size; i++)", pVariableName);
+                    StrBuilder_AppendFmtLn(fp, 2 * 4, "%s_Destroy(&%s->pData[i]);", itemTypeStr.c_str, pVariableName);
+                    StrBuilder_AppendFmtLn(fp, 4, "}");
                 }
                 StrBuilder_AppendFmtIdent(fp, 4, "free(%s->pData);\n", pVariableName);
-
-            
-         
         }
         break;
         case BuildTypeCreate:
-            StrBuilder_AppendFmtIdent(fp, 4, "%s->pData = NULL;\n", pVariableName);
-            StrBuilder_AppendFmtIdent(fp, 4, "%s->Size = 0;\n", pVariableName);
-            StrBuilder_AppendFmtIdent(fp, 4, "%s->Capacity = 0;\n", pVariableName);
+            StrBuilder_AppendFmtLn(fp, 4, "%s->pData = NULL;", pVariableName);
+            StrBuilder_AppendFmtLn(fp, 4, "%s->Size = 0;", pVariableName);
+            StrBuilder_AppendFmtLn(fp, 4, "%s->Capacity = 0;", pVariableName);
             break;
 
         case BuildTypeStaticInit:
@@ -217,12 +212,12 @@ bool ArrayPlugin_CodePrint(TProgram* program,
                 //TDeclarationSpecifiers_CodePrint(program, options&, pMainType->Args.pHead->TypeName)
 
                 bInstanciated = true;
-                StrBuilder_AppendFmtIdent(fp, 4, "if (Items_Reserve(%s, %s->Size + 1) > 0)\n", firstParameterName, firstParameterName);
+                StrBuilder_AppendFmtLn(fp, 4, "if (Items_Reserve(%s, %s->Size + 1) > 0)", firstParameterName, firstParameterName);
                 
-                StrBuilder_AppendIdent(fp, 4, "{\n");                
-                StrBuilder_AppendFmtIdent(fp, 4 *2, "%s->pData[%s->Size] = %s;\n", firstParameterName, firstParameterName, secondParameterName);
-                StrBuilder_AppendFmtIdent(fp, 4*2, "%s->Size++;\n", firstParameterName);
-                StrBuilder_AppendIdent(fp, 4, "}\n");
+                StrBuilder_AppendFmtLn(fp, 4, "{");
+                StrBuilder_AppendFmtLn(fp, 4 * 2, "%s->pData[%s->Size] = %s;", firstParameterName, firstParameterName, secondParameterName);
+                StrBuilder_AppendFmtLn(fp, 4 * 2, "%s->Size++;", firstParameterName);
+                StrBuilder_AppendFmtLn(fp, 4, "}");
                 
 
                 StrBuilder_Destroy(&itemTypeStr);
@@ -243,19 +238,19 @@ bool ArrayPlugin_CodePrint(TProgram* program,
 
 
                 bInstanciated = true;
-                StrBuilder_AppendIdent(fp, 4, "int iResult = 0;\n");
-                StrBuilder_AppendFmtIdent(fp, 4, "if (%s > %s->Capacity)\n", secondParameterName, firstParameterName);
-                StrBuilder_AppendIdent(fp, 4, "{\n");                
-                StrBuilder_AppendFmtIdent(fp, 4 * 2, "%s** pNew = %s->pData;\n", itemTypeStr.c_str, firstParameterName, firstParameterName);
-                StrBuilder_AppendFmtIdent(fp, 4 * 2, "pNew = (%s**)realloc(pNew, %s * sizeof(%s*));\n", itemTypeStr.c_str, secondParameterName, itemTypeStr.c_str);
-                StrBuilder_AppendIdent(fp, 4 * 2, "if (pNew != NULL)\n");
-                StrBuilder_AppendIdent(fp, 4 * 2, "{\n");
-                StrBuilder_AppendFmtIdent(fp, 4 * 3, "%s->pData = pNew;\n", firstParameterName);
-                StrBuilder_AppendFmtIdent(fp, 4 * 3, "%s->Capacity = %s;\n", firstParameterName, secondParameterName);
-                StrBuilder_AppendFmtIdent(fp, 4 * 3, "iResult = %s;\n", secondParameterName);
-                StrBuilder_AppendIdent(fp, 4 * 2, "}\n");                
-                StrBuilder_AppendIdent(fp, 4, "}\n");
-                StrBuilder_AppendIdent(fp, 4, "return iResult;\n");
+                StrBuilder_AppendFmtLn(fp, 4, "int iResult = 0;");
+                StrBuilder_AppendFmtLn(fp, 4, "if (%s > %s->Capacity)", secondParameterName, firstParameterName);
+                StrBuilder_AppendFmtLn(fp, 4, "{");
+                StrBuilder_AppendFmtLn(fp, 4 * 2, "%s** pNew = %s->pData;", itemTypeStr.c_str, firstParameterName, firstParameterName);
+                StrBuilder_AppendFmtLn(fp, 4 * 2, "pNew = (%s**)realloc(pNew, %s * sizeof(%s*));", itemTypeStr.c_str, secondParameterName, itemTypeStr.c_str);
+                StrBuilder_AppendFmtLn(fp, 4 * 2, "if (pNew != NULL)");
+                StrBuilder_AppendFmtLn(fp, 4 * 2, "{");
+                StrBuilder_AppendFmtLn(fp, 4 * 3, "%s->pData = pNew;", firstParameterName);
+                StrBuilder_AppendFmtLn(fp, 4 * 3, "%s->Capacity = %s;", firstParameterName, secondParameterName);
+                StrBuilder_AppendFmtLn(fp, 4 * 3, "iResult = %s;", secondParameterName);
+                StrBuilder_AppendFmtLn(fp, 4 * 2, "}\n");
+                StrBuilder_AppendFmtLn(fp, 4, "}");
+                StrBuilder_AppendFmtLn(fp, 4, "return iResult;");
                 
                 StrBuilder_Destroy(&itemTypeStr);
             }

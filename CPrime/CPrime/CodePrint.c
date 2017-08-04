@@ -265,8 +265,11 @@ static bool TLabeledStatement_CodePrint(TProgram* program, Options * options, TL
     {
         TNodeClueList_CodePrint(options, &p->ClueList0, fp);
         Output_Append(fp, p->Identifier);
+
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         Output_Append(fp, ":");
+
+        TStatement_CodePrint(program, options, p->pStatementOpt, false, fp);
     }
 
 
@@ -327,15 +330,6 @@ static bool TWhileStatement_CodePrint(TProgram* program, Options * options, TWhi
 }
 
 
-static bool TReturnStatement_CodePrint(TProgram* program, Options * options, TReturnStatement * p, bool b, StrBuilder* fp)
-{
-    TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-    Output_Append(fp, "return");
-    TExpression_CodePrint(program, options, p->pExpression, "return-statement", false, fp);
-    TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-    Output_Append(fp, ";");
-    return true;
-}
 
 static bool TDoStatement_CodePrint(TProgram* program, Options * options, TDoStatement * p, bool b, StrBuilder* fp)
 {
@@ -373,23 +367,33 @@ static bool TExpressionStatement_CodePrint(TProgram* program, Options * options,
 static bool TJumpStatement_CodePrint(TProgram* program, Options * options, TJumpStatement * p, bool b, StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-    Output_Append(fp, TokenToString(((TBinaryExpression*)p)->token));
 
-    if (p->pExpression)
+    switch (p->token)
     {
-        b = TExpression_CodePrint(program, options, p->pExpression, "statement", false, fp);
+    case TK_GOTO: 
+        Output_Append(fp, "goto");        
+        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+        Output_Append(fp, p->Identifier);
+        break;
+    case  TK_CONTINUE: 
+        Output_Append(fp, "continue");
+        break;
+    case TK_BREAK: 
+        Output_Append(fp, "break");
+        break;
+    case TK_RETURN: 
+        Output_Append(fp, "return");
+        TNodeClueList_CodePrint(options, &p->ClueList1, fp);        
+        TExpression_CodePrint(program, options, p->pExpression, "", false, fp);
+        break;
+    
+    default:
+        ASSERT(false);
     }
 
-    if (p->token == TK_BREAK)
-    {
-        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-        Output_Append(fp, ";");
-    }
-    else
-    {
-        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-        Output_Append(fp, ";");
-    }
+ 
+    TNodeClueList_CodePrint(options, &p->ClueList2, fp);
+    Output_Append(fp, ";");
 
     return true;
 }
@@ -496,11 +500,7 @@ static bool TStatement_CodePrint(TProgram* program, Options * options, TStatemen
     case TDoStatement_ID:
         TDoStatement_CodePrint(program, options, (TDoStatement*)p, b, fp);
         break;
-
-    case TReturnStatement_ID:
-        TReturnStatement_CodePrint(program, options, (TReturnStatement*)p, b, fp);
-        break;
-
+    
     default:
         ASSERT(false);
         break;
@@ -582,12 +582,7 @@ static bool TBlockItem_CodePrint(TProgram* program, Options * options, TBlockIte
         b = TExpressionStatement_CodePrint(program, options, (TExpressionStatement*)p, false, fp);
 
         break;
-
-    case TReturnStatement_ID:
-
-        b = TReturnStatement_CodePrint(program, options, (TReturnStatement*)p, false, fp);
-
-        break;
+    
 
     case TAsmStatement_ID:
 

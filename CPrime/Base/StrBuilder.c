@@ -340,3 +340,23 @@ void StrBuilder_AppendFmtIdent(StrBuilder * p, int nspaces, const char* fmt, ...
 	va_end(args);
 
 }
+
+void StrBuilder_AppendFmtLn(StrBuilder * p,
+                            int nspaces,
+                            const char* fmt,
+                            ...)
+{
+    for (int i = 0; i < nspaces; i++)
+    {
+        StrBuilder_Append(p, " ");
+    }
+
+    va_list args;
+    va_start(args, fmt);
+    char buffer[500];
+    vsnprintf(buffer, 500, fmt, args);
+    StrBuilder_Append(p, buffer);
+    va_end(args);
+
+    StrBuilder_Append(p, "\n");
+}

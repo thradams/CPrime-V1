@@ -106,12 +106,6 @@ bool TWhileStatement_Print(TWhileStatement * p, bool b, FILE* fp)
 }
 
 
-bool TReturnStatement_Print(TReturnStatement * p, bool b, FILE* fp)
-{
-    TExpression_Print(p->pExpression, "return-statement", false, fp);
-    return true;
-}
-
 bool TDoStatement_Print(TDoStatement * p, bool b, FILE* fp)
 {
     b = true;
@@ -273,11 +267,7 @@ bool TStatement_Print(TStatement *  p, bool b, FILE* fp)
         case TDoStatement_ID:
         TDoStatement_Print((TDoStatement*)p, b, fp);
         break;
-
-        case TReturnStatement_ID:
-        TReturnStatement_Print((TReturnStatement*)p, b, fp);
-        break;
-
+        
         default:
         ASSERT(false);
         break;
@@ -359,12 +349,6 @@ bool TBlockItem_Print(TBlockItem *  p, bool b, FILE* fp)
         case TExpressionStatement_ID:
         fprintf(fp, "{");
         b = TExpressionStatement_Print((TExpressionStatement*)p, false, fp);
-        fprintf(fp, "}");
-        break;
-
-        case TReturnStatement_ID:
-        fprintf(fp, "{");
-        b = TReturnStatement_Print((TReturnStatement*)p, false, fp);
         fprintf(fp, "}");
         break;
 

@@ -197,7 +197,7 @@ int Map2_SetAt(Map2* pMap,
   {
     if (pMap->nHashTableSize < 1)
     {
-      pMap->nHashTableSize = 10;
+      pMap->nHashTableSize = 1000;
     }
 
     MapItem2** pHashTable =

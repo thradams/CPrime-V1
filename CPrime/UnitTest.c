@@ -162,6 +162,74 @@ void Scanner_Test5()
 
         Scanner_Destroy(&scanner2);
 }
+
+void Scanner_Test10()
+{
+    Scanner scanner2;
+    Scanner_Init(&scanner2);
+    Scanner_IncludeFile(&scanner2, ".\\Test\\Test9.h", FileIncludeTypeQuoted, false);
+
+    MATCH(&scanner2, TK_BOF)
+    MATCH(&scanner2, TK_PRE_DEFINE)
+    MATCH(&scanner2, TK_PRE_DEFINE)
+    
+    
+    MATCH(&scanner2, TK_MACRO_CALL)
+    MATCH(&scanner2, TK_DECIMAL_INTEGER)
+    MATCH(&scanner2, TK_MACRO_EOF)
+    MATCH(&scanner2, TK_BREAKLINE)    
+    MATCH(&scanner2, TK_EOF)
+    
+
+    Scanner_Destroy(&scanner2);
+}
+
+
+void Scanner_Test11()
+{
+    Scanner scanner2;
+    Scanner_Init(&scanner2);
+    Scanner_IncludeFile(&scanner2, ".\\Test\\Test10.h", FileIncludeTypeQuoted, false);
+
+    MATCH(&scanner2, TK_BOF)
+        MATCH(&scanner2, TK_PRE_DEFINE)
+        MATCH(&scanner2, TK_PRE_DEFINE)
+        MATCH(&scanner2, TK_PRE_DEFINE)
+
+        MATCH(&scanner2, TK_MACRO_CALL)
+        MATCH(&scanner2, TK_DECIMAL_INTEGER)
+        MATCH(&scanner2, TK_MACRO_EOF)
+        MATCH(&scanner2, TK_BREAKLINE)
+        MATCH(&scanner2, TK_EOF)
+
+
+        Scanner_Destroy(&scanner2);
+}
+
+void Scanner_Test12()
+{
+    Scanner scanner2;
+    Scanner_Init(&scanner2);
+    Scanner_IncludeFile(&scanner2, ".\\Test\\Test11.h", FileIncludeTypeQuoted, false);
+
+    MATCH(&scanner2, TK_BOF)
+        MATCH(&scanner2, TK_PRE_DEFINE)
+        MATCH(&scanner2, TK_PRE_DEFINE)
+        MATCH(&scanner2, TK_PRE_DEFINE)
+
+        MATCH(&scanner2, TK_MACRO_CALL)
+        MATCH(&scanner2, TK_IDENTIFIER)
+        MATCH(&scanner2, TK_MACRO_EOF)
+        MATCH(&scanner2, TK_LEFT_PARENTHESIS)
+        MATCH(&scanner2, TK_DECIMAL_INTEGER)
+        MATCH(&scanner2, TK_RIGHT_PARENTHESIS)        
+        MATCH(&scanner2, TK_BREAKLINE)
+        MATCH(&scanner2, TK_EOF)
+
+
+        Scanner_Destroy(&scanner2);
+}
+
 void Scanner_Test6()
 {
     Scanner scanner2;
@@ -568,6 +636,9 @@ void Parser_Test6()
 void AllTests()
 {
     printf("RUNNING TESTS ...\n");
+     Scanner_Test10();
+     Scanner_Test11();
+     Scanner_Test12();
 
     Stream_Test1();
 
@@ -591,6 +662,7 @@ void AllTests()
     Scanner_Test7();
     Scanner_Test8();
     Scanner_Test9();
+    Scanner_Test10();
 
     Parser_Test1();
     Parser_Test2();

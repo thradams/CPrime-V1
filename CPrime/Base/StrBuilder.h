@@ -61,3 +61,9 @@ Result StrBuilder_AppendUpper(StrBuilder *p, const char* s);
 Result StrBuilder_AppendIdent(StrBuilder* p,
 	int nspaces,
 	const char* source);
+
+
+void StrBuilder_AppendFmtLn(StrBuilder * p,
+    int nspaces,
+    const char* fmt,
+    ...);

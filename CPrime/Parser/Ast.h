@@ -58,7 +58,7 @@ typedef enum
     TDoStatement_ID,
     TIfStatement_ID,
     TypeName_ID,
-    TReturnStatement_ID,
+    
     TInitializerListType_ID,
 
     TPrimaryExpression_ID,
@@ -293,12 +293,14 @@ typedef struct
 {
     TTypePointer Type;
     Tokens token;
+    String Identifier;
     TExpression *  pExpression;
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
+    TScannerItemList ClueList2;
 } TJumpStatement;
 
-#define TJUMP_STATEMENT_INIT {{TJumpStatement_ID}, TK_NONE, NULL, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT }
+#define TJUMP_STATEMENT_INIT {{TJumpStatement_ID}, TK_NONE, STRING_INIT, NULL, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT }
 CREATETYPE(TJumpStatement, TJUMP_STATEMENT_INIT)
 
 
@@ -342,17 +344,6 @@ typedef struct
 
 #define TWHILESTATEMENT_INIT { {TWhileStatement_ID}, NULL, NULL, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT}
 CREATETYPE(TWhileStatement, TWHILESTATEMENT_INIT)
-
-typedef struct
-{
-    TTypePointer Type;
-    TExpression*   pExpression;
-    TScannerItemList ClueList0;
-    TScannerItemList ClueList1;
-} TReturnStatement;
-
-#define TRETURN_STATEMENT_INIT { {TReturnStatement_ID}, NULL, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT}
-CREATETYPE(TReturnStatement, TRETURN_STATEMENT_INIT)
 
 
 typedef struct
@@ -425,7 +416,7 @@ CAST(TStatement, TIfStatement)
 CAST(TStatement, TDoStatement)
 CAST(TStatement, TForStatement)
 CAST(TStatement, TAsmStatement)
-CAST(TStatement, TReturnStatement)
+
 CAST(TStatement, TWhileStatement)
 CAST(TStatement, TSwitchStatement)
 
@@ -895,7 +886,7 @@ CAST(TBlockItem, TIfStatement)
 CAST(TBlockItem, TDoStatement)
 CAST(TBlockItem, TForStatement)
 CAST(TBlockItem, TAsmStatement)
-CAST(TBlockItem, TReturnStatement)
+
 CAST(TBlockItem, TWhileStatement)
 CAST(TBlockItem, TSwitchStatement)
 

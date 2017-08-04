@@ -860,9 +860,11 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
             *ppExpression = pPrimaryExpression;
         }
     }
-
-    else
+    else 
     {
+        //tem que ser?
+        ASSERT(IsFirstOfPrimaryExpression(token));
+
         //primary-expression
         TExpression* pPrimaryExpression;
         PrimaryExpression(ctx, &pPrimaryExpression);
@@ -870,46 +872,60 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
     }
 
     token = Parser_CurrentToken(ctx);
+    if (IsFirstOfPrimaryExpression(token))
+    {
+        
+       // ASSERT(false); //pergunta deve continuar? ta certo?
 
-    switch (token)
-    {
-    case TK_LEFT_PARENTHESIS:
-    {
         TPostfixExpressionCore *  pPostfixExpressionCore =
             TPostfixExpressionCore_Create();
         pPostfixExpressionCore->pExpressionLeft = *ppExpression;
-
-        String lexemeCopy = STRING_INIT;
-
-        TPrimaryExpressionValue* ppri =
-            TExpression_As_TPrimaryExpressionValue(*ppExpression);
-        if (ppri)
+        PostfixExpressionCore(ctx, pPostfixExpressionCore);
+        *ppExpression = (TExpression*)pPostfixExpressionCore;
+    }
+    else
+    {
+        switch (token)
         {
-            String_Set(&lexemeCopy, ppri->lexeme);
+        case TK_LEFT_PARENTHESIS:
+        {
+            TPostfixExpressionCore *  pPostfixExpressionCore =
+                TPostfixExpressionCore_Create();
+            pPostfixExpressionCore->pExpressionLeft = *ppExpression;
+
+            String lexemeCopy = STRING_INIT;
+
+            TPrimaryExpressionValue* ppri =
+                TExpression_As_TPrimaryExpressionValue(*ppExpression);
+            if (ppri)
+            {
+                String_Set(&lexemeCopy, ppri->lexeme);
+            }
+            PostfixExpressionCore(ctx, pPostfixExpressionCore);
+            *ppExpression = (TExpression*)pPostfixExpressionCore;
+
+
+
+            String_Destroy(&lexemeCopy);
         }
-        PostfixExpressionCore(ctx, pPostfixExpressionCore);
-        *ppExpression = (TExpression*)pPostfixExpressionCore;
+        break;
+        case TK_LEFT_SQUARE_BRACKET:
+        case TK_FULL_STOP:
+        case TK_ARROW:
+        case TK_PLUSPLUS:
+        case TK_MINUSMINUS:
+        {
+            TPostfixExpressionCore *  pPostfixExpressionCore =
+                TPostfixExpressionCore_Create();
+            pPostfixExpressionCore->pExpressionLeft = *ppExpression;
+            PostfixExpressionCore(ctx, pPostfixExpressionCore);
+            *ppExpression = (TExpression*)pPostfixExpressionCore;
+        }
+        break;
+        }
 
-
-
-        String_Destroy(&lexemeCopy);
     }
-    break;
-    case TK_LEFT_SQUARE_BRACKET:
-    case TK_FULL_STOP:
-    case TK_ARROW:
-    case TK_PLUSPLUS:
-    case TK_MINUSMINUS:
-    {
-        TPostfixExpressionCore *  pPostfixExpressionCore =
-            TPostfixExpressionCore_Create();
-        pPostfixExpressionCore->pExpressionLeft = *ppExpression;
-        PostfixExpressionCore(ctx, pPostfixExpressionCore);
-        *ppExpression = (TExpression*)pPostfixExpressionCore;
-    }
-    break;
-    }
-
+    
 }
 
 void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
@@ -2191,8 +2207,9 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
         *ppStatement = (TStatement*)pJumpStatement;
 
         Parser_Match(ctx, &pJumpStatement->ClueList0);
-
+        String_Set(&pJumpStatement->Identifier, Lexeme(ctx));
         Parser_MatchToken(ctx, TK_IDENTIFIER, &pJumpStatement->ClueList1);
+        Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList2);
     }
     break;
 
@@ -2201,9 +2218,9 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
         TJumpStatement* pJumpStatement = TJumpStatement_Create();
         pJumpStatement->token = token;
         *ppStatement = (TStatement*)pJumpStatement;
-
         Parser_Match(ctx, &pJumpStatement->ClueList0);
-        Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList1);
+
+        Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList2);
     }
     break;
 
@@ -2214,24 +2231,24 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
         *ppStatement = (TStatement*)pJumpStatement;
 
         Parser_Match(ctx, &pJumpStatement->ClueList0);
-        Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList1);
+        Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList2);
     }
     break;
 
     case TK_RETURN:
     {
-        TReturnStatement* pReturnStatement = TReturnStatement_Create();
+        TJumpStatement* pJumpStatement = TJumpStatement_Create();
+        pJumpStatement->token = token;
+        *ppStatement = (TStatement*)pJumpStatement;
 
-        *ppStatement = (TStatement*)pReturnStatement;
-
-        token = Parser_Match(ctx, &pReturnStatement->ClueList0);
+        token = Parser_Match(ctx, &pJumpStatement->ClueList0);
 
         if (token != TK_SEMICOLON)
         {
-            Expression0(ctx, &pReturnStatement->pExpression);
+            Expression0(ctx, &pJumpStatement->pExpression);
         }
 
-        Parser_MatchToken(ctx, TK_SEMICOLON, &pReturnStatement->ClueList1);
+        Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList2);
     }
     break;
 

@@ -78,7 +78,7 @@ PPTokenType TokenToPPToken(Tokens token)
 
 TFile* TFile_Create() _default
 {
-    TFile *p = (TFile*) malloc(sizeof * p);
+    TFile *p = (TFile*)malloc(sizeof * p);
     if (p != NULL) {
         String_Init(&p->FullPath);
         String_Init(&p->IncludePath);
@@ -676,24 +676,6 @@ void IgnorePreProcessorv2(BasicScanner* pBasicScanner, StrBuilder* strBuilder)
     }
 }
 
-/*void IgnorePreProcessor(Scanner* pScanner)
-{
-    BasicScanner* pTop = Scanner_Top(pScanner);
-
-    // ASSERT(pTop->currentItem.token != TK_BREAKLINE);
-    while (pTop->currentItem.token != TK_EOF)
-    {
-        if (pTop->currentItem.token == TK_BREAKLINE)
-        {
-            //BasicScanner_Match(Scanner_Top(pScanner));
-            break;
-        }
-
-        BasicScanner_Match(pTop);
-    }
-}
-*/
-
 void GetDefineString(Scanner* pScanner, StrBuilder* strBuilder)
 {
     for (;;)
@@ -727,11 +709,6 @@ void GetDefineString(Scanner* pScanner, StrBuilder* strBuilder)
         BasicScanner_Match(Scanner_Top(pScanner));
     }
 }
-
-//static Tokens Scanner_TokenAt(Scanner* pScanner)
-//{
-  //  return Scanner_Top(pScanner)->currentItem.token;
-//}
 
 
 Macro*  Scanner_FindPreprocessorItem2(Scanner* pScanner,
@@ -812,7 +789,6 @@ static bool GetNewMacroCallString(Scanner* pScanner,
     TokenArray* ppTokenArray,
     StrBuilder* strBuilder)
 {
-
     //StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
     //TODO aqui nao pode ser o current
     const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
@@ -835,9 +811,9 @@ static bool GetNewMacroCallString(Scanner* pScanner,
 
         //ignorar espacos (mas reservar a compra)
         token = pBasicScanner->currentItem.token;
+
         while (token == TK_SPACES || token == TK_COMMENT)
         {
-            
             //Scanner_PushToken(pScanner, token, lexeme, true);
             //ASSERT(false);
             BasicScanner_Match(pBasicScanner);
@@ -1003,6 +979,217 @@ static bool GetNewMacroCallString(Scanner* pScanner,
             //StrBuilder_Append(strBuilder, pMacro->Name);
         }
     }
+    return bIsMacro;
+    //return false;
+}
+
+
+
+static bool GetNewMacroCallString2(Scanner* pScanner,
+    BasicScanner* pBasicScanner,
+    Macro* pMacro,
+    TokenArray* ppTokenArray,
+    StrBuilder* strBuilder)
+{
+    //StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
+    //TODO aqui nao pode ser o current
+    const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
+    Tokens token = pBasicScanner->currentItem.token;
+
+    //verificar se tem parametros
+    int nArgsExpected = pMacro->FormalArguments.Size;// pMacro->bIsFunction;
+    int nArgsFound = 0;
+
+    //fazer uma lista com os parametros
+    if (nArgsExpected > 0)
+    {
+        //Olha adiante para ver se tem (
+        //StrBuilder macroName = STRBUILDER_INIT;
+        //StrBuilder_Append(&macroName, lexeme);
+        //Match do nome da macro
+        //BasicScanner_Match(pBasicScanner);
+
+        //MACRONAME   (
+
+        //ignorar espacos (mas reservar a compra)
+
+
+        while (token == TK_SPACES || token == TK_COMMENT)
+        {
+
+            //Scanner_PushToken(pScanner, token, lexeme, true);
+            //ASSERT(false);
+            StrBuilder_Append(strBuilder, lexeme);
+
+            BasicScanner_Match(pBasicScanner);
+            token = pBasicScanner->currentItem.token;
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
+        }
+
+        token = pBasicScanner->currentItem.token;
+        lexeme = pBasicScanner->currentItem.lexeme.c_str;
+
+        if (token == TK_LEFT_PARENTHESIS)
+        {
+            //Adiciona o nome da macro
+            PPToken *ppTokenName = PPToken_Create(pMacro->Name,
+                PPTokenType_Identifier);
+            TokenArray_Push(ppTokenArray, ppTokenName);
+
+            token = pBasicScanner->currentItem.token;
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
+
+            //Match do (
+            PPToken *ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+            TokenArray_Push(ppTokenArray, ppToken);
+
+            StrBuilder_Append(strBuilder, lexeme);
+
+            BasicScanner_Match(pBasicScanner);
+
+            token = pBasicScanner->currentItem.token;
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
+
+            //comeca com 1
+            nArgsFound = 1;
+            int iInsideParentesis = 1;
+
+            for (;;)
+            {
+                if (token == TK_LEFT_PARENTHESIS)
+                {
+
+                    PPToken *ppToken = PPToken_Create(lexeme,
+                        TokenToPPToken(token));
+
+                    TokenArray_Push(ppTokenArray, ppToken);
+
+                    StrBuilder_Append(strBuilder, lexeme);
+                    BasicScanner_Match(pBasicScanner);
+
+                    token = pBasicScanner->currentItem.token;
+                    lexeme = pBasicScanner->currentItem.lexeme.c_str;
+
+                    iInsideParentesis++;
+                }
+
+                else if (token == TK_RIGHT_PARENTHESIS)
+                {
+                    if (iInsideParentesis == 1)
+                    {
+                        PPToken *ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+                        TokenArray_Push(ppTokenArray, ppToken);
+
+                        StrBuilder_Append(strBuilder, lexeme);
+                        BasicScanner_Match(pBasicScanner);
+
+                        token = pBasicScanner->currentItem.token;
+                        lexeme = pBasicScanner->currentItem.lexeme.c_str;
+
+                        break;
+                    }
+
+                    iInsideParentesis--;
+                    //StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
+                    PPToken *ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+                    TokenArray_Push(ppTokenArray, ppToken);
+                    StrBuilder_Append(strBuilder, lexeme);
+                    BasicScanner_Match(pBasicScanner);
+                    token = pBasicScanner->currentItem.token;
+                    lexeme = pBasicScanner->currentItem.lexeme.c_str;
+                }
+
+                else if (token == TK_COMMA)
+                {
+                    if (iInsideParentesis == 1)
+                    {
+                        nArgsFound++;
+                    }
+
+                    else
+                    {
+                        //continuar...
+                    }
+
+                    //StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
+                    PPToken *ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+                    TokenArray_Push(ppTokenArray, ppToken);
+                    StrBuilder_Append(strBuilder, lexeme);
+                    BasicScanner_Match(pBasicScanner);
+                    token = pBasicScanner->currentItem.token;
+                    lexeme = pBasicScanner->currentItem.lexeme.c_str;
+                }
+
+                else
+                {
+                    //StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
+                    PPToken *ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+                    TokenArray_Push(ppTokenArray, ppToken);
+                    StrBuilder_Append(strBuilder, lexeme);
+                    BasicScanner_Match(pBasicScanner);
+                    token = pBasicScanner->currentItem.token;
+                    lexeme = pBasicScanner->currentItem.lexeme.c_str;
+                }
+            }
+        }
+        else
+        {
+            //MACRO (
+            //teria que colocar MACRO de volta
+            //oops
+        }
+        //StrBuilder_Destroy(&macroName);
+    }
+    else
+    {
+        //o nome eh a propria expansao
+        PPToken *ppTokenName = PPToken_Create(lexeme, TokenToPPToken(token));
+        TokenArray_Push(ppTokenArray, ppTokenName);
+        StrBuilder_Append(strBuilder, lexeme);
+        BasicScanner_Match(pBasicScanner);
+    }
+
+    bool bIsMacro = true;
+
+    if (nArgsExpected != nArgsFound)
+    {
+        if (nArgsFound == 0 && nArgsExpected > 0)
+        {
+            bIsMacro = false;
+            //nao eh macro
+            //no header do windows por ex, tem um min como membro
+            //de struct e o mesmo min eh macro
+            //tratar como nao sendo macro
+            //JObj_PrintDebug(pMacro);
+            //Scanner_PrintDebug(pScanner);
+        }
+
+        else
+        {
+            if (nArgsExpected > nArgsFound)
+            {
+                //Scanner_SetError(pScanner, "Illegal macro call. Too few arguments error");
+            }
+            else
+            {
+                //Scanner_SetError(pScanner, "Illegal macro call. Too many arguments error.");
+            }
+            ASSERT(false);
+            //JObj_PrintDebug(pMacro);
+            // Scanner_PrintDebug(pScanner);
+        }
+    }
+
+    /*if (bIsMacro)
+    {
+//        StrBuilder_Append(strBuilder, pMacro->Name);
+        if (nArgsExpected > 0)
+        {
+            //StrBuilder_Append(strBuilder, pMacro->Name);
+            TokenArray_ToStrBuilder(ppTokenArray, strBuilder);
+            //StrBuilder_Append(strBuilder, pMacro->Name);
+        }
+    }*/
     return bIsMacro;
     //return false;
 }
@@ -1276,13 +1463,6 @@ void Scanner_BuyTokens(Scanner* pScanner)
         return;
     }
 
-    //if (pScanner->AcumulatedTokens.pTail->token == TK_EOF)
-    //{
-    //}
-    //Tem um baralho
-
-    //puxar a carta de cima
-    //BasicScanner_Match(pBasicScanner);
 
     Tokens token = pBasicScanner->currentItem.token;
     const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
@@ -1341,8 +1521,6 @@ void Scanner_BuyTokens(Scanner* pScanner)
 
     State state = StateTop(pScanner);
     bool bActive0 = IsIncludeState(state);
-    //pBasicScanner->currentItem.bActive = IsIncludeState(state);
-
 
     if (token == TK_PREPROCESSOR)
     {
@@ -1388,7 +1566,7 @@ void Scanner_BuyTokens(Scanner* pScanner)
                     //tem que ser antes de colocar o outro na pilha
                     IgnorePreProcessorv2(pBasicScanner, &strBuilder);
 
-                    
+
                     Scanner_PushToken(pScanner, TK_PRE_INCLUDE, strBuilder.c_str, true);
                     Scanner_IncludeFile(pScanner, fileName, FileIncludeTypeQuoted, true);
                     String_Destroy(&fileName);
@@ -1430,12 +1608,12 @@ void Scanner_BuyTokens(Scanner* pScanner)
                     }
 
                     IgnorePreProcessorv2(pBasicScanner, &strBuilder);
-                    
+
                     Scanner_PushToken(pScanner, TK_PRE_INCLUDE, strBuilder.c_str, true);
                     Scanner_IncludeFile(pScanner, path.c_str, FileIncludeTypeIncludes, true);
                     StrBuilder_Destroy(&path);
                 }
-                
+
             }
             else
             {
@@ -1781,13 +1959,23 @@ void Scanner_BuyTokens(Scanner* pScanner)
             #define foo (4 + foo)
             foo
             */
+            bool bMacroAlreadyBeginExpanded = false;
 
             if (pMacro2 != NULL &&
-                !pBasicScanner->bMacroExpanded)
+                pBasicScanner->bMacroExpanded)
+            {
+                if (strcmp(pBasicScanner->stream.NameOrFullPath, pMacro2->Name) == 0)
+                {
+                    bMacroAlreadyBeginExpanded = true;
+                }
+            }
+
+            if (pMacro2 != NULL && !bMacroAlreadyBeginExpanded)
             {
                 StrBuilder strBuilder = STRBUILDER_INIT;
                 TokenArray ppTokenArray = TOKENARRAY_INIT;
 
+                StrBuilder finalCallString = STRBUILDER_INIT;
                 StrBuilder callString = STRBUILDER_INIT;
                 //confirma realmente se eh p expandir
                 //aqui tem que pegar no head do stream nao no acumulado
@@ -1817,18 +2005,75 @@ void Scanner_BuyTokens(Scanner* pScanner)
                         StrBuilder_Append(&strBuilder, " ");
                     }
 
+                    bool bMoreExpansions = false;
+                    for (;;)
+                    {
+                        //TETRIS: function-macro with (
+
+                        //se a expansao de A virou B
+                        //que eh uma macro com parametro
+                        //entao o call tem que ser tudo
+                        //A(1) e expandir de novo
+
+                        /*
+                        #define B(a) a
+                        #define A B
+                        A(1)
+                        */
+
+                        //Se strBuilder eh identificaror
+                        Macro* pMacro3 =
+                            Scanner_FindPreprocessorItem2(pScanner, strBuilder.c_str);
+                        if (pMacro3 != NULL && pMacro3->bIsFunction)
+                        {
+                            //so funcao que pode dar problema
+
+
+                            bMoreExpansions = true;
+                            StrBuilder_Clear(&callString);
+                            TokenArray_Clear(&ppTokenArray);
+                            //pegar o call string de novo
+                            bIsMacro = GetNewMacroCallString2(pScanner,
+                                pBasicScanner,
+                                pMacro3,
+                                &ppTokenArray,
+                                &callString);
+
+                            StrBuilder_Clear(&strBuilder);
+                            ExpandMacroToText(&ppTokenArray,
+                                &pScanner->Defines2,
+                                false,
+                                false,
+                                NULL,
+                                &strBuilder); //Resultado final da expansao
+
+                            //tem que ficar em loop
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    if (bMoreExpansions)
+                    {
+                        StrBuilder_Append(&finalCallString, pMacro2->Name);
+                        StrBuilder_Append(&finalCallString, callString.c_str);
+                    }
+                    else
+                    {
+                        StrBuilder_Append(&finalCallString, callString.c_str);
+                    }
+
                     //Poe mais cartas no baralho
                     PushExpandedMacro(pScanner,
                         pMacro2->Name,
-                        callString.c_str,
+                        finalCallString.c_str,
                         strBuilder.c_str);
 
-                    //ScannerItem* pNew = ScannerItem_Create();
-                    //StrBuilder_Set(&pNew->lexeme, callString.c_str);
-                    //pNew->token = TK_MACRO_CALL;
-                    //List_Add(&pScanner->AcumulatedTokens, pNew);
 
-                    Scanner_PushToken(pScanner, TK_MACRO_CALL, callString.c_str, true);
+
+                    Scanner_PushToken(pScanner, TK_MACRO_CALL, finalCallString.c_str, true);
                 }
                 else
                 {
@@ -1838,6 +2083,7 @@ void Scanner_BuyTokens(Scanner* pScanner)
                 TokenArray_Destroy(&ppTokenArray);
                 StrBuilder_Destroy(&strBuilder);
                 StrBuilder_Destroy(&callString);
+                StrBuilder_Destroy(&finalCallString);
             }
             else
             {
