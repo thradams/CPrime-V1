@@ -3316,6 +3316,7 @@ bool TFunctionSpecifier_IsFirst(Tokens token)
     {
     case TK_INLINE:
     case TK__INLINE://microsoft
+    case TK__FORCEINLINE://microsoft
     case TK__NORETURN:
         bResult = true;
         break;
@@ -3341,6 +3342,7 @@ bool Function_Specifier(Parser* ctx,
     switch (token)
     {
     case TK__INLINE://microsoft
+    case TK__FORCEINLINE://microsoft
     case TK_INLINE:
         pFunctionSpecifier->bIsInline = true;
         Parser_Match(ctx, &pFunctionSpecifier->ClueList0);

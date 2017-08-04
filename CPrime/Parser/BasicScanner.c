@@ -519,6 +519,7 @@ static struct TkPair keywords[] =
     { "if", TK_IF },
     { "inline", TK_INLINE },
     { "__inline", TK__INLINE },
+    {"__forceinline", TK__FORCEINLINE },
     { "int", TK_INT },
     { "long", TK_LONG },
     //

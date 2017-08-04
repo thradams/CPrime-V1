@@ -150,7 +150,8 @@ typedef enum
     TK_RESTRICT,
     TK__STATIC_ASSERT,
     TK_INLINE,
-    TK__INLINE,
+    TK__INLINE,//ms
+    TK__FORCEINLINE, //ms
     TK__NORETURN,
     TK__ALIGNAS,
     TK__GENERIC,
