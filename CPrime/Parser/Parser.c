@@ -53,51 +53,6 @@ bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
 bool IsTypeName(Parser* ctx, Tokens token, const char * lexeme);
 
 
-TDeclaration * FindDeclarationOfDeclarator(DeclarationsMap* map, const char* name)
-{
-    TDeclaration *pDeclaration = NULL;
-    int bResult = 0;
-    Bucket*  p = MultiMap_FindBucket(map, name);
-
-    if (p != NULL)
-    {
-        for (size_t i = 0; i < p->size; i++)
-        {
-            if (strcmp(name, p->data[i]->key) == 0)
-            {
-                pDeclaration =
-                    TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)p->data[i]->data);
-
-                break;
-            }
-        }
-    }
-    return pDeclaration;
-}
-
-int DeclarationsMap_IsTypeDef(DeclarationsMap* map, const char* name)
-{
-    int bResult = 0;
-    Bucket*  p = MultiMap_FindBucket(map, name);
-
-    if (p != NULL)
-    {
-        for (size_t i = 0; i < p->size; i++)
-        {
-            if (strcmp(name, p->data[i]->key) == 0)
-            {
-                TAnyDeclaration *pDeclaration = (TAnyDeclaration *)p->data[i]->data;
-                bResult = TAnyDeclaration_IsTypedef(pDeclaration) ? 1 : 0;
-
-                if (bResult)
-                    break;
-            }
-        }
-    }
-
-
-    return bResult;
-}
 
 Result Parser_InitString(Parser* parser,
     const char* name,
@@ -176,15 +131,6 @@ void Parser_PushFile(Parser* parser, const char* fileName)
 
 
 
-Result DeclarationsMap_Init(DeclarationsMap* p, size_t nBuckets)
-{
-    return MultiMap_Init(p, nBuckets);
-}
-
-void DeclarationsMap_Destroy(DeclarationsMap* p)
-{
-    MultiMap_Destroy(p, NULL); //OWNER IS AST
-}
 
 void Parser_Destroy(Parser* parser)
 {

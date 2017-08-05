@@ -1237,33 +1237,6 @@ void TInitializerListItem_Destroy(TInitializerListItem* p)
 }
 
 
-Result DeclarationsMap_Add(DeclarationsMap* p, const char* name, TAnyDeclaration* pData)
-{
-	return MultiMap_Add(p, name, pData);
-}
-
-TDeclaration* DeclarationsMap_FindDeclaration(DeclarationsMap* p, const char* name)
-{
-	if (name == NULL)
-	{
-		return NULL;
-	}
-
-	Bucket *  pBucket =
-		MultiMap_FindBucket(p, name);
-	if (pBucket)
-	{
-		for (size_t j = 0; j < pBucket->size; j++)
-		{
-			if (strcmp(pBucket->data[j]->key, name) == 0)
-			{
-				return TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
-			}
-		}
-	}
-	return NULL;
-}
-
 TDeclaration* TProgram_FindDeclaration(TProgram* p, const char* name)
 {
    TTypePointer* pt = SymbolMap_Find(&p->GlobalScope, name);

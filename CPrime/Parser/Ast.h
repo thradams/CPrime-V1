@@ -850,16 +850,6 @@ CREATETYPE(TParameter, TPARAMETER_DECLARATION_INIT)
 typedef ArrayT(TAnyDeclaration) TDeclarations;
 
 
-/////////
-typedef MultiMap DeclarationsMap;
-//Mapa de String - > TAnyDeclaration*
-#define DECLARATIONSMAP_INIT MULTIMAP_INIT
-Result DeclarationsMap_Init(DeclarationsMap* p, size_t nBuckets);
-void DeclarationsMap_Destroy(DeclarationsMap* p);
-TDeclaration* DeclarationsMap_FindDeclaration(DeclarationsMap* p, const char* name);
-Result DeclarationsMap_Add(DeclarationsMap* p, const char* name, TAnyDeclaration* pData);
-
-
 //Coleta o resultado do parser
 typedef struct
 {
