@@ -104,8 +104,6 @@ Result Parser_InitString(Parser* parser,
     const char* text)
 {
     List_Init(&parser->ClueList);
-    //    MultiMap_Init(&parser->Symbols, SYMBOL_BUCKETS_SIZE);
-    Map_Init(&parser->EnumMap, SYMBOL_BUCKETS_SIZE);
 
     ///////
     SymbolMap_Init(&parser->GlobalScope);
@@ -137,8 +135,6 @@ Result Parser_InitFile(Parser* parser, const char* fileName)
 
 
     List_Init(&parser->ClueList);
-    //    DeclarationsMap_Init(&parser->Symbols, SYMBOL_BUCKETS_SIZE);
-    Map_Init(&parser->EnumMap, SYMBOL_BUCKETS_SIZE);
 
     /////
     SymbolMap_Init(&parser->GlobalScope);
@@ -196,7 +192,6 @@ void Parser_Destroy(Parser* parser)
 
     List_Destroy(ScannerItem, &parser->ClueList);
 
-    Map_Destroy(&parser->EnumMap, NULL); //OWNER IS AST
     SymbolMap_Destroy(&parser->GlobalScope);
 
     //Map_Destroy(&parser->TypeDefNames, NULL);
@@ -3215,10 +3210,6 @@ void Enumeration_Constant(Parser* ctx,
 {
     const char* lexeme = Lexeme(ctx);
     String_Set(&pEnumerator2->Name, lexeme);
-
-    //TODO colocar um ponteiro
-    Map_Set(&ctx->EnumMap, lexeme, (void*)1);
-
     Parser_MatchToken(ctx, TK_IDENTIFIER, &pEnumerator2->ClueList0);
 }
 
@@ -4948,8 +4939,6 @@ bool GetAST(const char*  filename,
     SymbolMap_Swap(&parser.GlobalScope, &pProgram->GlobalScope);
 
     MacroMap_Swap(&parser.Scanner.Defines2, &pProgram->Defines);
-    Map_Swap(&parser.EnumMap, &pProgram->EnumMap);
-
 
     bResult = !parser.bError;
 

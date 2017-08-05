@@ -877,8 +877,6 @@ typedef struct
     //Defines
     MacroMap Defines;
 
-    Map EnumMap;
-
    
 
 } TProgram;

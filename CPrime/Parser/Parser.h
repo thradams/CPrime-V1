@@ -18,13 +18,6 @@ typedef struct {
   // scanner ja pré-processado
   Scanner Scanner;
 
-  // struct, union, or enum;
-  // typedef estao no mesmo mapa mas da p achar
-  // a diferenca se preciso
-  //DeclarationsMap Symbols;
-
-  Map EnumMap;
-
   TScannerItemList ClueList;
 
   SymbolMap GlobalScope;

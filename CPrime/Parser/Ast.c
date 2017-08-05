@@ -1395,7 +1395,7 @@ TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName
 	return pDeclarationResult;
 }
 
-#define TPROGRAM_INIT {ARRAYT_INIT, STRARRAY_INIT, SYMBOLMAP_INIT, MACROMAP_INIT, MAP_INIT}
+#define TPROGRAM_INIT {ARRAYT_INIT, STRARRAY_INIT, SYMBOLMAP_INIT, MACROMAP_INIT}
 void TProgram_Init(TProgram* p)  
 {
     TProgram d = TPROGRAM_INIT;
@@ -1405,7 +1405,6 @@ void TProgram_Init(TProgram* p)
 
 void TProgram_Destroy(TProgram * p)
 {
-	Map_Destroy(&p->EnumMap, NULL);
 	ArrayT_Destroy(TAnyDeclaration, &p->Declarations);
 	ArrayT_Destroy(TFile, &p->Files2);
 	SymbolMap_Destroy(&p->GlobalScope);
