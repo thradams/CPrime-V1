@@ -979,6 +979,11 @@ static bool GetNewMacroCallString(Scanner* pScanner,
             //StrBuilder_Append(strBuilder, pMacro->Name);
         }
     }
+
+    //tODO se nao for macro tem que pegar todo
+    //o match feito e devolver.
+    //nome da macro e espacos..
+    ASSERT(bIsMacro);
     return bIsMacro;
     //return false;
 }
