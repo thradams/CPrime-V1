@@ -58,6 +58,7 @@ typedef enum
     TDoStatement_ID,
     TIfStatement_ID,
     TypeName_ID,
+    TEnumerator_ID,
     
     TInitializerListType_ID,
 
@@ -489,6 +490,8 @@ void TAlignmentSpecifier_Destroy(TAlignmentSpecifier* p);
 
 typedef struct TEnumerator
 {
+    
+    TTypePointer Type;
     String Name;
     TExpression*   pExpression;
     struct TEnumerator *pNext;
@@ -498,7 +501,7 @@ typedef struct TEnumerator
     bool bHasComma;
 } TEnumerator;
 
-#define TENUMERATOR_INIT { STRING_INIT , NULL, NULL, TSCANNERITEMLIST_INIT, false}
+#define TENUMERATOR_INIT { {TEnumerator_ID },STRING_INIT , NULL, NULL, TSCANNERITEMLIST_INIT, false}
 CREATETYPE(TEnumerator, TENUMERATOR_INIT)
 
 typedef List(TEnumerator) TEnumeratorList;

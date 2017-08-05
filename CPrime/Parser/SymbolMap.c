@@ -429,7 +429,7 @@ static int SymbolMap_IsTypeNameCore(SymbolMap* pMap, const char* identifierName)
 
 int SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 {
-    if (strcmp(identifierName, "uintptr_t") == 0)
+    if (strcmp(identifierName, "PVOID64") == 0)
     {
         identifierName = identifierName;
     }

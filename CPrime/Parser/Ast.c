@@ -776,6 +776,8 @@ bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList* p, Tokens token, co
                 bInt = true;
                 break;
             case TK_DOUBLE:
+                break;
+
             case TK_IDENTIFIER:
                 bTypeDef = true;
                 break;

@@ -16,6 +16,8 @@
 #define  __cdecl  
 #define __declspec(x)          
 #define __int64 long long
+//#define _MSC_VER  1300
+#define __ptr64
 
 #pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\shared"
 #pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\um"

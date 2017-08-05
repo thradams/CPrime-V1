@@ -3263,7 +3263,8 @@ void Enumerator_List(Parser* ctx,
     List_Add(pEnumeratorList2, pEnumerator2);
 
     EnumeratorC(ctx, pEnumerator2);
-
+    TTypePointer* pv = NULL;
+    SymbolMap_SetAt(ctx->pCurrentScope, pEnumerator2->Name, (TTypePointer*)pEnumerator2, &pv);
     Tokens token = Parser_CurrentToken(ctx);
 
     //tem mais?
@@ -4700,6 +4701,16 @@ bool  Declaration(Parser* ctx,
                 ForEachListItem(TInitDeclarator, pInitDeclarator, &pFuncVarDeclaration->InitDeclaratorList)
                 {
                     const char* declaratorName = TInitDeclarator_FindName(pInitDeclarator);
+                   
+                    if (declaratorName ==0)
+                    {
+                        declaratorName = declaratorName;
+                    }
+                    if (declaratorName && strcmp(declaratorName, "PVOID64") == 0)
+                    {
+                        declaratorName = declaratorName;
+                    }
+                       
                     if (declaratorName != NULL)
                     {
                         TTypePointer*pv = NULL;
