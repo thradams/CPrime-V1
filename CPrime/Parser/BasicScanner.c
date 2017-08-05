@@ -804,7 +804,7 @@ void BasicScanner_Next(BasicScanner* scanner)
                 if (ch == '-' ||
                     ch == '+')
                 {
-                    BasicScanner_MatchChar(scanner);
+                    ch = BasicScanner_MatchChar(scanner);
                 }
                 while ((ch >= '0' && ch <= '9'))
                 {
