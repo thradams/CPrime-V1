@@ -758,11 +758,58 @@ void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecif
 bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList* p, Tokens token, const char* lexeme)
 {
     bool bResult = false;
+
+    bool bStruct = false;
+    bool bEnum = false;
+    bool bTypeDef = false;
+    bool bInt = false;
+    ForEachListItem(TSpecifierQualifier, pSpecifier, p)
+    {
+        switch (pSpecifier->Type)
+        {
+            CASE(TSingleTypeSpecifier) :
+            {     TSingleTypeSpecifier* pTSingleTypeSpecifier =
+                (TSingleTypeSpecifier*)pSpecifier;
+            switch (pTSingleTypeSpecifier->Token)
+            {
+            case TK_INT:
+                bInt = true;
+                break;
+            case TK_DOUBLE:
+            case TK_IDENTIFIER:
+                bTypeDef = true;
+                break;
+            }
+            }
+            break;
+
+            CASE(TStructUnionSpecifier) :
+                bStruct = true;
+            break;
+
+            CASE(TEnumSpecifier) :
+                bEnum = true;
+            break;
+
+            CASE(TStorageSpecifier) :
+
+                break;
+            CASE(TTypeQualifier) :
+
+                break;
+            CASE(TFunctionSpecifier) :
+
+                break;
+            CASE(TAlignmentSpecifier) :
+
+                break;
+        }
+    }
+
+
     if (token == TK_IDENTIFIER)
     {
-        //aqui token/lexeme tem que ser um tipo
-        //TODO 
-        if (p->pHead == NULL)
+        if (!bTypeDef && !bInt)
         {
             //Exemplo que se quer evitar
             //typedef int X;
@@ -777,6 +824,7 @@ bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList* p, Tokens token, co
         bResult = true;
     }
     return bResult;
+
 }
 
 bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers* pDeclarationSpecifiers, 
