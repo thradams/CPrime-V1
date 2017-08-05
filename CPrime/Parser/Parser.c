@@ -1170,10 +1170,11 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
         break;
     case TK_EOF:
         break;
+        //TODO ver tudo que pode ser follow
     default:
         //ASSERT(false);
-        SetUnexpectedError(ctx, "Assert", "");
-
+//        SetUnexpectedError(ctx, "Assert", "");
+        //aqui nao eh erro necessariamente
         break;
     }
 
