@@ -1,15 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <Windows.h>
 
-typedef enum E {A, B} E;
-typedef int X;
-typedef struct Y
-{
-    X x;
-};
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+
 int main()
 {
-    E e;
-    e = A;
+    int min = 0;
+    int i;
+    i = 1;
+    i = min;
 }
