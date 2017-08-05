@@ -49,8 +49,6 @@ static bool IsPreprocessorTokenPhase(Tokens token)
 
 
 bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
-void SetSymbolsFromDeclaration(Parser* ctx,
-    TAnyDeclaration* pDeclaration2);
 
 bool IsTypeName(Parser* ctx, Tokens token, const char * lexeme);
 
@@ -106,8 +104,14 @@ Result Parser_InitString(Parser* parser,
     const char* text)
 {
     List_Init(&parser->ClueList);
-    MultiMap_Init(&parser->Symbols, SYMBOL_BUCKETS_SIZE);
+    //    MultiMap_Init(&parser->Symbols, SYMBOL_BUCKETS_SIZE);
     Map_Init(&parser->EnumMap, SYMBOL_BUCKETS_SIZE);
+
+    ///////
+    SymbolMap_Init(&parser->GlobalScope);
+    parser->pCurrentScope = &parser->GlobalScope;
+
+    /////////
 
     //Map_Init(&parser->TypeDefNames, SYMBOL_BUCKETS_SIZE);
     parser->bError = false;
@@ -128,10 +132,19 @@ Result Parser_InitString(Parser* parser,
 
 Result Parser_InitFile(Parser* parser, const char* fileName)
 {
+
+
+
+
     List_Init(&parser->ClueList);
-    DeclarationsMap_Init(&parser->Symbols, SYMBOL_BUCKETS_SIZE);
+    //    DeclarationsMap_Init(&parser->Symbols, SYMBOL_BUCKETS_SIZE);
     Map_Init(&parser->EnumMap, SYMBOL_BUCKETS_SIZE);
 
+    /////
+    SymbolMap_Init(&parser->GlobalScope);
+    parser->pCurrentScope = &parser->GlobalScope;
+
+    //////
     //Map_Init(&parser->TypeDefNames, SYMBOL_BUCKETS_SIZE);
     parser->bError = false;
 
@@ -165,26 +178,7 @@ void Parser_PushFile(Parser* parser, const char* fileName)
 }
 
 
-void Parser_SetSymbol(Parser* parser,
-    const char* name,
-    TAnyDeclaration* pObject)
-{
-    Bucket*  pBucket = MultiMap_FindBucket(&parser->Symbols, name);
 
-    if (pBucket)
-    {
-        //TODO verificar se os tipos sao compativeis
-    }
-
-    MultiMap_Add(&parser->Symbols, name, pObject);
-    //Result result = Map_Find(&parser->TypeDefNames, name, &pOut);
-    //if (result == RESULT_OK)
-    //{
-    //tem que ser a mesma declaracao
-    //senao eh erro
-    //}
-    //Map_Set(&parser->TypeDefNames, name, pObject);
-}
 
 Result DeclarationsMap_Init(DeclarationsMap* p, size_t nBuckets)
 {
@@ -198,9 +192,12 @@ void DeclarationsMap_Destroy(DeclarationsMap* p)
 
 void Parser_Destroy(Parser* parser)
 {
+
+
     List_Destroy(ScannerItem, &parser->ClueList);
-    DeclarationsMap_Destroy(&parser->Symbols);
+
     Map_Destroy(&parser->EnumMap, NULL); //OWNER IS AST
+    SymbolMap_Destroy(&parser->GlobalScope);
 
     //Map_Destroy(&parser->TypeDefNames, NULL);
     StrBuilder_Destroy(&parser->ErrorMessage);
@@ -236,7 +233,7 @@ void SetError2(Parser* parser, const char* message, const char* message2)
         Scanner_GetError(&parser->Scanner, &parser->ErrorMessage);
         parser->bError = true;
         StrBuilder_Append(&parser->ErrorMessage, "(");
-        StrBuilder_AppendInt(&parser->ErrorMessage, Scanner_LineAt(&parser->Scanner,0));
+        StrBuilder_AppendInt(&parser->ErrorMessage, Scanner_LineAt(&parser->Scanner, 0));
         StrBuilder_Append(&parser->ErrorMessage, ") : error :");
         StrBuilder_Append(&parser->ErrorMessage, message);
         StrBuilder_Append(&parser->ErrorMessage, message2);
@@ -333,7 +330,7 @@ const char* Parser_LookAheadLexeme(Parser* parser)
         }
     }
 
-    return lexeme;    
+    return lexeme;
 }
 
 
@@ -489,7 +486,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 {
     *ppPrimaryExpression = NULL;
 
-  
+
 
     /*
     (6.5.1) primary-expression:
@@ -502,7 +499,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
     *ppPrimaryExpression = NULL; //out
 
     Tokens token = Parser_CurrentToken(ctx);
-
+    const char* lexeme = Lexeme(ctx);
     //PreprocessorTokenIndex(ctx);
     //-2 nem eh macro
     //-1 inicio de macro
@@ -527,8 +524,8 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
         {
             TPrimaryExpressionLiteralItem *  pPrimaryExpressionLiteralItem
                 = TPrimaryExpressionLiteralItem_Create();
-            const char* lexeme = Lexeme(ctx);
-            String_Set(&pPrimaryExpressionLiteralItem->lexeme, lexeme);
+            const char* lexeme2 = Lexeme(ctx);
+            String_Set(&pPrimaryExpressionLiteralItem->lexeme, lexeme2);
 
             token = Parser_Match(ctx,
                 &pPrimaryExpressionLiteralItem->ClueList0);
@@ -540,6 +537,24 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
     break;
 
     case TK_IDENTIFIER:
+    {
+        if (SymbolMap_Find(ctx->pCurrentScope, lexeme) == NULL)
+        {
+            printf("%s ? \n", lexeme);
+        }
+        TPrimaryExpressionValue *   pPrimaryExpressionValue
+            = TPrimaryExpressionValue_Create();
+
+        pPrimaryExpressionValue->token = token;
+        String_Set(&pPrimaryExpressionValue->lexeme, lexeme);
+
+
+        Parser_Match(ctx,
+            &pPrimaryExpressionValue->ClueList0);
+        *ppPrimaryExpression = (TExpression*)pPrimaryExpressionValue;
+    }
+    break;
+
     case TK_CHAR_LITERAL:
     case TK_DECIMAL_INTEGER:
     case TK_HEX_INTEGER:
@@ -860,7 +875,7 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
             *ppExpression = pPrimaryExpression;
         }
     }
-    else 
+    else
     {
         //tem que ser?
         ASSERT(IsFirstOfPrimaryExpression(token));
@@ -874,8 +889,8 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
     token = Parser_CurrentToken(ctx);
     if (IsFirstOfPrimaryExpression(token))
     {
-        
-       // ASSERT(false); //pergunta deve continuar? ta certo?
+
+        // ASSERT(false); //pergunta deve continuar? ta certo?
 
         TPostfixExpressionCore *  pPostfixExpressionCore =
             TPostfixExpressionCore_Create();
@@ -925,7 +940,7 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
         }
 
     }
-    
+
 }
 
 void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
@@ -1016,6 +1031,7 @@ static bool IsTypeQualifierToken(Tokens token)
 
 bool IsTypeName(Parser* ctx, Tokens token, const char * lexeme)
 {
+
     bool bResult = false;
 
     if (lexeme == NULL)
@@ -1027,7 +1043,8 @@ bool IsTypeName(Parser* ctx, Tokens token, const char * lexeme)
     {
 
     case TK_IDENTIFIER:
-        bResult = DeclarationsMap_IsTypeDef(&ctx->Symbols, lexeme);
+        bResult = SymbolMap_IsTypeName(ctx->pCurrentScope, lexeme);
+        //        bResult = DeclarationsMap_IsTypeDef(&ctx->Symbols, lexeme);
         break;
 
         //type-qualifier
@@ -2097,7 +2114,7 @@ bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
 bool Type_Qualifier_ListOpt(Parser* ctx, TTypeQualifierList* pQualifiers);
 void Declaration_Specifiers(Parser* ctx, TDeclarationSpecifiers* pDeclarationSpecifiers);
 void Declarator(Parser* ctx, TDeclarator** pTDeclarator2);
-void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier, int* typedefCount);
+void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier);
 bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier);
 void Initializer(Parser* ctx,
     TInitializer** ppInitializer,
@@ -2650,7 +2667,7 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_IDENTIFIER:
 
-        if (DeclarationsMap_IsTypeDef(&ctx->Symbols, lexeme))
+        if (IsTypeName(ctx, TK_IDENTIFIER, lexeme))
         {
             //É uma declaracao
         }
@@ -2796,6 +2813,10 @@ void Compound_Statement(Parser* ctx, TStatement** ppStatement)
     TCompoundStatement* pCompoundStatement = TCompoundStatement_Create();
     *ppStatement = (TStatement*)pCompoundStatement;
 
+    SymbolMap BlockScope = SYMBOLMAP_INIT;
+
+    BlockScope.pPrevious = ctx->pCurrentScope;
+    ctx->pCurrentScope = &BlockScope;
 
     Parser_MatchToken(ctx, TK_LEFT_CURLY_BRACKET, &pCompoundStatement->ClueList0);
 
@@ -2807,6 +2828,11 @@ void Compound_Statement(Parser* ctx, TStatement** ppStatement)
     }
 
     Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET, &pCompoundStatement->ClueList1);
+
+    //SymbolMap_Print(ctx->pCurrentScope);
+
+    ctx->pCurrentScope = BlockScope.pPrevious;
+    SymbolMap_Destroy(&BlockScope);
 }
 
 void Struct_Or_Union(Parser* ctx,
@@ -2875,14 +2901,18 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
     const char* lexeme = Lexeme(ctx);
     if (TTypeSpecifier_IsFirst(ctx, token, lexeme))
     {
-        int typedefCount = 0;
-        TTypeSpecifier* pTypeSpecifier = NULL;
-        Type_Specifier(ctx,
-            &pTypeSpecifier,
-            &typedefCount);
-        if (pTypeSpecifier != NULL)
+        if (TSpecifierQualifierList_CanAdd(pSpecifierQualifierList, token, lexeme))
         {
-            List_Add(pSpecifierQualifierList, pTypeSpecifier);
+            TTypeSpecifier* pTypeSpecifier = NULL;
+            Type_Specifier(ctx, &pTypeSpecifier);
+            if (pTypeSpecifier != NULL)
+            {
+                List_Add(pSpecifierQualifierList, pTypeSpecifier);
+            }
+        }
+        else
+        {
+            SetError2(ctx, "error", "");
         }
 
     }
@@ -2900,10 +2930,21 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
 
     token = Parser_CurrentToken(ctx);
     lexeme = Lexeme(ctx);
-    if (TTypeSpecifier_IsFirst(ctx, token, lexeme) ||
-        TTypeQualifier_IsFirst(token))
+    if (TTypeQualifier_IsFirst(token))
     {
         Specifier_Qualifier_List(ctx, pSpecifierQualifierList);
+    }
+    else if (TTypeSpecifier_IsFirst(ctx, token, lexeme))
+    {
+        if (TSpecifierQualifierList_CanAdd(pSpecifierQualifierList, token, lexeme))
+        {
+            /*
+            typedef int X;
+            void F(int X ); //X vai ser variavel e nao tipo
+            */
+
+            Specifier_Qualifier_List(ctx, pSpecifierQualifierList);
+        }
     }
 
 }
@@ -3146,7 +3187,7 @@ void Struct_Or_Union_Specifier(Parser* ctx,
             }
             else
             {
-               // SetError2(ctx, "unexpected struct ", "");
+                // SetError2(ctx, "unexpected struct ", "");
             }
         }
     }
@@ -3222,21 +3263,21 @@ void Enumerator_List(Parser* ctx,
     List_Add(pEnumeratorList2, pEnumerator2);
 
     EnumeratorC(ctx, pEnumerator2);
-    
+
     Tokens token = Parser_CurrentToken(ctx);
 
     //tem mais?
     if (token == TK_COMMA)
     {
         Parser_Match(ctx, &pEnumerator2->ClueList2);
-        token = Parser_CurrentToken(ctx);   
+        token = Parser_CurrentToken(ctx);
         pEnumerator2->bHasComma = true;
 
         if (token != TK_RIGHT_CURLY_BRACKET)
         {
             Enumerator_List(ctx, pEnumeratorList2);
         }
-    }    
+    }
 }
 
 void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
@@ -3517,6 +3558,9 @@ bool AbstractDeclaratorOpt(Parser* ctx, TDeclarator** ppTDeclarator2)
 void Parameter_Declaration(Parser* ctx,
     TParameter* pParameterDeclaration)
 {
+
+    //ctx->pCurrentParameterScope
+
     /*
     parameter-declaration:
     declaration-specifiers declarator
@@ -4003,7 +4047,7 @@ bool TTypeSpecifier_IsFirst(Parser* ctx, Tokens token, const char* lexeme)
         break;
 
     case TK_IDENTIFIER:
-        bResult = DeclarationsMap_IsTypeDef(&ctx->Symbols, lexeme);
+        bResult = IsTypeName(ctx, TK_IDENTIFIER, lexeme);
         break;
 
     default:
@@ -4105,9 +4149,7 @@ void AtomicTypeSpecifier(Parser* ctx,
     Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pAtomicTypeSpecifier->ClueList2);
 }
 
-void Type_Specifier(Parser* ctx,
-    TTypeSpecifier** ppTypeSpecifier,
-    int *typedefCount)
+void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier)
 {
     /*
     type-specifier:
@@ -4205,75 +4247,22 @@ void Type_Specifier(Parser* ctx,
 
     case TK_IDENTIFIER:
     {
-        int bIsTypedef = DeclarationsMap_IsTypeDef(&ctx->Symbols, lexeme);
-
+        int bIsTypedef = IsTypeName(ctx, TK_IDENTIFIER, lexeme);
         if (bIsTypedef)
         {
-            const char* lexeme = Lexeme(ctx);
-            String lexemeCopy = STRING_INIT;
-            String_Set(&lexemeCopy, lexeme);
+            TSingleTypeSpecifier* pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
+            pSingleTypeSpecifier->Token = token;
+            String_Set(&pSingleTypeSpecifier->TypedefName, lexeme);
+            bResult = true;
 
-            lexeme = lexemeCopy;
-            if (*typedefCount == 0 /*&&
-                                   ppTypeSpecifier == NULL*/)
-            {
-
-                if (*ppTypeSpecifier == NULL)
-                {
-                    *typedefCount = 1;
-
-                    TSingleTypeSpecifier* pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-
-
-                    pSingleTypeSpecifier->Token = token;
-                    String_Set(&pSingleTypeSpecifier->TypedefName, lexeme);
-                    bResult = true;
-
-
-                    Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-
-                    *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-                }
-                else
-                {
-                    bResult = false;
-                    //ERROR
-                    //typedef int INT;
-                    //typedef  double INT;
-
-
-                    //OK
-                    //typedef int INT;
-                    //typedef  int INT;
-
-                    //if ((*ppTypeSpecifier)->type)
-                    //daria este problema se wchar_t ja tivesse sido definido
-                    //typedef unsigned short wchar_t;
-
-                    //typedef int INT;
-                    // SetError(ctx, "??");
-                    //*typedefCount = 1;
-
-                    //pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-                    //pSingleTypeSpecifier->bIsTypeDef = true;
-                    //String_Set(&pSingleTypeSpecifier->TypedefName, lexeme);
-                    //bResult = true;
-                    //Match(ctx);
-                    //*ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
-                }
-            }
-            else
-            {
-                bResult = false;
-            }
-
-            String_Destroy(&lexemeCopy);
+            Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
+            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
 
         }
-
         else
         {
-            bResult = false;
+            ASSERT(false); //temque chegar aqui limpo ja
+            SetError2(ctx, "internal error", "");
         }
     }
     break;
@@ -4333,13 +4322,23 @@ void Declaration_Specifiers(Parser* ctx,
     }
     else if (TTypeSpecifier_IsFirst(ctx, token, lexeme))
     {
+        if (strcmp(lexeme, "uintptr_t") == 0)
+        {
+            lexeme = lexeme;
+        }
+        if (TDeclarationSpecifiers_CanAddSpeficier(pDeclarationSpecifiers,
+            token,
+            lexeme))
+        {
+            TTypeSpecifier* pTypeSpecifier = NULL;
+            Type_Specifier(ctx, &pTypeSpecifier);
+            List_Add(pDeclarationSpecifiers, pTypeSpecifier);
+        }
+        else
+        {
+            SetError2(ctx, "double typedef", "");
+        }
 
-        int typedefCount = 0;
-        TTypeSpecifier* pTypeSpecifier = NULL;
-        Type_Specifier(ctx,
-            &pTypeSpecifier,
-            &typedefCount);
-        List_Add(pDeclarationSpecifiers, pTypeSpecifier);
     }
     else if (TTypeQualifier_IsFirst(token))
     {
@@ -4370,7 +4369,13 @@ void Declaration_Specifiers(Parser* ctx,
     //Tem mais?
     if (Declaration_Specifiers_IsFirst(ctx, token, lexeme))
     {
-        Declaration_Specifiers(ctx, pDeclarationSpecifiers);
+        if (TDeclarationSpecifiers_CanAddSpeficier(pDeclarationSpecifiers,
+            token,
+            lexeme))
+        {
+            Declaration_Specifiers(ctx, pDeclarationSpecifiers);
+        }
+
     }
 
 }
@@ -4650,15 +4655,12 @@ bool  Declaration(Parser* ctx,
     {
         TDeclaration* pFuncVarDeclaration = TDeclaration_Create();
 
-
-
         if (token == TK_SEMICOLON)
         {
             //declaracao vazia como ;
             bHasDeclaration = true;
             //Match(ctx);
         }
-
         else
         {
             if (Declaration_Specifiers_IsFirst(ctx, Parser_CurrentToken(ctx), Lexeme(ctx)))
@@ -4667,8 +4669,6 @@ bool  Declaration(Parser* ctx,
                 bHasDeclaration = true;
             }
         }
-
-
 
         if (bHasDeclaration)
         {
@@ -4686,10 +4686,35 @@ bool  Declaration(Parser* ctx,
 
             else
             {
+                //Pega os parametros das funcoes mas nao usa
+                //se nao for uma definicao de funcao
+
+
+
+
                 //Agora vem os declaradores que possuem os ponteiros
                 Init_Declarator_List(ctx, &pFuncVarDeclaration->InitDeclaratorList);
                 token = Parser_CurrentToken(ctx);
+                //TODO
+                //colocar os declaradores nos simbolos
+                ForEachListItem(TInitDeclarator, pInitDeclarator, &pFuncVarDeclaration->InitDeclaratorList)
+                {
+                    const char* declaratorName = TInitDeclarator_FindName(pInitDeclarator);
+                    if (declaratorName != NULL)
+                    {
+                        TTypePointer*pv = NULL;
+                        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer*)pFuncVarDeclaration, &pv);
+                        if (pv != NULL)
+                        {
+                            pv = NULL;
+                            //TODO 
+                            //pode repetir desde q seja  o mesmo
+                        }
+                    }
 
+                    //ctx->
+                }
+                //
                 if (token == TK__DEFAULT ||
                     token == TK_DEFAULT)
                 {
@@ -4705,6 +4730,36 @@ bool  Declaration(Parser* ctx,
 
                 if (token == TK_LEFT_CURLY_BRACKET)
                 {
+                    //Ativa o escopo dos parametros
+                    //Adiconar os parametros em um escopo um pouco a cima.
+                    SymbolMap BlockScope = SYMBOLMAP_INIT;
+
+                    TInitDeclarator* pDeclarator3 =
+                        pFuncVarDeclaration->InitDeclaratorList.pHead;
+
+                    ForEachListItem(TParameter, pParameter, &pDeclarator3->pDeclarator->pDirectDeclarator->Parameters.ParameterList)
+                    {
+                        const char* parameterName = TDeclarator_GetName(&pParameter->Declarator);
+                        if (parameterName != NULL)
+                        {
+                            TTypePointer *pv;
+                            SymbolMap_SetAt(&BlockScope, parameterName, (TTypePointer*)pParameter, &pv);
+                            if (pv != NULL)
+                            {
+                                SetError2(ctx, "name already used", "");
+                            }
+                        }
+                        else
+                        {
+                            //parametro sem nome
+                        }
+                    }
+
+                    BlockScope.pPrevious = ctx->pCurrentScope;
+                    ctx->pCurrentScope = &BlockScope;
+
+
+                    //SymbolMap_Print(ctx->pCurrentScope);
                     /*
                     6.9.1) function-definition:
                     declaration-specifiers declarator declaration-listopt compound-statement
@@ -4712,6 +4767,11 @@ bool  Declaration(Parser* ctx,
                     TStatement* pStatement;
                     Compound_Statement(ctx, &pStatement);
                     //TODO cast
+
+                    ctx->pCurrentScope = BlockScope.pPrevious;
+                    SymbolMap_Destroy(&BlockScope);
+
+
                     pFuncVarDeclaration->pCompoundStatementOpt = (TCompoundStatement*)pStatement;
                 }
 
@@ -4719,6 +4779,8 @@ bool  Declaration(Parser* ctx,
                 {
                     Parser_MatchToken(ctx, TK_SEMICOLON, &pFuncVarDeclaration->ClueList1);
                 }
+
+
             }
 
             // StrBuilder_Swap(&pFuncVarDeclaration->PreprocessorAndCommentsString,
@@ -4732,61 +4794,10 @@ bool  Declaration(Parser* ctx,
         }
     }
 
+
     return bHasDeclaration;
 }
 
-void SetSymbolsFromDeclaration(Parser* ctx,
-    TAnyDeclaration* pDeclaration2)
-{
-    if (Parser_HasError(ctx))
-    {
-        return;
-    }
-    //Extrai as declaracoes de tipos variaveis e funcoes da declaracao
-    if (pDeclaration2->Type == TDeclaration_ID)
-    {
-        TDeclaration* pTFuncVarDeclaration = (TDeclaration*)pDeclaration2;
-        //if (pTFuncVarDeclaration->Specifiers.StorageSpecifiers.bIsTypedef)
-        {
-            ForEachListItem(TInitDeclarator, pDeclarator, &pTFuncVarDeclaration->InitDeclaratorList)
-            {
-                //        TDeclarator* pDeclarator = pTFuncVarDeclaration->Declarators.pItems[i];
-                const char* declaratorName = TInitDeclarator_FindName(pDeclarator);
-
-                if (declaratorName == NULL)
-                {
-                    //declaracao vazia ;
-                    //SetError(ctx, "empty declarator");
-                    //ASSERT(false);
-                }
-                else
-                {
-                    Parser_SetSymbol(ctx, declaratorName, pDeclaration2);
-                }
-            }
-
-            if (pTFuncVarDeclaration->InitDeclaratorList.pHead == NULL)
-            {
-                //tODO typedef struct X X;
-
-                TStructUnionSpecifier * pStructUnionSpecifier =
-                    TSpecifier_As_TStructUnionSpecifier(pTFuncVarDeclaration->Specifiers.pHead);
-                if (pStructUnionSpecifier != NULL)
-                {
-                    if (pStructUnionSpecifier->Name != NULL)
-                    {
-                        Parser_SetSymbol(ctx, pStructUnionSpecifier->Name, pDeclaration2);
-                    }
-                    else
-                    {
-                        printf("warning: unnamed struct/union that defines no instances");
-                    }
-                }
-
-            }
-        }
-    }
-}
 
 void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
 {
@@ -4811,7 +4822,7 @@ void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
             //
             ArrayT_Push(declarations, pDeclarationOut);
             declarationIndex++;
-            SetSymbolsFromDeclaration(ctx, pDeclarationOut);
+
         }
         else
         {
@@ -4923,7 +4934,7 @@ bool GetAST(const char*  filename,
 
     TFileMapToStrArray(&parser.Scanner.FilesIncluded, &pProgram->Files2);
     printf("%s\n", GetCompletationMessage(&parser));
-    MultiMap_Swap(&parser.Symbols, &pProgram->Symbols);
+    SymbolMap_Swap(&parser.GlobalScope, &pProgram->GlobalScope);
 
     MacroMap_Swap(&parser.Scanner.Defines2, &pProgram->Defines);
     Map_Swap(&parser.EnumMap, &pProgram->EnumMap);

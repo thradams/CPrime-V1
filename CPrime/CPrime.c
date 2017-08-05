@@ -20,7 +20,9 @@ void Compile(const char* configFileName,
     Options* options,
     bool bPrintASTFile)
 {
-    TProgram program = TPROGRAM_INIT;
+    TProgram program;
+    TProgram_Init(&program);
+
     clock_t tstart = clock();
 
     printf("Parsing...\n");

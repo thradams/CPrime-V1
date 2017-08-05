@@ -21,11 +21,15 @@ typedef struct {
   // struct, union, or enum;
   // typedef estao no mesmo mapa mas da p achar
   // a diferenca se preciso
-  DeclarationsMap Symbols;
+  //DeclarationsMap Symbols;
 
   Map EnumMap;
 
   TScannerItemList ClueList;
+
+  SymbolMap GlobalScope;
+  SymbolMap* pCurrentScope;
+  
   //TDeclarations Templates;
   //TDeclarations TemplatesInstances;
 } Parser;

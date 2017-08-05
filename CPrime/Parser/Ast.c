@@ -755,7 +755,102 @@ void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecif
 	}
 }
 
+bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList* p, Tokens token, const char* lexeme)
+{
+    bool bResult = false;
+    if (token == TK_IDENTIFIER)
+    {
+        //aqui token/lexeme tem que ser um tipo
+        //TODO 
+        if (p->pHead == NULL)
+        {
+            //Exemplo que se quer evitar
+            //typedef int X;
+            //void F(int X)
+            //nao pode ter nada antes
+            bResult = true;
+        }
+    }
+    else
+    {
+        //verificar combinacoes unsigned float etc.
+        bResult = true;
+    }
+    return bResult;
+}
 
+bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers* pDeclarationSpecifiers, 
+    Tokens token, 
+    const char* lexeme)
+{
+    bool bResult = false;
+
+    bool bStruct = false;
+    bool bEnum = false;
+    bool bTypeDef = false;
+    bool bInt = false;
+    ForEachListItem(TSpecifier, pSpecifier, pDeclarationSpecifiers)
+    {
+        switch (pSpecifier->Type)
+        {
+            CASE(TSingleTypeSpecifier) :
+            {     TSingleTypeSpecifier* pTSingleTypeSpecifier =
+                (TSingleTypeSpecifier*)pSpecifier;
+            switch (pTSingleTypeSpecifier->Token)
+            {
+            case TK_INT:
+                bInt = true;
+                break;
+            case TK_DOUBLE:
+            case TK_IDENTIFIER:
+                bTypeDef = true;
+                break;
+            }
+            }
+            break;
+
+            CASE(TStructUnionSpecifier) :
+                bStruct = true;
+            break;
+
+            CASE(TEnumSpecifier) :
+                bEnum = true;
+            break;
+
+            CASE(TStorageSpecifier) :
+                
+            break;
+            CASE(TTypeQualifier) :
+                
+            break;
+            CASE(TFunctionSpecifier) :
+                
+            break;
+            CASE(TAlignmentSpecifier) :
+                
+            break;            
+        }
+    }
+
+    
+    if (token == TK_IDENTIFIER)
+    {
+        if (!bTypeDef && !bInt)
+        {
+            //Exemplo que se quer evitar
+            //typedef int X;
+            //void F(int X)
+            //nao pode ter nada antes
+            bResult = true;
+        }
+    }
+    else
+    {
+        //verificar combinacoes unsigned float etc.
+        bResult = true;
+    }
+    return bResult;   
+}
 
 const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDeclarationSpecifiers)
 {
@@ -974,10 +1069,16 @@ bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecif
 		switch (pItem->Type)
 		{
 			CASE(TStorageSpecifier) :
-				if (((TStorageSpecifier*)pItem)->bIsTypedef)
-				{
-					bResult = true;
-				}
+            {
+                TStorageSpecifier* pStorageSpecifier =
+                    (TStorageSpecifier*)pItem;
+                
+                if (pStorageSpecifier->bIsTypedef)
+                {
+                    bResult = true;
+                }
+            }
+				
 			break;
 		}
 
@@ -1115,62 +1216,25 @@ TDeclaration* DeclarationsMap_FindDeclaration(DeclarationsMap* p, const char* na
 
 TDeclaration* TProgram_FindDeclaration(TProgram* p, const char* name)
 {
-	return DeclarationsMap_FindDeclaration(&p->Symbols, name);
+   TTypePointer* pt = SymbolMap_Find(&p->GlobalScope, name);
+   if (pt->Type == TDeclaration_ID)
+   {
+       return (TDeclaration*)pt;
+   }
+   return NULL;
+	//return DeclarationsMap_FindDeclaration(&p->Symbols, name);
 }
 
 TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name)
 {
-	TDeclaration*  pDeclaration = NULL;
-
-
-	Bucket *  pBucket =
-		MultiMap_FindBucket(&p->Symbols, name);
-	if (pBucket)
-	{
-		for (size_t j = 0; j < pBucket->size; j++)
-		{
-			if (strcmp(pBucket->data[j]->key, name) == 0)
-			{
-				TDeclaration*  pDeclaration0 =
-					TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
-
-				if (pDeclaration0 != NULL /* &&
-					pDeclaration0->pCompoundStatementOpt == NULL*/)
-				{
-					pDeclaration = pDeclaration0;
-					break;
-				}
-			}
-		}
-	}
-	return pDeclaration;
+    TTypePointer* pt = SymbolMap_Find(&p->GlobalScope, name);
+    if (pt->Type == TDeclaration_ID)
+    {
+        return (TDeclaration*)pt;
+    }
+    return NULL;   
 }
 
-
-TDeclaration* TProgram_FindFunctionDefinition(TProgram* p, const char* name)
-{
-	TDeclaration*  pDeclaration = NULL;
-	Bucket *  pBucket = MultiMap_FindBucket(&p->Symbols, name);
-	if (pBucket)
-	{
-		for (size_t j = 0; j < pBucket->size; j++)
-		{
-			if (strcmp(pBucket->data[j]->key, name) == 0)
-			{
-				TDeclaration*  pDeclaration0 =
-					TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
-
-				if (pDeclaration0 != NULL &&
-					pDeclaration0->pCompoundStatementOpt != NULL)
-				{
-					pDeclaration = pDeclaration0;
-					break;
-				}
-			}
-		}
-	}
-	return pDeclaration;
-}
 
 
 //Retorna a declaracao final do tipo entrando em cada typedef. 
@@ -1179,17 +1243,18 @@ TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName
 	TDeclaration*  pDeclarationResult = NULL;
 	for (;;)
 	{
-		Bucket *  pBucket =
-			MultiMap_FindBucket(&p->Symbols, typeName);
+		SymbolMapItem *  pBucket =
+			SymbolMap_FindBucket(&p->GlobalScope, typeName);
 		if (pBucket)
 		{
 			TDeclaration*  pDeclaration = NULL;
-			for (size_t j = 0; j < pBucket->size; j++)
+			//for (size_t j = 0; j < pBucket->size; j++)
+            while (pBucket)
 			{
 				pDeclaration = NULL;
-				if (strcmp(pBucket->data[j]->key, typeName) == 0)
+				if (strcmp(pBucket->Key, typeName) == 0)
 				{
-					pDeclaration = TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->data[j]->data);
+					pDeclaration = TAnyDeclaration_As_TDeclaration((TAnyDeclaration *)pBucket->pValue);
 					if (pDeclaration != NULL)
 					{
 						if (TDeclarationSpecifiers_IsTypedef(&pDeclaration->Specifiers))
@@ -1258,7 +1323,10 @@ TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName
 						break;
 					}
 				}//key
-			}//for
+
+                pBucket = pBucket->pNext;
+
+			}//while
 			if (pDeclarationResult != NULL)
 			{
 				break; //ok achou
@@ -1277,13 +1345,20 @@ TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName
 	return pDeclarationResult;
 }
 
+#define TPROGRAM_INIT {ARRAYT_INIT, STRARRAY_INIT, SYMBOLMAP_INIT, MACROMAP_INIT, MAP_INIT}
+void TProgram_Init(TProgram* p)  
+{
+    TProgram d = TPROGRAM_INIT;
+    *p = d;
+}
+
 
 void TProgram_Destroy(TProgram * p)
 {
 	Map_Destroy(&p->EnumMap, NULL);
 	ArrayT_Destroy(TAnyDeclaration, &p->Declarations);
 	ArrayT_Destroy(TFile, &p->Files2);
-	DeclarationsMap_Destroy(&p->Symbols);
+	SymbolMap_Destroy(&p->GlobalScope);
 	MacroMap_Destroy(&p->Defines);
 }
 

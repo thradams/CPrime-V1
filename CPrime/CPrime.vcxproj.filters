@@ -92,6 +92,9 @@
     <ClCompile Include="CPrime\Templates\ArrayTemplate.c">
       <Filter>Source Files\CPrime\Templates</Filter>
     </ClCompile>
+    <ClCompile Include="Parser\SymbolMap.c">
+      <Filter>Source Files\Parser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base\Array.h">
@@ -174,6 +177,9 @@
     </ClInclude>
     <ClInclude Include="settings.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\SymbolMap.h">
+      <Filter>Source Files\Parser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

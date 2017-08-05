@@ -7,7 +7,7 @@
 #include "..\Base\StringEx.h"
 #include "Scanner.h"
 #include "Macro.h"
-
+#include "SymbolMap.h"
 
 #define CAST(FROM, TO) \
 inline TO *  FROM##_As_##TO(FROM*  p)\
@@ -68,7 +68,9 @@ typedef enum
     TPrimaryExpressionLiteral_ID,
     TPostfixExpressionCore_ID,
     TBinaryExpression_ID,
-    TTernaryExpression_ID
+    TTernaryExpression_ID,
+
+    TParameter_ID
 } Type;
 #define CASE(T) case T##_ID
 
@@ -562,7 +564,7 @@ TSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p)
 bool TSpecifierQualifierList_IsTypedefQualifier(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsAutoPointer(TSpecifierQualifierList *pSpecifierQualifierList);
 
-
+bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList* p, Tokens token, const char* lexeme);
 bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsChar(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p);
@@ -574,6 +576,7 @@ typedef List(TSpecifier) TDeclarationSpecifiers;
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers);
 
 const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDeclarationSpecifiers);
+bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers* pDeclarationSpecifiers, Tokens token, const char* lexeme);
 
 
 
@@ -823,6 +826,7 @@ int TAnyDeclaration_GetFileIndex(TAnyDeclaration* pDeclaration);
 
 typedef struct TParameter
 {
+    TTypePointer Type;
     TDeclarationSpecifiers Specifiers;
     TDeclarator Declarator;
 
@@ -833,7 +837,7 @@ typedef struct TParameter
     TScannerItemList ClueList00; //, do parametro
     bool bHasComma;
 } TParameter;
-#define TPARAMETER_DECLARATION_INIT { TDECLARATION_SPECIFIERS_INIT, TDECLARATOR_INIT, NULL, TSCANNERITEMLIST_INIT, false}
+#define TPARAMETER_DECLARATION_INIT { { TParameter_ID}, TDECLARATION_SPECIFIERS_INIT, TDECLARATOR_INIT, NULL, TSCANNERITEMLIST_INIT, false}
 void TParameter_Destroy(TParameter* p);
 void TParameter_Swap(TParameter* a, TParameter* b);
 const char* TParameter_GetTypedefName(TParameter* p);
@@ -863,16 +867,21 @@ typedef struct
     TFileArray Files2;
 
     //multimap dos simbolos
-    DeclarationsMap Symbols;
+    //DeclarationsMap Symbols;
+    SymbolMap GlobalScope;
+    
 
     //Defines
     MacroMap Defines;
 
     Map EnumMap;
 
+   
+
 } TProgram;
 
-#define TPROGRAM_INIT {ARRAYT_INIT, STRARRAY_INIT, MAP_INIT, MACROMAP_INIT, MAP_INIT}
+
+void TProgram_Init(TProgram* p);
 void TProgram_Destroy(TProgram* p);
 TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName);
 TDeclaration* TProgram_FindDeclaration(TProgram* p, const char* name);
@@ -1022,4 +1031,5 @@ CAST(TExpression, TPostfixExpressionCore)
 CAST(TExpression, TCastExpressionType)
 
 TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name);
-TDeclaration* TProgram_FindFunctionDefinition(TProgram* p, const char* name);
+
+bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecifiers);

@@ -164,6 +164,7 @@
     <ClCompile Include="Parser\Parser.c" />
     <ClCompile Include="Parser\PPToken.c" />
     <ClCompile Include="Parser\Scanner.c" />
+    <ClCompile Include="Parser\SymbolMap.c" />
     <ClCompile Include="Parser\TokenArray.c" />
     <ClCompile Include="UnitTest.c" />
   </ItemGroup>
@@ -184,6 +185,7 @@
     <ClInclude Include="CPrime\Templates\ListTemplate.h" />
     <ClInclude Include="CPrime\Templates\MapTemplate.h" />
     <ClInclude Include="CPrime\Templates\UnionTemplate.h" />
+    <ClInclude Include="Parser\SymbolMap.h" />
     <ClInclude Include="settings.h" />
     <ClInclude Include="vs2017.h" />
     <ClInclude Include="Parser\Ast.h" />
