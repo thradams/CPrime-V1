@@ -63,7 +63,7 @@ Result Parser_InitString(Parser* parser,
     ///////
     SymbolMap_Init(&parser->GlobalScope);
     parser->pCurrentScope = &parser->GlobalScope;
-
+    parser->bPreprocessorEvalFlag = false;
     /////////
 
     //Map_Init(&parser->TypeDefNames, SYMBOL_BUCKETS_SIZE);
@@ -88,7 +88,7 @@ Result Parser_InitFile(Parser* parser, const char* fileName)
 
 
 
-
+    parser->bPreprocessorEvalFlag = false;
     List_Init(&parser->ClueList);
 
     /////
@@ -481,8 +481,15 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
     {
         if (SymbolMap_Find(ctx->pCurrentScope, lexeme) == NULL)
         {
-            printf("%s ? \n", lexeme);
+            if (!ctx->bPreprocessorEvalFlag)
+            {
+                printf("%s ? line %d\n", lexeme, GetCurrentLine(ctx));
+                //SetError2(ctx, "not found", "");
+                //para o parser nao achou..mas para define X eh nromal nao achar
+                
+            }
         }
+
         TPrimaryExpressionValue *   pPrimaryExpressionValue
             = TPrimaryExpressionValue_Create();
 

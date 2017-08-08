@@ -1240,7 +1240,8 @@ void TInitializerListItem_Destroy(TInitializerListItem* p)
 TDeclaration* TProgram_FindDeclaration(TProgram* p, const char* name)
 {
    TTypePointer* pt = SymbolMap_Find(&p->GlobalScope, name);
-   if (pt->Type == TDeclaration_ID)
+   if (pt != NULL &&
+       pt->Type == TDeclaration_ID)
    {
        return (TDeclaration*)pt;
    }
@@ -1251,7 +1252,8 @@ TDeclaration* TProgram_FindDeclaration(TProgram* p, const char* name)
 TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name)
 {
     TTypePointer* pt = SymbolMap_Find(&p->GlobalScope, name);
-    if (pt->Type == TDeclaration_ID)
+    if (pt != NULL && 
+        pt->Type == TDeclaration_ID)
     {
         return (TDeclaration*)pt;
     }
@@ -1268,7 +1270,7 @@ TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName
 	{
 		SymbolMapItem *  pBucket =
 			SymbolMap_FindBucket(&p->GlobalScope, typeName);
-		if (pBucket)
+		if (pBucket != NULL)
 		{
 			TDeclaration*  pDeclaration = NULL;
 			//for (size_t j = 0; j < pBucket->size; j++)

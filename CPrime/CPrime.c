@@ -88,9 +88,9 @@ int main(int argc, char* argv[])
     printf("C' Version " __DATE__ "\n");
     printf("https://github.com/thradams/CPrime\n\n");
 
-
-    //AllTests();
-
+#ifdef _DEBUG
+    AllTests();
+#endif
     if (argc < 2)
     {
         PrintHelp();

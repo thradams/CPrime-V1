@@ -76,7 +76,7 @@ Result Scanner_InitString(Scanner* pScanner,
   const char* name,
   const char* text);
 
-Result PushExpandedMacro(Scanner * pScanner, const char * defineName, const char * callString, const char * defineContent);
+Result PushExpandedMacro(Scanner * pScanner, const char * defineName, const char * defineContent);
 
 
 Result Scanner_Init(Scanner* pScanner);

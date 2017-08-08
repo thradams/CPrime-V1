@@ -23,8 +23,8 @@ typedef struct {
   SymbolMap GlobalScope;
   SymbolMap* pCurrentScope;
   
-  //TDeclarations Templates;
-  //TDeclarations TemplatesInstances;
+
+  bool bPreprocessorEvalFlag;
 } Parser;
 
 Result Parser_InitFile(Parser *parser, const char *fileName);
