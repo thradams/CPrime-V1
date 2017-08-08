@@ -1446,6 +1446,8 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
           PushExpandedMacro(pScanner, pMacro2->Name, strExpanded.c_str);
 
           Scanner_PushToken(pScanner, TK_MACRO_CALL, pMacro2->Name, true);
+          bExitLoop = true;
+
         }
       }
       else
