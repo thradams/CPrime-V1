@@ -125,7 +125,7 @@ static void TNodeClueList_CodePrint(Options* options, TScannerItemList* list,
         case TK_PRE_ELSE:
         case TK_PRE_IFDEF:
         case TK_PRE_IFNDEF:
-
+        case TK_PRE_ELIF:
             Output_Append(fp, pNodeClue->lexeme.c_str);
             Output_Append(fp, "\n");
             break;
@@ -2794,9 +2794,9 @@ static const char * InitValueForType(Tokens token)
     case TK_FLOAT:
         return "0.0";
     case TK_char:
-        return "'\0'";
+        return "'\\0'";
     case TK__WCHAR_T:
-        return "L'\0'";
+        return "L'\\0'";
 
     }
     return "0";

@@ -5,6 +5,9 @@
 #include "Scanner.h"
 #include "..\Base\Path.h"
 //Define to include modications
+
+void Declarator(Parser* ctx, bool bAbstract, TDeclarator** ppTDeclarator2);
+
 #define LANGUAGE_EXTENSIONS 
 Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt);
 Tokens Parser_MatchToken(Parser* parser,
@@ -393,8 +396,6 @@ void ArgumentExpressionList(Parser* ctx, TExpression**);
 void AssignmentExpression(Parser* ctx, TExpression**);
 void Initializer_List(Parser* ctx, TInitializerList* pInitializerList);
 
-bool AbstractDeclaratorOpt(Parser* ctx, TDeclarator** pTDeclarator2);
-
 
 
 bool IsFirstOfPrimaryExpression(Tokens token)
@@ -618,7 +619,7 @@ void TypeName(Parser* ctx, TTypeName* pTypeName)
     Specifier_Qualifier_List(ctx, &pTypeName->SpecifierQualifierList);
 
     TDeclarator* pDeclarator = NULL;
-    AbstractDeclaratorOpt(ctx, &pDeclarator);
+    Declarator(ctx, true, &pDeclarator);
     if (pDeclarator)
     {
         pTypeName->Declarator = *pDeclarator;
@@ -2062,7 +2063,8 @@ void Parameter_Declaration(Parser* ctx, TParameter* pParameterDeclaration);
 bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
 bool Type_Qualifier_ListOpt(Parser* ctx, TTypeQualifierList* pQualifiers);
 void Declaration_Specifiers(Parser* ctx, TDeclarationSpecifiers* pDeclarationSpecifiers);
-void Declarator(Parser* ctx, TDeclarator** pTDeclarator2);
+
+//void Declarator(Parser* ctx, bool bAbstract, TDeclarator** pTDeclarator2);
 void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier);
 bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier);
 void Initializer(Parser* ctx,
@@ -2928,7 +2930,7 @@ void Struct_Declarator(Parser* ctx,
         *ppTDeclarator2 = pInitDeclarator;
 
         ASSERT(pInitDeclarator->pDeclarator == NULL);
-        Declarator(ctx, &pInitDeclarator->pDeclarator);
+        Declarator(ctx, false, &pInitDeclarator->pDeclarator);
 
         token = Parser_CurrentToken(ctx);
 
@@ -3470,37 +3472,6 @@ void Parameter_List(Parser* ctx,
     }
 }
 
-
-
-void AbstractDeclarator(Parser* ctx, TDeclarator** ppTDeclarator2)
-{
-    /*
-    abstract-declarator:
-    pointer
-    pointeropt direct-abstract-declarator
-    */
-    //TODO!!! esta sendo usado como se fosse a mesma coisa?
-    Declarator(ctx, ppTDeclarator2);
-}
-
-bool AbstractDeclaratorOpt(Parser* ctx, TDeclarator** ppTDeclarator2)
-{
-    bool bResult = false;
-    Tokens token = Parser_CurrentToken(ctx);
-
-    switch (token)
-    {
-    case TK_ASTERISK:
-        AbstractDeclarator(ctx, ppTDeclarator2);
-        break;
-    }
-
-    return bResult;
-}
-
-
-
-
 void Parameter_Declaration(Parser* ctx,
     TParameter* pParameterDeclaration)
 {
@@ -3516,7 +3487,7 @@ void Parameter_Declaration(Parser* ctx,
         &pParameterDeclaration->Specifiers);
 
     TDeclarator *pDeclarator = NULL;
-    AbstractDeclarator(ctx, &pDeclarator);
+    Declarator(ctx, true, &pDeclarator);
     if (pDeclarator)
     {
         pParameterDeclaration->Declarator = *pDeclarator;
@@ -3544,20 +3515,8 @@ void Parameter_Type_List(Parser* ctx,
     }
 }
 
-void Direct_Abstract_Declarator(Parser* ctx, TDeclarator** ppDeclarator2)
-{
-    /*
-    direct-abstract-declarator:
-      ( abstract-declarator )
-      direct-abstract-declaratoropt [ type-qualifier-listopt assignment-expressionopt ]
-      direct-abstract-declaratoropt [ static type-qualifier-listopt assignment-expression ]
-      direct-abstract-declaratoropt [ type-qualifier-list static assignment-expression ]
-      direct-abstract-declaratoropt [ * ]
-      direct-abstract-declaratoropt ( parameter-type-listopt )
-    */
-}
 
-void Direct_Declarator(Parser* ctx, TDirectDeclarator** ppDeclarator2)
+void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclarator2)
 {
     *ppDeclarator2 = NULL; //out
 
@@ -3589,7 +3548,7 @@ void Direct_Declarator(Parser* ctx, TDirectDeclarator** ppDeclarator2)
 
         Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pDirectDeclarator->ClueList0);
 
-        Declarator(ctx, &pDirectDeclarator->pDeclarator);
+        Declarator(ctx, bAbstract, &pDirectDeclarator->pDeclarator);
         Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pDirectDeclarator->ClueList1);
 
         //Para indicar que eh uma ( declarator )
@@ -3724,12 +3683,18 @@ void Direct_Declarator(Parser* ctx, TDirectDeclarator** ppDeclarator2)
     }
 
     token = Parser_CurrentToken(ctx);
-    if (token == TK_LEFT_PARENTHESIS ||
-        token == TK_IDENTIFIER)
+    if (token == TK_LEFT_PARENTHESIS)
     {
         //tem mais
         TDirectDeclarator *pDirectDeclaratorNext = NULL;
-        Direct_Declarator(ctx, &pDirectDeclaratorNext);
+        Direct_Declarator(ctx, bAbstract, &pDirectDeclaratorNext);
+        pDirectDeclarator->pDirectDeclarator = pDirectDeclaratorNext;
+    }
+    else if (!bAbstract && token == TK_IDENTIFIER)
+    {
+        //tem mais
+        TDirectDeclarator *pDirectDeclaratorNext = NULL;
+        Direct_Declarator(ctx, bAbstract, &pDirectDeclaratorNext);
         pDirectDeclarator->pDirectDeclarator = pDirectDeclaratorNext;
     }
 
@@ -3880,17 +3845,8 @@ int PointerOpt(Parser* ctx, TPointerList* pPointerList)
     return ns;
 }
 
-void Abstract_Declarator(Parser* ctx, TDeclarator** ppTDeclarator2)
-{
-    /*
-    abstract-declarator:
-    pointer
-    pointeropt direct-abstract-declarator
-    */
-}
-
 //pag 123 C
-void Declarator(Parser* ctx, TDeclarator** ppTDeclarator2)
+void Declarator(Parser* ctx, bool bAbstract, TDeclarator** ppTDeclarator2)
 {
     *ppTDeclarator2 = NULL; //out
     TDeclarator* pDeclarator = TDeclarator_Create();
@@ -3901,7 +3857,7 @@ void Declarator(Parser* ctx, TDeclarator** ppTDeclarator2)
     PointerOpt(ctx, &pDeclarator->PointerList);
 
     ASSERT(pDeclarator->pDirectDeclarator == NULL);
-    Direct_Declarator(ctx, &pDeclarator->pDirectDeclarator);
+    Direct_Declarator(ctx, bAbstract, &pDeclarator->pDirectDeclarator);
 
     *ppTDeclarator2 = pDeclarator;
 }
@@ -4532,8 +4488,17 @@ void Init_Declarator(Parser* ctx,
         TInitDeclarator_Create();
 
     ASSERT(pInitDeclarator->pDeclarator == NULL);
-    Declarator(ctx, &pInitDeclarator->pDeclarator);
+    Declarator(ctx, false, &pInitDeclarator->pDeclarator);
     Tokens token = Parser_CurrentToken(ctx);
+
+    const char* declaratorName = TInitDeclarator_FindName(pInitDeclarator);
+    if (declaratorName)
+    {
+        //Fica em um contexto que vive so durante a declaracao
+        //depois eh substituido
+        TTypePointer* pv;
+        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer*) pInitDeclarator, &pv);
+    }
 
     //Antes do =
     *ppDeclarator2 = pInitDeclarator;
@@ -4636,13 +4601,32 @@ bool  Declaration(Parser* ctx,
                 //se nao for uma definicao de funcao
 
 
+                //////////////////////
+                /////vou criar um escopo para declarators
+                // int* p = malloc(sizeof p);
+                //                        ^
+                //                       p esta no contexto
+                // mas nao tem toda declaracao
+
+                SymbolMap BlockScope = SYMBOLMAP_INIT;
+
+                BlockScope.pPrevious = ctx->pCurrentScope;
+                ctx->pCurrentScope = &BlockScope;
 
 
                 //Agora vem os declaradores que possuem os ponteiros
                 Init_Declarator_List(ctx, &pFuncVarDeclaration->InitDeclaratorList);
+
+
+                ctx->pCurrentScope = BlockScope.pPrevious;
+                SymbolMap_Destroy(&BlockScope);
+
+                ////////////////////////
+
                 token = Parser_CurrentToken(ctx);
-                //TODO
+                
                 //colocar os declaradores nos simbolos
+                //agora ele monta a tabela com a declaracao toda
                 ForEachListItem(TInitDeclarator, pInitDeclarator, &pFuncVarDeclaration->InitDeclaratorList)
                 {
                     const char* declaratorName = TInitDeclarator_FindName(pInitDeclarator);

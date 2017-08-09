@@ -36,6 +36,7 @@ typedef enum
     TDeclaration_ID,
     TStaticAssertDeclaration_ID,
 	TEofDeclaration_ID,
+    TInitDeclarator_ID,
 
     TSingleTypeSpecifier_ID,
     TEnumSpecifier_ID,
@@ -715,6 +716,7 @@ CREATETYPE(TDirectDeclarator, TDIRECTDECLARATOR_INIT)
 
 typedef struct TInitDeclarator
 {
+    TTypePointer Type;
     TDeclarator* pDeclarator;
     TInitializer* pInitializer;
     struct TInitDeclarator * pNext;
@@ -722,7 +724,7 @@ typedef struct TInitDeclarator
 	TScannerItemList ClueList1; //defval
 } TInitDeclarator;
 
-#define TINITDECLARATOR_INIT {NULL, NULL, NULL, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT}
+#define TINITDECLARATOR_INIT {{TInitDeclarator_ID}, NULL, NULL, NULL, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT}
 CREATETYPE(TInitDeclarator, TINITDECLARATOR_INIT)
 
 typedef TInitDeclarator TStructDeclarator;
