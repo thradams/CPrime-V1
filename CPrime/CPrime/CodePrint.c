@@ -2376,7 +2376,7 @@ void Typedef_BuildDestroy(TProgram* program,
                 if (pFunctionDeclaration != NULL)
                 {
                     //tem delete
-                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(&%s);\n", strFuncName.c_str, pVariableName);
+                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(%s);\n", strFuncName.c_str, pVariableName);
                 }
                 else
                 {
