@@ -7,13 +7,14 @@
 
 
 //Instancia as funcoes especias new create delete
-void ArrayPlugin_BuildDestroy(TProgram* program,
+bool ArrayPlugin_BuildDestroy(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
     BuildType buildType,
     StrBuilder* fp)
 {
+    bool bInstanciated = false;
     if (strcmp(pStructUnionSpecifier->TemplateName, "Array") == 0)
     {
         StrBuilder itemTypeStr = STRBUILDER_INIT;
@@ -21,6 +22,7 @@ void ArrayPlugin_BuildDestroy(TProgram* program,
 
         TTypeName* pTypeName = NULL;
         Options  options = OPTIONS_INIT;
+        
         if (pStructUnionSpecifier->Args.pHead)
         {
             pTypeName = &pStructUnionSpecifier->Args.pHead->TypeName;
@@ -41,33 +43,33 @@ void ArrayPlugin_BuildDestroy(TProgram* program,
             bool bIsPointer = TDeclarator_IsDirectPointer(&pTypeName->Declarator);
             bool bAuto = TPointerList_IsAutoPointer(&pTypeName->Declarator.PointerList);
 
-            
-                if (bIsPointer && bAuto)
-                {
-                    StrBuilder_AppendFmtLn(fp, 4, "for (int i = 0 ; i < %s->Size; i++)", pVariableName);
-                    StrBuilder_AppendFmtLn(fp, 4, "{");
-                    /*
-                    BuildDestroy(program,
-                        &options,
-                        &pTypeName->SpecifierQualifierList,
-                        NULL,
-                        NULL,
-                        itemTypeStr.c_str,
-                        true,
-                        BuildTypeDelete,
-                        fp);
-                        */
+
+            if (bIsPointer && bAuto)
+            {
+                StrBuilder_AppendFmtLn(fp, 4, "for (int i = 0 ; i < %s->Size; i++)", pVariableName);
+                StrBuilder_AppendFmtLn(fp, 4, "{");
+                /*
+                BuildDestroy(program,
+                    &options,
+                    &pTypeName->SpecifierQualifierList,
+                    NULL,
+                    NULL,
+                    itemTypeStr.c_str,
+                    true,
+                    BuildTypeDelete,
+                    fp);
+                    */
                     //StrBuilder_AppendFmtIdent(fp, 2 * 4, "%s *pCurrent = ;\n", itemTypeStr.c_str, pVariableName);
-                    StrBuilder_AppendFmtLn(fp, 2 * 4, "%s_Delete(%s->pData[i]);", itemTypeStr.c_str, pVariableName);
-                    StrBuilder_AppendFmtLn(fp, 4, "}");
-                }
-                else if (!bIsPointer)
-                {
-                    StrBuilder_AppendFmtLn(fp, 4, "for (int i = 0 ; i < %s->Size; i++)", pVariableName);
-                    StrBuilder_AppendFmtLn(fp, 2 * 4, "%s_Destroy(&%s->pData[i]);", itemTypeStr.c_str, pVariableName);
-                    StrBuilder_AppendFmtLn(fp, 4, "}");
-                }
-                StrBuilder_AppendFmtIdent(fp, 4, "free(%s->pData);\n", pVariableName);
+                StrBuilder_AppendFmtLn(fp, 2 * 4, "%s_Delete(%s->pData[i]);", itemTypeStr.c_str, pVariableName);
+                StrBuilder_AppendFmtLn(fp, 4, "}");
+            }
+            else if (!bIsPointer)
+            {
+                StrBuilder_AppendFmtLn(fp, 4, "for (int i = 0 ; i < %s->Size; i++)", pVariableName);
+                StrBuilder_AppendFmtLn(fp, 2 * 4, "%s_Destroy(&%s->pData[i]);", itemTypeStr.c_str, pVariableName);
+                StrBuilder_AppendFmtLn(fp, 4, "}");
+            }
+            StrBuilder_AppendFmtIdent(fp, 4, "free(%s->pData);\n", pVariableName);
         }
         break;
         case BuildTypeCreate:
@@ -84,6 +86,7 @@ void ArrayPlugin_BuildDestroy(TProgram* program,
         }
         StrBuilder_Destroy(&itemTypeStr);
     }
+    return bInstanciated;
 }
 
 
@@ -106,17 +109,16 @@ bool ArrayPlugin_Type_CodePrint(TProgram* program,
                 Output_Append(fp, "Array(");
                 TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, false, fp);
                 Output_Append(fp, ")");
-
                 bResult = true;
-                Output_Append(fp, " ");
-                Output_Append(fp, "{");
+                //Output_Append(fp, " ");
+                //Output_Append(fp, "{");
 
-                TSpecifierQualifierList_CodePrint(program, options, &p->Args.pHead->TypeName.SpecifierQualifierList, false, fp);
+                //TSpecifierQualifierList_CodePrint(program, options, &p->Args.pHead->TypeName.SpecifierQualifierList, false, fp);
 
                 //TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, b, fp);
-                Output_Append(fp, "**pData; int Size, Capacity;");
+                //Output_Append(fp, "**pData; int Size, Capacity;");
 
-                Output_Append(fp, "}");
+                //Output_Append(fp, "}");
             }
             else
             {
@@ -161,13 +163,45 @@ TStructUnionSpecifier* TParameter_GetTypedefStruct(TProgram* program,
 }
 
 
+
+TDeclarationSpecifiers* TDeclaration_GetArgTypeSpecifier(TDeclaration* p, int index)
+{
+    TDeclarationSpecifiers* pResult = NULL;
+    TParameterTypeList *pArguments = TDeclaration_GetFunctionArguments(p);
+    int n = 0;
+    ForEachListItem(TParameter, pItem, &pArguments->ParameterList)
+    {
+        if (n == index)
+        {
+            pResult = &pItem->Specifiers;
+            break;
+        }
+        n++;
+    }
+    return pResult;
+}
+
+const char* TDeclaration_GetArgTypeName(TDeclaration* p, int index, StrBuilder* sb)
+{
+    TDeclarationSpecifiers* pDeclarationSpecifiers =
+        TDeclaration_GetArgTypeSpecifier(p, index);
+    if (pDeclarationSpecifiers)
+    {
+        Options options = OPTIONS_INIT;
+        options.bIncludeComments = false;
+        TDeclarationSpecifiers_CodePrint(NULL, &options, pDeclarationSpecifiers, false, sb);
+    }
+    return sb->c_str;
+}
+
+
+
 bool ArrayPlugin_CodePrint(TProgram* program,
     Options * options,
     TDeclaration* p,
     bool b,
     StrBuilder* fp)
 {
-
     const char* funcName = TDeclaration_GetFunctionName(p);
     if (funcName == NULL)
     {
@@ -179,8 +213,8 @@ bool ArrayPlugin_CodePrint(TProgram* program,
     {
         return false;
     }
-
-    const char* firstParameterName = TParameter_GetName(pArguments->ParameterList.pHead);
+    const char* firstParameterName =
+        TDeclaration_GetArgName(p, 0);
 
     if (firstParameterName == NULL)
     {
@@ -198,31 +232,30 @@ bool ArrayPlugin_CodePrint(TProgram* program,
     bool bInstanciated = false;
     if (IsSuffix(funcName, "_Add"))
     {
-        TParameter* pSecondParameter = pArguments->ParameterList.pHead->pNext;
-        if (pSecondParameter != NULL)
+        const char* secondParameterName =
+            TDeclaration_GetArgName(p, 1);
+
+        if (secondParameterName != NULL)
         {
-            const char* secondParameterName = TParameter_GetName(pSecondParameter);
-            if (secondParameterName != NULL)
-            {
-                StrBuilder itemTypeStr = STRBUILDER_INIT;
-                Options  options = OPTIONS_INIT;
-                TSpecifierQualifierList_CodePrint(program, &options, &pMainType->Args.pHead->TypeName.SpecifierQualifierList, false, &itemTypeStr);
+            StrBuilder itemTypeStr1 = STRBUILDER_INIT;
+            TDeclaration_GetArgTypeName(p, 0, &itemTypeStr1);
+            //Tem que ver se %s_Reserve existe
+            //senao existir gera um erro
 
+            StrBuilder itemTypeStr = STRBUILDER_INIT;
+            TDeclaration_GetArgTypeName(p, 1, &itemTypeStr);
 
-                //TDeclarationSpecifiers_CodePrint(program, options&, pMainType->Args.pHead->TypeName)
+            bInstanciated = true;
+            StrBuilder_AppendFmtLn(fp, 4, "if (%s_Reserve(%s, %s->Size + 1) > 0)", itemTypeStr1.c_str, firstParameterName, firstParameterName);
+            StrBuilder_AppendFmtLn(fp, 4, "{");
+            StrBuilder_AppendFmtLn(fp, 4 * 2, "%s->pData[%s->Size] = %s;", firstParameterName, firstParameterName, secondParameterName);
+            StrBuilder_AppendFmtLn(fp, 4 * 2, "%s->Size++;", firstParameterName);
+            StrBuilder_AppendFmtLn(fp, 4, "}");
+            StrBuilder_Destroy(&itemTypeStr);
+            StrBuilder_Destroy(&itemTypeStr1);
 
-                bInstanciated = true;
-                StrBuilder_AppendFmtLn(fp, 4, "if (Items_Reserve(%s, %s->Size + 1) > 0)", firstParameterName, firstParameterName);
-                
-                StrBuilder_AppendFmtLn(fp, 4, "{");
-                StrBuilder_AppendFmtLn(fp, 4 * 2, "%s->pData[%s->Size] = %s;", firstParameterName, firstParameterName, secondParameterName);
-                StrBuilder_AppendFmtLn(fp, 4 * 2, "%s->Size++;", firstParameterName);
-                StrBuilder_AppendFmtLn(fp, 4, "}");
-                
-
-                StrBuilder_Destroy(&itemTypeStr);
-            }
         }
+
     }//_Add
     else if (IsSuffix(funcName, "_Reserve"))
     {
@@ -251,7 +284,7 @@ bool ArrayPlugin_CodePrint(TProgram* program,
                 StrBuilder_AppendFmtLn(fp, 4 * 2, "}\n");
                 StrBuilder_AppendFmtLn(fp, 4, "}");
                 StrBuilder_AppendFmtLn(fp, 4, "return iResult;");
-                
+
                 StrBuilder_Destroy(&itemTypeStr);
             }
         }

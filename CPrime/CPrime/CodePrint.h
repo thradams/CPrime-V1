@@ -20,7 +20,7 @@ typedef enum
 typedef struct Options
 {
 	bool bExpandMacros;
-	bool bIncludeComments;
+	bool bIncludeComments _defval(1);
 	bool bDontPrintClueList;
 	int IdentationLevel;
 } Options;
@@ -57,3 +57,6 @@ bool TSpecifierQualifierList_CodePrint(TProgram* program,
 	TSpecifierQualifierList* pDeclarationSpecifiers,
 	bool b,
 	StrBuilder* fp);
+
+
+bool TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDeclarationSpecifiers* pDeclarationSpecifiers, bool b, StrBuilder* fp);

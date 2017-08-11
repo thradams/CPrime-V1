@@ -2412,3 +2412,8 @@ bool Scanner_MatchToken(Scanner* pScanner, Tokens token, bool bActive)
   Scanner_Match(pScanner);
   return b;
 }
+
+void TScannerItemList_Destroy(TScannerItemList* p)
+{
+    List_Destroy(ScannerItem, (p));
+}

@@ -7,13 +7,14 @@
 
 
 //Instancia as funcoes especias new create delete
-void MapPlugin_BuildDestroy(TProgram* program,
+bool MapPlugin_BuildDestroy(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
     BuildType buildType,
     StrBuilder* fp)
 {
+    bool bInstanciated = false;
     if (strcmp(pStructUnionSpecifier->TemplateName, "Map") == 0)
     {
         StrBuilder itemTypeStr = STRBUILDER_INIT;
@@ -40,29 +41,19 @@ void MapPlugin_BuildDestroy(TProgram* program,
             bool bIsPointer = TDeclarator_IsDirectPointer(&pTypeName->Declarator);
             bool bAuto =  TPointerList_IsAutoPointer(&pTypeName->Declarator.PointerList);
 
-        //TSpecifierQualifierList_is
-        StrBuilder_AppendFmt(fp, "%s *pItem = %s->pHead;\n", itemTypeStr.c_str, pVariableName);
-        StrBuilder_AppendFmt(fp, "while (pItem)\n");
-        StrBuilder_AppendFmt(fp, "{\n");
+           // StrBuilder_AppendFmt(fp, "{\n");
         
         if (bIsPointer)
         {
-            StrBuilder_AppendFmt(fp, "  %s *pCurrent = pItem;\n", itemTypeStr.c_str);
-            StrBuilder_AppendFmt(fp, "  pItem = pItem->pNext;\n");
-            if (bAuto)
-            {
-                StrBuilder_AppendFmt(fp, "  %s_Delete(pCurrent);\n", itemTypeStr.c_str);
-            }
+          
         }
         else
         {
-            StrBuilder_AppendFmt(fp, "  %s* pCurrent = pItem;\n", itemTypeStr.c_str);
-            StrBuilder_AppendFmt(fp, "  pItem = pItem->pNext;\n");
-            StrBuilder_AppendFmt(fp, "  %s_Destroy(pCurrent);\n", itemTypeStr.c_str);
+           
         }
 
         //printf("  T* pCurrent = pItem;\n");
-        StrBuilder_AppendFmt(fp, "}\n");
+        //StrBuilder_AppendFmt(fp, "}\n");
         }
         break;
         case BuildTypeCreate:
@@ -71,13 +62,14 @@ void MapPlugin_BuildDestroy(TProgram* program,
             break;
         
         case BuildTypeStaticInit:
-            StrBuilder_AppendFmt(fp, "NULL, NULL");
+            StrBuilder_AppendFmt(fp, "NULL, 0, 0");
             break;
         default:
             break;
         }
         StrBuilder_Destroy(&itemTypeStr);
     }
+    return bInstanciated;
 }
 
 
@@ -97,14 +89,10 @@ bool MapPlugin_Type_CodePrint(TProgram* program,
         {
             if (p->Args.pHead)
             {
+                Output_Append(fp, "Map(");
+                TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, false, fp);
+                Output_Append(fp, ")");
                 bResult = true;
-                Output_Append(fp, " ");
-                Output_Append(fp, "{");
-
-                TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, b, fp);
-                Output_Append(fp, "* pHead, *pTail;");
-
-                Output_Append(fp, "}");
             }
             else
             {
@@ -149,7 +137,7 @@ bool MapPlugin_CodePrint(TProgram* program,
                 if (pStructUnionSpecifier)
                 {
                     if (IsSuffix(functionName, "_Add") &&
-                        strcmp(pStructUnionSpecifier->TemplateName, "List") == 0)
+                        strcmp(pStructUnionSpecifier->TemplateName, "Map") == 0)
                     {
                         StrBuilder_Append(fp, "\n"
                             "    if (pList->pHead == NULL) {\n"

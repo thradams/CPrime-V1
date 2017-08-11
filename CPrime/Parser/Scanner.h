@@ -34,7 +34,9 @@ typedef ArrayT(TFile) TFileArray;
 
 typedef List(ScannerItem) TScannerItemList;
 #define TSCANNERITEMLIST_INIT LIST_INIT
-#define TScannerItemList_Destroy(p) List_Destroy(ScannerItem, (p))
+
+void TScannerItemList_Destroy(TScannerItemList* p);
+
 #define TScannerItemList_Swap(a, b) List_Swap(ScannerItem, (a), (b))
 
 

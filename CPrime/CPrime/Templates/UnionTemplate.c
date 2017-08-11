@@ -14,13 +14,15 @@ static bool UnionPlugin_CodePrintCore(TProgram* program,
 
 
 //Instancia as funcoes especias new create delete
-void UnionPlugin_BuildDestroy(TProgram* program,
+bool UnionPlugin_BuildDestroy(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
     BuildType buildType,
     StrBuilder* fp)
 {
+    bool bInstanciated = false;
+
     if (strcmp(pStructUnionSpecifier->TemplateName, "Union") == 0)
     {
         StrBuilder itemTypeStr = STRBUILDER_INIT;
@@ -71,6 +73,7 @@ void UnionPlugin_BuildDestroy(TProgram* program,
         }
         StrBuilder_Destroy(&itemTypeStr);
     }
+    return bInstanciated;
 }
 
 
@@ -88,20 +91,16 @@ bool UnionPlugin_Type_CodePrint(TProgram* program,
     {
         if (strcmp(p->TemplateName, "Union") == 0)
         {
-            if (p->Args.pHead)
+            int i = 0;
+            Output_Append(fp, "Union(");
+            ForEachListItem(TTemplateTypeSpecifierArgument, pItem, &p->Args)
             {
-                bResult = true;
-                Output_Append(fp, " ");
-                Output_Append(fp, "{");
-
-                Output_Append(fp, "int type;");
-
-                Output_Append(fp, "}");
-            }
-            else
-            {
-                //error
-            }
+                if (i > 0)
+                    Output_Append(fp, ",");
+                TTypeName_CodePrint(program, options, &pItem->TypeName, false, fp);
+                i++;
+            }            
+            Output_Append(fp, ")");
         }
     }
 

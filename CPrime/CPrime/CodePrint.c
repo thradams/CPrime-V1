@@ -1645,7 +1645,7 @@ bool TSpecifierQualifierList_CodePrint(TProgram* program,
     return b;
 }
 
-static bool TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDeclarationSpecifiers* pDeclarationSpecifiers, bool b, StrBuilder* fp)
+bool TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDeclarationSpecifiers* pDeclarationSpecifiers, bool b, StrBuilder* fp)
 {
 
     ForEachListItem(TSpecifier, pItem, pDeclarationSpecifiers)

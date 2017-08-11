@@ -7,13 +7,15 @@
 
 
 //Instancia as funcoes especias new create delete
-void ListPlugin_BuildDestroy(TProgram* program,
+bool ListPlugin_BuildDestroy(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
     BuildType buildType,
     StrBuilder* fp)
 {
+    bool bInstanciated = false;
+
     if (strcmp(pStructUnionSpecifier->TemplateName, "List") == 0)
     {
         StrBuilder itemTypeStr = STRBUILDER_INIT;
@@ -78,6 +80,7 @@ void ListPlugin_BuildDestroy(TProgram* program,
         }
         StrBuilder_Destroy(&itemTypeStr);
     }
+    return bInstanciated;
 }
 
 
@@ -88,7 +91,8 @@ void Output_Append(StrBuilder* p,
 bool ListPlugin_Type_CodePrint(TProgram* program,
     Options * options,
     TStructUnionSpecifier* p,
-    bool b, StrBuilder* fp)
+    bool b, 
+    StrBuilder* fp)
 {
     bool bResult = false;
     if (p->TemplateName != NULL)
@@ -97,14 +101,19 @@ bool ListPlugin_Type_CodePrint(TProgram* program,
         {
             if (p->Args.pHead)
             {
+                Output_Append(fp, "List(");
+                TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, false, fp);
+                Output_Append(fp, ")");
                 bResult = true;
-                Output_Append(fp, " ");
-                Output_Append(fp, "{");
 
-                TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, b, fp);
-                Output_Append(fp, "* pHead, *pTail;");
+                //bResult = true;
+                //Output_Append(fp, " ");
+                //Output_Append(fp, "{");
 
-                Output_Append(fp, "}");
+                //TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, b, fp);
+                //Output_Append(fp, "* pHead, *pTail;");
+
+                //Output_Append(fp, "}");
             }
             else
             {
@@ -151,15 +160,32 @@ bool ListPlugin_CodePrint(TProgram* program,
                     if (IsSuffix(functionName, "_Add") &&
                         strcmp(pStructUnionSpecifier->TemplateName, "List") == 0)
                     {
-                        StrBuilder_Append(fp, "\n"
-                            "    if (pList->pHead == NULL) {\n"
-                            "        pList->pHead = pItem; \n"
+                        //GetArgTypeName
+
+                        const char* arg1Name = 
+                            TDeclaration_GetArgName(p, 0);
+
+                        const char* arg2Name =
+                            TDeclaration_GetArgName(p, 1);
+
+
+                        StrBuilder_AppendFmtIdent(fp, 1* 4,  
+                            "\n"
+                            "    if (%s->pHead == NULL) {\n"
+                            "        %s->pHead = %s; \n"
                             "    }\n"
                             "    else\n"
                             "    {\n"
-                            "        pList->pTail->pNext = pItem; \n"                            
+                            "        %s->pTail->pNext = %s; \n"                            
                             "    }\n"
-                            "    pList->pTail = pItem; \n");
+                            "    %s->pTail = %s; \n",
+                            arg1Name, 
+                            arg1Name, 
+                            arg2Name, 
+                            arg1Name, 
+                            arg2Name, 
+                            arg1Name, 
+                            arg2Name);
                     }
 
                 }

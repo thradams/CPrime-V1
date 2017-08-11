@@ -10,6 +10,20 @@
 #include "MapTemplate.h"
 #include "ArrayTemplate.h"
 
+bool (*BuildDestroyFunctions[])(TProgram* program,
+    TStructUnionSpecifier* pStructUnionSpecifier,
+    const char* pVariableName,
+    bool bVariableNameIsPointer,
+    BuildType buildType,
+    StrBuilder* fp) = 
+{
+    ListPlugin_BuildDestroy,
+    UnionPlugin_BuildDestroy,
+    MapPlugin_BuildDestroy,
+    ArrayPlugin_BuildDestroy
+};
+
+
 //Instancia as funcoes especias new create delete
 void AllPlugin_BuildDestroy(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
@@ -18,33 +32,21 @@ void AllPlugin_BuildDestroy(TProgram* program,
     BuildType buildType,
     StrBuilder* fp)
 {
-    ListPlugin_BuildDestroy(program,
-                            pStructUnionSpecifier,
-                            pVariableName,
-                            bVariableNameIsPointer,
-                            buildType,
-                            fp);
-
-    UnionPlugin_BuildDestroy(program,
-                            pStructUnionSpecifier,
-                            pVariableName,
-                            bVariableNameIsPointer,
-                            buildType,
-                            fp);
-
-    MapPlugin_BuildDestroy(program,
-                            pStructUnionSpecifier,
-                            pVariableName,
-                            bVariableNameIsPointer,
-                            buildType,
-                            fp);
-
-    ArrayPlugin_BuildDestroy(program,
-                           pStructUnionSpecifier,
-                           pVariableName,
-                           bVariableNameIsPointer,
-                           buildType,
-                           fp);
+    bool bInstanciated = false;
+    for (int i = 0; 
+         i < sizeof(BuildDestroyFunctions) / sizeof(BuildDestroyFunctions[0]); 
+         i++)
+    {
+        bInstanciated = BuildDestroyFunctions[i](program,
+            pStructUnionSpecifier,
+            pVariableName,
+            bVariableNameIsPointer,
+            buildType,
+            fp);
+        if (bInstanciated)
+            break;
+    }
+    //return bInstanciated;
 }
 
 
