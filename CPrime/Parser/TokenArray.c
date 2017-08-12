@@ -50,22 +50,20 @@ void TokenArray_Clear(TokenArray* p)
 }
 
 
-void TokenArray_Init(TokenArray* p)
+void TokenArray_Init(TokenArray* p) _default
 {
-  TokenArray temp = TOKENARRAY_INIT;
-  *p = temp;
+    p->pItems = NULL;
+    p->Size = 0;
+    p->Capacity = 0;
 }
 
-TokenArray* TokenArray_Create()
+TokenArray* TokenArray_Create() _default
 {
-  TokenArray* p = (TokenArray*)malloc(sizeof * p);
-
-  if (p)
-  {
-    TokenArray_Init(p);
-  }
-
-  return p;
+    TokenArray *p = (TokenArray*) malloc(sizeof * p);
+    if (p != NULL) {
+        TokenArray_Init(p);
+    }
+    return p;
 }
 
 void TokenArray_Destroy(TokenArray* st)
@@ -80,13 +78,12 @@ void TokenArray_Swap(TokenArray* p1, TokenArray* p2)
   *p2 = temp;
 }
 
-void TokenArray_Delete(TokenArray* st)
+void TokenArray_Delete(TokenArray* st) _default
 {
-  if (st != NULL)
-  {
-    TokenArray_Destroy(st);
-    free(st);
-  }
+    if (st != NULL) {
+        TokenArray_Destroy(st);
+        free(st);
+    }
 }
 
 

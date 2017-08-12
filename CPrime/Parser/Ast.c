@@ -1703,6 +1703,23 @@ bool EvaluateConstantExpression(TExpression *  p, int *pResult)
 
 
 
+TDeclarationSpecifiers* TDeclaration_GetArgTypeSpecifier(TDeclaration* p, int index)
+{
+    TDeclarationSpecifiers* pResult = NULL;
+    TParameterTypeList *pArguments = TDeclaration_GetFunctionArguments(p);
+    int n = 0;
+    ForEachListItem(TParameter, pItem, &pArguments->ParameterList)
+    {
+        if (n == index)
+        {
+            pResult = &pItem->Specifiers;
+            break;
+        }
+        n++;
+    }
+    return pResult;
+}
+
 TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration* p)
 {
 	TParameterTypeList* pParameterTypeList = NULL;
@@ -1842,3 +1859,4 @@ int TDeclaration_GetNumberFuncArgs(TDeclaration* p)
     }
     return n;
 }
+

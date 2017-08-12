@@ -43,13 +43,12 @@ PPToken* PPToken_Create(const char* s, PPTokenType token)
 	return p;
 }
 
-void PPToken_Delete(PPToken * p)
+void PPToken_Delete(PPToken * p) _default
 {
-	if (p != 0)
-	{
-		PPToken_Destroy(p);
-		free(p);
-	}
+    if (p != NULL) {
+        PPToken_Destroy(p);
+        free(p);
+    }
 }
 
 void PPToken_DeleteVoid(void* pv)

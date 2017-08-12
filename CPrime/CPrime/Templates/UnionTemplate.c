@@ -86,11 +86,12 @@ bool UnionPlugin_Type_CodePrint(TProgram* program,
     TStructUnionSpecifier* p,
     bool b, StrBuilder* fp)
 {
-    bool bResult = false;
+    bool bInstanciated = false;
     if (p->TemplateName != NULL)
     {
         if (strcmp(p->TemplateName, "Union") == 0)
         {
+            bInstanciated = true;
             int i = 0;
             Output_Append(fp, "Union(");
             ForEachListItem(TTemplateTypeSpecifierArgument, pItem, &p->Args)
@@ -104,7 +105,7 @@ bool UnionPlugin_Type_CodePrint(TProgram* program,
         }
     }
 
-    return true;
+    return bInstanciated;
 }
 
 

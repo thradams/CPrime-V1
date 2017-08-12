@@ -104,6 +104,8 @@ int main(int argc, char* argv[])
 	
 
     Options options = OPTIONS_INIT;
+    //options.bShrink = true;
+
     bool bPrintPreprocessedToFile = false;
     bool bPrintPreprocessedToConsole = false;
     bool bPrintASTFile = false;

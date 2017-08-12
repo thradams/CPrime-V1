@@ -370,28 +370,28 @@ static bool TJumpStatement_CodePrint(TProgram* program, Options * options, TJump
 
     switch (p->token)
     {
-    case TK_GOTO: 
-        Output_Append(fp, "goto");        
+    case TK_GOTO:
+        Output_Append(fp, "goto");
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         Output_Append(fp, p->Identifier);
         break;
-    case  TK_CONTINUE: 
+    case  TK_CONTINUE:
         Output_Append(fp, "continue");
         break;
-    case TK_BREAK: 
+    case TK_BREAK:
         Output_Append(fp, "break");
         break;
-    case TK_RETURN: 
+    case TK_RETURN:
         Output_Append(fp, "return");
-        TNodeClueList_CodePrint(options, &p->ClueList1, fp);        
+        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         TExpression_CodePrint(program, options, p->pExpression, "", false, fp);
         break;
-    
+
     default:
         ASSERT(false);
     }
 
- 
+
     TNodeClueList_CodePrint(options, &p->ClueList2, fp);
     Output_Append(fp, ";");
 
@@ -500,7 +500,7 @@ static bool TStatement_CodePrint(TProgram* program, Options * options, TStatemen
     case TDoStatement_ID:
         TDoStatement_CodePrint(program, options, (TDoStatement*)p, b, fp);
         break;
-    
+
     default:
         ASSERT(false);
         break;
@@ -582,7 +582,7 @@ static bool TBlockItem_CodePrint(TProgram* program, Options * options, TBlockIte
         b = TExpressionStatement_CodePrint(program, options, (TExpressionStatement*)p, false, fp);
 
         break;
-    
+
 
     case TAsmStatement_ID:
 
@@ -1960,20 +1960,25 @@ static bool TDeclaration_CodePrint(TProgram* program,
         {
             TNodeClueList_CodePrint(options, &p->ClueList00, fp);
             StrBuilder_Append(fp, "_default");
-            TNodeClueList_CodePrint(options, &p->pCompoundStatementOpt->ClueList0, fp);
-            Output_Append(fp, "{\n");
 
-            DefaultFunctionDefinition_CodePrint(program,
-                options,
-                p,
-                b,
-                fp);
+            if (options->bShrink)
+            {
+                Output_Append(fp, ";");
+            }
+            else
+            {
+                TNodeClueList_CodePrint(options, &p->pCompoundStatementOpt->ClueList0, fp);
+                Output_Append(fp, "{\n");
 
-            //Se colocar isso vai acumulando cada vez que rodar
-            //TNodeClueList_CodePrint(options, &p->pCompoundStatementOpt->ClueList1, fp);
-            Output_Append(fp, "}");
+                DefaultFunctionDefinition_CodePrint(program,
+                    options,
+                    p,
+                    b,
+                    fp);
 
+                Output_Append(fp, "}");
 
+            }
             return true;
         }
         else
@@ -1994,20 +1999,29 @@ static bool TDeclaration_CodePrint(TProgram* program,
         if (p->bDefault)
         {
 
-            TNodeClueList_CodePrint(options, &p->ClueList00, fp);
-            StrBuilder_Append(fp, "_default");
-            //Output_Append(fp, " /*default*/\n");
-            TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-            Output_Append(fp, "\n{\n");
+            if (!options->bShrink)
+            {
+                TNodeClueList_CodePrint(options, &p->ClueList00, fp);
+                StrBuilder_Append(fp, "_default");
+                //Output_Append(fp, " /*default*/\n");
+                TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+                Output_Append(fp, "\n{\n");
 
-            DefaultFunctionDefinition_CodePrint(program,
-                options,
-                p,
-                b,
-                fp);
+                DefaultFunctionDefinition_CodePrint(program,
+                    options,
+                    p,
+                    b,
+                    fp);
 
-            Output_Append(fp, "\n");
-            Output_Append(fp, "}");
+                Output_Append(fp, "\n");
+                Output_Append(fp, "}");
+            }
+            else
+            {
+                TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+                StrBuilder_Append(fp, " _default");                
+                Output_Append(fp, ";");
+            }
 
             return true;
         }
@@ -2931,7 +2945,16 @@ void TStructUnionSpecifier_BuildDestroy(TProgram* program,
 {
     if (buildType == BuildTypeStaticInit)
     {
-        StrBuilder_AppendFmt(fp, "{");
+        if (pStructUnionSpecifier->StructDeclarationList.size == 0 &&
+            bVariableNameIsPointer)
+        {
+            /*struct X* pNext;*/            
+            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/NULL", pVariableName);            
+        }
+        else            
+        {
+            StrBuilder_AppendFmt(fp, "{");
+        }        
     }
 
     //TStructUnionSpecifier* pStructUnionSpecifier =
@@ -2951,91 +2974,119 @@ void TStructUnionSpecifier_BuildDestroy(TProgram* program,
         {
             bool bFirstItem = true;
 
-            for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
+            if (pStructUnionSpecifier->StructDeclarationList.size == 0)
             {
-                TAnyStructDeclaration* pAnyStructDeclaration =
-                    pStructUnionSpecifier->StructDeclarationList.pItems[i];
 
-                TStructDeclaration* pStructDeclaration =
-                    TAnyStructDeclaration_As_TStructDeclaration(pAnyStructDeclaration);
-
-
-
-                if (pStructDeclaration != NULL)
+                /*Exemplo:
+                struct X {
+                  struct X* pNext;
+                }
+                */
+                if (bVariableNameIsPointer && buildType == BuildTypeInit)
                 {
-                    TStructDeclarator* pStructDeclarator =
-                        pStructDeclaration->DeclaratorList.pHead;
+                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = NULL;\n", pVariableName);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
+                {
+                    TAnyStructDeclaration* pAnyStructDeclaration =
+                        pStructUnionSpecifier->StructDeclarationList.pItems[i];
 
-                    StrBuilder strVariableName = STRBUILDER_INIT;
+                    TStructDeclaration* pStructDeclaration =
+                        TAnyStructDeclaration_As_TStructDeclaration(pAnyStructDeclaration);
 
-                    while (pStructDeclarator)
+
+
+                    if (pStructDeclaration != NULL)
                     {
+                        TStructDeclarator* pStructDeclarator =
+                            pStructDeclaration->DeclaratorList.pHead;
 
-                        if (bFirstItem)
+                        StrBuilder strVariableName = STRBUILDER_INIT;
+
+                        while (pStructDeclarator)
                         {
-                            bFirstItem = false;
-                        }
-                        else
-                        {
-                            if (buildType == BuildTypeStaticInit)
-                            {
-                                StrBuilder_AppendFmt(fp, ",");
-                            }
-                        }
 
-                        const char* declaratorName = TDeclarator_GetName(pStructDeclarator->pDeclarator);
-
-                        //if (buildType != BuildTypeStaticInit)
-                        {
-                            if (pVariableName)
+                            if (bFirstItem)
                             {
-                                StrBuilder_Set(&strVariableName, pVariableName);
-                            }
-
-                            if (bVariableNameIsPointer)
-                            {
-                                StrBuilder_Append(&strVariableName, "->");
+                                bFirstItem = false;
                             }
                             else
                             {
-                                StrBuilder_Append(&strVariableName, ".");
+                                if (buildType == BuildTypeStaticInit)
+                                {
+                                    StrBuilder_AppendFmt(fp, ",");
+                                }
                             }
 
-                            StrBuilder_Append(&strVariableName, declaratorName);
-                        }
+                            const char* declaratorName = TDeclarator_GetName(pStructDeclarator->pDeclarator);
 
-                        bool bStructDeclaratorIsPointer =
-                            TPointerList_IsPointer(&pStructDeclarator->pDeclarator->PointerList);
-                        //ver se eh typedef p ponteiro
-
-                        if (buildType == BuildTypeStaticInit)
-                        {
-                            if (pStructDeclarator->pInitializer)
+                            //if (buildType != BuildTypeStaticInit)
                             {
-                                if (pStructDeclarator->pInitializer)
+                                if (pVariableName)
                                 {
-                                    StrBuilder sb = STRBUILDER_INIT;
-                                    Options options = OPTIONS_INIT;
-                                    options.bExpandMacros = true;
-                                    TInitializer_CodePrint(program,
-                                        &options,
-                                        pStructDeclarator->pDeclarator,
-                                        (TDeclarationSpecifiers*)&pStructDeclaration->SpecifierQualifierList,
-                                        bStructDeclaratorIsPointer,
-                                        pStructDeclarator->pInitializer,
-                                        false,
-                                        &sb);
-                                    StrBuilder_AppendFmt(fp, "%s", sb.c_str);
-                                    StrBuilder_Destroy(&sb);
-                                    //TInitializer_codeprint
+                                    StrBuilder_Set(&strVariableName, pVariableName);
+                                }
+
+                                if (bVariableNameIsPointer)
+                                {
+                                    StrBuilder_Append(&strVariableName, "->");
                                 }
                                 else
                                 {
-                                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/0", pVariableName);
+                                    StrBuilder_Append(&strVariableName, ".");
+                                }
+
+                                StrBuilder_Append(&strVariableName, declaratorName);
+                            }
+
+                            bool bStructDeclaratorIsPointer =
+                                TPointerList_IsPointer(&pStructDeclarator->pDeclarator->PointerList);
+                            //ver se eh typedef p ponteiro
+
+                            if (buildType == BuildTypeStaticInit)
+                            {
+                                if (pStructDeclarator->pInitializer)
+                                {
+                                    if (pStructDeclarator->pInitializer)
+                                    {
+                                        StrBuilder sb = STRBUILDER_INIT;
+                                        Options options = OPTIONS_INIT;
+                                        options.bExpandMacros = true;
+                                        TInitializer_CodePrint(program,
+                                            &options,
+                                            pStructDeclarator->pDeclarator,
+                                            (TDeclarationSpecifiers*)&pStructDeclaration->SpecifierQualifierList,
+                                            bStructDeclaratorIsPointer,
+                                            pStructDeclarator->pInitializer,
+                                            false,
+                                            &sb);
+                                        StrBuilder_AppendFmt(fp, "%s", sb.c_str);
+                                        StrBuilder_Destroy(&sb);
+                                        //TInitializer_codeprint
+                                    }
+                                    else
+                                    {
+                                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/0", pVariableName);
+                                    }
+                                }
+                                else
+                                {
+                                    BuildDestroy(program,
+                                        options,
+                                        &pStructDeclaration->SpecifierQualifierList,
+                                        pStructDeclarator->pDeclarator,
+                                        pStructDeclarator->pInitializer,
+                                        strVariableName.c_str,
+                                        bStructDeclaratorIsPointer,
+                                        buildType, fp);
                                 }
                             }
                             else
                             {
+
                                 BuildDestroy(program,
                                     options,
                                     &pStructDeclaration->SpecifierQualifierList,
@@ -3043,37 +3094,35 @@ void TStructUnionSpecifier_BuildDestroy(TProgram* program,
                                     pStructDeclarator->pInitializer,
                                     strVariableName.c_str,
                                     bStructDeclaratorIsPointer,
-                                    buildType, fp);
+                                    buildType,
+                                    fp);
                             }
-                        }
-                        else
-                        {
 
-                            BuildDestroy(program,
-                                options,
-                                &pStructDeclaration->SpecifierQualifierList,
-                                pStructDeclarator->pDeclarator,
-                                pStructDeclarator->pInitializer,
-                                strVariableName.c_str,
-                                bStructDeclaratorIsPointer,
-                                buildType,
-                                fp);
+                            pStructDeclarator = (pStructDeclarator)->pNext;
                         }
 
-                        pStructDeclarator = (pStructDeclarator)->pNext;
+                        StrBuilder_Destroy(&strVariableName);
                     }
-
-                    StrBuilder_Destroy(&strVariableName);
                 }
+                //                    
             }
-            //                    
         }
     }
 
     if (buildType == BuildTypeStaticInit)
     {
-        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "}");
+        if (pStructUnionSpecifier->StructDeclarationList.size == 0 &&
+            bVariableNameIsPointer)
+        {
+            
+        }
+        else
+        {
+            StrBuilder_AppendFmt(fp, "}");
+        }
     }
+
+
 }
 
 void BuildDestroy(TProgram* program,
@@ -3290,6 +3339,7 @@ void BuildDestroy(TProgram* program,
         }
         else
         {
+
             TStructUnionSpecifier* pStructUnionSpecifier =
                 TSpecifier_As_TStructUnionSpecifier(pSpecifier);
             TStructUnionSpecifier_BuildDestroy(program,

@@ -33,8 +33,8 @@ bool ListPlugin_BuildDestroy(TProgram* program,
         switch (buildType)
         {
         case BuildTypeInit:
-            StrBuilder_AppendFmt(fp, "%s->pHead = NULL;\n", pVariableName);
-            StrBuilder_AppendFmt(fp, "%s->pTail = NULL;\n", pVariableName);
+            StrBuilder_AppendFmtLn(fp, 1 * 4, "%s->pHead = NULL;", pVariableName);
+            StrBuilder_AppendFmtLn(fp, 1 * 4, "%s->pTail = NULL;", pVariableName);
             break;
         case BuildTypeDestroy:
         case BuildTypeDelete:
@@ -43,37 +43,37 @@ bool ListPlugin_BuildDestroy(TProgram* program,
             bool bAuto =  TPointerList_IsAutoPointer(&pTypeName->Declarator.PointerList);
 
         //TSpecifierQualifierList_is
-        StrBuilder_AppendFmt(fp, "%s *pItem = %s->pHead;\n", itemTypeStr.c_str, pVariableName);
-        StrBuilder_AppendFmt(fp, "while (pItem)\n");
-        StrBuilder_AppendFmt(fp, "{\n");
+        StrBuilder_AppendFmtLn(fp, 1 * 4, "%s *pItem = %s->pHead;", itemTypeStr.c_str, pVariableName);
+        StrBuilder_AppendFmtLn(fp, 1 * 4, "while (pItem)");
+        StrBuilder_AppendFmtLn(fp, 1 * 4, "{");
         
         if (bIsPointer)
         {
-            StrBuilder_AppendFmt(fp, "  %s *pCurrent = pItem;\n", itemTypeStr.c_str);
-            StrBuilder_AppendFmt(fp, "  pItem = pItem->pNext;\n");
+            StrBuilder_AppendFmtLn(fp, 2 * 4, "%s *pCurrent = pItem;", itemTypeStr.c_str);
+            StrBuilder_AppendFmtLn(fp, 2 * 4, "pItem = pItem->pNext;");
             if (bAuto)
             {
-                StrBuilder_AppendFmt(fp, "  %s_Delete(pCurrent);\n", itemTypeStr.c_str);
+                StrBuilder_AppendFmtLn(fp, 2 * 4, "%s_Delete(pCurrent);", itemTypeStr.c_str);
             }
         }
         else
         {
-            StrBuilder_AppendFmt(fp, "  %s* pCurrent = pItem;\n", itemTypeStr.c_str);
-            StrBuilder_AppendFmt(fp, "  pItem = pItem->pNext;\n");
-            StrBuilder_AppendFmt(fp, "  %s_Destroy(pCurrent);\n", itemTypeStr.c_str);
+            StrBuilder_AppendFmtLn(fp, 2 * 4, "%s* pCurrent = pItem;", itemTypeStr.c_str);
+            StrBuilder_AppendFmtLn(fp, 2 * 4, "pItem = pItem->pNext;");
+            StrBuilder_AppendFmtLn(fp, 2 * 4, "%s_Destroy(pCurrent);", itemTypeStr.c_str);
         }
 
         //printf("  T* pCurrent = pItem;\n");
-        StrBuilder_AppendFmt(fp, "}\n");
+        StrBuilder_AppendFmtLn(fp, 1 * 4, "}");
         }
         break;
         case BuildTypeCreate:
-            StrBuilder_AppendFmt(fp, "%s->pHead = NULL;\n", pVariableName);
-            StrBuilder_AppendFmt(fp, "%s->pTail = NULL;\n", pVariableName);
+            StrBuilder_AppendFmtLn(fp, 1 * 4, "%s->pHead = NULL;", pVariableName);
+            StrBuilder_AppendFmtLn(fp, 1 * 4, "%s->pTail = NULL;", pVariableName);
             break;
         
         case BuildTypeStaticInit:
-            StrBuilder_AppendFmt(fp, "NULL, NULL");
+            StrBuilder_AppendFmt(fp, "0");
             break;
         default:
             break;
@@ -94,6 +94,7 @@ bool ListPlugin_Type_CodePrint(TProgram* program,
     bool b, 
     StrBuilder* fp)
 {
+    bool bInstanciated = false;
     bool bResult = false;
     if (p->TemplateName != NULL)
     {
@@ -101,19 +102,11 @@ bool ListPlugin_Type_CodePrint(TProgram* program,
         {
             if (p->Args.pHead)
             {
+                bInstanciated = true;
                 Output_Append(fp, "List(");
                 TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, false, fp);
                 Output_Append(fp, ")");
                 bResult = true;
-
-                //bResult = true;
-                //Output_Append(fp, " ");
-                //Output_Append(fp, "{");
-
-                //TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, b, fp);
-                //Output_Append(fp, "* pHead, *pTail;");
-
-                //Output_Append(fp, "}");
             }
             else
             {
@@ -122,7 +115,7 @@ bool ListPlugin_Type_CodePrint(TProgram* program,
         }
     }
 
-    return true;
+    return bInstanciated;
 }
 
 
@@ -136,61 +129,52 @@ bool ListPlugin_CodePrint(TProgram* program,
     bool b,
     StrBuilder* fp)
 {
-    if (p->InitDeclaratorList.pHead != NULL &&
-        p->InitDeclaratorList.pHead->pNext == NULL)
+    bool bInstanciated = false;
+    
+    const char* functionName = TDeclaration_GetFunctionName(p);
+    int nArgs = TDeclaration_GetNumberFuncArgs(p);
+    
+    if (nArgs > 0)
     {
-        TInitDeclarator *pInitDeclarator =
-            p->InitDeclaratorList.pHead;
+        TDeclarationSpecifiers* pFirst =
+            TDeclaration_GetArgTypeSpecifier(p, 0);
 
-        const char* functionName =
-            pInitDeclarator->pDeclarator->pDirectDeclarator->Identifier;
+        TStructUnionSpecifier* pStructUnionSpecifier =
+            GetStructSpecifier(program, pFirst);
+        if (strcmp(pStructUnionSpecifier->TemplateName, "List") != 0)
+        {
+            return false;
+        }
+    }
+    
+    if (nArgs == 1)
+    {
+        const char* arg1Name =
+            TDeclaration_GetArgName(p, 0);
+
+    }
+    else if (nArgs == 2)
+    {
+        const char* arg1Name =
+            TDeclaration_GetArgName(p, 0);
+
+        const char* arg2Name =
+            TDeclaration_GetArgName(p, 1);
 
         if (IsSuffix(functionName, "_Add"))
         {
-            TParameter* pParameterDeclaration =
-                pInitDeclarator->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
-
-            if (pParameterDeclaration != NULL)
-            {
-                TStructUnionSpecifier* pStructUnionSpecifier =
-                    GetStructSpecifier(program, &pParameterDeclaration->Specifiers);
-
-                if (pStructUnionSpecifier)
-                {
-                    if (IsSuffix(functionName, "_Add") &&
-                        strcmp(pStructUnionSpecifier->TemplateName, "List") == 0)
-                    {
-                        //GetArgTypeName
-
-                        const char* arg1Name = 
-                            TDeclaration_GetArgName(p, 0);
-
-                        const char* arg2Name =
-                            TDeclaration_GetArgName(p, 1);
-
-
-                        StrBuilder_AppendFmtIdent(fp, 1* 4,  
-                            "\n"
-                            "    if (%s->pHead == NULL) {\n"
-                            "        %s->pHead = %s; \n"
-                            "    }\n"
-                            "    else\n"
-                            "    {\n"
-                            "        %s->pTail->pNext = %s; \n"                            
-                            "    }\n"
-                            "    %s->pTail = %s; \n",
-                            arg1Name, 
-                            arg1Name, 
-                            arg2Name, 
-                            arg1Name, 
-                            arg2Name, 
-                            arg1Name, 
-                            arg2Name);
-                    }
-
-                }
-            }
-        }//_Add
+            bInstanciated = true;
+            StrBuilder_AppendFmtLn(fp, 1 * 4, "if (%s->pHead == NULL)", arg1Name);
+            StrBuilder_AppendFmtLn(fp, 1 * 4, "{");
+            StrBuilder_AppendFmtLn(fp, 2 * 4, "%s->pHead = %s;", arg1Name, arg2Name);
+            StrBuilder_AppendFmtLn(fp, 1 * 4, "}");
+            StrBuilder_AppendFmtLn(fp, 1 * 4, "else");
+            StrBuilder_AppendFmtLn(fp, 1 * 4, "{");
+            StrBuilder_AppendFmtLn(fp, 2 * 4, "%s->pTail->pNext = %s;", arg1Name, arg2Name);
+            StrBuilder_AppendFmtLn(fp, 1 * 4, "}");
+            StrBuilder_AppendFmtLn(fp, 1 * 4, "%s->pTail = %s;", arg1Name, arg2Name);
+        }
     }
-    return false;
+    
+    return bInstanciated;
 }

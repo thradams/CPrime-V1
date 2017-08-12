@@ -10,6 +10,8 @@
 #include "MapTemplate.h"
 #include "ArrayTemplate.h"
 
+#define SIZEOFARRAY(x) (sizeof(x)/sizeof((x)[0]))
+
 bool (*BuildDestroyFunctions[])(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
@@ -23,9 +25,32 @@ bool (*BuildDestroyFunctions[])(TProgram* program,
     ArrayPlugin_BuildDestroy
 };
 
+bool(*Type_CodePrint[])(TProgram* program,
+    Options * options,
+    TStructUnionSpecifier* p,
+    bool b,
+    StrBuilder* fp) =
+{
+    ListPlugin_Type_CodePrint,
+    UnionPlugin_Type_CodePrint,
+    MapPlugin_Type_CodePrint,
+    ArrayPlugin_Type_CodePrint
+};
+bool(*CodePrint[])(TProgram* program,
+    Options * options,
+    TDeclaration* p,
+    bool b,
+    StrBuilder* fp) =
+{
+    ListPlugin_CodePrint,
+    UnionPlugin_CodePrint,
+    MapPlugin_CodePrint,
+    ArrayPlugin_CodePrint
+};
+
 
 //Instancia as funcoes especias new create delete
-void AllPlugin_BuildDestroy(TProgram* program,
+bool AllPlugin_BuildDestroy(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
@@ -33,9 +58,8 @@ void AllPlugin_BuildDestroy(TProgram* program,
     StrBuilder* fp)
 {
     bool bInstanciated = false;
-    for (int i = 0; 
-         i < sizeof(BuildDestroyFunctions) / sizeof(BuildDestroyFunctions[0]); 
-         i++)
+    
+    for (int i = 0;  i < SIZEOFARRAY(BuildDestroyFunctions); i++)
     {
         bInstanciated = BuildDestroyFunctions[i](program,
             pStructUnionSpecifier,
@@ -46,7 +70,7 @@ void AllPlugin_BuildDestroy(TProgram* program,
         if (bInstanciated)
             break;
     }
-    //return bInstanciated;
+    return bInstanciated;
 }
 
 
@@ -59,28 +83,20 @@ bool AllPlugin_Type_CodePrint(TProgram* program,
     TStructUnionSpecifier* p,
     bool b, StrBuilder* fp)
 {
-    ListPlugin_Type_CodePrint(program,
-                              options,
-                              p,
-                              b, fp);
 
-    UnionPlugin_Type_CodePrint(program,
-                              options,
-                              p,
-                              b, fp);
-
-    MapPlugin_Type_CodePrint(program,
-                               options,
-                               p,
-                               b, fp);
-
-    ArrayPlugin_Type_CodePrint(program,
-                             options,
-                             p,
-                             b, fp);
-
-
-    return true;
+    bool bInstanciated = false;
+    for (int i = 0; i < 4/* SIZEOFARRAY(Type_CodePrint)*/; i++)
+    {
+        bInstanciated = Type_CodePrint[i](program,
+            options,
+            p,
+            b,
+            fp);
+        if (bInstanciated)
+            break;
+    }
+ 
+    return bInstanciated;
 }
 
 
@@ -94,29 +110,16 @@ bool AllPlugin_CodePrint(TProgram* program,
     bool b,
     StrBuilder* fp)
 {
-    ListPlugin_CodePrint( program,
-                         options,
-                         p,
-                         b,
-                         fp);
-
-    MapPlugin_CodePrint(program,
-                         options,
-                         p,
-                         b,
-                         fp);
-
-    UnionPlugin_CodePrint(program,
-                        options,
-                        p,
-                        b,
-                        fp);
-
-    ArrayPlugin_CodePrint(program,
-                          options,
-                          p,
-                          b,
-                          fp);
-
-    return false;
+    bool bInstanciated = false;
+    for (int i = 0; i < SIZEOFARRAY(CodePrint); i++)
+    {
+        bInstanciated = CodePrint[i](program,
+            options,
+            p,
+            b,
+            fp);
+        if (bInstanciated)
+            break;
+    }
+    return bInstanciated;
 }

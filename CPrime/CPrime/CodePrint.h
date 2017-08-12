@@ -23,9 +23,10 @@ typedef struct Options
 	bool bIncludeComments _defval(1);
 	bool bDontPrintClueList;
 	int IdentationLevel;
+    bool bShrink;
 } Options;
 
-#define OPTIONS_INIT {false, true, false, 0}
+#define OPTIONS_INIT {false, true, false, 0, false}
 
 void Options_Destroy(Options* options);
 

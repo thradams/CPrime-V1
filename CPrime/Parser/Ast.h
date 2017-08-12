@@ -580,7 +580,7 @@ bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList* p);
 
 
-typedef List(TSpecifier) TDeclarationSpecifiers;
+typedef List(TSpecifier) TDeclarationSpecifiers; //tODO pode ser 4 TSpecifier no max
 #define TDECLARATION_SPECIFIERS_INIT LIST_INIT
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers);
 
@@ -816,6 +816,7 @@ typedef struct
 #define TFUNCVARDECLARATION_INIT { {TDeclaration_ID}, TDECLARATION_SPECIFIERS_INIT, LIST_INIT, NULL,  -1, -1, TSCANNERITEMLIST_INIT,  false, TSCANNERITEMLIST_INIT}
 CREATETYPE(TDeclaration, TFUNCVARDECLARATION_INIT)
 
+TDeclarationSpecifiers* TDeclaration_GetArgTypeSpecifier(TDeclaration* p, int index);
 void TDeclaration_Destroy(TDeclaration* p);
 
 const char* TDeclaration_GetArgName(TDeclaration* p, int index);
