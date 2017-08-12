@@ -158,7 +158,7 @@ TStructUnionSpecifier* TParameter_GetTypedefStruct(TProgram* program,
 const char* TDeclaration_GetArgTypeName(TDeclaration* p, int index, StrBuilder* sb);
 
 
-bool ArrayPlugin_CodePrint(TProgram* program,
+bool ArrayPlugin_InstanciateFunction(TProgram* program,
     Options * options,
     TDeclaration* p,
     bool b,

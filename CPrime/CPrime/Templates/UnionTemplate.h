@@ -17,7 +17,7 @@ bool UnionPlugin_InstanciateType(TProgram* program,
                                bool b, StrBuilder* fp);
 
 //Implementa 'default'
-bool UnionPlugin_CodePrint(TProgram* program,
+bool UnionPlugin_InstanciateFunction(TProgram* program,
                           Options * options,
                           TDeclaration* p,
                           bool b,

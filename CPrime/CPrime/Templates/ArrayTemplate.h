@@ -17,7 +17,7 @@ bool ArrayPlugin_InstanciateType(TProgram* program,
                                bool b, StrBuilder* fp);
 
 //Implementa 'default'
-bool ArrayPlugin_CodePrint(TProgram* program,
+bool ArrayPlugin_InstanciateFunction(TProgram* program,
                           Options * options,
                           TDeclaration* p,
                           bool b,

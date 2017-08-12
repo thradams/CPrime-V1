@@ -123,7 +123,7 @@ bool IsSuffix(const char* s, const char* suffix);
 TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifiers* specifiers);
 
 //Implementa 'default'
-bool ListPlugin_CodePrint(TProgram* program,
+bool ListPlugin_InstanciateFunction(TProgram* program,
     Options * options,
     TDeclaration* p,
     bool b,

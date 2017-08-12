@@ -17,7 +17,7 @@ bool ListPlugin_InstanciateType(TProgram* program,
                                bool b, StrBuilder* fp);
 
 //Implementa 'default'
-bool ListPlugin_CodePrint(TProgram* program,
+bool ListPlugin_InstanciateFunction(TProgram* program,
                           Options * options,
                           TDeclaration* p,
                           bool b,

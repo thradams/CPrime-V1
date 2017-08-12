@@ -42,10 +42,10 @@ bool(*CodePrint[])(TProgram* program,
     bool b,
     StrBuilder* fp) =
 {
-    ListPlugin_CodePrint,
-    UnionPlugin_CodePrint,
-    MapPlugin_CodePrint,
-    ArrayPlugin_CodePrint
+    ListPlugin_InstanciateFunction,
+    UnionPlugin_InstanciateFunction,
+    MapPlugin_InstanciateFunction,
+    ArrayPlugin_InstanciateFunction
 };
 
 

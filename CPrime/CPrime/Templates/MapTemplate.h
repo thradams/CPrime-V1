@@ -17,7 +17,7 @@ bool MapPlugin_InstanciateType(TProgram* program,
                                bool b, StrBuilder* fp);
 
 //Implementa 'default'
-bool MapPlugin_CodePrint(TProgram* program,
+bool MapPlugin_InstanciateFunction(TProgram* program,
                           Options * options,
                           TDeclaration* p,
                           bool b,

@@ -200,7 +200,7 @@ static bool UnionPlugin_CodePrintCore(TProgram* program,
 
 
 //Implementa 'default'
-bool UnionPlugin_CodePrint(TProgram* program,
+bool UnionPlugin_InstanciateFunction(TProgram* program,
                            Options * options,
                            TDeclaration* p,
                            bool b,

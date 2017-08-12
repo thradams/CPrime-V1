@@ -130,7 +130,7 @@ TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifi
 const char* TDeclaration_GetArgTypeName(TDeclaration* p, int index, StrBuilder* sb);
 
 //Implementa 'default'
-bool MapPlugin_CodePrint(TProgram* program,
+bool MapPlugin_InstanciateFunction(TProgram* program,
     Options * options,
     TDeclaration* p,
     bool b,
