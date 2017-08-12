@@ -19,10 +19,10 @@ bool (*BuildDestroyFunctions[])(TProgram* program,
     BuildType buildType,
     StrBuilder* fp) = 
 {
-    ListPlugin_BuildDestroy,
-    UnionPlugin_BuildDestroy,
-    MapPlugin_BuildDestroy,
-    ArrayPlugin_BuildDestroy
+    ListPlugin_InstanciateSpecialFunctions,
+    UnionPlugin_InstanciateSpecialFunctions,
+    MapPlugin_InstanciateSpecialFunctions,
+    ArrayPlugin_InstanciateSpecialFunctions
 };
 
 bool(*Type_CodePrint[])(TProgram* program,
@@ -31,10 +31,10 @@ bool(*Type_CodePrint[])(TProgram* program,
     bool b,
     StrBuilder* fp) =
 {
-    ListPlugin_Type_CodePrint,
-    UnionPlugin_Type_CodePrint,
-    MapPlugin_Type_CodePrint,
-    ArrayPlugin_Type_CodePrint
+    ListPlugin_InstanciateType,
+    UnionPlugin_InstanciateType,
+    MapPlugin_InstanciateType,
+    ArrayPlugin_InstanciateType
 };
 bool(*CodePrint[])(TProgram* program,
     Options * options,
@@ -50,7 +50,7 @@ bool(*CodePrint[])(TProgram* program,
 
 
 //Instancia as funcoes especias new create delete
-bool AllPlugin_BuildDestroy(TProgram* program,
+bool AllPlugin_InstanciateSpecialFunctions(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
@@ -78,7 +78,7 @@ void Output_Append(StrBuilder* p,
     const char* source);
 
 //Gera estrutura de ad
-bool AllPlugin_Type_CodePrint(TProgram* program,
+bool AllPlugin_InstanciateType(TProgram* program,
     Options * options,
     TStructUnionSpecifier* p,
     bool b, StrBuilder* fp)

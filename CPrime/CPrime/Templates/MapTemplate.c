@@ -7,7 +7,7 @@
 
 
 //Instancia as funcoes especias new create delete
-bool MapPlugin_BuildDestroy(TProgram* program,
+bool MapPlugin_InstanciateSpecialFunctions(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
@@ -95,7 +95,7 @@ void Output_Append(StrBuilder* p,
     const char* source);
 
 //Gera estrutura de ad
-bool MapPlugin_Type_CodePrint(TProgram* program,
+bool MapPlugin_InstanciateType(TProgram* program,
     Options * options,
     TStructUnionSpecifier* p,
     bool b, StrBuilder* fp)

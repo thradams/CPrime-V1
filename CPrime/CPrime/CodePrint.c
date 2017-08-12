@@ -972,7 +972,7 @@ static bool TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
     if (p->TemplateName != NULL)
     {
 
-        AllPlugin_Type_CodePrint(program,
+        AllPlugin_InstanciateType(program,
             options,
             p,
             b,
@@ -2303,7 +2303,7 @@ void BuildDestroy(TProgram* program,
     BuildType buildType,
     StrBuilder* fp);
 
-void Typedef_BuildDestroy(TProgram* program,
+void Typedef_InstanciateSpecialFunctions(TProgram* program,
     Options* options,
     TDeclaration* pDeclaration2,
     TInitializer* pInitializer,
@@ -2708,7 +2708,7 @@ void Typedef_BuildDestroy(TProgram* program,
 }
 
 
-void TEnumSpecifier_BuildDestroy(TProgram* program,
+void TEnumSpecifier_InstanciateSpecialFunctions(TProgram* program,
     Options* options,
     TSpecifierQualifierList* pSpecifierQualifierList,
     TEnumSpecifier* pSingleTypeSpecifier,
@@ -2815,7 +2815,7 @@ static const char * InitValueForType(Tokens token)
     }
     return "0";
 }
-void TSingleTypeSpecifier_BuildDestroy(TProgram* program,
+void TSingleTypeSpecifier_InstanciateSpecialFunctions(TProgram* program,
     Options* options,
     TSpecifierQualifierList* pSpecifierQualifierList,
     TSingleTypeSpecifier* pSingleTypeSpecifier,
@@ -2935,7 +2935,7 @@ void TSingleTypeSpecifier_BuildDestroy(TProgram* program,
 
 
 
-void TStructUnionSpecifier_BuildDestroy(TProgram* program,
+void TStructUnionSpecifier_InstanciateSpecialFunctions(TProgram* program,
     Options* options,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
@@ -2964,7 +2964,7 @@ void TStructUnionSpecifier_BuildDestroy(TProgram* program,
     {
         if (pStructUnionSpecifier->TemplateName != NULL)
         {
-            AllPlugin_BuildDestroy(program,
+            AllPlugin_InstanciateSpecialFunctions(program,
                 pStructUnionSpecifier,
                 pVariableName,
                 bVariableNameIsPointer,
@@ -3193,7 +3193,7 @@ void BuildDestroy(TProgram* program,
 
             if (pDeclaration2)
             {
-                Typedef_BuildDestroy(program,
+                Typedef_InstanciateSpecialFunctions(program,
                     options,
                     pDeclaration2,
                     pInitializer,
@@ -3214,7 +3214,7 @@ void BuildDestroy(TProgram* program,
         }
         else
         {
-            TSingleTypeSpecifier_BuildDestroy(program,
+            TSingleTypeSpecifier_InstanciateSpecialFunctions(program,
                 options,
                 pSpecifierQualifierList,
                 pSingleTypeSpecifier,
@@ -3265,7 +3265,7 @@ void BuildDestroy(TProgram* program,
                 {
                     TStructUnionSpecifier* pStructUnionSpecifier =
                         TSpecifier_As_TStructUnionSpecifier(pSpecifier);
-                    TStructUnionSpecifier_BuildDestroy(program,
+                    TStructUnionSpecifier_InstanciateSpecialFunctions(program,
                         options,
                         pStructUnionSpecifier,
                         pVariableName,
@@ -3311,7 +3311,7 @@ void BuildDestroy(TProgram* program,
                 {
                     TStructUnionSpecifier* pStructUnionSpecifier =
                         TSpecifier_As_TStructUnionSpecifier(pSpecifier);
-                    TStructUnionSpecifier_BuildDestroy(program,
+                    TStructUnionSpecifier_InstanciateSpecialFunctions(program,
                         options,
                         pStructUnionSpecifier,
                         pVariableName,
@@ -3325,7 +3325,7 @@ void BuildDestroy(TProgram* program,
             {
                 TStructUnionSpecifier* pStructUnionSpecifier =
                     TSpecifier_As_TStructUnionSpecifier(pSpecifier);
-                TStructUnionSpecifier_BuildDestroy(program,
+                TStructUnionSpecifier_InstanciateSpecialFunctions(program,
                     options,
                     pStructUnionSpecifier,
                     pVariableName,
@@ -3342,7 +3342,7 @@ void BuildDestroy(TProgram* program,
 
             TStructUnionSpecifier* pStructUnionSpecifier =
                 TSpecifier_As_TStructUnionSpecifier(pSpecifier);
-            TStructUnionSpecifier_BuildDestroy(program,
+            TStructUnionSpecifier_InstanciateSpecialFunctions(program,
                 options,
                 pStructUnionSpecifier,
                 pVariableName,
@@ -3353,7 +3353,7 @@ void BuildDestroy(TProgram* program,
     }
     else if (pSpecifier->Type == TEnumSpecifier_ID)
     {
-        TEnumSpecifier_BuildDestroy(program,
+        TEnumSpecifier_InstanciateSpecialFunctions(program,
             options,
             pSpecifierQualifierList,
             (TEnumSpecifier*)pSpecifier,

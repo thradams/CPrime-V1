@@ -7,7 +7,7 @@
 
 
 //Instancia as funcoes especias new create delete
-bool ListPlugin_BuildDestroy(TProgram* program,
+bool ListPlugin_InstanciateSpecialFunctions(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
@@ -88,7 +88,7 @@ void Output_Append(StrBuilder* p,
     const char* source);
 
 //Gera estrutura de ad
-bool ListPlugin_Type_CodePrint(TProgram* program,
+bool ListPlugin_InstanciateType(TProgram* program,
     Options * options,
     TStructUnionSpecifier* p,
     bool b, 

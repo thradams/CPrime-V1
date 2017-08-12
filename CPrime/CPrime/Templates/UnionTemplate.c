@@ -14,7 +14,7 @@ static bool UnionPlugin_CodePrintCore(TProgram* program,
 
 
 //Instancia as funcoes especias new create delete
-bool UnionPlugin_BuildDestroy(TProgram* program,
+bool UnionPlugin_InstanciateSpecialFunctions(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
@@ -81,7 +81,7 @@ void Output_Append(StrBuilder* p,
     const char* source);
 
 //Gera estrutura de ad
-bool UnionPlugin_Type_CodePrint(TProgram* program,
+bool UnionPlugin_InstanciateType(TProgram* program,
     Options * options,
     TStructUnionSpecifier* p,
     bool b, StrBuilder* fp)

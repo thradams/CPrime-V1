@@ -7,7 +7,7 @@
 
 
 //Instancia as funcoes especias new create delete
-bool ArrayPlugin_BuildDestroy(TProgram* program,
+bool ArrayPlugin_InstanciateSpecialFunctions(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
@@ -83,7 +83,7 @@ void Output_Append(StrBuilder* p,
     const char* source);
 
 //Gera estrutura de ad
-bool ArrayPlugin_Type_CodePrint(TProgram* program,
+bool ArrayPlugin_InstanciateType(TProgram* program,
     Options * options,
     TStructUnionSpecifier* p,
     bool b, StrBuilder* fp)

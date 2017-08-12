@@ -3,7 +3,7 @@
 #include "..\CodePrint.h"
 
 //implementa funcoes especiais
-bool AllPlugin_BuildDestroy(TProgram* program,
+bool AllPlugin_InstanciateSpecialFunctions(TProgram* program,
                              TStructUnionSpecifier* pStructUnionSpecifier,
                              const char* pVariableName,
                              bool bVariableNameIsPointer,
@@ -11,7 +11,7 @@ bool AllPlugin_BuildDestroy(TProgram* program,
     StrBuilder* fp);
 
 //instancia o tipo
-bool AllPlugin_Type_CodePrint(TProgram* program,
+bool AllPlugin_InstanciateType(TProgram* program,
                                Options * options,
                                TStructUnionSpecifier* p,
                                bool b, StrBuilder* fp);
