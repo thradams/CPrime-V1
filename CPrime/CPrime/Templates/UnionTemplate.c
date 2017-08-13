@@ -6,11 +6,11 @@
 #include <stdlib.h>
 
 static bool UnionPlugin_CodePrintCore(TProgram* program,
-                                      Options * options,
-                                      TStructUnionSpecifier* pTStructUnionSpecifier3,
-                                      const char* strBuilderFunc,
-                                      bool b,
-                                      StrBuilder* fp);
+    Options * options,
+    TStructUnionSpecifier* pTStructUnionSpecifier3,
+    const char* strBuilderFunc,
+    bool b,
+    StrBuilder* fp);
 
 
 //Instancia as funcoes especias new create delete
@@ -39,36 +39,36 @@ bool UnionPlugin_InstanciateSpecialFunctions(TProgram* program,
 
         switch (buildType)
         {
-            case BuildTypeInit:
+        case BuildTypeInit:
             StrBuilder_AppendFmt(fp, "static_assert(false, \"er\";\n", pVariableName);
             break;
-            case BuildTypeDestroy:
+        case BuildTypeDestroy:
             //Implementa 'default'
             UnionPlugin_CodePrintCore(program,
-                                      &options,
-                                      pStructUnionSpecifier,
-                                      "_Destroy",
-                                      false,
-                                      fp);
+                &options,
+                pStructUnionSpecifier,
+                "_Destroy",
+                false,
+                fp);
 
             break;
 
-            case BuildTypeDelete:
+        case BuildTypeDelete:
 
             //Implementa 'default'
             UnionPlugin_CodePrintCore(program,
-                                      &options,
-                                      pStructUnionSpecifier,
-                                                  "_Delete",
-                                                  false,
-                                                  fp);
+                &options,
+                pStructUnionSpecifier,
+                "_Delete",
+                false,
+                fp);
 
             break;
-            case BuildTypeCreate:
-            case BuildTypeStaticInit:
+        case BuildTypeCreate:
+        case BuildTypeStaticInit:
             StrBuilder_AppendFmt(fp, "static_assert(false, \"er\";\n", pVariableName);
             break;
-            default:
+        default:
             break;
         }
         StrBuilder_Destroy(&itemTypeStr);
@@ -100,7 +100,7 @@ bool UnionPlugin_InstanciateType(TProgram* program,
                     Output_Append(fp, ",");
                 TTypeName_CodePrint(program, options, &pItem->TypeName, false, fp);
                 i++;
-            }            
+            }
             Output_Append(fp, ")");
         }
     }
@@ -113,14 +113,51 @@ bool IsSuffix(const char* s, const char* suffix);
 TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifiers* specifiers);
 
 bool GetTypeAndFunction(const char* source,
-                        StrBuilder* strBuilderType,
-                        StrBuilder* strBuilderFunc);
+    StrBuilder* strBuilderType,
+    StrBuilder* strBuilderFunc);
+
+void GetAllUnionTypes(TProgram* program,
+    TStructUnionSpecifier* pTStructUnionSpecifier3,
+    Map2* map)
+{
+    ForEachListItem(TTemplateTypeSpecifierArgument, pItem, (TTemplateTypeSpecifierArgumentList*)&pTStructUnionSpecifier3->Args)
+    {
+        TSingleTypeSpecifier* pSingleTypeSpecifier =
+            TSpecifier_As_TSingleTypeSpecifier(pItem->TypeName.SpecifierQualifierList.pHead);
+        if (pSingleTypeSpecifier &&
+            pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+        {
+            const char* typedefName = pSingleTypeSpecifier->TypedefName;
+            TDeclaration * pDeclaration = TProgram_GetFinalTypeDeclaration(program, typedefName);
+            if (pDeclaration)
+            {
+                TStructUnionSpecifier* pStructUnionSpecifier =
+                    TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pHead->pNext);
+                if (pStructUnionSpecifier)
+                {
+                    if (pStructUnionSpecifier->TemplateName != NULL &&
+                        strcmp(pStructUnionSpecifier->TemplateName, "Union") == 0)
+                    {
+                        GetAllUnionTypes(program,
+                            pStructUnionSpecifier,
+                            map);
+                    }
+                    else
+                    {
+                        void *pv;
+                        Map2_SetAt(map, typedefName, pStructUnionSpecifier, &pv);
+                    }
+                }
+            }
+        }
+    }
+}
 
 //Implementa 'default'
 static bool UnionPlugin_CodePrintCore(TProgram* program,
     Options * options,
     TStructUnionSpecifier* pTStructUnionSpecifier3,
-                                      const char* strBuilderFunc,
+    const char* strBuilderFunc,
     bool b,
     StrBuilder* fp)
 {
@@ -132,22 +169,30 @@ static bool UnionPlugin_CodePrintCore(TProgram* program,
         //eh template tipo
         if (strcmp(pTStructUnionSpecifier3->TemplateName, "Union") == 0)
         {
-            bResult = true;
             StrBuilder_Append(fp, "\n");
             StrBuilder_Append(fp, "    switch(p->type) {\n");
-            ForEachListItem(TTemplateTypeSpecifierArgument, pItem, (TTemplateTypeSpecifierArgumentList*)&pTStructUnionSpecifier3->Args)
-            {
-                TSingleTypeSpecifier* pSingleTypeSpecifier =
-                    TSpecifier_As_TSingleTypeSpecifier(pItem->TypeName.SpecifierQualifierList.pHead);
-                if (pSingleTypeSpecifier && pSingleTypeSpecifier->Token == TK_IDENTIFIER)
-                {
-                    const char* typedefName = pSingleTypeSpecifier->TypedefName;
-                    TDeclaration * pDeclaration = TProgram_GetFinalTypeDeclaration(program, typedefName);
-                    if (pDeclaration)
-                    {
-                        TStructUnionSpecifier* pStructUnionSpecifier =
-                            TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pHead->pNext);
 
+
+            Map2 map;
+            Map2_Init(&map);
+            GetAllUnionTypes(program,
+                pTStructUnionSpecifier3,
+                &map);
+
+            if (map.pHashTable != NULL)
+            {
+                for (unsigned int nHash = 0;
+                    nHash < map.nHashTableSize;
+                    nHash++)
+                {
+                    MapItem2* pKeyValue =
+                        map.pHashTable[nHash];
+                    while (pKeyValue != NULL)
+                    {
+                        const char* typedefName = pKeyValue->Key;
+                        TStructUnionSpecifier* pStructUnionSpecifier =
+                            (TStructUnionSpecifier*)pKeyValue->pValue;
+                        ////////
                         if (pStructUnionSpecifier &&
                             pStructUnionSpecifier->StructDeclarationList.size > 0)
                         {
@@ -185,14 +230,14 @@ static bool UnionPlugin_CodePrintCore(TProgram* program,
                             }
 
                         }
+
+                        //////
+                        pKeyValue = pKeyValue->pNext;
                     }
-
-
                 }
-
-
             }
             StrBuilder_Append(fp, "    }\n");
+            Map2_Destroy(&map);
         }
     }
     return bResult;
@@ -201,10 +246,10 @@ static bool UnionPlugin_CodePrintCore(TProgram* program,
 
 //Implementa 'default'
 bool UnionPlugin_InstanciateFunction(TProgram* program,
-                           Options * options,
-                           TDeclaration* p,
-                           bool b,
-                           StrBuilder* fp)
+    Options * options,
+    TDeclaration* p,
+    bool b,
+    StrBuilder* fp)
 {
     bool bResult = false;
 
@@ -226,8 +271,8 @@ bool UnionPlugin_InstanciateFunction(TProgram* program,
             StrBuilder strBuilderFunc = STRBUILDER_INIT;
 
             GetTypeAndFunction(functionName,
-                               &strBuilderType,
-                               &strBuilderFunc);
+                &strBuilderType,
+                &strBuilderFunc);
 
             TSingleTypeSpecifier *pSingleTypeSpecifier =
                 TSpecifier_As_TSingleTypeSpecifier(pParameterDeclaration->Specifiers.pHead);
@@ -244,11 +289,11 @@ bool UnionPlugin_InstanciateFunction(TProgram* program,
                         TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pHead->pNext);
 
                     UnionPlugin_CodePrintCore(program,
-                                                          options,
-                                                          pTStructUnionSpecifier3,
-                                                          strBuilderFunc.c_str,
-                                                          b,
-                                                          fp);
+                        options,
+                        pTStructUnionSpecifier3,
+                        strBuilderFunc.c_str,
+                        b,
+                        fp);
                 }
             }
 
