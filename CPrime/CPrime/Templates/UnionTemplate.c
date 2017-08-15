@@ -12,6 +12,11 @@ static bool UnionPlugin_CodePrintCore(TProgram* program,
     bool b,
     StrBuilder* fp);
 
+//Implementa 'default'
+static bool CodePrintCasts(TProgram* program,
+    Options * options,
+    TStructUnionSpecifier* pTStructUnionSpecifier3,
+    StrBuilder* fp);
 
 //Instancia as funcoes especias new create delete
 bool UnionPlugin_InstanciateSpecialFunctions(TProgram* program,
@@ -43,6 +48,13 @@ bool UnionPlugin_InstanciateSpecialFunctions(TProgram* program,
             StrBuilder_AppendFmt(fp, "static_assert(false, \"er\";\n", pVariableName);
             break;
         case BuildTypeDestroy:
+
+            StrBuilder_AppendFmt(fp, "/*\n");
+            CodePrintCasts(program,
+                &options,
+                pStructUnionSpecifier,
+                fp);
+            StrBuilder_AppendFmt(fp, "*/\n");
             //Implementa 'default'
             UnionPlugin_CodePrintCore(program,
                 &options,
@@ -93,7 +105,7 @@ bool UnionPlugin_InstanciateType(TProgram* program,
         {
             bInstanciated = true;
             int i = 0;
-            Output_Append(fp, "Union(");
+            Output_Append(fp, " Union(");
             ForEachListItem(TTemplateTypeSpecifierArgument, pItem, &p->Args)
             {
                 if (i > 0)
@@ -138,6 +150,9 @@ void GetAllUnionTypes(TProgram* program,
                     if (pStructUnionSpecifier->TemplateName != NULL &&
                         strcmp(pStructUnionSpecifier->TemplateName, "Union") == 0)
                     {
+                        void *pv;
+                        Map2_SetAt(map, typedefName, pStructUnionSpecifier, &pv);
+
                         GetAllUnionTypes(program,
                             pStructUnionSpecifier,
                             map);
@@ -193,8 +208,11 @@ static bool UnionPlugin_CodePrintCore(TProgram* program,
                         TStructUnionSpecifier* pStructUnionSpecifier =
                             (TStructUnionSpecifier*)pKeyValue->pValue;
                         ////////
+
+
                         if (pStructUnionSpecifier &&
-                            pStructUnionSpecifier->StructDeclarationList.size > 0)
+                            pStructUnionSpecifier->StructDeclarationList.size > 0 &&
+                            pStructUnionSpecifier->TemplateName == NULL)
                         {
                             TStructDeclaration* pStructDeclaration =
                                 TAnyStructDeclaration_As_TStructDeclaration(pStructUnionSpecifier->StructDeclarationList.pItems[0]);
@@ -243,6 +261,158 @@ static bool UnionPlugin_CodePrintCore(TProgram* program,
     return bResult;
 }
 
+
+
+//Implementa 'default'
+static bool CodePrintCasts(TProgram* program,
+    Options * options,
+    TStructUnionSpecifier* pTStructUnionSpecifier3,
+    StrBuilder* fp)
+{
+    bool bResult = false;
+
+
+    if (pTStructUnionSpecifier3 && pTStructUnionSpecifier3->TemplateName)
+    {
+        //eh template tipo
+        if (strcmp(pTStructUnionSpecifier3->TemplateName, "Union") == 0)
+        {
+            Map2 map;
+            Map2_Init(&map);
+            GetAllUnionTypes(program,
+                pTStructUnionSpecifier3,
+                &map);
+
+            if (map.pHashTable != NULL)
+            {
+                for (unsigned int nHash = 0;
+                    nHash < map.nHashTableSize;
+                    nHash++)
+                {
+                    MapItem2* pKeyValue =
+                        map.pHashTable[nHash];
+                    while (pKeyValue != NULL)
+                    {
+                        const char* typedefName = pKeyValue->Key;
+                        TStructUnionSpecifier* pStructUnionSpecifier =
+                            (TStructUnionSpecifier*)pKeyValue->pValue;
+                        ////////
+
+
+                        if (pStructUnionSpecifier)
+                        {
+                            StrBuilder_Append(fp, "inline ");
+                            StrBuilder_Append(fp, typedefName);
+                            StrBuilder_Append(fp, "* ");
+
+                            if (pTStructUnionSpecifier3->Name)
+                            {
+                                StrBuilder_Append(fp, pTStructUnionSpecifier3->Name);
+                            }
+                            else
+                            {
+                            }
+                            StrBuilder_Append(fp, "_As_");
+                            StrBuilder_Append(fp, typedefName);
+                            StrBuilder_Append(fp, "(");
+                            if (pTStructUnionSpecifier3->Name)
+                            {
+                                StrBuilder_Append(fp, pTStructUnionSpecifier3->Name);
+                            }
+                            else
+                            {
+                            }
+                            StrBuilder_Append(fp, "*p) ");
+                            StrBuilder_Append(fp, "{");
+
+                            if (pStructUnionSpecifier->StructDeclarationList.size > 0 &&
+                                pStructUnionSpecifier->TemplateName == NULL)
+                            {
+                                TStructDeclaration* pStructDeclaration =
+                                    TAnyStructDeclaration_As_TStructDeclaration(pStructUnionSpecifier->StructDeclarationList.pItems[0]);
+                                if (pStructDeclaration)
+                                {
+                                    TPrimaryExpressionValue* pExpression =
+                                        TExpression_As_TPrimaryExpressionValue(TInitializer_As_TExpression(pStructDeclaration->DeclaratorList.pHead->pInitializer));
+
+                                    if (pExpression)
+                                    {
+                                        StrBuilder_Append(fp, "return p->type == ");
+                                        StrBuilder_Append(fp, pExpression->lexeme);
+                                        StrBuilder_Append(fp, " ? ");
+                                        StrBuilder_Append(fp, "(");
+                                        StrBuilder_Append(fp, typedefName);
+                                        StrBuilder_Append(fp, "*) p : ");
+                                        StrBuilder_Append(fp, "(");
+                                        StrBuilder_Append(fp, typedefName);
+                                        StrBuilder_Append(fp, "*) NULL;");
+                                        
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                StrBuilder_Append(fp, "return (");
+                                StrBuilder_Append(fp, typedefName);
+                                StrBuilder_Append(fp, "*) p;");                                
+                            }
+                        }
+                        StrBuilder_Append(fp, "}\n");
+
+                        //////////
+
+                        StrBuilder_Append(fp, "inline ");
+                        
+                        if (pTStructUnionSpecifier3->Name)
+                        {
+                            StrBuilder_Append(fp, pTStructUnionSpecifier3->Name);
+                        }
+                        else
+                        {
+                        }
+                        StrBuilder_Append(fp, "* ");
+
+                        StrBuilder_Append(fp, typedefName);
+
+                        StrBuilder_Append(fp, "_As_");
+                        if (pTStructUnionSpecifier3->Name)
+                        {
+                            StrBuilder_Append(fp, pTStructUnionSpecifier3->Name);
+                        }
+                        else
+                        {
+                        }
+                        StrBuilder_Append(fp, "(");
+                        StrBuilder_Append(fp, typedefName);
+
+                        
+                        StrBuilder_Append(fp, "*p) ");
+                        StrBuilder_Append(fp, "{");
+
+                        StrBuilder_Append(fp, "return (");
+                        if (pTStructUnionSpecifier3->Name)
+                        {
+                            StrBuilder_Append(fp, pTStructUnionSpecifier3->Name);
+                        }
+                        else
+                        {
+                        }
+                        StrBuilder_Append(fp, "*) p;");
+
+                        StrBuilder_Append(fp, "}\n");
+
+
+                        ///////////
+                        pKeyValue = pKeyValue->pNext;
+                    }
+                }
+            }
+
+            Map2_Destroy(&map);
+        }
+    }
+    return bResult;
+}
 
 //Implementa 'default'
 bool UnionPlugin_InstanciateFunction(TProgram* program,

@@ -12,7 +12,7 @@
 
 #define SIZEOFARRAY(x) (sizeof(x)/sizeof((x)[0]))
 
-bool (*BuildDestroyFunctions[])(TProgram* program,
+bool (*InstanciateSpecialFunctionsFunctions[])(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
     bool bVariableNameIsPointer,
@@ -59,9 +59,9 @@ bool AllPlugin_InstanciateSpecialFunctions(TProgram* program,
 {
     bool bInstanciated = false;
     
-    for (int i = 0;  i < SIZEOFARRAY(BuildDestroyFunctions); i++)
+    for (int i = 0;  i < SIZEOFARRAY(InstanciateSpecialFunctionsFunctions); i++)
     {
-        bInstanciated = BuildDestroyFunctions[i](program,
+        bInstanciated = InstanciateSpecialFunctionsFunctions[i](program,
             pStructUnionSpecifier,
             pVariableName,
             bVariableNameIsPointer,

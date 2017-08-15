@@ -42,7 +42,7 @@ void BuildInitializationForTypedef(TProgram* program,
 
 bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, bool b, StrBuilder* fp);
 
-void BuildDestroy(TProgram* program,
+void InstanciateSpecialFunctions(TProgram* program,
 	Options * options,
 	TSpecifierQualifierList* pSpecifierQualifierList,
 	TDeclarator* pDeclarator,

@@ -972,6 +972,8 @@ static bool TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
     if (p->TemplateName != NULL)
     {
 
+        //TNodeClueList_CodePrint(options, &p->ClueList2, fp);
+
         AllPlugin_InstanciateType(program,
             options,
             p,
@@ -1097,7 +1099,7 @@ static bool TInitializerList_CodePrint(TProgram* program,
     {
         //a partir de {} e um tipo consegue gerar o final
 
-        BuildDestroy(program,
+        InstanciateSpecialFunctions(program,
             options,
             (TSpecifierQualifierList*)(pDeclarationSpecifiers),
             NULL,
@@ -1151,7 +1153,7 @@ static bool TInitializerListType_CodePrint(TProgram* program,
 
         Output_Append(fp, "_default");
 
-        BuildDestroy(program,
+        InstanciateSpecialFunctions(program,
             options,
             (TSpecifierQualifierList*)(pDeclarationSpecifiers),
             pDeclarator,
@@ -1803,7 +1805,7 @@ static bool DefaultFunctionDefinition_CodePrint(TProgram* program,
 
             options->IdentationLevel++;
 
-            BuildDestroy(program,
+            InstanciateSpecialFunctions(program,
                 options,
                 (TSpecifierQualifierList*)(pSpecifiers),
                 pReturnTypeDeclarator,
@@ -1831,7 +1833,7 @@ static bool DefaultFunctionDefinition_CodePrint(TProgram* program,
                 TDeclaration_FindDeclarator(pReturnTypeDeclaration, typedefName);
 
             options->IdentationLevel++;
-            BuildDestroy(program,
+            InstanciateSpecialFunctions(program,
                 options,
                 (TSpecifierQualifierList*)(&pReturnTypeDeclaration->Specifiers),
                 pReturnTypeDeclarator,
@@ -1859,7 +1861,7 @@ static bool DefaultFunctionDefinition_CodePrint(TProgram* program,
                 TDeclaration_FindDeclarator(pReturnTypeDeclaration, typedefName);
 
             options->IdentationLevel++;
-            BuildDestroy(program,
+            InstanciateSpecialFunctions(program,
                 options,
                 (TSpecifierQualifierList*)(&pReturnTypeDeclaration->Specifiers),
                 pReturnTypeDeclarator,
@@ -1887,7 +1889,7 @@ static bool DefaultFunctionDefinition_CodePrint(TProgram* program,
                 TDeclaration_FindDeclarator(pReturnTypeDeclaration, typedefName);
 
             options->IdentationLevel++;
-            BuildDestroy(program,
+            InstanciateSpecialFunctions(program,
                 options,
                 (TSpecifierQualifierList*)(&pReturnTypeDeclaration->Specifiers),
                 pReturnTypeDeclarator,
@@ -2293,7 +2295,7 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 
 
 
-void BuildDestroy(TProgram* program,
+void InstanciateSpecialFunctions(TProgram* program,
     Options* options,
     TSpecifierQualifierList* pSpecifierQualifierList,
     TDeclarator* pDeclarator,
@@ -2356,7 +2358,7 @@ void Typedef_InstanciateSpecialFunctions(TProgram* program,
                     {
                         // "inline"
 
-                        BuildDestroy(program,
+                        InstanciateSpecialFunctions(program,
                             options,
                             (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
                             pTypedefDeclarator,
@@ -2427,7 +2429,7 @@ void Typedef_InstanciateSpecialFunctions(TProgram* program,
                         if (pTypedefDeclarator != NULL)
                         {
                             StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "if (%s) {\n", pVariableName);
-                            BuildDestroy(program,
+                            InstanciateSpecialFunctions(program,
                                 options,
                                 (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
                                 pTypedefDeclarator,
@@ -2481,7 +2483,7 @@ void Typedef_InstanciateSpecialFunctions(TProgram* program,
                     {
                         // "inline"
 
-                        BuildDestroy(program,
+                        InstanciateSpecialFunctions(program,
                             options,
                             (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
                             pTypedefDeclarator,
@@ -2549,7 +2551,7 @@ void Typedef_InstanciateSpecialFunctions(TProgram* program,
                             buildTypeModified = BuildTypeDestroy;
                         }
 
-                        BuildDestroy(program,
+                        InstanciateSpecialFunctions(program,
                             options,
                             (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
                             pTypedefDeclarator,
@@ -2634,7 +2636,7 @@ void Typedef_InstanciateSpecialFunctions(TProgram* program,
                             buildTypeModified = BuildTypeInit;
                         }
 
-                        BuildDestroy(program,
+                        InstanciateSpecialFunctions(program,
                             options,
                             (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
                             pTypedefDeclarator,
@@ -2682,7 +2684,7 @@ void Typedef_InstanciateSpecialFunctions(TProgram* program,
                 {
                     // "inline"
 
-                    BuildDestroy(program,
+                    InstanciateSpecialFunctions(program,
                         options,
                         (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
                         pTypedefDeclarator,
@@ -3074,7 +3076,7 @@ void TStructUnionSpecifier_InstanciateSpecialFunctions(TProgram* program,
                                 }
                                 else
                                 {
-                                    BuildDestroy(program,
+                                    InstanciateSpecialFunctions(program,
                                         options,
                                         &pStructDeclaration->SpecifierQualifierList,
                                         pStructDeclarator->pDeclarator,
@@ -3087,7 +3089,7 @@ void TStructUnionSpecifier_InstanciateSpecialFunctions(TProgram* program,
                             else
                             {
 
-                                BuildDestroy(program,
+                                InstanciateSpecialFunctions(program,
                                     options,
                                     &pStructDeclaration->SpecifierQualifierList,
                                     pStructDeclarator->pDeclarator,
@@ -3125,7 +3127,7 @@ void TStructUnionSpecifier_InstanciateSpecialFunctions(TProgram* program,
 
 }
 
-void BuildDestroy(TProgram* program,
+void InstanciateSpecialFunctions(TProgram* program,
     Options* options,
     TSpecifierQualifierList* pSpecifierQualifierList,
     TDeclarator* pDeclarator,
