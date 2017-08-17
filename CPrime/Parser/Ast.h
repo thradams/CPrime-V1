@@ -513,7 +513,7 @@ CREATETYPE(TEnumerator, TENUMERATOR_INIT)
 typedef List(TEnumerator) TEnumeratorList;
 void TEnumeratorList_Destroy(TEnumeratorList* p);
 
-typedef struct
+typedef struct TEnumSpecifier
 {
     TTypePointer Type;
     String Name;
@@ -540,6 +540,7 @@ typedef struct
 CREATETYPE(TSingleTypeSpecifier, TBUILDINTYPE_SPECIFIER_INIT)
 
 const char* TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier* p);
+
 
 typedef TTypePointer TTypeSpecifier;
 
@@ -793,7 +794,7 @@ CAST(TSpecifier, TStructUnionSpecifier)
 CAST(TSpecifierQualifier, TStructUnionSpecifier)
 
 
-typedef struct
+typedef struct TDeclaration
 {
     TTypePointer Type;
     TDeclarationSpecifiers Specifiers;

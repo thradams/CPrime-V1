@@ -24,7 +24,7 @@ static SymbolMapItem* SymbolMap_GetAssocAt(
     unsigned int* HashValue);
 
 
-inline unsigned int String2_HashKey(const char*  Key)
+static unsigned int String2_HashKey(const char*  Key)
 {
     // hash key to unsigned int value by pseudorandomizing transform
     // (algorithm copied from STL string hash in xfunctional)
@@ -137,7 +137,7 @@ TTypePointer* SymbolMap_Find(SymbolMap* pMap,
     {
         pTypePointer = pKeyValue->pValue;
     }
-    
+
 
     if (pTypePointer == NULL && pMap->pPrevious != NULL)
     {
@@ -207,17 +207,10 @@ bool SymbolMap_RemoveKey(SymbolMap* pMap,
 
 int SymbolMap_SetAt(SymbolMap* pMap,
     const char* Key,
-    TTypePointer* newValue,
-    TTypePointer** ppPreviousValue)
+    TTypePointer* newValue)
 {
-    if (strcmp(Key, "uintptr_t") == 0)
-    {
-        Key = Key;
-    }
-
-
     int result = 0;
-    *ppPreviousValue = NULL;
+
 
     if (pMap->pHashTable == NULL)
     {
@@ -245,7 +238,7 @@ int SymbolMap_SetAt(SymbolMap* pMap,
                 &nHashBucket,
                 &HashValue);
 
-        if (pKeyValue == NULL)
+        //if (pKeyValue == NULL)
         {
             pKeyValue = (SymbolMapItem*)malloc(sizeof(SymbolMapItem) * 1);
             pKeyValue->HashValue = HashValue;
@@ -257,13 +250,12 @@ int SymbolMap_SetAt(SymbolMap* pMap,
             result = 0;
         }
 
-        else
-        {
-            result = 1;
-            *ppPreviousValue = pKeyValue->pValue;
-            pKeyValue->pValue = newValue;
-            String_Set(&pKeyValue->Key, Key);
-        }
+        //else
+        //{
+        //    result = 1;
+        //    pKeyValue->pValue = newValue;
+        //    String_Set(&pKeyValue->Key, Key);
+        //}
     }
 
     return result;
@@ -316,8 +308,12 @@ const char* PrintType(Type type)
     case TEofDeclaration_ID:
 
     case TSingleTypeSpecifier_ID:
+        return "TSingleTypeSpecifier_ID";
     case TEnumSpecifier_ID:
+        return "TEnumSpecifier_ID";
     case TStructUnionSpecifier_ID:
+        return "TStructUnionSpecifier_ID";
+
     case TStorageSpecifier_ID:
     case TAtomicTypeSpecifier_ID:
     case TTemplateTypeSpecifier_ID:
@@ -370,9 +366,10 @@ static void SymbolMap_PrintCore(SymbolMap* pMap, int* n)
         for (int i = 0; i < pMap->nHashTableSize; i++)
         {
             SymbolMapItem* pSymbolMapItem = pMap->pHashTable[i];
-            if (pSymbolMapItem != NULL)
+            while (pSymbolMapItem != NULL)
             {
                 printf("%s = %s\n", pSymbolMapItem->Key, PrintType(pSymbolMapItem->pValue->Type));
+                pSymbolMapItem = pSymbolMapItem->pNext;
             }
         }
     }
@@ -387,52 +384,280 @@ void SymbolMap_Print(SymbolMap* pMap)
 
 
 
-static int SymbolMap_IsTypeNameCore(SymbolMap* pMap, const char* identifierName)
+bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 {
-    int iResult = -1; //-1 nao achou
-
-
-    SymbolMapItem* pBucket =
-        SymbolMap_FindBucket(pMap, identifierName);
-
-    while (pBucket)
+    bool bIsTypeName = false;
+    
+    while (pMap)
     {
-        if (strcmp(pBucket->Key, identifierName) == 0)
-        {
-            //ja achou alguma coisa agora ve se eh typedef
-            iResult = 0;
+        SymbolMapItem* pBucket =
+            SymbolMap_FindBucket(pMap, identifierName);
 
-            SymbolMapItem* pSymbolMapItem = pBucket;
-            if (pSymbolMapItem->pValue->Type == TDeclaration_ID)
+        while (pBucket)
+        {
+            if (pBucket->pValue->Type == TDeclaration_ID &&
+                strcmp(pBucket->Key, identifierName) == 0)
             {
-                TDeclaration* p = (TDeclaration*)pSymbolMapItem->pValue;
-                if (TDeclarationSpecifiers_IsTypedef(&p->Specifiers))
+                TDeclaration* pDeclaration =
+                    (TDeclaration*)pBucket->pValue;
+                ForEachListItem(TSpecifier, pItem, &pDeclaration->Specifiers)
                 {
-                    iResult = 1;
+                    if (pItem->Type == TStorageSpecifier_ID)
+                    {
+                        TStorageSpecifier* pStorageSpecifier =
+                            (TStorageSpecifier*)pItem;
+                        if (pStorageSpecifier->bIsTypedef)
+                        {
+                            bIsTypeName = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (bIsTypeName)
+                break;
+            pBucket = pBucket->pNext;
+        }
+
+        if (bIsTypeName)
+            break;
+
+        pMap = pMap->pPrevious;
+    }
+
+    return bIsTypeName;
+}
+
+
+
+TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* structTagName)
+{
+    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+
+    if (pMap->pHashTable != NULL)
+    {
+        unsigned int nHashBucket, HashValue;
+        SymbolMapItem* pKeyValue =
+            SymbolMap_GetAssocAt(pMap,
+                structTagName,
+                &nHashBucket,
+                &HashValue);
+
+        while (pKeyValue != NULL)
+        {
+            //Obs enum struct e union compartilham um mapa unico
+            if (pKeyValue->pValue->Type == TStructUnionSpecifier_ID)
+            {
+                if (strcmp(pKeyValue->Key, structTagName) == 0)
+                {
+                    pStructUnionSpecifier =
+                        (TStructUnionSpecifier*)pKeyValue->pValue;
+                    if (pStructUnionSpecifier->StructDeclarationList.size > 0)
+                    {
+                        //Se achou definicao completa pode sair
+                        break;
+                    }
+                }
+            }
+            pKeyValue = pKeyValue->pNext;
+        }
+    }
+
+    return pStructUnionSpecifier;
+}
+
+
+TEnumSpecifier* SymbolMap_FindEnum(SymbolMap* pMap, const char* enumTagName)
+{
+    TEnumSpecifier* pEnumSpecifier = NULL;
+
+    if (pMap->pHashTable != NULL)
+    {
+        unsigned int nHashBucket, HashValue;
+        SymbolMapItem* pKeyValue =
+            SymbolMap_GetAssocAt(pMap,
+                enumTagName,
+                &nHashBucket,
+                &HashValue);
+
+        while (pKeyValue != NULL)
+        {
+            //Obs enum struct e union compartilham um mapa unico
+            if (pKeyValue->pValue->Type == TEnumSpecifier_ID)
+            {
+                if (strcmp(pKeyValue->Key, enumTagName) == 0)
+                {
+                    pEnumSpecifier =
+                        (TEnumSpecifier*)pKeyValue->pValue;
+                    if (pEnumSpecifier->EnumeratorList.pHead != NULL)
+                    {
+                        //Se achou definicao completa pode sair
+                        break;
+                    }
+                }
+            }
+            pKeyValue = pKeyValue->pNext;
+        }
+    }
+
+    return pEnumSpecifier;
+}
+
+
+TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
+    const char* typedefName)
+{
+    TDeclaration* pDeclarationResult = NULL;
+
+    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+
+    if (pMap->pHashTable != NULL)
+    {
+        unsigned int nHashBucket, HashValue;
+        SymbolMapItem* pKeyValue =
+            SymbolMap_GetAssocAt(pMap,
+                typedefName,
+                &nHashBucket,
+                &HashValue);
+
+        while (pKeyValue != NULL)
+        {
+            if (pKeyValue->pValue->Type == TDeclaration_ID &&
+                strcmp(pKeyValue->Key, typedefName) == 0)
+            {
+                TDeclaration *pDeclaration =
+                    (TDeclaration *)pKeyValue->pValue;
+
+                //typedef X Y;
+                bool bIsTypedef = false;
+                const char* indirectTypedef = NULL;
+                ForEachListItem(TTypeSpecifier, pItem, &pDeclaration->Specifiers)
+                {
+                    switch (pItem->Type)
+                    {
+                    case TStorageSpecifier_ID:
+                    {
+                        TStorageSpecifier* pStorageSpecifier =
+                            (TStorageSpecifier*)pItem;
+                        if (pStorageSpecifier->bIsTypedef)
+                        {
+                            bIsTypedef = true;
+                        }
+                    }
+                    break;
+                    case TSingleTypeSpecifier_ID:
+                    {
+                        TSingleTypeSpecifier* pSingleTypeSpecifier =
+                            (TSingleTypeSpecifier*)pItem;
+
+                        if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+                        {
+                            indirectTypedef = pSingleTypeSpecifier->TypedefName;
+                        }
+                    }
+                    break;
+                    }
+                }
+                if (!bIsTypedef)
+                {
+                    //Nao eh um typedef
+                    break;
+                }
+                else
+                {
+                    if (indirectTypedef != NULL)
+                    {
+                        //eh um typedef indireto
+                        pDeclarationResult =
+                            SymbolMap_FindTypedefDeclarationTarget(pMap, indirectTypedef);
+                    }
+                    else
+                    {
+                        //'e um typedef direto - retorna a declaracao que ele aparece
+                        pDeclarationResult = pDeclaration;
+                    }
+                    break;
+                }
+            }
+            pKeyValue = pKeyValue->pNext;
+        }
+    }
+
+    return pDeclarationResult;
+}
+
+TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
+    const char* typedefName)
+{
+    /*Sample:
+    struct X;
+    typedef struct X X;
+    struct X { int i;  };
+    typedef X Y;
+    */
+
+    TTypeSpecifier* pSpecifierTarget = NULL;
+
+    TDeclaration* pDeclaration =
+        SymbolMap_FindTypedefDeclarationTarget(pMap, typedefName);
+    if (pDeclaration)
+    {
+        ForEachListItem(TTypeSpecifier, pItem, &pDeclaration->Specifiers)
+        {
+            switch (pItem->Type)
+            {
+            case TSingleTypeSpecifier_ID:
+                pSpecifierTarget = pItem;
+                break;
+
+            case TStructUnionSpecifier_ID:
+            {
+                TStructUnionSpecifier* pStructUnionSpecifier =
+                    (TStructUnionSpecifier*)pItem;
+                if (pStructUnionSpecifier->StructDeclarationList.size == 0)
+                {
+                    if (pStructUnionSpecifier->Name != NULL)
+                    {
+                        pSpecifierTarget = (TTypeSpecifier*)SymbolMap_FindStructUnion(pMap, pStructUnionSpecifier->Name);
+                    }
+                    else
+                    {
+                        ASSERT(false);
+                    }
+                }
+                else
+                {
+                    pSpecifierTarget = (TTypeSpecifier*)pStructUnionSpecifier;
                 }
             }
             break;
+            case TEnumSpecifier_ID:
+                TEnumSpecifier* pEnumSpecifier =
+                    (TEnumSpecifier*)pItem;
+                if (pEnumSpecifier->EnumeratorList.pHead == NULL)
+                {
+                    if (pEnumSpecifier->Name != NULL)
+                    {
+                        pEnumSpecifier = SymbolMap_FindEnum(pMap, pEnumSpecifier->Name);
+                    }
+                    else
+                    {
+                        ASSERT(false);
+                    }
+                }
+                else
+                {
+                    pSpecifierTarget = (TTypeSpecifier*)pEnumSpecifier;
+                }
+                break;
+            }
+
+            if (pSpecifierTarget != NULL)
+            {
+                //ja achou
+                break;
+            }
         }
-        pBucket = pBucket->pNext;
     }
-
-
-    if (iResult == -1 &&
-        pMap->pPrevious != NULL)
-    {
-        iResult = SymbolMap_IsTypeNameCore(pMap->pPrevious, identifierName);
-    }
-
-
-    return iResult;
-}
-
-int SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
-{
-    if (strcmp(identifierName, "PVOID64") == 0)
-    {
-        identifierName = identifierName;
-    }
-
-    return SymbolMap_IsTypeNameCore(pMap, identifierName) == 1;
+    return pSpecifierTarget;
 }

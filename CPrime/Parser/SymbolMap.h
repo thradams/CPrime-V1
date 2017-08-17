@@ -27,8 +27,7 @@ typedef struct SymbolMap
 
 int SymbolMap_SetAt(SymbolMap* pMap,
 	const char* Key,
-    TTypePointer* newValue,
-    TTypePointer** ppPreviousValue);
+    TTypePointer* newValue);
 
 
 TTypePointer* SymbolMap_Find(SymbolMap* pMap,
@@ -49,4 +48,16 @@ SymbolMapItem* SymbolMap_FindBucket(SymbolMap* pMap, const char*  Key);
 void SymbolMap_Swap(SymbolMap * pA, SymbolMap * pB);
 
 void SymbolMap_Print(SymbolMap* pMap);
-int SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName);
+bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName);
+
+struct TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* structTagName);
+struct TEnumSpecifier* SymbolMap_FindEnum(SymbolMap* pMap, const char* enumTagName);
+
+struct TTypePointer;
+typedef struct TTypePointer TTypePointer;
+typedef TTypePointer TTypeSpecifier;
+TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
+    const char* typedefName);
+
+struct TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
+    const char* typedefName);

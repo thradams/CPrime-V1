@@ -3095,7 +3095,10 @@ void Struct_Or_Union_Specifier(Parser* ctx,
 
     if (token == TK_IDENTIFIER)
     {
+        
         String_Set(&pStructUnionSpecifier->Name, lexeme);
+
+        
         Parser_Match(ctx, &pStructUnionSpecifier->ClueList1);
         token = Parser_CurrentToken(ctx);
         if (token == TK_LEFT_PARENTHESIS)
@@ -3141,6 +3144,12 @@ void Struct_Or_Union_Specifier(Parser* ctx,
                 // SetError2(ctx, "unexpected struct ", "");
             }
         }
+    }
+
+
+    if (pStructUnionSpecifier->Name != NULL)
+    {
+        SymbolMap_SetAt(ctx->pCurrentScope, pStructUnionSpecifier->Name, (TTypePointer*)pStructUnionSpecifier);
     }
 
     token = Parser_CurrentToken(ctx);
@@ -3210,8 +3219,8 @@ void Enumerator_List(Parser* ctx,
     List_Add(pEnumeratorList2, pEnumerator2);
 
     EnumeratorC(ctx, pEnumerator2);
-    TTypePointer* pv = NULL;
-    SymbolMap_SetAt(ctx->pCurrentScope, pEnumerator2->Name, (TTypePointer*)pEnumerator2, &pv);
+    SymbolMap_SetAt(ctx->pCurrentScope, pEnumerator2->Name, (TTypePointer*)pEnumerator2);
+
     Tokens token = Parser_CurrentToken(ctx);
 
     //tem mais?
@@ -4496,8 +4505,8 @@ void Init_Declarator(Parser* ctx,
     {
         //Fica em um contexto que vive so durante a declaracao
         //depois eh substituido
-        TTypePointer* pv;
-        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer*) pInitDeclarator, &pv);
+        
+        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer*) pInitDeclarator);
     }
 
     //Antes do =
@@ -4642,14 +4651,7 @@ bool  Declaration(Parser* ctx,
                        
                     if (declaratorName != NULL)
                     {
-                        TTypePointer*pv = NULL;
-                        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer*)pFuncVarDeclaration, &pv);
-                        if (pv != NULL)
-                        {
-                            pv = NULL;
-                            //TODO 
-                            //pode repetir desde q seja  o mesmo
-                        }
+                        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer*)pFuncVarDeclaration);
                     }
 
                     //ctx->
@@ -4682,12 +4684,7 @@ bool  Declaration(Parser* ctx,
                         const char* parameterName = TDeclarator_GetName(&pParameter->Declarator);
                         if (parameterName != NULL)
                         {
-                            TTypePointer *pv;
-                            SymbolMap_SetAt(&BlockScope, parameterName, (TTypePointer*)pParameter, &pv);
-                            if (pv != NULL)
-                            {
-                                SetError2(ctx, "name already used", "");
-                            }
+                            SymbolMap_SetAt(&BlockScope, parameterName, (TTypePointer*)pParameter);
                         }
                         else
                         {

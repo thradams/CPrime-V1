@@ -238,5 +238,14 @@ bool EachStructDeclarator(TStructUnionSpecifier* pStruct,
 void AstPlayground(TProgram* program)
 {
    
-        
+   // SymbolMap_Print(&program->GlobalScope);
+
+   // TStructUnionSpecifier* p =
+   //     SymbolMap_FindStructUnion(&program->GlobalScope, "X");
+
+
+   // TTypeSpecifier* p2 = 
+    //    SymbolMap_FindTypedefSpecifierTarget(&program->GlobalScope, "Y");
+    //find struct X
+    //find X
 }
