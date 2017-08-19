@@ -66,8 +66,8 @@ bool TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDec
 void InstanciateInit(TProgram* program,
     Options* options,
     TSpecifierQualifierList* pSpecifierQualifierList,
+    TDeclarator* pDeclatator,
     TInitializer* pInitializer,
     const char* pVariableName,
-    bool bVariableNameIsPointer,
     bool bInitPointerContent,
     StrBuilder* fp);

@@ -1823,9 +1823,9 @@ static bool DefaultFunctionDefinition_CodePrint(TProgram* program,
         InstanciateInit(program,
             options,
             (TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
+            &pFirstParameter->Declarator,
             NULL,
             firstParameterName,
-            TDeclarator_IsPointer(&pFirstParameter->Declarator),
             true /*content*/,
             fp);
         options->IdentationLevel--;
@@ -3139,20 +3139,50 @@ void TStructUnionSpecifier_InstanciateSpecialFunctions(TProgram* program,
 
 void InstanciateInit(TProgram* program,
     Options* options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
+    TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
+    TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
     TInitializer* pInitializer,
     const char* pVariableName,
-    bool bVariableNameIsPointer,
     bool bInitializePointerContent,
     StrBuilder* fp)
 {
-    StrBuilder_AppendFmtLn(fp, 4, "/*");
-    if (bVariableNameIsPointer)
+    
+    bool bIsPointer =
+        TDeclarator_IsPointer(pDeclatator);
+
+    if (bIsPointer)
     {
         if (bInitializePointerContent)
         {
+            const char* typedefName =
+                TSpecifierQualifierList_GetTypedefName(pSpecifierQualifierList);
+            if (typedefName != NULL)
+            {
+                TDeclaration* pDeclaration 
+                    = SymbolMap_FindTypedefDeclarationTarget(&program->GlobalScope, typedefName);
+                if (pDeclaration != NULL)
+                {
+                    TDeclarator* pDeclarator2 = 
+                        TDeclaration_FindDeclarator(pDeclaration, typedefName);
+                    
+                    bool bIsPointer2 =
+                        TDeclarator_IsPointer(pDeclarator2);
+
+                    InstanciateInit(program,
+                        options,
+                        (TSpecifierQualifierList*)&pDeclaration->Specifiers,
+                        pDeclarator2,
+                        pInitializer,
+                        "",
+                        bInitializePointerContent,
+                        fp);
+                }
+            }
             //tipo simples interiro etc enum
-            StrBuilder_AppendFmtLn(fp, 4, "*%s = 0;", pVariableName);
+            
+            const char* declatorName = 
+                TDeclarator_GetName(pDeclatator);
+            StrBuilder_AppendFmtLn(fp, 4, "/* *%s = 0; */", declatorName);
             
             //se for typedfef pegar o tipo final
             //void InstanciateInit(program,
@@ -3163,19 +3193,19 @@ void InstanciateInit(TProgram* program,
                 //bVariableNameIsPointer,
                 //bInitializePointerContent,
                 //fp);
-            
+
             //se for struct pegar final
         }
         else
         {
-            StrBuilder_AppendFmtLn(fp, 4, "*%s = NULL;", pVariableName);
+            StrBuilder_AppendFmtLn(fp, 4, "/* *%s = NULL; */", pVariableName);
         }
     }
     else
     {
-        StrBuilder_AppendFmtLn(fp, 4, "%s = 0;", pVariableName);
+        StrBuilder_AppendFmtLn(fp, 4, "/* %s = 0; */", pVariableName);
     }
-    StrBuilder_AppendFmtLn(fp, 4, "*/");
+   
 }
 
 void InstanciateSpecialFunctions(TProgram* program,
