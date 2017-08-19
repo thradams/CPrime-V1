@@ -1819,6 +1819,16 @@ static bool DefaultFunctionDefinition_CodePrint(TProgram* program,
     }
     else if (IsSuffix(funcName, "_Init") && pFirstParameter)
     {
+        options->IdentationLevel++;
+        InstanciateInit(program,
+            options,
+            (TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
+            NULL,
+            firstParameterName,
+            TDeclarator_IsPointer(&pFirstParameter->Declarator),
+            true /*content*/,
+            fp);
+        options->IdentationLevel--;
 
 
         const char* typedefName =
@@ -2021,7 +2031,7 @@ static bool TDeclaration_CodePrint(TProgram* program,
             else
             {
                 TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-                StrBuilder_Append(fp, " _default");                
+                StrBuilder_Append(fp, " _default");
                 Output_Append(fp, ";");
             }
 
@@ -2950,13 +2960,13 @@ void TStructUnionSpecifier_InstanciateSpecialFunctions(TProgram* program,
         if (pStructUnionSpecifier->StructDeclarationList.size == 0 &&
             bVariableNameIsPointer)
         {
-            /*struct X* pNext;*/            
-            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/NULL", pVariableName);            
+            /*struct X* pNext;*/
+            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/NULL", pVariableName);
         }
-        else            
+        else
         {
             StrBuilder_AppendFmt(fp, "{");
-        }        
+        }
     }
 
     //TStructUnionSpecifier* pStructUnionSpecifier =
@@ -3116,7 +3126,7 @@ void TStructUnionSpecifier_InstanciateSpecialFunctions(TProgram* program,
         if (pStructUnionSpecifier->StructDeclarationList.size == 0 &&
             bVariableNameIsPointer)
         {
-            
+
         }
         else
         {
@@ -3125,6 +3135,47 @@ void TStructUnionSpecifier_InstanciateSpecialFunctions(TProgram* program,
     }
 
 
+}
+
+void InstanciateInit(TProgram* program,
+    Options* options,
+    TSpecifierQualifierList* pSpecifierQualifierList,
+    TInitializer* pInitializer,
+    const char* pVariableName,
+    bool bVariableNameIsPointer,
+    bool bInitializePointerContent,
+    StrBuilder* fp)
+{
+    StrBuilder_AppendFmtLn(fp, 4, "/*");
+    if (bVariableNameIsPointer)
+    {
+        if (bInitializePointerContent)
+        {
+            //tipo simples interiro etc enum
+            StrBuilder_AppendFmtLn(fp, 4, "*%s = 0;", pVariableName);
+            
+            //se for typedfef pegar o tipo final
+            //void InstanciateInit(program,
+              //  options,
+                //pSpecifierQualifierList,
+                //pInitializer,
+                //pVariableName,
+                //bVariableNameIsPointer,
+                //bInitializePointerContent,
+                //fp);
+            
+            //se for struct pegar final
+        }
+        else
+        {
+            StrBuilder_AppendFmtLn(fp, 4, "*%s = NULL;", pVariableName);
+        }
+    }
+    else
+    {
+        StrBuilder_AppendFmtLn(fp, 4, "%s = 0;", pVariableName);
+    }
+    StrBuilder_AppendFmtLn(fp, 4, "*/");
 }
 
 void InstanciateSpecialFunctions(TProgram* program,

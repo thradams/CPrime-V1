@@ -7,6 +7,7 @@
 #include "..\Parser\Macro.h"
 #include "..\Base\Map.h"
 
+
 typedef enum
 {
 	BuildTypeInit,
@@ -61,3 +62,12 @@ bool TSpecifierQualifierList_CodePrint(TProgram* program,
 
 
 bool TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDeclarationSpecifiers* pDeclarationSpecifiers, bool b, StrBuilder* fp);
+
+void InstanciateInit(TProgram* program,
+    Options* options,
+    TSpecifierQualifierList* pSpecifierQualifierList,
+    TInitializer* pInitializer,
+    const char* pVariableName,
+    bool bVariableNameIsPointer,
+    bool bInitPointerContent,
+    StrBuilder* fp);
