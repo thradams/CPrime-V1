@@ -429,6 +429,40 @@ bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 }
 
 
+TDeclaration* SymbolMap_FindFunction(SymbolMap* pMap, const char* funcName)
+{
+	TDeclaration* pDeclaration = NULL;
+
+	if (pMap->pHashTable != NULL)
+	{
+		unsigned int nHashBucket, HashValue;
+		SymbolMapItem* pKeyValue =
+			SymbolMap_GetAssocAt(pMap,
+				funcName,
+				&nHashBucket,
+				&HashValue);
+
+		while (pKeyValue != NULL)
+		{
+			//Obs enum struct e union compartilham um mapa unico
+			if (pKeyValue->pValue->Type == TDeclaration_ID)
+			{
+				if (strcmp(pKeyValue->Key, funcName) == 0)
+				{
+					pDeclaration =
+						(TDeclaration*)pKeyValue->pValue;
+					
+					break;					
+				}
+			}
+			pKeyValue = pKeyValue->pNext;
+		}
+	}
+
+	return pDeclaration;
+}
+
+
 
 TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* structTagName)
 {

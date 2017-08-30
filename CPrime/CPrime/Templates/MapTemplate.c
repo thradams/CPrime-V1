@@ -150,7 +150,8 @@ bool MapPlugin_InstanciateFunction(TProgram* program,
 
         TStructUnionSpecifier* pStructUnionSpecifier =
             GetStructSpecifier(program, pFirst);
-        if (strcmp(pStructUnionSpecifier->TemplateName, "Map") != 0)
+        
+		if (!TStructUnionSpecifier_IsTemplate(pStructUnionSpecifier, "Map"))
         {
             return false;
         }

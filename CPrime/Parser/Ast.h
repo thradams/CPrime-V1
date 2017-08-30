@@ -679,6 +679,7 @@ typedef struct TDeclarator
 #define TDECLARATOR_INIT {LIST_INIT, NULL, TSCANNERITEMLIST_INIT}
 CREATETYPE(TDeclarator, TDECLARATOR_INIT)
 bool TDeclarator_IsPointer(TDeclarator* p);
+bool TDeclarator_IsAutoPointer(TDeclarator* p);
 bool TDeclarator_IsDirectPointer(TDeclarator* p);
 const char* TDeclarator_GetName(TDeclarator* p);
 
@@ -782,6 +783,7 @@ typedef struct TStructUnionSpecifier
 } TStructUnionSpecifier;
 #define TSTRUCT_UNION_SPECIFIER_INIT { {TStructUnionSpecifier_ID}, ARRAYT_INIT, STRING_INIT , STRING_INIT , true , LIST_INIT, LIST_INIT, LIST_INIT}
 
+bool TStructUnionSpecifier_IsTemplate(TStructUnionSpecifier* p, const char* templateName);
 CREATETYPE(TStructUnionSpecifier, TSTRUCT_UNION_SPECIFIER_INIT)
 
 

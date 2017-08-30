@@ -2984,18 +2984,15 @@ void Struct_Declarator_List(Parser* ctx,
 
         if (token == TK_COMMA)
         {
-
-
+			//Tem mais
             Parser_Match(ctx, &pTDeclarator2->ClueList00);
 
             Struct_Declarator_List(ctx, pStructDeclarationList);
         }
-
         else if (token == TK_SEMICOLON)
         {
             break;
         }
-
         else
         {
             SetUnexpectedError(ctx, "Struct_Declarator_List unexpected", "");

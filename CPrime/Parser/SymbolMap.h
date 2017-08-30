@@ -61,3 +61,4 @@ TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
 
 struct TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
     const char* typedefName);
+struct TDeclaration* SymbolMap_FindFunction(SymbolMap* pMap, const char* funcName);

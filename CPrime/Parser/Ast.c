@@ -328,6 +328,16 @@ void TEnumSpecifier_Destroy(TEnumSpecifier* p) _default
     TScannerItemList_Destroy(&p->ClueList3);
 }
 
+bool TStructUnionSpecifier_IsTemplate(TStructUnionSpecifier* p, const char* templateName)
+{
+	bool bResult = false;
+	if (p->TemplateName != NULL)
+	{
+		bResult = strcmp(p->TemplateName, templateName) == 0;
+	}
+	return bResult;
+}
+
 void TStructUnionSpecifier_Destroy(TStructUnionSpecifier* p) 
 {
 	String_Destroy(&p->Name);
@@ -412,6 +422,11 @@ bool TDeclarator_IsPointer(TDeclarator* p)
 	return TPointerList_IsPointer(&p->PointerList);
 }
 
+bool TDeclarator_IsAutoPointer(TDeclarator* p)
+{
+	return TPointerList_IsAutoPointer(&p->PointerList);
+}
+
 TSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p)
 {
 	TSpecifier* pSpecifier = NULL;
@@ -488,7 +503,7 @@ bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p)
 		TSingleTypeSpecifier* pSingleTypeSpecifier =
 			TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
 		if (pSingleTypeSpecifier &&
-			pSingleTypeSpecifier->Token == TK_INT ||
+			(pSingleTypeSpecifier->Token == TK_INT ||
 			pSingleTypeSpecifier->Token == TK_SHORT ||
 			pSingleTypeSpecifier->Token == TK_SIGNED ||
 			pSingleTypeSpecifier->Token == TK_UNSIGNED ||
@@ -496,7 +511,7 @@ bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p)
             pSingleTypeSpecifier->Token == TK__INT16 ||
             pSingleTypeSpecifier->Token == TK__INT32 ||
             pSingleTypeSpecifier->Token == TK__INT64 ||
-            pSingleTypeSpecifier->Token == TK__WCHAR_T
+            pSingleTypeSpecifier->Token == TK__WCHAR_T)
             )
 		{
 			bResult = true;

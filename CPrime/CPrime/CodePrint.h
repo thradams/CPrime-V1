@@ -64,10 +64,12 @@ bool TSpecifierQualifierList_CodePrint(TProgram* program,
 bool TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDeclarationSpecifiers* pDeclarationSpecifiers, bool b, StrBuilder* fp);
 
 void InstanciateInit(TProgram* program,
-    Options* options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    TDeclarator* pDeclatator,
-    TInitializer* pInitializer,
-    const char* pVariableName,
-    bool bInitPointerContent,
-    StrBuilder* fp);
+	Options* options,
+	TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
+	TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
+	TInitializer* pInitializer,
+	const char* pInitExpressionText, //(x->p->i = 0)
+	bool bInitExpressionIsPointer,  //true quando o tipo da expressão eh um ponteiro para algo
+	bool bInitializePointerContent,
+	bool bSearchForInitFunction,
+	StrBuilder* fp);
