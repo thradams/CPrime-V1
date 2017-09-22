@@ -3775,7 +3775,7 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
     case TK_DTOR_QUALIFIER:
     case TK_MDTOR_QUALIFIER:
         pQualifier->Token = token;
-        Parser_Match(ctx, NULL);
+        Parser_Match(ctx, &pQualifier->ClueList0);
         bResult = true;
         break;
 #endif

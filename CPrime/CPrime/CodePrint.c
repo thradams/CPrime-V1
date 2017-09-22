@@ -940,16 +940,20 @@ static bool TEnumSpecifier_CodePrint(TProgram* program, Options * options, TEnum
 	Output_Append(fp, p->Name);
 
 	TNodeClueList_CodePrint(options, &p->ClueList2, fp);
-	Output_Append(fp, "{");
 
-
-	ForEachListItem(TEnumerator, pTEnumerator, &p->EnumeratorList)
+	if (p->EnumeratorList.pHead != NULL)
 	{
-		TEnumerator_CodePrint(program, options, pTEnumerator, false, fp);
-	}
+		Output_Append(fp, "{");
 
-	TNodeClueList_CodePrint(options, &p->ClueList3, fp);
-	Output_Append(fp, "}");
+		ForEachListItem(TEnumerator, pTEnumerator, &p->EnumeratorList)
+		{
+			TEnumerator_CodePrint(program, options, pTEnumerator, false, fp);
+		}
+
+		TNodeClueList_CodePrint(options, &p->ClueList3, fp);
+		Output_Append(fp, "}");
+	}
+	
 	return true;
 }
 
@@ -3232,7 +3236,7 @@ void InstanciateDestroy(TProgram* program,
 						pInitExpressionText,
 						bTypedefTargetDeclaratorIsPointer || bInitExpressionIsPointer,
 						bTypedefTargetDeclaratorIsAutoPointer || bInitExpressionIsAutoPointer,
-						true,
+                        bSearchForInitFunction,
 						fp);
 				}
 			}
@@ -3498,7 +3502,7 @@ void InstanciateInit(TProgram* program,
 						pInitExpressionText,
 						bTypedefTargetDeclaratorIsPointer || bInitExpressionIsPointer,
 						bInitializePointerContent,
-						true,
+                        bSearchForInitFunction,
 						fp);
 				}
 			}
