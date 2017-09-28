@@ -61,7 +61,7 @@ static bool TInitializerListItem_CodePrint(TProgram* program,
 static bool TTypeQualifierList_CodePrint(TProgram* program, Options * options, TTypeQualifierList* p, bool b, StrBuilder* fp);
 //static bool TInitializerList_CodePrint(TProgram* program, Options * options, TTypeSpecifier* pTypeSpecifier, bool bIsPointer, TInitializerList*p, bool b, StrBuilder* fp);
 //static bool TInitializerListType_CodePrint(TTypeSpecifier* pTypeSpecifier, bool b, StrBuilder* fp);
-static bool TDeclarator_CodePrint(TProgram* program, Options * options, TDeclarator* p, bool b, StrBuilder* fp);
+static bool TDeclarator_CodePrint(TProgram* program, Options * options, TDeclarator* p, bool b, bool bPrintName, StrBuilder* fp);
 static bool TAnyDeclaration_CodePrint(TProgram* program, Options * options, TAnyDeclaration *pDeclaration, bool b, StrBuilder* fp);
 static bool TTypeSpecifier_CodePrint(TProgram* program, Options * options, TTypeSpecifier* p, bool b, StrBuilder* fp);
 static bool TAnyStructDeclaration_CodePrint(TProgram* program, Options * options, TAnyStructDeclaration* p, bool b, StrBuilder* fp);
@@ -1282,6 +1282,7 @@ static bool TParameterTypeList_CodePrint(TProgram* program, Options * options, T
 
 static bool TDirectDeclarator_CodePrint(TProgram* program, Options * options, TDirectDeclarator* pDirectDeclarator,
 	bool b,
+    bool bPrintName,
 	StrBuilder* fp)
 {
 	if (pDirectDeclarator == NULL)
@@ -1295,7 +1296,10 @@ static bool TDirectDeclarator_CodePrint(TProgram* program, Options * options, TD
 	{
 		//identifier
 		TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList0, fp);
-		Output_Append(fp, pDirectDeclarator->Identifier);
+        if (bPrintName)
+        {
+            Output_Append(fp, pDirectDeclarator->Identifier);
+        }
 		b = true;
 	}
 	else  if (pDirectDeclarator->pDeclarator)
@@ -1304,7 +1308,7 @@ static bool TDirectDeclarator_CodePrint(TProgram* program, Options * options, TD
 		TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList0, fp);
 		Output_Append(fp, "(");
 
-		b = TDeclarator_CodePrint(program, options, pDirectDeclarator->pDeclarator, b, fp);
+		b = TDeclarator_CodePrint(program, options, pDirectDeclarator->pDeclarator, b, bPrintName, fp);
 
 		TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList1, fp);
 		Output_Append(fp, ")");
@@ -1341,7 +1345,7 @@ static bool TDirectDeclarator_CodePrint(TProgram* program, Options * options, TD
 	if (pDirectDeclarator->pDirectDeclarator)
 	{
 		//fprintf(fp, "\"direct-declarator\":");
-		TDirectDeclarator_CodePrint(program, options, pDirectDeclarator->pDirectDeclarator, b, fp);
+		TDirectDeclarator_CodePrint(program, options, pDirectDeclarator->pDirectDeclarator, b, bPrintName,fp);
 	}
 
 
@@ -1349,10 +1353,10 @@ static bool TDirectDeclarator_CodePrint(TProgram* program, Options * options, TD
 	return b;
 }
 
-static bool TDeclarator_CodePrint(TProgram* program, Options * options, TDeclarator* p, bool b, StrBuilder* fp)
+static bool TDeclarator_CodePrint(TProgram* program, Options * options, TDeclarator* p, bool b, bool bPrintName, StrBuilder* fp)
 {
 	b = TPointerList_CodePrint(program, options, &p->PointerList, b, fp);
-	b = TDirectDeclarator_CodePrint(program, options, p->pDirectDeclarator, b, fp);
+	b = TDirectDeclarator_CodePrint(program, options, p->pDirectDeclarator, b, bPrintName, fp);
 	return b;
 }
 
@@ -1368,7 +1372,7 @@ bool TStructDeclarator_CodePrint(TProgram* program,
 	StrBuilder* fp)
 {
 	b = false;
-	b = TDeclarator_CodePrint(program, options, p->pDeclarator, b, fp);
+	b = TDeclarator_CodePrint(program, options, p->pDeclarator, b, true/*bPrintName*/, fp);
 	if (p->pInitializer)
 	{
 		TNodeClueList_CodePrint(options, &p->ClueList1, fp);
@@ -1714,7 +1718,7 @@ bool TInitDeclarator_CodePrint(TProgram* program,
 	bool b, StrBuilder* fp)
 {
 	b = false;
-	b = TDeclarator_CodePrint(program, options, p->pDeclarator, b, fp);
+	b = TDeclarator_CodePrint(program, options, p->pDeclarator, b, true/*bPrintName*/, fp);
 
 	if (p->pInitializer)
 	{
@@ -1758,6 +1762,7 @@ bool TInitDeclaratorList_CodePrint(TProgram* program,
 	//  fprintf(fp, "]");
 	return true;
 }
+
 void InstanciateDestroy(TProgram* program,
 	Options* options,
 	TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
@@ -1884,7 +1889,7 @@ static bool DefaultFunctionDefinition_CodePrint(TProgram* program,
 			&pFirstParameter->Declarator,
 			firstParameterName,
 			bInitExpressionIsPointer,
-			true /*content*/,
+			false /*content*/,
 			false,
 			fp);
 		options->IdentationLevel--;
@@ -2063,7 +2068,7 @@ bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, boo
 	//b = TDeclarationSpecifiers_CodePrint(program, options, &p->Specifiers, false, fp);
 
 
-	b = TDeclarator_CodePrint(program, options, &p->Declarator, b, fp);
+	b = TDeclarator_CodePrint(program, options, &p->Declarator, b, true/*bPrintName*/, fp);
 
 	return b;
 }
@@ -2075,7 +2080,7 @@ static bool TParameter_CodePrint(TProgram* program,
 	StrBuilder* fp)
 {
 	b = TDeclarationSpecifiers_CodePrint(program, options, &p->Specifiers, false, fp);
-	b = TDeclarator_CodePrint(program, options, &p->Declarator, b, fp);
+	b = TDeclarator_CodePrint(program, options, &p->Declarator, b, true/*bPrintName*/, fp);
 
 	if (p->bHasComma)
 	{
@@ -3153,13 +3158,36 @@ void InstanciateDestroy(TProgram* program,
 	bool bSearchForInitFunction,    //true= procurar por funcao init
 	StrBuilder* fp)
 {
-	const char* declatorName = TDeclarator_GetName(pDeclatator);
+    printf("InstanciateDestroy\n");
+
+    printf("expression '%s'\n",
+        pInitExpressionText);
+
+
+    StrBuilder sb = STRBUILDER_INIT;
+    bool bPrintName = false;
+    TDeclarator_CodePrint(program, options, pDeclatator, false, bPrintName, &sb);
+    
+    StrBuilder sb2 = STRBUILDER_INIT;
+    TSpecifierQualifierList_CodePrint(program, options, pSpecifierQualifierList, false, &sb2);
+    
+    printf("type = %s | %s\n",        
+        sb2.c_str,
+        sb.c_str );
+
+    printf("pointer = %s\nauto = %s\n",
+        (bInitExpressionIsPointer ? "true" : "false"),
+        (bInitExpressionIsAutoPointer ? "true" : "false"));
+
+    StrBuilder_Destroy(&sb);
+
+	//const char* declatorName = TDeclarator_GetName(pDeclatator);
 	bool bDeclaratorIsPointer = pDeclatator ? TDeclarator_IsPointer(pDeclatator) : false;
 
-	if (declatorName == NULL)
-	{
+	//if (declatorName == NULL)
+	//{
 		//erro tem que ter um nome
-	}
+	//}
 
 	//if (!bInitExpressionIsAutoPointer && bInitExpressionIsPointer)
 	//{
@@ -3295,6 +3323,8 @@ void InstanciateDestroy(TProgram* program,
 				
 				TDeclaration* pDeclaration =
 					SymbolMap_FindFunction(&program->GlobalScope, funcName);
+                
+                printf("'%s' %s\n", funcName, (pDeclaration ? "found" : "not found"));
 
 				if (pDeclaration != NULL)
 				{
@@ -3314,6 +3344,8 @@ void InstanciateDestroy(TProgram* program,
 
 						TDeclaration* pDeclaration =
 							SymbolMap_FindFunction(&program->GlobalScope, funcName);
+
+                        printf("'%s' %s\n", funcName, (pDeclaration ? "found" : "not found"));
 
 						if (pDeclaration != NULL)
 						{
@@ -3394,6 +3426,13 @@ void InstanciateDestroy(TProgram* program,
 				}
 			}
 			//Passar por cada item para inicializar
+            
+            //se for auto pointer ainda tem que fazer free
+            if (bInitExpressionIsPointer && bInitExpressionIsAutoPointer)
+            {
+                //o destroy foi feito inline mas ainda tem que fazer free
+                StrBuilder_AppendFmtLn(fp, 4 * 1, "free(%s);", pInitExpressionText);
+            }
 		}
 	}
 	else if (pMainSpecifier->Type == TEnumSpecifier_ID)
