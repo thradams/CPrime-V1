@@ -1,33 +1,61 @@
+#define STRUCT 
+//struct
 
-#include <stdlib.h>
+typedef  char * _auto String;
 
-typedef struct 
+//void String_Destroy(String* s) {}
+
+struct X;
+
+typedef struct X X;
+
+void X_Destroy(STRUCT X* pX)  _default
 {
-       int * _auto i;
-} X;
-
-void X_Destroy(X* p) _default
-{
-    free(p->i);
+    /// pX ///
+    //pX->a = 0;
+    //pX->b = 0;
+    free(pX->Name);
+    /// pX ///
 }
 
-#if 0
+void X_Delete(STRUCT X* pX)  _default
+{
+    if (pX){
+
+        X_Destroy(pX);
+        free(pX);
+    }
+
+}
+
 struct Y
 {
-    X * _auto pAutoX;
-    X x;
+    STRUCT X x;
+    STRUCT X * pX;
+    STRUCT X * _auto pAutoX;
 };
+typedef struct Y Y;
 
-void Y_Destroy(struct Y* p) _default
+//void Y_Destroy(STRUCT Y* pY) _default;
+void Y_Delete(STRUCT Y* pY) _default
 {
-    X_Destroy(p->pAutoX);
-    free(p->pAutoX);
-    X_Destroy(&p->x);
+    /// pY ///
+    if (pY)
+    {
+    X_Destroy(&pY->x);
+    //pY->pX = NULL;
+    X_Delete(pY->pAutoX);
+        free(pY);
+    }
+    /// pY ///
 }
-#endif
-
 int main()
 {
-
-
 }
+
+struct X
+{
+    int a;
+    char b;
+    String  Name;
+};

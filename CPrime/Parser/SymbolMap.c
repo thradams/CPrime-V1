@@ -462,7 +462,17 @@ TDeclaration* SymbolMap_FindFunction(SymbolMap* pMap, const char* funcName)
 	return pDeclaration;
 }
 
-
+TDeclaration* SymbolMap_FindObjFunction(SymbolMap* pMap, 
+    const char* objName,
+    const char* funcName)
+{
+    char buffer[500] = {0};
+    strcat(buffer, objName);
+    strcat(buffer, "_");
+    strcat(buffer, funcName);
+    TDeclaration* p = SymbolMap_FindFunction(pMap, buffer);
+    return p;
+}
 
 TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* structTagName)
 {
