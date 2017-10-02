@@ -1763,13 +1763,14 @@ bool TInitDeclaratorList_CodePrint(TProgram* program,
     //  fprintf(fp, "]");
     return true;
 }
-enum Action
+
+typedef enum 
 {
     ActionDestroy,
     ActionDestroyContent,
     ActionDelete,
     ActionInit
-};
+} Action;
 
 void InstanciateDestroy2(TProgram* program,
     Options* options,
