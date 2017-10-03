@@ -1097,6 +1097,7 @@ static void TInitializerList_CodePrint(TProgram* program,
     }
     else
     {
+        
         ForEachListItem(TInitializerListItem, pItem, p)
         {
             if (!List_IsFirstItem(p, pItem))
@@ -1109,6 +1110,7 @@ static void TInitializerList_CodePrint(TProgram* program,
                 pItem,
                 fp);
         }       
+        
     }
 }
 
@@ -1150,7 +1152,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
     else
     {
         TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-        //Output_Append(fp, options, "{");
+        Output_Append(fp, options, "{");
 
         TInitializerList_CodePrint(program,
             options,
@@ -1161,7 +1163,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
             fp);
 
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-        //Output_Append(fp, options, "}");
+        Output_Append(fp, options, "}");
     }
 
 
@@ -2080,9 +2082,6 @@ static void TInitializerListItem_CodePrint(TProgram* program,
 
     StrBuilder* fp)
 {
-
-
-
     if (!List_IsEmpty(&p->DesignatorList))
     {
         TDesignatorList_CodePrint(program, options, &p->DesignatorList, fp);
@@ -2093,10 +2092,7 @@ static void TInitializerListItem_CodePrint(TProgram* program,
         pDeclarator,
         pDeclarationSpecifiers,
         p->pInitializer,
-
         fp);
-
-
 }
 
 
