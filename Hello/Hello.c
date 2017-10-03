@@ -1,61 +1,49 @@
-#define STRUCT 
-//struct
+#include <stdio.h>
+#include <stdlib.h>
+//#include <Windows.h>
 
-typedef  char * _auto String;
+typedef char * _auto String;
 
-//void String_Destroy(String* s) {}
-
-struct X;
-
-typedef struct X X;
-
-void X_Destroy(STRUCT X* pX)  _default
+struct Person
 {
-    /// pX ///
-    //pX->a = 0;
-    //pX->b = 0;
-    free(pX->Name);
-    /// pX ///
-}
-
-void X_Delete(STRUCT X* pX)  _default
-{
-    if (pX){
-
-        X_Destroy(pX);
-        free(pX);
-    }
-
-}
-
-struct Y
-{
-    STRUCT X x;
-    STRUCT X * pX;
-    STRUCT X * _auto pAutoX;
+    String Name;
+    int age /*= -1*/;
+    _Bool b /*= true*/;
 };
-typedef struct Y Y;
 
-//void Y_Destroy(STRUCT Y* pY) _default;
-void Y_Delete(STRUCT Y* pY) _default
-{
-    /// pY ///
-    if (pY)
-    {
-    X_Destroy(&pY->x);
-    //pY->pX = NULL;
-    X_Delete(pY->pAutoX);
-        free(pY);
-    }
-    /// pY ///
-}
+struct Person* Person_Create();
+void Person_Delete(struct Person* person);
+
 int main()
 {
+    struct Person person = _default {/*.Name=*/0/*NULL*/, /*.age=*/0, /*.b=*/0};
+    struct Person* pPerson = Person_Create();
+    Person_Delete(pPerson);
+    return 0;
 }
 
-struct X
+struct Person* Person_Create() _default
 {
-    int a;
-    char b;
-    String  Name;
-};
+    struct Person *p = malloc(sizeof * p);
+    if (p)
+    {
+        p->Name = 0/*NULL*/;
+        p->age = 0;
+        p->b = 0;
+    }
+    return p;
+    
+
+}
+void Person_Delete(struct Person* person) _default
+{
+    if (person)
+    {
+        free(person->Name);
+        //person->age = 0;
+        //person->b = 0;
+        free(person);
+    }
+    
+
+}

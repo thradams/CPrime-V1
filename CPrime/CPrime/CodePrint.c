@@ -1076,14 +1076,15 @@ static void TInitializerList_CodePrint(TProgram* program,
 
     StrBuilder* fp)
 {
-
-
     if (List_HasOneItem(p) &&
         List_Back(p)->pInitializer == NULL/* &&
                                           pSpecifierQualifierList != NULL*/)
     {
-        //a partir de {} e um tipo consegue gerar o final
-
+        if (!options->bHideDefaultImplementation)
+        {
+            Output_Append(fp, options, "_default ");
+        }
+        //a partir de {} e um tipo consegue gerar o final        
         InstanciateDestroy2(program,
             options,
             (TSpecifierQualifierList*)(pDeclarationSpecifiers),
@@ -1091,19 +1092,11 @@ static void TInitializerList_CodePrint(TProgram* program,
             NULL,
             "",
             ActionStaticInit,
-            false,
+            true,
             fp);
-
-
-        //BuildInitialization(program, options, pDeclarationSpecifiers, bIsPointer, fp);
-
     }
     else
     {
-        //TNodeClueList_CodePrint(&p->ClueList, fp, 0);
-
-        //Output_Append(fp, options,  "{");
-
         ForEachListItem(TInitializerListItem, pItem, p)
         {
             if (!List_IsFirstItem(p, pItem))
@@ -1115,14 +1108,10 @@ static void TInitializerList_CodePrint(TProgram* program,
                 pDeclarationSpecifiers,
                 pItem,
                 fp);
-        }
-
-        //Output_Append(fp, options,  "}");
+        }       
     }
-
-
-
 }
+
 static void TInitializerListType_CodePrint(TProgram* program,
     Options * options,
     TDeclarator* pDeclarator,
@@ -1141,22 +1130,27 @@ static void TInitializerListType_CodePrint(TProgram* program,
 
         Output_Append(fp, options, "_default");
         Output_Append(fp, options, " {");
-        InstanciateDestroy2(program,
-            options,
-            (TSpecifierQualifierList*)(pDeclarationSpecifiers),
-            pDeclarator,                        //<-dupla para entender o tipo
-            pInitializer,
-            "",
-            ActionStaticInit,
-            false,
-            fp);
-
+        if (options->bHideDefaultImplementation)
+        {
+        }
+        else
+        {
+            InstanciateDestroy2(program,
+                options,
+                (TSpecifierQualifierList*)(pDeclarationSpecifiers),
+                pDeclarator,                        //<-dupla para entender o tipo
+                pInitializer,
+                "",
+                ActionStaticInit,
+                false,
+                fp);
+        }
         Output_Append(fp, options, "}");
     }
     else
     {
         TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-        Output_Append(fp, options, "{");
+        //Output_Append(fp, options, "{");
 
         TInitializerList_CodePrint(program,
             options,
@@ -1167,7 +1161,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
             fp);
 
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-        Output_Append(fp, options, "}");
+        //Output_Append(fp, options, "}");
     }
 
 

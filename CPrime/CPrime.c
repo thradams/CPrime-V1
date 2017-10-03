@@ -65,21 +65,24 @@ void Compile(const char* configFileName,
 
 void PrintHelp()
 {
-    printf("Syntax: cprime [options] [file ...]\n");
+    printf("Syntax: cp [options] [file ...]\n");
     printf("\n");
-    printf("Examples: cprime hello.c\n");
-    printf("          cprime -config config.h hello.c\n");
-	printf("          cprime -config config.h hello.c -out hello.c\n");
-    printf("          cprime -config config.h -P hello.c\n");	
-    printf("          cprime -E hello.c\n");
+    printf("Examples: cp hello.c\n");
+    printf("          cp -config config.h hello.c\n");
+	printf("          cp -config config.h hello.c -o hello.c\n");
+    printf("          cp -config config.h -P hello.c\n");	
+    printf("          cp -E hello.c\n");
+    printf("          cp -P hello.c\n");
+    printf("          cp -A hello.c\n");
     printf("\n");
     printf("Options:\n");
     printf("-config FILE                          Configuration file.\n");
     printf("-help                                 Print this message.\n");
-	printf("-o                                    Sets ouput file name.\n");
+	printf("-o FILE                               Sets ouput file name.\n");
     printf("-E                                    Preprocess to console.\n");
     printf("-P                                    Preprocess to file.\n");
     printf("-A                                    Output AST to file.\n");
+    printf("-r                                    Reverts generation.\n");
 
 }
 int main(int argc, char* argv[])
@@ -118,6 +121,10 @@ int main(int argc, char* argv[])
             bPrintPreprocessedToFile = true;
         }
         else if (strcmp(option, "-E") == 0)
+        {
+            bPrintPreprocessedToConsole = true;
+        }
+        else if (strcmp(option, "-r") == 0)
         {
             bPrintPreprocessedToConsole = true;
         }
