@@ -36,22 +36,10 @@ void TProgram_PrintCodeToFile(TProgram * pProgram,
 	const char * fileName,
 	const char* userpath);
 
-void BuildInitializationForTypedef(TProgram* program,
-	Options * options,
-	const char* typedefName,
-	StrBuilder* strBuilder);
+
 
 bool TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p, bool b, StrBuilder* fp);
 
-void InstanciateSpecialFunctions(TProgram* program,
-	Options * options,
-	TSpecifierQualifierList* pSpecifierQualifierList,
-	TDeclarator* pDeclarator,
-	TInitializer* pInitializer,
-	const char* pVariableName,
-	bool bVariableNameIsPointer,
-	BuildType buildType,
-	StrBuilder* fp);
 
 bool IsSuffix(const char* s, const char* suffix);
 bool TSpecifierQualifierList_CodePrint(TProgram* program,
@@ -63,13 +51,22 @@ bool TSpecifierQualifierList_CodePrint(TProgram* program,
 
 bool TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDeclarationSpecifiers* pDeclarationSpecifiers, bool b, StrBuilder* fp);
 
-void InstanciateInit(TProgram* program,
-	Options* options,
-	TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
-	TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
-	TInitializer* pInitializer,
-	const char* pInitExpressionText, //(x->p->i = 0)
-	bool bInitExpressionIsPointer,  //true quando o tipo da expressão eh um ponteiro para algo
-	bool bInitializePointerContent,
-	bool bSearchForInitFunction,
-	StrBuilder* fp);
+typedef enum
+{
+    ActionDestroy,
+    ActionDestroyContent,
+    ActionDelete,
+    ActionCreate,
+    ActionInit,
+    ActionInitContent,
+    ActionStaticInit,
+} Action;
+
+void InstanciateDestroy2(TProgram* program,
+    Options* options,
+    TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
+    TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
+    const char* pInitExpressionText, //(x->p->i = 0)    
+    const Action action,
+    bool bCanApplyFunction,
+    StrBuilder* fp);

@@ -120,8 +120,14 @@ Result StrBuilder_SetN(StrBuilder* p,
 Result StrBuilder_Set(StrBuilder* p,
                       const char* source)
 {
+  int n = strlen(source);
   StrBuilder_Clear(p);
-  return StrBuilder_SetN(p, source, strlen(source));
+  Result r = RESULT_OK;
+  if (n > 0)
+  {
+      r = StrBuilder_SetN(p, source, strlen(source));
+  }
+  return r;
 }
 
 Result StrBuilder_AppendN(StrBuilder* p,

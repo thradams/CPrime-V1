@@ -108,7 +108,7 @@ static void TNodeClueList_CodePrint(Options* options, TScannerItemList* list,
             Output_Append(fp, pNodeClue->lexeme.c_str);
             Output_Append(fp, "\n");
             //if (pNodeClue->bActive)
-            //{
+            
             IncludeLevel++;
             //}
             break;
@@ -1094,8 +1094,6 @@ static bool TInitializerList_CodePrint(TProgram* program,
     bool b,
     StrBuilder* fp)
 {
-
-
     b = false;
 
     if (List_HasOneItem(p) &&
@@ -1104,15 +1102,15 @@ static bool TInitializerList_CodePrint(TProgram* program,
     {
         //a partir de {} e um tipo consegue gerar o final
 
-        InstanciateSpecialFunctions(program,
+         InstanciateDestroy2(program,
             options,
             (TSpecifierQualifierList*)(pDeclarationSpecifiers),
-            NULL,
-            NULL,
-            NULL,
+            NULL,                        //<-dupla para entender o tipo
+            "",
+            ActionStaticInit,
             false,
-            BuildTypeStaticInit,
             fp);
+
 
         //BuildInitialization(program, options, pDeclarationSpecifiers, bIsPointer, fp);
 
@@ -1153,21 +1151,21 @@ static bool TInitializerListType_CodePrint(TProgram* program,
 
     if (p->bDefault)
     {
-
         TNodeClueList_CodePrint(options, &p->ClueList00, fp);
 
         Output_Append(fp, "_default");
-
-        InstanciateSpecialFunctions(program,
+        Output_Append(fp, " {");
+        InstanciateDestroy2(program,
             options,
             (TSpecifierQualifierList*)(pDeclarationSpecifiers),
-            pDeclarator,
-            NULL,
-            NULL,
+            pDeclarator,                        //<-dupla para entender o tipo
+            "",
+            ActionStaticInit,
             false,
-            BuildTypeStaticInit,
             fp);
 
+        Output_Append(fp, "}");
+       
         //BuildInitialization(program,
         //  options,
         //pDeclarationSpecifiers,
@@ -1764,13 +1762,7 @@ bool TInitDeclaratorList_CodePrint(TProgram* program,
     return true;
 }
 
-typedef enum 
-{
-    ActionDestroy,
-    ActionDestroyContent,
-    ActionDelete,
-    ActionInit
-} Action;
+
 
 void InstanciateDestroy2(TProgram* program,
     Options* options,
@@ -1817,79 +1809,32 @@ static bool DefaultFunctionDefinition_CodePrint(TProgram* program,
 
     if (IsSuffix(funcName, "_Create"))
     {
-
-        const char* typedefName =
-            TDeclarationSpecifiers_GetTypedefName(pSpecifiers);
-
-        TDeclaration* pReturnTypeDeclaration =
-            TProgram_FindDeclaration(program, typedefName);
-
-        TDeclarator* pReturnTypeDeclarator =
-            TDeclaration_FindDeclarator(pReturnTypeDeclaration, typedefName);
-
-
-
-        bool bIsTypedef = false;
-
-        if (typedefName != NULL)
-        {
-            //typedef
-            StrBuilder_AppendFmtLn(fp, 4 * 1, "%s *p = (%s*) malloc(sizeof * p);", typedefName, typedefName);
-        }
-
-        //typedef
-        if (typedefName == NULL)
-        {
-            TSpecifier* pMainSpecifier =
-                TSpecifierQualifierList_GetMainSpecifier((TSpecifierQualifierList*)pSpecifiers);
-            StrBuilder_AppendFmtIdent(fp, 4 * 1, "");
-            TTypeSpecifier_CodePrint(program, options, pMainSpecifier, false, fp);
-            StrBuilder_AppendIdent(fp, 4 * 1, " *p = (");
-            TTypeSpecifier_CodePrint(program, options, pMainSpecifier, false, fp);
-            StrBuilder_Append(fp, "*) malloc(sizeof * p);\n");
-        }
-
-        StrBuilder_AppendFmtLn(fp, 4 * 1, "if (p != NULL)");
-        StrBuilder_AppendFmtLn(fp, 4 * 1, "{");
         options->IdentationLevel++;
-        InstanciateInit(program,
+        InstanciateDestroy2(program,
             options,
-            (TSpecifierQualifierList*)(&pReturnTypeDeclaration->Specifiers),
-            NULL,
-            NULL,
+            (TSpecifierQualifierList*)(&pSpecifiers),
+            p->InitDeclaratorList.pHead->pDeclarator,
             "p",
-            true,
-            true /*content*/,
-            true,
+            ActionCreate,
+            false,
             fp);
         options->IdentationLevel--;
-
-        StrBuilder_AppendFmtLn(fp, 4 * 1, "}");
-        StrBuilder_AppendFmtLn(fp, 4 * 1, "return p;");
     }
     else if (IsSuffix(funcName, "_Init") && pFirstParameter)
     {
-        bool bInitExpressionIsPointer =
-            TDeclarator_IsPointer(&pFirstParameter->Declarator);
-
         options->IdentationLevel++;
-        InstanciateInit(program,
+        InstanciateDestroy2(program,
             options,
             (TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
             &pFirstParameter->Declarator,
-            NULL,
             firstParameterName,
-            bInitExpressionIsPointer,
-            true /*content*/,
-            false, /*no inicio nao pode procurar por funcao pois fica reentrante*/
+            ActionInitContent,
+            false,
             fp);
         options->IdentationLevel--;
     }
     else if (IsSuffix(funcName, "_Destroy"))
     {
-        bool bInitExpressionIsPointer =
-            TDeclarator_IsPointer(&pFirstParameter->Declarator);
-
         options->IdentationLevel++;
         InstanciateDestroy2(program,
             options,
@@ -1903,9 +1848,6 @@ static bool DefaultFunctionDefinition_CodePrint(TProgram* program,
     }
     else if (IsSuffix(funcName, "_Delete"))
     {
-        bool bInitExpressionIsPointer =
-            TDeclarator_IsPointer(&pFirstParameter->Declarator);
-
         options->IdentationLevel++;
         InstanciateDestroy2(program,
             options,
@@ -2311,837 +2253,7 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 
 
 
-void InstanciateSpecialFunctions(TProgram* program,
-    Options* options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    TDeclarator* pDeclarator,
-    TInitializer* pInitializer,
-    const char* pVariableName,
-    bool bVariableNameIsPointer,
-    BuildType buildType,
-    StrBuilder* fp);
 
-void Typedef_InstanciateSpecialFunctions(TProgram* program,
-    Options* options,
-    TDeclaration* pDeclaration2,
-    TInitializer* pInitializer,
-    const char* pVariableName,
-    bool bVariableNameIsPointer,
-    const char* declaratorName,
-    const char* typedefName,
-    bool bIsPointer,
-    bool bIsAutoPointer,
-    BuildType buildType,
-    StrBuilder* fp)
-
-{
-    StrBuilder strFuncName = STRBUILDER_INIT;
-    if (pDeclaration2)
-    {
-        if (buildType == BuildTypeInit)
-        {
-            if (bVariableNameIsPointer)
-            {
-                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = NULL;\n", pVariableName);
-            }
-            else
-            {
-                //inicializando nao pointer
-
-                StrBuilder_Set(&strFuncName, typedefName);
-                StrBuilder_Append(&strFuncName, "_Init");
-                TDeclaration *pFunctionDeclaration =
-                    TProgram_FindFunctionDeclaration(program, strFuncName.c_str);
-
-                if (pFunctionDeclaration != NULL)
-                {
-                    //tem Init
-                    if (bVariableNameIsPointer)
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(%s);\n", strFuncName.c_str, pVariableName);
-                    }
-                    else
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(&%s);\n", strFuncName.c_str, pVariableName);
-                    }
-                }
-                else
-                {
-                    //nao tem nem Init
-                    TDeclarator* pTypedefDeclarator =
-                        TDeclaration_FindDeclarator(pDeclaration2, typedefName);
-                    if (pTypedefDeclarator != NULL)
-                    {
-                        // "inline"
-
-                        InstanciateSpecialFunctions(program,
-                            options,
-                            (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
-                            pTypedefDeclarator,
-                            pInitializer,
-                            pVariableName,
-                            bVariableNameIsPointer,
-                            BuildTypeInit,
-                            fp);
-
-                    }
-                }
-            }
-
-        }
-        else if (buildType == BuildTypeDestroy)
-        {
-            if (bIsPointer && !bIsAutoPointer)
-            {
-                //printf("//%s = NULL;\n", pVariableName);
-            }
-            else if (bIsPointer && bIsAutoPointer)
-            {
-                //Destruindo um auto pointer
-                StrBuilder_Append(&strFuncName, typedefName);
-                StrBuilder_Append(&strFuncName, "_Delete");
-
-                //ve se tem delete
-                TDeclaration *pFunctionDeclaration =
-                    TProgram_FindFunctionDeclaration(program, strFuncName.c_str);
-
-                if (pFunctionDeclaration != NULL)
-                {
-                    //tem delete
-                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(%s);\n", strFuncName.c_str, pVariableName);
-                }
-                else
-                {
-                    //nao tem delete ve se tem destroy
-                    StrBuilder_Set(&strFuncName, typedefName);
-                    StrBuilder_Append(&strFuncName, "_Destroy");
-                    pFunctionDeclaration =
-                        TProgram_FindFunctionDeclaration(program, strFuncName.c_str);
-
-                    if (pFunctionDeclaration != NULL)
-                    {
-                        //tem destroy
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "if (%s) {\n", pVariableName);
-
-
-                        if (bVariableNameIsPointer)
-                        {
-                            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(%s);\n", strFuncName.c_str, pVariableName);
-                            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(%s);\n", pVariableName);
-                        }
-                        else
-                        {
-                            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(&%s);\n", strFuncName.c_str, pVariableName);
-                            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(&%s);\n", pVariableName);
-                        }
-
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "}\n");
-                    }
-                    else
-                    {
-                        //nao tem nem delete nem destroy
-                        TDeclarator* pTypedefDeclarator =
-                            TDeclaration_FindDeclarator(pDeclaration2, typedefName);
-                        if (pTypedefDeclarator != NULL)
-                        {
-                            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "if (%s) {\n", pVariableName);
-                            InstanciateSpecialFunctions(program,
-                                options,
-                                (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
-                                pTypedefDeclarator,
-                                pInitializer,
-                                pVariableName,
-                                bVariableNameIsPointer,
-                                BuildTypeDestroy, fp);
-
-                            if (bVariableNameIsPointer)
-                            {
-                                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(%s);\n", pVariableName);
-                            }
-                            else
-                            {
-                                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(&%s);\n", pVariableName);
-                            }
-
-                            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "}\n");
-                        }
-                    }
-                }
-
-            }
-            else
-            {
-                //destruindo nao pointer
-                //nao tem delete ve se tem destroy
-                StrBuilder_Set(&strFuncName, typedefName);
-                StrBuilder_Append(&strFuncName, "_Destroy");
-                TDeclaration *pFunctionDeclaration =
-                    TProgram_FindFunctionDeclaration(program, strFuncName.c_str);
-
-                if (pFunctionDeclaration != NULL)
-                {
-                    //tem destroy
-                    if (bVariableNameIsPointer)
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(%s);\n", strFuncName.c_str, pVariableName);
-                    }
-                    else
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(&%s);\n", strFuncName.c_str, pVariableName);
-                    }
-                }
-                else
-                {
-                    //nao tem nem delete nem destroy
-                    TDeclarator* pTypedefDeclarator =
-                        TDeclaration_FindDeclarator(pDeclaration2, typedefName);
-                    if (pTypedefDeclarator != NULL)
-                    {
-                        // "inline"
-
-                        InstanciateSpecialFunctions(program,
-                            options,
-                            (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
-                            pTypedefDeclarator,
-                            pInitializer,
-                            pVariableName,
-                            bVariableNameIsPointer,
-                            BuildTypeDestroy, fp);
-
-                    }
-                }
-            }
-        }
-        else if (buildType == BuildTypeDelete)
-        {
-            if (bIsPointer && !bIsAutoPointer)
-            {
-                //printf("//%s = NULL;\n", pVariableName);
-            }
-            else
-            {
-                StrBuilder strFuncName = STRBUILDER_INIT;
-                StrBuilder_Append(&strFuncName, typedefName);
-
-                TDeclaration *pFunctionDeclaration = NULL;
-
-                if (bIsAutoPointer)
-                {
-                    StrBuilder_Append(&strFuncName, "_Delete");
-                }
-                else
-                {
-                    StrBuilder_Append(&strFuncName, "_Destroy");
-                }
-
-                pFunctionDeclaration =
-                    TProgram_FindFunctionDeclaration(program, strFuncName.c_str);
-
-
-                //printf("%s {\n", typedefName);
-                if (pFunctionDeclaration != NULL)
-                {
-                    //esta funcao substitui o conceito
-                    //destroy, init, delete
-                    if (bVariableNameIsPointer)
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(%s);\n", strFuncName.c_str, pVariableName);
-                    }
-                    else
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(&%s);\n", strFuncName.c_str, pVariableName);
-                    }
-                }
-                else
-                {
-                    //StrBuilder_AppendFmt(fp, "////// %s //////\n", declaratorName);
-
-                    TDeclarator* pTypedefDeclarator =
-                        TDeclaration_FindDeclarator(pDeclaration2, typedefName);
-                    if (pTypedefDeclarator != NULL)
-                    {
-                        BuildType buildTypeModified = buildType;
-
-                        if (bIsAutoPointer && buildType == BuildTypeDestroy)
-                        {
-                            buildTypeModified = BuildTypeDestroy;
-                        }
-
-                        InstanciateSpecialFunctions(program,
-                            options,
-                            (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
-                            pTypedefDeclarator,
-                            pInitializer,
-                            pVariableName,
-                            bVariableNameIsPointer,
-                            buildTypeModified, fp);
-
-                        if (bIsAutoPointer && buildType == BuildTypeDestroy)
-                        {
-                            if (bVariableNameIsPointer)
-                            {
-                                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(%s);\n", pVariableName);
-                            }
-                            else
-                            {
-                                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(&%s);\n", pVariableName);
-                            }
-                        }
-
-                        //printf("//%s }\n", declaratorName);
-
-                    }
-                    else
-                    {
-                        ASSERT(false);
-                    }
-                }
-
-                //printf("}\n");
-                StrBuilder_Destroy(&strFuncName);
-            }
-        }
-        else if (buildType == BuildTypeCreate)
-        {
-            if (bIsPointer && !bIsAutoPointer)
-            {
-                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = NULL;\n", pVariableName);
-            }
-            else
-            {
-                StrBuilder strFuncName = STRBUILDER_INIT;
-                StrBuilder_Append(&strFuncName, typedefName);
-                StrBuilder_Append(&strFuncName, "_Init");
-                TDeclaration *pFunctionDeclaration = NULL;
-
-
-
-                pFunctionDeclaration =
-                    TProgram_FindFunctionDeclaration(program, strFuncName.c_str);
-
-
-                //printf("%s {\n", typedefName);
-                if (pFunctionDeclaration != NULL)
-                {
-                    //esta funcao substitui o conceito
-                    //destroy, init, delete
-                    if (bVariableNameIsPointer)
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(%s);\n", strFuncName.c_str, pVariableName);
-                    }
-                    else
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(&%s);\n", strFuncName.c_str, pVariableName);
-                    }
-                }
-                else
-                {
-                    TDeclarator* pTypedefDeclarator =
-                        TDeclaration_FindDeclarator(pDeclaration2, typedefName);
-                    if (pTypedefDeclarator != NULL)
-                    {
-                        BuildType buildTypeModified = buildType;
-
-                        if (bIsAutoPointer && buildType == BuildTypeDestroy)
-                        {
-                            buildTypeModified = BuildTypeDestroy;
-                        }
-
-                        if (buildType == BuildTypeCreate)
-                        {
-                            buildTypeModified = BuildTypeInit;
-                        }
-
-                        InstanciateSpecialFunctions(program,
-                            options,
-                            (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
-                            pTypedefDeclarator,
-                            pInitializer,
-                            pVariableName,
-                            bVariableNameIsPointer,
-                            buildTypeModified, fp);
-
-                        if (bIsAutoPointer && buildType == BuildTypeDestroy)
-                        {
-                            if (bVariableNameIsPointer)
-                            {
-                                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(%s);\n", pVariableName);
-                            }
-                            else
-                            {
-                                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(&%s);\n", pVariableName);
-                            }
-                        }
-
-                        //printf("//%s }\n", declaratorName);
-
-                    }
-                    else
-                    {
-                        ASSERT(false);
-                    }
-                }
-
-                //printf("}\n");
-                StrBuilder_Destroy(&strFuncName);
-            }
-        }
-        else if (buildType == BuildTypeStaticInit)
-        {
-            if (bVariableNameIsPointer)
-            {
-                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/ NULL", pVariableName);
-            }
-            else
-            {
-                TDeclarator* pTypedefDeclarator =
-                    TDeclaration_FindDeclarator(pDeclaration2, typedefName);
-                if (pTypedefDeclarator != NULL)
-                {
-                    // "inline"
-
-                    InstanciateSpecialFunctions(program,
-                        options,
-                        (TSpecifierQualifierList*)&pDeclaration2->Specifiers,
-                        pTypedefDeclarator,
-                        pInitializer,
-                        pVariableName,
-                        bVariableNameIsPointer,
-                        BuildTypeStaticInit, fp);
-
-                }
-            }
-        }
-        else
-        {
-            ASSERT(false);
-        }
-    }
-    else
-    {
-        //nao achou este typedef
-        ASSERT(false);
-    }
-    StrBuilder_Destroy(&strFuncName);
-}
-
-
-void TEnumSpecifier_InstanciateSpecialFunctions(TProgram* program,
-    Options* options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    TEnumSpecifier* pSingleTypeSpecifier,
-    TInitializer* pInitializer,
-    const char* pVariableName,
-    bool bVariableNameIsPointer,
-    bool bIsPointer,
-    bool bIsAutoPointer,
-    BuildType buildType,
-    StrBuilder* fp)
-{
-
-    if (buildType == BuildTypeInit ||
-        buildType == BuildTypeCreate)
-    {
-        if (pInitializer)
-        {
-            StrBuilder sb = STRBUILDER_INIT;
-            //Options options = OPTIONS_INIT;
-
-            bool bExpandMacros = options->bExpandMacros;
-            options->bExpandMacros = true;
-
-            TInitializer_CodePrint(program,
-                options,
-                NULL,
-                (TDeclarationSpecifiers*)pSpecifierQualifierList,
-                false,
-                pInitializer,
-                false,
-                &sb);
-
-            options->bExpandMacros = bExpandMacros;
-
-            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = %s;\n", pVariableName, sb.c_str);
-            StrBuilder_Destroy(&sb);
-        }
-        else
-        {
-            if (bIsPointer)
-            {
-                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = NULL;\n", pVariableName);
-            }
-            else
-            {
-                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = 0;\n", pVariableName);
-            }
-        }
-    }
-    else if (buildType == BuildTypeDestroy)
-    {
-        if (bIsPointer && !bIsAutoPointer)
-        {
-            //printf("//%s = NULL;\n", pVariableName);
-        }
-        else if (bIsAutoPointer)
-        {
-            if (bVariableNameIsPointer)
-            {
-                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(%s);\n", pVariableName);
-            }
-            else
-            {
-                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(&%s);\n", pVariableName);
-            }
-        }
-        else
-        {
-            //printf("//%s = 0;\n", pVariableName);
-        }
-    }
-    else if (buildType == BuildTypeDelete)
-    {
-    }
-    else if (buildType == BuildTypeStaticInit)
-    {
-        if (bIsPointer)
-        {
-            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/NULL", pVariableName);
-        }
-        else
-        {
-            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/0", pVariableName);
-        }
-    }
-
-}
-
-static const char * InitValueForType(Tokens token)
-{
-    switch (token)
-    {
-    case TK__BOOL:
-        return "false";
-    case TK_DOUBLE:
-        return "0.0";
-    case TK_FLOAT:
-        return "0.0";
-    case TK_char:
-        return "'\\0'";
-    case TK__WCHAR_T:
-        return "L'\\0'";
-
-    }
-    return "0";
-}
-void TSingleTypeSpecifier_InstanciateSpecialFunctions(TProgram* program,
-    Options* options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    TSingleTypeSpecifier* pSingleTypeSpecifier,
-    TInitializer* pInitializer,
-    const char* pVariableName,
-    bool bVariableNameIsPointer,
-    bool bIsPointer,
-    bool bIsAutoPointer,
-    BuildType buildType,
-    StrBuilder* fp)
-{
-    Tokens token = pSingleTypeSpecifier->Token;
-    if (token == TK_INT ||
-        token == TK_LONG ||
-        //
-        token == TK__INT8 ||
-        token == TK__INT16 ||
-        token == TK__INT32 ||
-        token == TK__INT64 ||
-        token == TK__WCHAR_T ||
-        //
-        token == TK_SHORT ||
-        token == TK_UNSIGNED ||
-        //
-        token == TK_DOUBLE ||
-        token == TK_FLOAT ||
-        //
-        token == TK__BOOL ||
-        //
-
-        token == TK_char ||
-        token == TK_VOID
-        )
-    {
-        if (buildType == BuildTypeInit ||
-            buildType == BuildTypeCreate)
-        {
-            if (pInitializer)
-            {
-                StrBuilder sb = STRBUILDER_INIT;
-                //Options options = OPTIONS_INIT;
-
-                bool bExpandMacros = options->bExpandMacros;
-                options->bExpandMacros = true;
-
-                TInitializer_CodePrint(program,
-                    options,
-                    NULL,
-                    (TDeclarationSpecifiers*)pSpecifierQualifierList,
-                    false,
-                    pInitializer,
-                    false,
-                    &sb);
-
-                options->bExpandMacros = bExpandMacros;
-
-                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = %s;\n", pVariableName, sb.c_str);
-                StrBuilder_Destroy(&sb);
-            }
-            else
-            {
-                if (bIsPointer)
-                {
-                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = NULL;\n", pVariableName);
-                }
-                else
-                {
-                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = %s;\n", pVariableName, InitValueForType(token));
-                }
-            }
-        }
-        else if (buildType == BuildTypeDestroy)
-        {
-            if (bIsPointer && !bIsAutoPointer)
-            {
-                //printf("//%s = NULL;\n", pVariableName);
-            }
-            else if (bIsAutoPointer)
-            {
-                if (bVariableNameIsPointer)
-                {
-                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(%s);\n", pVariableName);
-                }
-                else
-                {
-                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(&%s);\n", pVariableName);
-                }
-            }
-            else
-            {
-                //printf("//%s = 0;\n", pVariableName);
-            }
-        }
-        else if (buildType == BuildTypeDelete)
-        {
-        }
-        else if (buildType == BuildTypeStaticInit)
-        {
-            if (bIsPointer)
-            {
-                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/NULL", pVariableName);
-            }
-            else
-            {
-                StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/%s", pVariableName, InitValueForType(token));
-            }
-        }
-    }
-    else
-    {
-        ASSERT(false);
-    }
-}
-
-
-
-
-
-
-void TStructUnionSpecifier_InstanciateSpecialFunctions(TProgram* program,
-    Options* options,
-    TStructUnionSpecifier* pStructUnionSpecifier,
-    const char* pVariableName,
-    bool bVariableNameIsPointer,
-    BuildType buildType,
-    StrBuilder* fp)
-{
-    if (buildType == BuildTypeStaticInit)
-    {
-        if (pStructUnionSpecifier->StructDeclarationList.size == 0 &&
-            bVariableNameIsPointer)
-        {
-            /*struct X* pNext;*/
-            StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/NULL", pVariableName);
-        }
-        else
-        {
-            StrBuilder_AppendFmt(fp, "{");
-        }
-    }
-
-    //TStructUnionSpecifier* pStructUnionSpecifier =
-    //  TSpecifier_As_TStructUnionSpecifier(pSpecifier);
-
-    if (pStructUnionSpecifier != NULL)
-    {
-        if (pStructUnionSpecifier->TemplateName != NULL)
-        {
-            AllPlugin_InstanciateSpecialFunctions(program,
-                pStructUnionSpecifier,
-                pVariableName,
-                bVariableNameIsPointer,
-                buildType, fp);
-        }
-        else
-        {
-            bool bFirstItem = true;
-
-            if (pStructUnionSpecifier->StructDeclarationList.size == 0)
-            {
-
-                /*Exemplo:
-                struct X {
-                struct X* pNext;
-                }
-                */
-                if (bVariableNameIsPointer && buildType == BuildTypeInit)
-                {
-                    StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s = NULL;\n", pVariableName);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
-                {
-                    TAnyStructDeclaration* pAnyStructDeclaration =
-                        pStructUnionSpecifier->StructDeclarationList.pItems[i];
-
-                    TStructDeclaration* pStructDeclaration =
-                        TAnyStructDeclaration_As_TStructDeclaration(pAnyStructDeclaration);
-
-
-
-                    if (pStructDeclaration != NULL)
-                    {
-                        TStructDeclarator* pStructDeclarator =
-                            pStructDeclaration->DeclaratorList.pHead;
-
-                        StrBuilder strVariableName = STRBUILDER_INIT;
-
-                        while (pStructDeclarator)
-                        {
-
-                            if (bFirstItem)
-                            {
-                                bFirstItem = false;
-                            }
-                            else
-                            {
-                                if (buildType == BuildTypeStaticInit)
-                                {
-                                    StrBuilder_AppendFmt(fp, ",");
-                                }
-                            }
-
-                            const char* declaratorName = TDeclarator_GetName(pStructDeclarator->pDeclarator);
-
-                            //if (buildType != BuildTypeStaticInit)
-                            {
-                                if (pVariableName)
-                                {
-                                    StrBuilder_Set(&strVariableName, pVariableName);
-                                }
-
-                                if (bVariableNameIsPointer)
-                                {
-                                    StrBuilder_Append(&strVariableName, "->");
-                                }
-                                else
-                                {
-                                    StrBuilder_Append(&strVariableName, ".");
-                                }
-
-                                StrBuilder_Append(&strVariableName, declaratorName);
-                            }
-
-                            bool bStructDeclaratorIsPointer =
-                                TPointerList_IsPointer(&pStructDeclarator->pDeclarator->PointerList);
-                            //ver se eh typedef p ponteiro
-
-                            if (buildType == BuildTypeStaticInit)
-                            {
-                                if (pStructDeclarator->pInitializer)
-                                {
-                                    if (pStructDeclarator->pInitializer)
-                                    {
-                                        StrBuilder sb = STRBUILDER_INIT;
-                                        Options options = OPTIONS_INIT;
-                                        options.bExpandMacros = true;
-                                        TInitializer_CodePrint(program,
-                                            &options,
-                                            pStructDeclarator->pDeclarator,
-                                            (TDeclarationSpecifiers*)&pStructDeclaration->SpecifierQualifierList,
-                                            bStructDeclaratorIsPointer,
-                                            pStructDeclarator->pInitializer,
-                                            false,
-                                            &sb);
-                                        StrBuilder_AppendFmt(fp, "%s", sb.c_str);
-                                        StrBuilder_Destroy(&sb);
-                                        //TInitializer_codeprint
-                                    }
-                                    else
-                                    {
-                                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "/*%s*/0", pVariableName);
-                                    }
-                                }
-                                else
-                                {
-                                    InstanciateSpecialFunctions(program,
-                                        options,
-                                        &pStructDeclaration->SpecifierQualifierList,
-                                        pStructDeclarator->pDeclarator,
-                                        pStructDeclarator->pInitializer,
-                                        strVariableName.c_str,
-                                        bStructDeclaratorIsPointer,
-                                        buildType, fp);
-                                }
-                            }
-                            else
-                            {
-
-                                InstanciateSpecialFunctions(program,
-                                    options,
-                                    &pStructDeclaration->SpecifierQualifierList,
-                                    pStructDeclarator->pDeclarator,
-                                    pStructDeclarator->pInitializer,
-                                    strVariableName.c_str,
-                                    bStructDeclaratorIsPointer,
-                                    buildType,
-                                    fp);
-                            }
-
-                            pStructDeclarator = (pStructDeclarator)->pNext;
-                        }
-
-                        StrBuilder_Destroy(&strVariableName);
-                    }
-                }
-                //                    
-            }
-        }
-    }
-
-    if (buildType == BuildTypeStaticInit)
-    {
-        if (pStructUnionSpecifier->StructDeclarationList.size == 0 &&
-            bVariableNameIsPointer)
-        {
-
-        }
-        else
-        {
-            StrBuilder_AppendFmt(fp, "}");
-        }
-    }
-
-
-}
 
 void InstanciateDestroy2(TProgram* program,
     Options* options,
@@ -3152,9 +2264,6 @@ void InstanciateDestroy2(TProgram* program,
     bool bCanApplyFunction,
     StrBuilder* fp)
 {
-    printf("InstanciateDestroy2\n");
-
-    printf("expression '%s'\n", pInitExpressionText);
 
     bool bDeclaratorIsPointer = pDeclatator ? TDeclarator_IsPointer(pDeclatator) : false;
     bool bDeclaratorIsAutoPointer = pDeclatator ? TDeclarator_IsAutoPointer(pDeclatator) : false;
@@ -3192,7 +2301,7 @@ void InstanciateDestroy2(TProgram* program,
                                 "Destroy");
                         if (pDeclarationDestroy)
                         {
-                            StrBuilder_AppendFmtLn(fp, 4 * 1,
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                 "%s_Destroy(&%s);",
                                 pSingleTypeSpecifier->TypedefName,
                                 pInitExpressionText);
@@ -3200,11 +2309,11 @@ void InstanciateDestroy2(TProgram* program,
                         }
                     }
                 }
-                
+
             }
- 
+
             if (!bComplete)
-            {            
+            {
                 TDeclaration* pTypedefTargetDeclaration
                     = SymbolMap_FindTypedefDeclarationTarget(&program->GlobalScope,
                         pSingleTypeSpecifier->TypedefName);
@@ -3265,19 +2374,40 @@ void InstanciateDestroy2(TProgram* program,
         }
         else
         {
-            
             //nao eh typedef, deve ser int, double etc..
             if (action == ActionDestroy)
             {
                 if (bDeclaratorIsAutoPointer)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * 1, "free(%s);",  pInitExpressionText);
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free(%s);", pInitExpressionText);
                 }
                 else
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * 1, "//%s = 0;", pInitExpressionText);
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = 0;", pInitExpressionText);
                 }
-                
+            }
+            else if (action == ActionInit)
+            {
+                if (bDeclaratorIsAutoPointer || bDeclaratorIsPointer)
+                {
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = NULL;", pInitExpressionText);
+                }
+                else
+                {
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = 0;", pInitExpressionText);
+                }
+            }
+            else if (action == ActionStaticInit)
+            {
+                if (bDeclaratorIsPointer)
+                {
+                    StrBuilder_AppendFmt(fp, "/*%s=*/NULL", pInitExpressionText);
+                    
+                }
+                else
+                {
+                    StrBuilder_AppendFmt(fp, "/*%s=*/0", pInitExpressionText);                    
+                }
             }
         }
     }
@@ -3285,7 +2415,7 @@ void InstanciateDestroy2(TProgram* program,
     {
         TStructUnionSpecifier* pStructUnionSpecifier =
             (TStructUnionSpecifier*)pMainSpecifier;
-        
+
         //Indica se consegui fazer sem entrar na struct
         bool bComplete = false;
 
@@ -3305,7 +2435,7 @@ void InstanciateDestroy2(TProgram* program,
                                 "Delete");
                         if (pDeclarationDestroy)
                         {
-                            StrBuilder_AppendFmtLn(fp, 4 * 1,
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                 "%s_Delete(%s);",
                                 pStructUnionSpecifier->Name,
                                 pInitExpressionText);
@@ -3321,11 +2451,11 @@ void InstanciateDestroy2(TProgram* program,
                                     "Destroy");
                             if (pDeclarationDestroy)
                             {
-                                StrBuilder_AppendFmtLn(fp, 4 * 1,
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                     "%s_Destroy(%s);",
                                     pStructUnionSpecifier->Name,
                                     pInitExpressionText);
-                                StrBuilder_AppendFmtLn(fp, 4 * 1,
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                     "free(%s);",
                                     pInitExpressionText);
                                 bComplete = true;
@@ -3337,11 +2467,11 @@ void InstanciateDestroy2(TProgram* program,
                 {
                     if (action != ActionDestroyContent)
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * 1, "//%s = NULL;", pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = NULL;", pInitExpressionText);
                         bComplete = true;
                     }
                 }
-                    
+
             }
             else
             {
@@ -3350,17 +2480,17 @@ void InstanciateDestroy2(TProgram* program,
                 {
                     //vamos procurar pela funcao conceito _Destroy
                     TDeclaration* pDeclarationDestroy =
-                        SymbolMap_FindObjFunction(&program->GlobalScope, 
-                                                  pStructUnionSpecifier->Name, 
-                                                  "Destroy");
+                        SymbolMap_FindObjFunction(&program->GlobalScope,
+                            pStructUnionSpecifier->Name,
+                            "Destroy");
                     if (pDeclarationDestroy)
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * 1, 
-                            "%s_Destroy(&%s);", 
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                            "%s_Destroy(&%s);",
                             pStructUnionSpecifier->Name,
                             pInitExpressionText);
                         bComplete = true;
-                    }                    
+                    }
                 }
             }
         }
@@ -3376,7 +2506,7 @@ void InstanciateDestroy2(TProgram* program,
                         "Delete");
                 if (pDeclarationDestroy)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * 1,
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                         "%s_Delete(%s);",
                         pStructUnionSpecifier->Name,
                         pInitExpressionText);
@@ -3396,7 +2526,7 @@ void InstanciateDestroy2(TProgram* program,
                             "%s_Destroy(%s);",
                             pStructUnionSpecifier->Name,
                             pInitExpressionText);
-                        StrBuilder_AppendFmtLn(fp, 4 * 1,
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                             "free(%s);",
                             pInitExpressionText);
                         bComplete = true;
@@ -3415,19 +2545,19 @@ void InstanciateDestroy2(TProgram* program,
                         "Destroy");
                 if (pDeclarationDestroy)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * 1,
-                        "if (%s){\n",                        
-                      pInitExpressionText);
-
-                    StrBuilder_AppendFmtLn(fp, 4 * 2,
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "if (%s){\n",
+                        pInitExpressionText);
+                    options->IdentationLevel++;
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                         "%s_Destroy(%s);",
                         pStructUnionSpecifier->Name,
                         pInitExpressionText);
-                    StrBuilder_AppendFmtLn(fp, 4 * 2,
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                         "free(%s);",
                         pInitExpressionText);
-
-                    StrBuilder_AppendFmtLn(fp, 4 * 1,
+                    options->IdentationLevel--;
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                         "}\n",
                         pInitExpressionText);
 
@@ -3435,7 +2565,104 @@ void InstanciateDestroy2(TProgram* program,
                 }
             }
         }
+        else if (action == ActionInit)
+        {
+            if (bDeclaratorIsPointer)
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "%s = NULL;",
+                    pInitExpressionText);
+                bComplete = true;
+            }
+            else
+            {
+                TDeclaration* pDeclarationInit =
+                    SymbolMap_FindObjFunction(&program->GlobalScope,
+                        pStructUnionSpecifier->Name,
+                        "Init");
+                if (pDeclarationInit)
+                {
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "%s_Init(&%s);",
+                        pStructUnionSpecifier->Name,
+                        pInitExpressionText);
+                    bComplete = true;
+                }
+            }
+        }
+        else if (action == ActionInitContent)
+        {
+            if (bCanApplyFunction)
+            {                
+                TDeclaration* pDeclarationInit =
+                    SymbolMap_FindObjFunction(&program->GlobalScope,
+                        pStructUnionSpecifier->Name,
+                        "Init");
+                if (pDeclarationInit)
+                {
+                    if (bDeclaratorIsPointer)
+                    {
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                            "%s_Init(%s);",
+                            pStructUnionSpecifier->Name,
+                            pInitExpressionText);
+                    }
+                    else
+                    {
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                            "%s_Init(&%s);",
+                            pStructUnionSpecifier->Name,
+                            pInitExpressionText);
+                    }
+                }                   
+                bComplete = true;
+            }
+        }
+        else if (action == ActionCreate)
+        {
+            if (true /*bCanApplyFunction*/)
+            {
+                TDeclaration* pDeclarationInit =
+                    SymbolMap_FindObjFunction(&program->GlobalScope,
+                        pStructUnionSpecifier->Name,
+                        "Init");
+                if (pDeclarationInit)
+                {   
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "struct %s *p = malloc(sizeof * p);",
+                        pStructUnionSpecifier->Name);
+                    
+                    
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "if (p)");
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "{");
+                    options->IdentationLevel++;
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                            "%s_Init(p);",
+                            pStructUnionSpecifier->Name);
+                        
+                        options->IdentationLevel--;
 
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                            "}");
+                        
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,                        
+                            "return p;");
+
+                        bComplete = true;
+                }
+                
+            }
+        }
+        else if (action == ActionStaticInit)
+        {
+            if (bDeclaratorIsPointer)
+            {
+                StrBuilder_AppendFmt(fp, "/*%s=*/NULL", pInitExpressionText);
+                bComplete = true;
+            }
+        }
         //Exemplos
         //struct Y *pY e é para destruir o conteudo
         //struct Y *pY e NAO é para destruir o conteudo
@@ -3454,25 +2681,53 @@ void InstanciateDestroy2(TProgram* program,
 
             if (pStructUnionSpecifier->StructDeclarationList.size > 0)
             {
-                StrBuilder_AppendFmtLn(fp, 4 * 1, "/// %s ///", pInitExpressionText);
 
-              if (action == ActionDelete)
-              {                
-                StrBuilder_AppendFmtLn(fp, 4 * 1, "if (%s)", pInitExpressionText);
-                StrBuilder_AppendFmtLn(fp, 4 * 1, "{", pInitExpressionText);
-              }
-              else if (action == ActionDestroy)
-              {
-                  if (bDeclaratorIsAutoPointer)
-                  {
-                      StrBuilder_AppendFmtLn(fp, 4 * 1, "if (%s)", pInitExpressionText);
-                      StrBuilder_AppendFmtLn(fp, 4 * 1, "{");
-                  }
-              }
+
+                if (action == ActionDelete)
+                {
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "if (%s)", pInitExpressionText);
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{", pInitExpressionText);
+                    options->IdentationLevel++;
+                }
+                else if (action == ActionDestroy)
+                {
+                    if (bDeclaratorIsAutoPointer)
+                    {
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "if (%s)", pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
+                        options->IdentationLevel++;
+                    }
+                }
+                else if (action == ActionCreate)
+                {
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "struct %s *p = malloc(sizeof * p);",
+                        pStructUnionSpecifier->Name);
+
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "if (p)");
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "{");
+                    options->IdentationLevel++;
+                }
+                else if (action == ActionStaticInit)
+                {
+                    if (bCanApplyFunction)
+                    {
+                        //o primeiro nao precisa do {
+                        
+                        StrBuilder_AppendFmt(fp, "/*%s=*/{", pInitExpressionText);
+                    }
+                }
 
                 //ok tem a definicao completa da struct
                 for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
                 {
+                    if (action == ActionStaticInit && i > 0)
+                    {
+                        StrBuilder_Append(fp, ", ");
+                    }
+
                     TAnyStructDeclaration* pAnyStructDeclaration =
                         pStructUnionSpecifier->StructDeclarationList.pItems[i];
 
@@ -3499,13 +2754,19 @@ void InstanciateDestroy2(TProgram* program,
 
                             const char* structDeclaratorName =
                                 TDeclarator_GetName(pStructDeclarator->pDeclarator);
-
-                            if (pInitExpressionText)
-                                StrBuilder_Set(&strVariableName, pInitExpressionText);
-
-                            if (bDeclaratorIsPointer)
+                            if (action != ActionStaticInit)
                             {
-                                StrBuilder_Append(&strVariableName, "->");
+                                if (pInitExpressionText)
+                                    StrBuilder_Set(&strVariableName, pInitExpressionText);
+
+                                if (bDeclaratorIsPointer)
+                                {
+                                    StrBuilder_Append(&strVariableName, "->");
+                                }
+                                else
+                                {
+                                    StrBuilder_Append(&strVariableName, ".");
+                                }
                             }
                             else
                             {
@@ -3521,12 +2782,14 @@ void InstanciateDestroy2(TProgram* program,
                                 //destroy normal
                                 action2 = ActionDestroy;
                             }
-                            
-                            //if (bStructDeclaratorIsAutoPointer)
-                            //{
-                              //  StrBuilder_AppendFmtLn(fp, 4 * 2, "if (%s) {\n", strVariableName.c_str);
-//                                options->IdentationLevel++;
-                            //}
+                            else if (action == ActionInitContent)
+                            {
+                                action2 = ActionInit;
+                            }
+                            else if (action == ActionCreate)
+                            {
+                                action2 = ActionInit;
+                            }
 
                             InstanciateDestroy2(program,
                                 options,
@@ -3537,14 +2800,8 @@ void InstanciateDestroy2(TProgram* program,
                                 true,
                                 fp);
 
-                       //     if (bStructDeclaratorIsAutoPointer)
-                         //   {
-                           //     options->IdentationLevel--;
-                             //   StrBuilder_AppendFmtLn(fp, 4 * 2, "free(%s);", strVariableName.c_str);
-                               // StrBuilder_AppendFmtLn(fp, 4 * 1, "}\n");
-                            //}
+                            
 
-                            //proximo declarator
                             pStructDeclarator = (pStructDeclarator)->pNext;
                         }
 
@@ -3556,543 +2813,123 @@ void InstanciateDestroy2(TProgram* program,
                 {
                     if (bDeclaratorIsAutoPointer)
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * 1, "free(%s);", pInitExpressionText);
-                        StrBuilder_AppendFmtLn(fp, 4 * 1, "}");
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free(%s);", pInitExpressionText);
+                        options->IdentationLevel--;
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+
                     }
                 }
                 else if (action == ActionDelete)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * 2, "free(%s);", pInitExpressionText);
-                    StrBuilder_AppendFmtLn(fp, 4 * 1, "}");
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free(%s);", pInitExpressionText);
+                    options->IdentationLevel--;
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+
                 }
-
-                StrBuilder_AppendFmtLn(fp, 4 * 1, "/// %s ///", pInitExpressionText);
-
+                else if (action == ActionCreate)
+                {
+                    options->IdentationLevel--;
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "}");
+                    
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "return p;");                    
+                }
+                else if (action == ActionStaticInit)
+                {
+                    if (bCanApplyFunction)
+                    {
+                        //o primeiro nao tem 
+                        StrBuilder_Append(fp, "}");
+                    }
+                }
             }
             else
             {
                 //error nao tem a definicao completa da struct
+            }
+            if (action != ActionStaticInit)
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "");
             }
         }//complete
 
     }
     else if (pMainSpecifier->Type == TEnumSpecifier_ID)
     {
-        bool bFunctionFound = false;
+        TEnumSpecifier *pEnumSpecifier =
+            TSpecifier_As_TEnumSpecifier(pMainSpecifier);
+        
 
-        if (bFunctionFound)
+        //nao eh typedef, deve ser int, double etc..
+        if (action == ActionDestroy)
         {
+            if (bDeclaratorIsAutoPointer)
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free(%s);", pInitExpressionText);
+            }
+            else
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = 0;", pInitExpressionText);
+            }
         }
-        else
+        else if (action == ActionInit)
         {
-        }
+            //TODO achar a definicao completa do enum
+            const char* firstValue =
+                pEnumSpecifier->EnumeratorList.pHead ? pEnumSpecifier->EnumeratorList.pHead->Name :
+                "0";
 
-        //TEnumSpecifier* pEnumSpecifier =
-        //(TEnumSpecifier*)pMainSpecifier;
-        //StrBuilder_AppendFmtLn(fp, 4 * 1, "%s = 0;", pInitExpressionText);
+            if (bDeclaratorIsPointer)
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = NULL;", pInitExpressionText);
+            }
+            else
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, firstValue);
+            }
+        }
+        else if (action == ActionInitContent)
+        {
+            //TODO achar a definicao completa do enum
+            const char* firstValue =
+                pEnumSpecifier->EnumeratorList.pHead ? pEnumSpecifier->EnumeratorList.pHead->Name :
+                "0";
+
+            if (bDeclaratorIsPointer)
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "*%s = NULL;", pInitExpressionText);
+            }
+            else
+            {
+                
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, firstValue);
+            }
+        }
+        else if (action == ActionStaticInit)
+        {
+            //TODO achar a definicao completa do enum
+            const char* firstValue =
+                pEnumSpecifier->EnumeratorList.pHead ? pEnumSpecifier->EnumeratorList.pHead->Name :
+                "0";
+
+            if (bDeclaratorIsPointer)
+            {
+                StrBuilder_AppendFmt(fp, "/*%s=*/NULL", pInitExpressionText);
+            }
+            else
+            {
+                StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, firstValue);                
+            }
+        }
     }
     else
     {
         ASSERT(false);
     }
+
 }
 
-
-void InstanciateInit(TProgram* program,
-    Options* options,
-    TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
-    TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
-    TInitializer* pInitializer,      //para declarator que tenha inicializacao
-    const char* pInitExpressionText, //(x->p->i = 0)
-    bool bInitExpressionIsPointer,  //true quando o tipo da expressão eh um ponteiro para algo
-    bool bInitializePointerContent, //inicializar o conteudo da expressao
-    bool bSearchForInitFunction,    //true= procurar por funcao init
-    StrBuilder* fp)
-{
-    const char* declatorName = TDeclarator_GetName(pDeclatator);
-    bool bDeclaratorIsPointer = pDeclatator ? TDeclarator_IsPointer(pDeclatator) : false;
-
-    if (declatorName == NULL)
-    {
-        //erro tem que ter um nome
-    }
-
-    if (!bInitializePointerContent && bInitExpressionIsPointer)
-    {
-        //É um ponteiro para algo e se deseja inicializar ele
-        StrBuilder_AppendFmtLn(fp, 4 * 1, "%s = NULL;", pInitExpressionText);
-        return;
-    }
-
-    TSpecifier* pMainSpecifier =
-        TSpecifierQualifierList_GetMainSpecifier(pSpecifierQualifierList);
-
-    if (pMainSpecifier == NULL)
-    {
-        //error
-        return;
-    }
-
-    if (pMainSpecifier->Type == TSingleTypeSpecifier_ID)
-    {
-        TSingleTypeSpecifier* pSingleTypeSpecifier =
-            (TSingleTypeSpecifier*)pMainSpecifier;
-
-        if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
-        {
-            TDeclaration* pTypedefTargetDeclaration
-                = SymbolMap_FindTypedefDeclarationTarget(&program->GlobalScope, pSingleTypeSpecifier->TypedefName);
-            if (pTypedefTargetDeclaration)
-            {
-                bool bCompleted = false;
-                //Ver se existe uma funcao Typedef_INIT?
-                if (bSearchForInitFunction)
-                {
-                    char funcName[200] = { 0 };
-                    strcat(funcName, pSingleTypeSpecifier->TypedefName);
-                    strcat(funcName, "_Init");
-                    TDeclaration* pDeclaration =
-                        SymbolMap_FindFunction(&program->GlobalScope, funcName);
-
-                    if (pDeclaration != NULL)
-                    {
-                        //Sempre init recebe um ponteiro para o que se se deseja inicializar
-                        //mas tinha que verificar
-                        if (bInitExpressionIsPointer)
-                            StrBuilder_AppendFmtLn(fp, 4 * 1, "%s(%s);", funcName, pInitExpressionText);
-                        else
-                            StrBuilder_AppendFmtLn(fp, 4 * 1, "%s(&%s);", funcName, pInitExpressionText);
-
-                        bCompleted = true;
-                    }
-                }
-
-                if (!bCompleted)
-                {
-                    /*
-                    TODO casos estranhos
-                    typedef X *Y;
-                    typedef Y *Z; ?
-                    */
-                    //Ele tinha que gerar um tipo equivalnete final
-                    //similiar a um typeof(a)
-                    TDeclarator* pTypedefTargetDeclarator =
-                        TDeclaration_FindDeclarator(pTypedefTargetDeclaration, pSingleTypeSpecifier->TypedefName);
-
-                    bool bTypedefTargetDeclaratorIsPointer =
-                        TDeclarator_IsPointer(pTypedefTargetDeclarator);
-
-                    InstanciateInit(program,
-                        options,
-                        (TSpecifierQualifierList*)&pTypedefTargetDeclaration->Specifiers,
-                        pTypedefTargetDeclarator,
-                        pInitializer,
-                        pInitExpressionText,
-                        bTypedefTargetDeclaratorIsPointer || bInitExpressionIsPointer,
-                        bInitializePointerContent,
-                        bSearchForInitFunction,
-                        fp);
-                }
-            }
-            else
-            {
-                ASSERT(false);
-            }
-        }
-        else
-        {
-            //tipo simples int etc..
-            if (TSpecifierQualifierList_IsAnyInteger(pSpecifierQualifierList))
-            {
-                StrBuilder_AppendFmtLn(fp, 4 * 1, "%s = 0;", pInitExpressionText);
-            }
-            else if (TSpecifierQualifierList_IsChar(pSpecifierQualifierList))
-            {
-                StrBuilder_AppendFmtLn(fp, 4 * 1, "%s = '\\0';", pInitExpressionText);
-            }
-            else if (TSpecifierQualifierList_IsBool(pSpecifierQualifierList))
-            {
-                StrBuilder_AppendFmtLn(fp, 4 * 1, "%s = false;", pInitExpressionText);
-            }
-            else
-            {
-                StrBuilder_AppendFmtLn(fp, 4 * 1, "%s = 0;", pInitExpressionText);
-            }
-        }
-    }
-    else if (pMainSpecifier->Type == TStructUnionSpecifier_ID)
-    {
-        TStructUnionSpecifier* pStructUnionSpecifier =
-            (TStructUnionSpecifier*)pMainSpecifier;
-
-        if (pStructUnionSpecifier &&
-            pStructUnionSpecifier->Name != NULL)
-        {
-            //vou procurar a definicao completa da struct
-            pStructUnionSpecifier =
-                SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Name);
-        }
-
-        bool bCompleted = false;
-        //Ver se existe uma funcao Typedef_INIT?
-        if (bSearchForInitFunction)
-        {
-            if (pStructUnionSpecifier->Name != NULL)
-            {
-                char funcName[200] = { 0 };
-                strcat(funcName, pStructUnionSpecifier->Name);
-                strcat(funcName, "_Init");
-                TDeclaration* pDeclaration =
-                    SymbolMap_FindFunction(&program->GlobalScope, funcName);
-
-                if (pDeclaration != NULL)
-                {
-                    //Sempre init recebe um ponteiro para o que se se deseja inicializar
-                    //mas tinha que verificar
-                    StrBuilder_AppendFmtLn(fp, 4 * 1, "%s(&%s);", funcName, pInitExpressionText);
-                    bCompleted = true;
-                }
-            }
-        }
-
-        if (!bCompleted)
-        {
-            //deseja inicializar o conteudo
-            for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
-            {
-                TAnyStructDeclaration* pAnyStructDeclaration =
-                    pStructUnionSpecifier->StructDeclarationList.pItems[i];
-
-                TStructDeclaration* pStructDeclaration =
-                    TAnyStructDeclaration_As_TStructDeclaration(pAnyStructDeclaration);
-
-                if (pStructDeclaration != NULL)
-                {
-                    TStructDeclarator* pStructDeclarator =
-                        pStructDeclaration->DeclaratorList.pHead;
-
-                    bool bStructDeclaratorIsPointer =
-                        TPointerList_IsPointer(&pStructDeclarator->pDeclarator->PointerList);
-                    StrBuilder strVariableName = STRBUILDER_INIT;
-
-
-                    while (pStructDeclarator)
-                    {
-                        StrBuilder_Clear(&strVariableName);
-
-                        const char* structDeclaratorName =
-                            TDeclarator_GetName(pStructDeclarator->pDeclarator);
-
-                        if (pInitExpressionText)
-                            StrBuilder_Set(&strVariableName, pInitExpressionText);
-
-                        if (bInitExpressionIsPointer)
-                        {
-                            StrBuilder_Append(&strVariableName, "->");
-                        }
-                        else
-                        {
-                            StrBuilder_Append(&strVariableName, ".");
-                        }
-
-
-                        StrBuilder_Append(&strVariableName, structDeclaratorName);
-
-                        InstanciateInit(program,
-                            options,
-                            &pStructDeclaration->SpecifierQualifierList,
-                            pStructDeclarator->pDeclarator,
-                            pStructDeclarator->pInitializer,
-                            strVariableName.c_str,
-                            TDeclarator_IsPointer(pStructDeclarator->pDeclarator),
-                            false, //se for ponteiro nao inicia o conteudo da coisa apontada
-                            true,
-                            fp);
-
-                        //proximo declarator
-                        pStructDeclarator = (pStructDeclarator)->pNext;
-                    }
-
-                    StrBuilder_Destroy(&strVariableName);
-                }
-            }
-            //Passar por cada item para inicializar
-        }
-    }
-    else if (pMainSpecifier->Type == TEnumSpecifier_ID)
-    {
-        //TEnumSpecifier* pEnumSpecifier =
-        //(TEnumSpecifier*)pMainSpecifier;
-        StrBuilder_AppendFmtLn(fp, 4 * 1, "%s = 0;", pInitExpressionText);
-    }
-    else
-    {
-        ASSERT(false);
-    }
-}
-
-void InstanciateSpecialFunctions(TProgram* program,
-    Options* options,
-    TSpecifierQualifierList* pSpecifierQualifierList,
-    TDeclarator* pDeclarator,
-    TInitializer* pInitializer,
-    const char* pVariableName,
-    bool bVariableNameIsPointer,
-    BuildType buildType,
-    StrBuilder* fp)
-{
-    if (buildType == BuildTypeDelete)
-    {
-        StrBuilder_AppendIdent(fp, options->IdentationLevel * 4, "if (");
-        StrBuilder_Append(fp, pVariableName);
-        StrBuilder_Append(fp, " != NULL) {\n");
-        options->IdentationLevel++;
-        //printf("if (%s != NULL) {\n", pVariableName);
-    }
-    else if (buildType == BuildTypeCreate)
-    {
-        StrBuilder_AppendIdent(fp, options->IdentationLevel * 4, "");
-
-
-        bool bDontPrintClueList = options->bDontPrintClueList;
-        options->bDontPrintClueList = true;
-        TSpecifierQualifierList_CodePrint(program, options, pSpecifierQualifierList, false, fp);
-
-        //printf("%*c", n, ' ');
-        StrBuilder_Append(fp, " *p = (");
-        TSpecifierQualifierList_CodePrint(program, options, pSpecifierQualifierList, false, fp);
-        StrBuilder_Append(fp, "*) malloc(sizeof * p);\n");
-        StrBuilder_AppendIdent(fp, options->IdentationLevel * 4, "if (p != NULL) {\n");
-
-        options->bDontPrintClueList = bDontPrintClueList;
-        options->IdentationLevel++;
-        //printf("T p = malloc(sizeof * p);\n");
-        //printf("if (p != NULL) {\n");
-    }
-
-    const char* declaratorName = TDeclarator_GetName(pDeclarator);
-    //
-    bool bIsPointer = false;
-    bool bIsAutoPointer = false;
-    bool bIsTypedef = TSpecifierQualifierList_IsTypedefQualifier(pSpecifierQualifierList);
-
-    if (pDeclarator)
-    {
-        bIsPointer = TDeclarator_IsPointer(pDeclarator);
-        bIsAutoPointer = TPointerList_IsAutoPointer(&pDeclarator->PointerList);
-    }
-
-    //{
-    TSpecifier* pSpecifier =
-        TSpecifierQualifierList_GetMainSpecifier(pSpecifierQualifierList);
-
-    if (pSpecifier->Type == TSingleTypeSpecifier_ID)
-    {
-        TSingleTypeSpecifier *pSingleTypeSpecifier =
-            TSpecifier_As_TSingleTypeSpecifier(pSpecifier);
-        if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
-        {
-            const char* typedefName = pSingleTypeSpecifier->TypedefName;
-
-            TDeclaration* pDeclaration2 =
-                TProgram_GetFinalTypeDeclaration(program, typedefName);
-
-            if (pDeclaration2)
-            {
-                Typedef_InstanciateSpecialFunctions(program,
-                    options,
-                    pDeclaration2,
-                    pInitializer,
-                    pVariableName,
-                    bVariableNameIsPointer,
-                    declaratorName,
-                    typedefName,
-                    bIsPointer,
-                    bIsAutoPointer,
-                    buildType,
-                    fp);
-            }
-            else
-            {
-                //nao achou este typedef
-                ASSERT(false);
-            }
-        }
-        else
-        {
-            TSingleTypeSpecifier_InstanciateSpecialFunctions(program,
-                options,
-                pSpecifierQualifierList,
-                pSingleTypeSpecifier,
-                pInitializer,
-                pVariableName,
-                bVariableNameIsPointer,
-                bIsPointer,
-                bIsAutoPointer,
-                buildType,
-                fp);
-        }
-    }
-    else if (pSpecifier->Type == TStructUnionSpecifier_ID)
-    {
-        if (bIsTypedef)
-        {
-            if (buildType == BuildTypeDelete)
-            {
-                //vou procurar o conceito de destroy
-                StrBuilder strFuncName = STRBUILDER_INIT;
-                StrBuilder_Append(&strFuncName, declaratorName);
-
-                TDeclaration *pFunctionDeclaration = NULL;
-                StrBuilder_Append(&strFuncName, "_Destroy");
-                pFunctionDeclaration =
-                    TProgram_FindFunctionDeclaration(program, strFuncName.c_str);
-                if (pFunctionDeclaration != NULL)
-                {
-                    if (bVariableNameIsPointer)
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(%s);\n", strFuncName.c_str, pVariableName);
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(%s);\n", pVariableName);
-
-                        //printf("%s(%s);\n", strFuncName.c_str, pVariableName);
-                        //printf("free(%s);\n", pVariableName);
-                    }
-                    else
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(&%s);\n", strFuncName.c_str, pVariableName);
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(&%s);\n", pVariableName);
-
-                        //printf("%s(&%s);\n", strFuncName.c_str, pVariableName);
-                        //printf("free(&%s);\n", pVariableName);
-                    }
-
-                }
-                else
-                {
-                    TStructUnionSpecifier* pStructUnionSpecifier =
-                        TSpecifier_As_TStructUnionSpecifier(pSpecifier);
-                    TStructUnionSpecifier_InstanciateSpecialFunctions(program,
-                        options,
-                        pStructUnionSpecifier,
-                        pVariableName,
-                        bVariableNameIsPointer,
-                        BuildTypeDestroy, fp);
-
-                    if (bVariableNameIsPointer)
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(%s);\n", pVariableName);
-                        //printf("free(%s);\n", pVariableName);
-                    }
-                    else
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "free(&%s);\n", pVariableName);
-                        //printf("free(&%s);\n", pVariableName);
-                    }
-                }
-            }
-            else if (buildType == BuildTypeCreate)
-            {
-                //vou procurar o conceito de destroy
-                StrBuilder strFuncName = STRBUILDER_INIT;
-                StrBuilder_Append(&strFuncName, declaratorName);
-
-                TDeclaration *pFunctionDeclaration = NULL;
-                StrBuilder_Append(&strFuncName, "_Init");
-                pFunctionDeclaration =
-                    TProgram_FindFunctionDeclaration(program, strFuncName.c_str);
-                if (pFunctionDeclaration != NULL)
-                {
-                    if (bVariableNameIsPointer)
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(%s);\n", strFuncName.c_str, pVariableName);
-                        //printf("%s(%s);\n", strFuncName.c_str, pVariableName);
-                        //printf("%s = NULL;\n", pVariableName);
-                    }
-                    else
-                    {
-                        StrBuilder_AppendFmtIdent(fp, options->IdentationLevel * 4, "%s(&%s);\n", strFuncName.c_str, pVariableName);
-                    }
-                }
-                else
-                {
-                    TStructUnionSpecifier* pStructUnionSpecifier =
-                        TSpecifier_As_TStructUnionSpecifier(pSpecifier);
-                    TStructUnionSpecifier_InstanciateSpecialFunctions(program,
-                        options,
-                        pStructUnionSpecifier,
-                        pVariableName,
-                        bVariableNameIsPointer,
-                        BuildTypeInit, fp);
-                }
-            }
-            else if (buildType == BuildTypeDestroy ||
-                buildType == BuildTypeInit ||
-                buildType == BuildTypeStaticInit)
-            {
-                TStructUnionSpecifier* pStructUnionSpecifier =
-                    TSpecifier_As_TStructUnionSpecifier(pSpecifier);
-                TStructUnionSpecifier_InstanciateSpecialFunctions(program,
-                    options,
-                    pStructUnionSpecifier,
-                    pVariableName,
-                    bVariableNameIsPointer,
-                    buildType, fp);
-            }
-            else
-            {
-                ASSERT(false);
-            }
-        }
-        else
-        {
-
-            TStructUnionSpecifier* pStructUnionSpecifier =
-                TSpecifier_As_TStructUnionSpecifier(pSpecifier);
-            TStructUnionSpecifier_InstanciateSpecialFunctions(program,
-                options,
-                pStructUnionSpecifier,
-                pVariableName,
-                bVariableNameIsPointer,
-                buildType, fp);
-        }
-
-    }
-    else if (pSpecifier->Type == TEnumSpecifier_ID)
-    {
-        TEnumSpecifier_InstanciateSpecialFunctions(program,
-            options,
-            pSpecifierQualifierList,
-            (TEnumSpecifier*)pSpecifier,
-            pInitializer,
-            pVariableName,
-            bVariableNameIsPointer,
-            bIsPointer,
-            bIsAutoPointer,
-            buildType,
-            fp);
-    }
-    else
-    {
-        ASSERT(false);
-    }
-    //printf("%s = false\n", TDeclarator_GetName(pStructDeclarator->pDeclarator));
-
-    if (buildType == BuildTypeDelete)
-    {
-        options->IdentationLevel--;
-        StrBuilder_AppendIdent(fp, options->IdentationLevel * 4, "}\n");
-
-    }
-    else if (buildType == BuildTypeCreate)
-    {
-        options->IdentationLevel--;
-        StrBuilder_AppendIdent(fp, options->IdentationLevel * 4, "}\n");
-
-        //options->IdentationLevel--;
-        StrBuilder_AppendIdent(fp, options->IdentationLevel * 4, "return p;\n");
-    }
-}
-//}
 
 
 bool IsSuffix(const char* s, const char* suffix)
