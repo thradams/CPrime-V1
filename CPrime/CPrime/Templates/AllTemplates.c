@@ -15,7 +15,6 @@
 bool (*InstanciateSpecialFunctionsFunctions[])(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
-    bool bVariableNameIsPointer,
     BuildType buildType,
     StrBuilder* fp) = 
 {
@@ -28,7 +27,6 @@ bool (*InstanciateSpecialFunctionsFunctions[])(TProgram* program,
 bool(*Type_CodePrint[])(TProgram* program,
     Options * options,
     TStructUnionSpecifier* p,
-    bool b,
     StrBuilder* fp) =
 {
     ListPlugin_InstanciateType,
@@ -39,7 +37,7 @@ bool(*Type_CodePrint[])(TProgram* program,
 bool(*CodePrint[])(TProgram* program,
     Options * options,
     TDeclaration* p,
-    bool b,
+    
     StrBuilder* fp) =
 {
     ListPlugin_InstanciateFunction,
@@ -53,7 +51,7 @@ bool(*CodePrint[])(TProgram* program,
 bool AllPlugin_InstanciateSpecialFunctions(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
-    bool bVariableNameIsPointer,
+ 
     BuildType buildType,
     StrBuilder* fp)
 {
@@ -64,7 +62,7 @@ bool AllPlugin_InstanciateSpecialFunctions(TProgram* program,
         bInstanciated = InstanciateSpecialFunctionsFunctions[i](program,
             pStructUnionSpecifier,
             pVariableName,
-            bVariableNameIsPointer,
+           
             buildType,
             fp);
         if (bInstanciated)
@@ -75,13 +73,14 @@ bool AllPlugin_InstanciateSpecialFunctions(TProgram* program,
 
 
 void Output_Append(StrBuilder* p,
+    Options* options,
     const char* source);
 
 //Gera estrutura de ad
 bool AllPlugin_InstanciateType(TProgram* program,
     Options * options,
     TStructUnionSpecifier* p,
-    bool b, StrBuilder* fp)
+    StrBuilder* fp)
 {
 
     bool bInstanciated = false;
@@ -90,7 +89,7 @@ bool AllPlugin_InstanciateType(TProgram* program,
         bInstanciated = Type_CodePrint[i](program,
             options,
             p,
-            b,
+          
             fp);
         if (bInstanciated)
             break;
@@ -106,8 +105,7 @@ TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifi
 //Implementa 'default'
 bool AllPlugin_CodePrint(TProgram* program,
     Options * options,
-    TDeclaration* p,
-    bool b,
+    TDeclaration* p,    
     StrBuilder* fp)
 {
     bool bInstanciated = false;
@@ -115,8 +113,7 @@ bool AllPlugin_CodePrint(TProgram* program,
     {
         bInstanciated = CodePrint[i](program,
             options,
-            p,
-            b,
+            p,            
             fp);
         if (bInstanciated)
             break;

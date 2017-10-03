@@ -10,7 +10,7 @@
 bool ListPlugin_InstanciateSpecialFunctions(TProgram* program,
 	TStructUnionSpecifier* pStructUnionSpecifier,
 	const char* pVariableName,
-	bool bVariableNameIsPointer,
+	
 	BuildType buildType,
 	StrBuilder* fp)
 {
@@ -26,7 +26,7 @@ bool ListPlugin_InstanciateSpecialFunctions(TProgram* program,
 		{
 			pTypeName = &pStructUnionSpecifier->Args.pHead->TypeName;
 			//TTypeName_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName, false, &itemTypeStr);
-			TSpecifierQualifierList_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList, false, &itemTypeStr);
+			TSpecifierQualifierList_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList,  &itemTypeStr);
 		}
 
 		switch (buildType)
@@ -84,13 +84,14 @@ bool ListPlugin_InstanciateSpecialFunctions(TProgram* program,
 
 
 void Output_Append(StrBuilder* p,
+    Options* options,
 	const char* source);
 
 //Gera estrutura de ad
 bool ListPlugin_InstanciateType(TProgram* program,
 	Options * options,
 	TStructUnionSpecifier* p,
-	bool b,
+
 	StrBuilder* fp)
 {
 	bool bInstanciated = false;
@@ -101,9 +102,9 @@ bool ListPlugin_InstanciateType(TProgram* program,
 		if (p->Args.pHead)
 		{
 			bInstanciated = true;
-			Output_Append(fp, "List(");
-			TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, false, fp);
-			Output_Append(fp, ")");
+			Output_Append(fp, options,  "List(");
+			TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, fp);
+			Output_Append(fp, options,  ")");
 			bResult = true;
 		}
 		else
@@ -123,7 +124,7 @@ TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifi
 bool ListPlugin_InstanciateFunction(TProgram* program,
 	Options * options,
 	TDeclaration* p,
-	bool b,
+	
 	StrBuilder* fp)
 {
 	bool bInstanciated = false;

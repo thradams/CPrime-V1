@@ -10,7 +10,7 @@
 bool MapPlugin_InstanciateSpecialFunctions(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
-    bool bVariableNameIsPointer,
+    
     BuildType buildType,
     StrBuilder* fp)
 {
@@ -27,7 +27,7 @@ bool MapPlugin_InstanciateSpecialFunctions(TProgram* program,
         {
             pTypeName = &pStructUnionSpecifier->Args.pHead->TypeName;
             //TTypeName_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName, false, &itemTypeStr);
-            TSpecifierQualifierList_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList, false, &itemTypeStr);
+            TSpecifierQualifierList_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList,  &itemTypeStr);
         }
 
         switch (buildType)
@@ -92,13 +92,14 @@ bool MapPlugin_InstanciateSpecialFunctions(TProgram* program,
 
 
 void Output_Append(StrBuilder* p,
+    Options * options,
     const char* source);
 
 //Gera estrutura de ad
 bool MapPlugin_InstanciateType(TProgram* program,
     Options * options,
     TStructUnionSpecifier* p,
-    bool b, StrBuilder* fp)
+   StrBuilder* fp)
 {
     bool bInstanciated = false;
     if (p->TemplateName != NULL)
@@ -108,9 +109,9 @@ bool MapPlugin_InstanciateType(TProgram* program,
             bInstanciated = true;
             if (p->Args.pHead)
             {
-                Output_Append(fp, "Map(");
-                TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, false, fp);
-                Output_Append(fp, ")");
+                Output_Append(fp, options, "Map(");
+                TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, fp);
+                Output_Append(fp, options, ")");
 
             }
             else
@@ -133,7 +134,7 @@ const char* TDeclaration_GetArgTypeName(TDeclaration* p, int index, StrBuilder* 
 bool MapPlugin_InstanciateFunction(TProgram* program,
     Options * options,
     TDeclaration* p,
-    bool b,
+   
     StrBuilder* fp)
 {
     bool bInstanciated = false;
@@ -155,7 +156,7 @@ bool MapPlugin_InstanciateFunction(TProgram* program,
         {
             return false;
         }
-        TSpecifierQualifierList_CodePrint(program, options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList, false, &itemTypeStr);
+        TSpecifierQualifierList_CodePrint(program, options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList,  &itemTypeStr);
     }
 
 

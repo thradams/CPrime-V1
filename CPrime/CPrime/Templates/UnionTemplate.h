@@ -6,7 +6,7 @@
 bool UnionPlugin_InstanciateSpecialFunctions(TProgram* program,
                              TStructUnionSpecifier* pStructUnionSpecifier,
                              const char* pVariableName,
-                             bool bVariableNameIsPointer,
+                             
                              BuildType buildType,
     StrBuilder* fp);
 
@@ -14,11 +14,11 @@ bool UnionPlugin_InstanciateSpecialFunctions(TProgram* program,
 bool UnionPlugin_InstanciateType(TProgram* program,
                                Options * options,
                                TStructUnionSpecifier* p,
-                               bool b, StrBuilder* fp);
+                                StrBuilder* fp);
 
 //Implementa 'default'
 bool UnionPlugin_InstanciateFunction(TProgram* program,
                           Options * options,
                           TDeclaration* p,
-                          bool b,
+                          
                           StrBuilder* fp);

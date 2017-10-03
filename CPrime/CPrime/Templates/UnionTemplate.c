@@ -9,7 +9,7 @@ static bool UnionPlugin_CodePrintCore(TProgram* program,
     Options * options,
     TStructUnionSpecifier* pTStructUnionSpecifier3,
     const char* strBuilderFunc,
-    bool b,
+  
     StrBuilder* fp);
 
 //Implementa 'default'
@@ -22,7 +22,7 @@ static bool CodePrintCasts(TProgram* program,
 bool UnionPlugin_InstanciateSpecialFunctions(TProgram* program,
     TStructUnionSpecifier* pStructUnionSpecifier,
     const char* pVariableName,
-    bool bVariableNameIsPointer,
+    
     BuildType buildType,
     StrBuilder* fp)
 {
@@ -39,7 +39,7 @@ bool UnionPlugin_InstanciateSpecialFunctions(TProgram* program,
         {
             pTypeName = &pStructUnionSpecifier->Args.pHead->TypeName;
             //TTypeName_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName, false, &itemTypeStr);
-            TSpecifierQualifierList_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList, false, &itemTypeStr);
+            TSpecifierQualifierList_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList,  &itemTypeStr);
         }
 
         switch (buildType)
@@ -60,7 +60,7 @@ bool UnionPlugin_InstanciateSpecialFunctions(TProgram* program,
                 &options,
                 pStructUnionSpecifier,
                 "_Destroy",
-                false,
+                
                 fp);
 
             break;
@@ -72,7 +72,7 @@ bool UnionPlugin_InstanciateSpecialFunctions(TProgram* program,
                 &options,
                 pStructUnionSpecifier,
                 "_Delete",
-                false,
+                
                 fp);
 
             break;
@@ -90,13 +90,14 @@ bool UnionPlugin_InstanciateSpecialFunctions(TProgram* program,
 
 
 void Output_Append(StrBuilder* p,
+    Options* options,
     const char* source);
 
 //Gera estrutura de ad
 bool UnionPlugin_InstanciateType(TProgram* program,
     Options * options,
     TStructUnionSpecifier* p,
-    bool b, StrBuilder* fp)
+    StrBuilder* fp)
 {
     bool bInstanciated = false;
     if (p->TemplateName != NULL)
@@ -105,15 +106,15 @@ bool UnionPlugin_InstanciateType(TProgram* program,
         {
             bInstanciated = true;
             int i = 0;
-            Output_Append(fp, " Union(");
+            Output_Append(fp, options, " Union(");
             ForEachListItem(TTemplateTypeSpecifierArgument, pItem, &p->Args)
             {
                 if (i > 0)
-                    Output_Append(fp, ",");
-                TTypeName_CodePrint(program, options, &pItem->TypeName, false, fp);
+                    Output_Append(fp, options, ",");
+                TTypeName_CodePrint(program, options, &pItem->TypeName, fp);
                 i++;
             }
-            Output_Append(fp, ")");
+            Output_Append(fp, options, ")");
         }
     }
 
@@ -173,7 +174,7 @@ static bool UnionPlugin_CodePrintCore(TProgram* program,
     Options * options,
     TStructUnionSpecifier* pTStructUnionSpecifier3,
     const char* strBuilderFunc,
-    bool b,
+
     StrBuilder* fp)
 {
     bool bResult = false;
@@ -418,7 +419,7 @@ static bool CodePrintCasts(TProgram* program,
 bool UnionPlugin_InstanciateFunction(TProgram* program,
     Options * options,
     TDeclaration* p,
-    bool b,
+
     StrBuilder* fp)
 {
     bool bResult = false;
@@ -462,7 +463,7 @@ bool UnionPlugin_InstanciateFunction(TProgram* program,
                         options,
                         pTStructUnionSpecifier3,
                         strBuilderFunc.c_str,
-                        b,
+                        
                         fp);
                 }
             }

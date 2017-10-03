@@ -1555,7 +1555,7 @@ bool EvaluateConstantExpression(TExpression *  p, int *pResult)
 				//if (TDeclarationSpecifiers_IsTypedef(pTUnaryExpressionOperator->TypeName.SpecifierQualifierList))
 				{
 
-					//b = TTypeQualifier_CodePrint2(&pTUnaryExpressionOperator->TypeName.qualifiers, false, fp);
+					//b = TTypeQualifier_CodePrint2(&pTUnaryExpressionOperator->TypeName.qualifiers, fp);
 					//b = TTypeSpecifier_CodePrint2(pTUnaryExpressionOperator->TypeName.pTypeSpecifier, b, fp);
 					// b = TDeclarator_CodePrint(&pTUnaryExpressionOperator->TypeName.declarator, b, fp);
 
@@ -1595,7 +1595,7 @@ bool EvaluateConstantExpression(TExpression *  p, int *pResult)
 				(TCastExpressionType*)p;
 
 
-			//b = TTypeQualifier_CodePrint2(&pCastExpressionType->TypeName.qualifiers, false, fp);
+			//b = TTypeQualifier_CodePrint2(&pCastExpressionType->TypeName.qualifiers, fp);
 			//b = TTypeSpecifier_CodePrint2(pCastExpressionType->TypeName.pTypeSpecifier, b, fp);
 			//b = TDeclarator_CodePrint(&pCastExpressionType->TypeName.declarator, b, fp);
 

@@ -10,7 +10,7 @@
 bool ArrayPlugin_InstanciateSpecialFunctions(TProgram* program,
 	TStructUnionSpecifier* pStructUnionSpecifier,
 	const char* pVariableName,
-	bool bVariableNameIsPointer,
+
 	BuildType buildType,
 	StrBuilder* fp)
 {
@@ -28,7 +28,7 @@ bool ArrayPlugin_InstanciateSpecialFunctions(TProgram* program,
 		{
 			pTypeName = &pStructUnionSpecifier->Args.pHead->TypeName;
 			//TTypeName_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName, false, &itemTypeStr);
-			TSpecifierQualifierList_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList, false, &itemTypeStr);
+			TSpecifierQualifierList_CodePrint(program, &options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList,  &itemTypeStr);
 		}
 
 		switch (buildType)
@@ -80,13 +80,14 @@ bool ArrayPlugin_InstanciateSpecialFunctions(TProgram* program,
 
 
 void Output_Append(StrBuilder* p,
+    Options* options,
 	const char* source);
 
 //Gera estrutura de ad
 bool ArrayPlugin_InstanciateType(TProgram* program,
 	Options * options,
 	TStructUnionSpecifier* p,
-	bool b, StrBuilder* fp)
+ StrBuilder* fp)
 {
 	bool bInstanciated = false;
 
@@ -94,14 +95,14 @@ bool ArrayPlugin_InstanciateType(TProgram* program,
 	{
 		if (p->Args.pHead)
 		{
-			Output_Append(fp, "Array(");
-			TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, false, fp);
-			Output_Append(fp, ")");
+			Output_Append(fp, options, "Array(");
+			TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, fp);
+			Output_Append(fp, options, ")");
 			bInstanciated = true;
 			//Output_Append(fp, " ");
 			//Output_Append(fp, "{");
 
-			//TSpecifierQualifierList_CodePrint(program, options, &p->Args.pHead->TypeName.SpecifierQualifierList, false, fp);
+			//TSpecifierQualifierList_CodePrint(program, options, &p->Args.pHead->TypeName.SpecifierQualifierList, fp);
 
 			//TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, b, fp);
 			//Output_Append(fp, "**pData; int Size, Capacity;");
@@ -159,7 +160,7 @@ const char* TDeclaration_GetArgTypeName(TDeclaration* p, int index, StrBuilder* 
 bool ArrayPlugin_InstanciateFunction(TProgram* program,
 	Options * options,
 	TDeclaration* p,
-	bool b,
+	
 	StrBuilder* fp)
 {
 	bool bInstanciated = false;
@@ -181,7 +182,7 @@ bool ArrayPlugin_InstanciateFunction(TProgram* program,
 		{
 			return false;
 		}		
-		TSpecifierQualifierList_CodePrint(program, options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList, false, &itemTypeStr);
+		TSpecifierQualifierList_CodePrint(program, options, &pStructUnionSpecifier->Args.pHead->TypeName.SpecifierQualifierList,  &itemTypeStr);
 	}
 
 
@@ -256,7 +257,7 @@ const char* TDeclaration_GetArgTypeName(TDeclaration* p, int index, StrBuilder* 
 	{
 		Options options = OPTIONS_INIT;
 		options.bIncludeComments = false;
-		TDeclarationSpecifiers_CodePrint(NULL, &options, pDeclarationSpecifiers, false, sb);
+		TDeclarationSpecifiers_CodePrint(NULL, &options, pDeclarationSpecifiers,  sb);
 	}
 	return sb->c_str;
 }

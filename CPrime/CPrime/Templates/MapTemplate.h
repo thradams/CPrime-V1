@@ -6,7 +6,7 @@
 bool MapPlugin_InstanciateSpecialFunctions(TProgram* program,
                              TStructUnionSpecifier* pStructUnionSpecifier,
                              const char* pVariableName,
-                             bool bVariableNameIsPointer,
+                             
                              BuildType buildType,
     StrBuilder* fp);
 
@@ -14,11 +14,11 @@ bool MapPlugin_InstanciateSpecialFunctions(TProgram* program,
 bool MapPlugin_InstanciateType(TProgram* program,
                                Options * options,
                                TStructUnionSpecifier* p,
-                               bool b, StrBuilder* fp);
+                                StrBuilder* fp);
 
 //Implementa 'default'
 bool MapPlugin_InstanciateFunction(TProgram* program,
                           Options * options,
                           TDeclaration* p,
-                          bool b,
+                          
                           StrBuilder* fp);
