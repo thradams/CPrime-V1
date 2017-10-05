@@ -511,7 +511,7 @@ TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* st
             pKeyValue = pKeyValue->pNext;
         }
     }
-
+   
     return pStructUnionSpecifier;
 }
 

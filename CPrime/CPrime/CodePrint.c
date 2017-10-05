@@ -2638,10 +2638,9 @@ void InstanciateDestroy2(TProgram* program,
                     SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Name);
             }
 
-            if (pStructUnionSpecifier->StructDeclarationList.size > 0)
+            if (pStructUnionSpecifier &&
+                pStructUnionSpecifier->StructDeclarationList.size > 0)
             {
-
-
                 if (action == ActionDelete)
                 {
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "if (%s)", pInitExpressionText);
@@ -2807,6 +2806,7 @@ void InstanciateDestroy2(TProgram* program,
             else
             {
                 //error nao tem a definicao completa da struct
+                StrBuilder_AppendFmt(fp, "/*type not found %s*/", pInitExpressionText);
             }           
         }//complete
 
