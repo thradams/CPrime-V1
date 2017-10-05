@@ -401,20 +401,18 @@ void TInitDeclarator_Destroy(TInitDeclarator* p) _default
     TScannerItemList_Destroy(&p->ClueList1);
 }
 
+void TParameterTypeList_Destroy(TParameterTypeList* p);
 
-
-void TDirectDeclarator_Destroy(TDirectDeclarator* p) 
+void TDirectDeclarator_Destroy(TDirectDeclarator* p) _default
 {
-	String_Destroy(&p->Identifier);
-	//TParameterList_Delete(p->pParametersOpt);
-	//T/PointerList_Destroy(&p->PointerList);
-	TDeclarator_Delete(p->pDeclarator);
-	//TInitializer_Delete(p->pInitializer);
-	//TExpression_Delete(p->pExpression);
-	TScannerItemList_Destroy(&p->ClueList0);
-	TScannerItemList_Destroy(&p->ClueList1);
-	TScannerItemList_Destroy(&p->ClueList2);
-	TScannerItemList_Destroy(&p->ClueList3);
+    String_Destroy(&p->Identifier);
+    TDeclarator_Delete(p->pDeclarator);
+    TDirectDeclarator_Delete(p->pDirectDeclarator);
+    TParameterTypeList_Destroy(&p->Parameters);
+    TScannerItemList_Destroy(&p->ClueList0);
+    TScannerItemList_Destroy(&p->ClueList1);
+    TScannerItemList_Destroy(&p->ClueList2);
+    TScannerItemList_Destroy(&p->ClueList3);
 }
 
 bool TDeclarator_IsPointer(TDeclarator* p)

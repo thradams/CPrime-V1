@@ -711,8 +711,8 @@ typedef enum TDirectDeclaratorType
 typedef struct TDirectDeclarator
 {
     String Identifier; //identifier
-    TDeclarator* pDeclarator; //(declarator)
-    struct TDirectDeclarator* pDirectDeclarator; //
+    TDeclarator* _auto pDeclarator; //(declarator)
+    struct TDirectDeclarator* _auto  pDirectDeclarator; //
     TPosition Position;
     TParameterTypeList  Parameters;
     TExpression*   pExpression;

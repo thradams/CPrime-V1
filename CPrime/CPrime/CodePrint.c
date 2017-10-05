@@ -2802,11 +2802,7 @@ void InstanciateDestroy2(TProgram* program,
             else
             {
                 //error nao tem a definicao completa da struct
-            }
-            if (action != ActionStaticInit && bCanApplyFunction)
-            {
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "");
-            }
+            }           
         }//complete
 
     }
