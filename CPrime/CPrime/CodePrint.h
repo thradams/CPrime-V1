@@ -17,6 +17,14 @@ typedef enum
 	BuildTypeStaticInit,
 } BuildType;
 
+typedef enum 
+{
+    SearchNone,
+    SearchAll,
+    SearchDestroy,
+    SearchInit,
+    SearchDelete,
+} Search;
 
 typedef struct Options
 {
@@ -74,6 +82,6 @@ void InstanciateDestroy2(TProgram* program,
     TInitializer* pInitializer,
     const char* pInitExpressionText, //(x->p->i = 0)    
     const Action action,
-    bool bCanApplyFunction,
+    Search search,
     bool *pbHasInitializers,
     StrBuilder* fp);

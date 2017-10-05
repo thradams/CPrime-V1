@@ -1099,7 +1099,7 @@ static void TInitializerList_CodePrint(TProgram* program,
             NULL,
             "",
             ActionStaticInit,
-            true,
+            SearchNone,
             &bHasInitializers,
             &sb);
         if (bHasInitializers)
@@ -1110,7 +1110,7 @@ static void TInitializerList_CodePrint(TProgram* program,
         {
             Output_Append(fp, options, "{0}");
         }
-        
+
         StrBuilder_Destroy(&sb);
     }
     else
@@ -1164,7 +1164,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
                 pInitializer,
                 "",
                 ActionStaticInit,
-                false,
+                SearchNone,
                 &bHasInitializers,
                 &sb);
 
@@ -1177,7 +1177,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
                 Output_Append(fp, options, "0");
             }
 
-            StrBuilder_Destroy(&sb);          
+            StrBuilder_Destroy(&sb);
         }
         Output_Append(fp, options, "}");
     }
@@ -1771,7 +1771,7 @@ void InstanciateDestroy2(TProgram* program,
     TInitializer* pInitializerOpt,
     const char* pInitExpressionText, //(x->p->i = 0),
     const Action action,
-    bool bCanApplyFunction,
+    Search search,
     bool * pbHasInitializers,
     StrBuilder* fp);
 
@@ -1812,7 +1812,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
     if (IsSuffix(funcName, "_Create"))
     {
         options->IdentationLevel++;
-        
+
         InstanciateDestroy2(program,
             options,
             (TSpecifierQualifierList*)(&pSpecifiers),
@@ -1820,7 +1820,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             NULL,
             "p",
             ActionCreate,
-            false,
+            SearchInit,
             NULL,
             fp);
         options->IdentationLevel--;
@@ -1828,7 +1828,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
     else if (IsSuffix(funcName, "_Init") && pFirstParameter)
     {
         options->IdentationLevel++;
-        
+
         InstanciateDestroy2(program,
             options,
             (TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
@@ -1836,14 +1836,14 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             NULL,
             firstParameterName,
             ActionInitContent,
-            false,
+            SearchNone,
             NULL,
             fp);
         options->IdentationLevel--;
     }
     else if (IsSuffix(funcName, "_Destroy"))
     {
-        
+
         options->IdentationLevel++;
         InstanciateDestroy2(program,
             options,
@@ -1852,14 +1852,14 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             NULL,
             firstParameterName,
             ActionDestroyContent,
-            false,
+            SearchNone,
             NULL,
             fp);
         options->IdentationLevel--;
     }
     else if (IsSuffix(funcName, "_Delete"))
     {
-        
+
         options->IdentationLevel++;
         InstanciateDestroy2(program,
             options,
@@ -1868,7 +1868,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             NULL,
             firstParameterName,
             ActionDelete,
-            false,
+            SearchDestroy,
             NULL,
             fp);
         options->IdentationLevel--;
@@ -2221,12 +2221,13 @@ static bool FindHighLevelFunction(TProgram* program,
     TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
     TInitializer* pInitializerOpt,
     const char* pInitExpressionText, //(x->p->i = 0)    
-    const Action action,    
+    const Action action,
+    Search search,
     const char* nameToFind,
     StrBuilder* fp)
 {
     bool bComplete = false;
-    bool bCanApplyFunction = true;
+
 
     bool bDeclaratorIsPointer = pDeclatator ? TDeclarator_IsPointer(pDeclatator) : false;
     bool bDeclaratorIsAutoPointer = pDeclatator ? TDeclarator_IsAutoPointer(pDeclatator) : false;
@@ -2239,7 +2240,8 @@ static bool FindHighLevelFunction(TProgram* program,
             if (bDeclaratorIsAutoPointer)
             {
                 //nao eh ponteiro
-                if (bCanApplyFunction)
+                if (search == SearchAll ||
+                    search == SearchDelete)
                 {
                     //vamos procurar pela funcao conceito _Delete
                     TDeclaration* pDeclarationDestroy =
@@ -2256,22 +2258,26 @@ static bool FindHighLevelFunction(TProgram* program,
                     }
                     else
                     {
-                        //se nao achou delete procura a destroy 
-                        //e depois chama free
-                        TDeclaration* pDeclarationDestroy =
-                            SymbolMap_FindObjFunction(&program->GlobalScope,
-                                nameToFind,
-                                "Destroy");
-                        if (pDeclarationDestroy)
+                        if (search == SearchAll ||
+                            search == SearchDestroy)
                         {
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                "%s_Destroy(%s);",
-                                nameToFind,
-                                pInitExpressionText);
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                "free(%s);",
-                                pInitExpressionText);
-                            bComplete = true;
+                            //se nao achou delete procura a destroy 
+                            //e depois chama free
+                            TDeclaration* pDeclarationDestroy =
+                                SymbolMap_FindObjFunction(&program->GlobalScope,
+                                    nameToFind,
+                                    "Destroy");
+                            if (pDeclarationDestroy)
+                            {
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                    "%s_Destroy(%s);",
+                                    nameToFind,
+                                    pInitExpressionText);
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                    "free(%s);",
+                                    pInitExpressionText);
+                                bComplete = true;
+                            }
                         }
                     }
                 }
@@ -2289,7 +2295,8 @@ static bool FindHighLevelFunction(TProgram* program,
         else
         {
             //nao eh ponteiro
-            if (bCanApplyFunction)
+            if (search == SearchAll ||
+                search == SearchDestroy)
             {
                 //vamos procurar pela funcao conceito _Destroy
                 TDeclaration* pDeclarationDestroy =
@@ -2310,7 +2317,8 @@ static bool FindHighLevelFunction(TProgram* program,
     else if (action == ActionDelete)
     {
         //nao eh ponteiro
-        if (bCanApplyFunction)
+        if (search == SearchAll ||
+            search == SearchDelete)
         {
             //vamos procurar pela funcao conceito _Delete
             TDeclaration* pDeclarationDestroy =
@@ -2327,23 +2335,28 @@ static bool FindHighLevelFunction(TProgram* program,
             }
             else
             {
-                //se nao achou delete procura a destroy 
-                //e depois chama free
-                TDeclaration* pDeclarationDestroy =
-                    SymbolMap_FindObjFunction(&program->GlobalScope,
-                        nameToFind,
-                        "Destroy");
-                if (pDeclarationDestroy)
+                if (search == SearchAll ||
+                    search == SearchDestroy)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * 1,
-                        "%s_Destroy(%s);",
-                        nameToFind,
-                        pInitExpressionText);
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "free(%s);",
-                        pInitExpressionText);
-                    bComplete = true;
+                    //se nao achou delete procura a destroy 
+                    //e depois chama free
+                    TDeclaration* pDeclarationDestroy =
+                        SymbolMap_FindObjFunction(&program->GlobalScope,
+                            nameToFind,
+                            "Destroy");
+                    if (pDeclarationDestroy)
+                    {
+                        StrBuilder_AppendFmtLn(fp, 4 * 1,
+                            "%s_Destroy(%s);",
+                            nameToFind,
+                            pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                            "free(%s);",
+                            pInitExpressionText);
+                        bComplete = true;
+                    }
                 }
+
             }
         }
         else
@@ -2352,30 +2365,35 @@ static bool FindHighLevelFunction(TProgram* program,
             //posso procurar pela destroy
             //se nao achou delete procura a destroy 
             //e depois chama free
-            TDeclaration* pDeclarationDestroy =
-                SymbolMap_FindObjFunction(&program->GlobalScope,
-                    nameToFind,
-                    "Destroy");
-            if (pDeclarationDestroy)
+            if (search == SearchAll ||
+                search == SearchDestroy)
             {
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                    "if (%s){\n",
-                    pInitExpressionText);
-                options->IdentationLevel++;
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                    "%s_Destroy(%s);",
-                    nameToFind,
-                    pInitExpressionText);
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                    "free(%s);",
-                    pInitExpressionText);
-                options->IdentationLevel--;
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                    "}\n",
-                    pInitExpressionText);
+                TDeclaration* pDeclarationDestroy =
+                    SymbolMap_FindObjFunction(&program->GlobalScope,
+                        nameToFind,
+                        "Destroy");
+                if (pDeclarationDestroy)
+                {
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "if (%s){\n",
+                        pInitExpressionText);
+                    options->IdentationLevel++;
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "%s_Destroy(%s);",
+                        nameToFind,
+                        pInitExpressionText);
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "free(%s);",
+                        pInitExpressionText);
+                    options->IdentationLevel--;
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "}\n",
+                        pInitExpressionText);
 
-                bComplete = true;
+                    bComplete = true;
+                }
             }
+
         }
     }
     else if (action == ActionInit)
@@ -2389,23 +2407,29 @@ static bool FindHighLevelFunction(TProgram* program,
         }
         else
         {
-            TDeclaration* pDeclarationInit =
-                SymbolMap_FindObjFunction(&program->GlobalScope,
-                    nameToFind,
-                    "Init");
-            if (pDeclarationInit)
+            if (search == SearchAll ||
+                search == SearchInit)
             {
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                    "%s_Init(&%s);",
-                    nameToFind,
-                    pInitExpressionText);
-                bComplete = true;
+                TDeclaration* pDeclarationInit =
+                    SymbolMap_FindObjFunction(&program->GlobalScope,
+                        nameToFind,
+                        "Init");
+                if (pDeclarationInit)
+                {
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "%s_Init(&%s);",
+                        nameToFind,
+                        pInitExpressionText);
+                    bComplete = true;
+                }
             }
+
         }
     }
     else if (action == ActionInitContent)
     {
-        if (bCanApplyFunction)
+        if (search == SearchAll ||
+            search == SearchInit)
         {
             TDeclaration* pDeclarationInit =
                 SymbolMap_FindObjFunction(&program->GlobalScope,
@@ -2433,7 +2457,8 @@ static bool FindHighLevelFunction(TProgram* program,
     }
     else if (action == ActionCreate)
     {
-        if (true /*bCanApplyFunction*/)
+        if (search == SearchAll ||
+            search == SearchInit)
         {
             TDeclaration* pDeclarationInit =
                 SymbolMap_FindObjFunction(&program->GlobalScope,
@@ -2495,7 +2520,7 @@ void InstanciateDestroy2(TProgram* program,
     TInitializer* pInitializerOpt,
     const char* pInitExpressionText, //(x->p->i = 0)    
     const Action action,
-    bool bCanApplyFunction,
+    Search search,
     bool* pbHasInitializers,
     StrBuilder* fp)
 {
@@ -2523,21 +2548,18 @@ void InstanciateDestroy2(TProgram* program,
 
         if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
         {
-            bool bComplete = false;
+            bool bComplete = FindHighLevelFunction(program,
+                options,
+                pSpecifierQualifierList,//<-dupla para entender o tipo
+                pDeclatator,                        //<-dupla para entender o tipo
+                pInitializerOpt,
+                pInitExpressionText, //(x->p->i = 0)    
+                action,
+                search,
+                pSingleTypeSpecifier->TypedefName,
+                fp);
 
-            if (bCanApplyFunction)
-            {
-                bComplete = FindHighLevelFunction(program,
-                     options,
-                     pSpecifierQualifierList,//<-dupla para entender o tipo
-                     pDeclatator,                        //<-dupla para entender o tipo
-                     pInitializerOpt,
-                    pInitExpressionText, //(x->p->i = 0)    
-                    action,
-                    pSingleTypeSpecifier->TypedefName,
-                    fp);
-            }
-            
+
 
             if (!bComplete)
             {
@@ -2575,7 +2597,7 @@ void InstanciateDestroy2(TProgram* program,
                         NULL,
                         pInitExpressionText,
                         action2,
-                        bCanApplyFunction,
+                        SearchAll,
                         pbHasInitializers,
                         fp);
                 }
@@ -2653,18 +2675,18 @@ void InstanciateDestroy2(TProgram* program,
         //Indica se consegui fazer sem entrar na struct
         bool bComplete = false;
 
-        if (bCanApplyFunction)
-        {
-            bComplete = FindHighLevelFunction(program,
-                options,
-                pSpecifierQualifierList,//<-dupla para entender o tipo
-                pDeclatator,                        //<-dupla para entender o tipo
-                pInitializerOpt,
-                pInitExpressionText, //(x->p->i = 0)    
-                action,
-                pStructUnionSpecifier->Name,
-                fp);
-        }
+
+        bComplete = FindHighLevelFunction(program,
+            options,
+            pSpecifierQualifierList,//<-dupla para entender o tipo
+            pDeclatator,                        //<-dupla para entender o tipo
+            pInitializerOpt,
+            pInitExpressionText, //(x->p->i = 0)    
+            action,
+            search,
+            pStructUnionSpecifier->Name,
+            fp);
+
         //Exemplos
         //struct Y *pY e é para destruir o conteudo
         //struct Y *pY e NAO é para destruir o conteudo
@@ -2713,12 +2735,12 @@ void InstanciateDestroy2(TProgram* program,
                 }
                 else if (action == ActionStaticInit)
                 {
-                    if (bCanApplyFunction)
-                    {
+                    //if (bCanApplyFunction)
+                    //{
                         //o primeiro nao precisa do {
 
-                        StrBuilder_AppendFmt(fp, "/*%s=*/{", pInitExpressionText);
-                    }
+                      //  StrBuilder_AppendFmt(fp, "/*%s=*/{", pInitExpressionText);
+                    //}
                 }
 
                 //ok tem a definicao completa da struct
@@ -2799,8 +2821,8 @@ void InstanciateDestroy2(TProgram* program,
                                 pStructDeclarator->pInitializer,
                                 strVariableName.c_str,
                                 action2,
-                                true,
-                                pbHasInitializers,
+                                SearchAll,
+                                pbHasInitializers,                                
                                 fp);
 
 
@@ -2840,18 +2862,18 @@ void InstanciateDestroy2(TProgram* program,
                 }
                 else if (action == ActionStaticInit)
                 {
-                    if (bCanApplyFunction)
-                    {
-                        //o primeiro nao tem 
-                        StrBuilder_Append(fp, "}");
-                    }
+                    //if (bCanApplyFunction)
+                    //{
+                      //  //o primeiro nao tem 
+                        //StrBuilder_Append(fp, "}");
+                    //}
                 }
             }
             else
             {
                 //error nao tem a definicao completa da struct
                 StrBuilder_AppendFmt(fp, "/*type not found %s*/", pInitExpressionText);
-            }           
+            }
         }//complete
 
     }
