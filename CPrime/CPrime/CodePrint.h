@@ -75,4 +75,5 @@ void InstanciateDestroy2(TProgram* program,
     const char* pInitExpressionText, //(x->p->i = 0)    
     const Action action,
     bool bCanApplyFunction,
+    bool *pbHasInitializers,
     StrBuilder* fp);

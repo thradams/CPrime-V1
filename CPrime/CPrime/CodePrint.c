@@ -1089,7 +1089,9 @@ static void TInitializerList_CodePrint(TProgram* program,
         {
             Output_Append(fp, options, "_default ");
         }
-        //a partir de {} e um tipo consegue gerar o final        
+        //a partir de {} e um tipo consegue gerar o final  
+        StrBuilder sb = STRBUILDER_INIT;
+        bool bHasInitializers = false;
         InstanciateDestroy2(program,
             options,
             (TSpecifierQualifierList*)(pDeclarationSpecifiers),
@@ -1098,7 +1100,18 @@ static void TInitializerList_CodePrint(TProgram* program,
             "",
             ActionStaticInit,
             true,
-            fp);
+            &bHasInitializers,
+            &sb);
+        if (bHasInitializers)
+        {
+            Output_Append(fp, options, sb.c_str);
+        }
+        else
+        {
+            Output_Append(fp, options, "{0}");
+        }
+        
+        StrBuilder_Destroy(&sb);
     }
     else
     {
@@ -1142,6 +1155,8 @@ static void TInitializerListType_CodePrint(TProgram* program,
         }
         else
         {
+            StrBuilder sb = STRBUILDER_INIT;
+            bool bHasInitializers = false;
             InstanciateDestroy2(program,
                 options,
                 (TSpecifierQualifierList*)(pDeclarationSpecifiers),
@@ -1150,7 +1165,19 @@ static void TInitializerListType_CodePrint(TProgram* program,
                 "",
                 ActionStaticInit,
                 false,
-                fp);
+                &bHasInitializers,
+                &sb);
+
+            if (bHasInitializers)
+            {
+                Output_Append(fp, options, sb.c_str);
+            }
+            else
+            {
+                Output_Append(fp, options, "0");
+            }
+
+            StrBuilder_Destroy(&sb);          
         }
         Output_Append(fp, options, "}");
     }
@@ -1745,6 +1772,7 @@ void InstanciateDestroy2(TProgram* program,
     const char* pInitExpressionText, //(x->p->i = 0),
     const Action action,
     bool bCanApplyFunction,
+    bool * pbHasInitializers,
     StrBuilder* fp);
 
 static void DefaultFunctionDefinition_CodePrint(TProgram* program,
@@ -1784,6 +1812,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
     if (IsSuffix(funcName, "_Create"))
     {
         options->IdentationLevel++;
+        
         InstanciateDestroy2(program,
             options,
             (TSpecifierQualifierList*)(&pSpecifiers),
@@ -1792,12 +1821,14 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             "p",
             ActionCreate,
             false,
+            NULL,
             fp);
         options->IdentationLevel--;
     }
     else if (IsSuffix(funcName, "_Init") && pFirstParameter)
     {
         options->IdentationLevel++;
+        
         InstanciateDestroy2(program,
             options,
             (TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
@@ -1806,11 +1837,13 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             firstParameterName,
             ActionInitContent,
             false,
+            NULL,
             fp);
         options->IdentationLevel--;
     }
     else if (IsSuffix(funcName, "_Destroy"))
     {
+        
         options->IdentationLevel++;
         InstanciateDestroy2(program,
             options,
@@ -1820,11 +1853,13 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             firstParameterName,
             ActionDestroyContent,
             false,
+            NULL,
             fp);
         options->IdentationLevel--;
     }
     else if (IsSuffix(funcName, "_Delete"))
     {
+        
         options->IdentationLevel++;
         InstanciateDestroy2(program,
             options,
@@ -1834,6 +1869,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             firstParameterName,
             ActionDelete,
             false,
+            NULL,
             fp);
         options->IdentationLevel--;
     }
@@ -2460,8 +2496,14 @@ void InstanciateDestroy2(TProgram* program,
     const char* pInitExpressionText, //(x->p->i = 0)    
     const Action action,
     bool bCanApplyFunction,
+    bool* pbHasInitializers,
     StrBuilder* fp)
 {
+    if (pInitializerOpt && pbHasInitializers)
+    {
+        *pbHasInitializers = true;
+    }
+
     bool bDeclaratorIsPointer = pDeclatator ? TDeclarator_IsPointer(pDeclatator) : false;
     bool bDeclaratorIsAutoPointer = pDeclatator ? TDeclarator_IsAutoPointer(pDeclatator) : false;
 
@@ -2534,6 +2576,7 @@ void InstanciateDestroy2(TProgram* program,
                         pInitExpressionText,
                         action2,
                         bCanApplyFunction,
+                        pbHasInitializers,
                         fp);
                 }
                 else
@@ -2757,6 +2800,7 @@ void InstanciateDestroy2(TProgram* program,
                                 strVariableName.c_str,
                                 action2,
                                 true,
+                                pbHasInitializers,
                                 fp);
 
 
