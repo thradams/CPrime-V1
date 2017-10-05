@@ -115,6 +115,11 @@ static void TNodeClueList_CodePrint(Options* options, TScannerItemList* list,
             //bInclude = true;
             break;
         case TK_PRE_DEFINE:
+            //TODO gerar macros como init
+            Output_Append(fp, options, pNodeClue->lexeme.c_str);
+            Output_Append(fp, options, "\n");
+            break;
+
         case TK_PRE_UNDEF:
         case TK_PRE_PRAGMA:
         case TK_PRE_IF:
