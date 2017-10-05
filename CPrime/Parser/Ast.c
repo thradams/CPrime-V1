@@ -709,7 +709,7 @@ void TTemplateTypeSpecifierArgument_Destroy(TTemplateTypeSpecifierArgument* p) _
 
 void TTemplateTypeSpecifier_Destroy(TTemplateTypeSpecifier* p) 
 {
-	TTemplateTypeSpecifierArgumentList_Destroy(&p->Args);
+	TTemplateTypeSpecifierArgumentList_Destroy(&p->Args);//
 	TScannerItemList_Destroy(&p->ClueList0);
 	String_Destroy(&p->Identifier);
 }
@@ -1021,15 +1021,15 @@ bool TDeclaration_Is_StructOrUnionDeclaration(TDeclaration* p)
 }
 
 
-void TDeclaration_Destroy(TDeclaration* p) 
+void TDeclaration_Destroy(TDeclaration* p)
 {
-	TCompoundStatement_Delete(p->pCompoundStatementOpt);
-	TDeclarationSpecifiers_Destroy(&p->Specifiers);
-	List_Destroy(TInitDeclarator, &p->InitDeclaratorList);
-
-	TScannerItemList_Destroy(&p->ClueList00);
-	//	TScannerItemList_Destroy(&p->ClueList0);
-	TScannerItemList_Destroy(&p->ClueList1);
+    //
+    List_Destroy(TInitDeclarator, &p->InitDeclaratorList);
+    //
+    TDeclarationSpecifiers_Destroy(&p->Specifiers);
+    TCompoundStatement_Delete(p->pCompoundStatementOpt);
+    TScannerItemList_Destroy(&p->ClueList00);
+    TScannerItemList_Destroy(&p->ClueList1);
 }
 
 void TParameter_Swap(TParameter* a, TParameter* b)
@@ -1087,11 +1087,11 @@ const char* TParameter_GetName(TParameter* p)
 	return TDeclarator_GetName(&p->Declarator);
 }
 
-void TParameter_Destroy(TParameter* p) 
+void TParameter_Destroy(TParameter* p) _default
 {
-	TDeclarator_Destroy(&p->Declarator);
-	TDeclarationSpecifiers_Destroy(&p->Specifiers);
-	TScannerItemList_Destroy(&p->ClueList00);
+    TDeclarationSpecifiers_Destroy(&p->Specifiers);
+    TDeclarator_Destroy(&p->Declarator);
+    TScannerItemList_Destroy(&p->ClueList00);
 }
 
 void TParameterTypeList_Destroy(TParameterTypeList* p)
@@ -1202,21 +1202,21 @@ void TDesignation_Destroy(TDesignation* pDesignation)
 
 }
 
-void TDesignator_Destroy(TDesignator* p)
+void TDesignator_Destroy(TDesignator* p) _default
 {
-	TExpression_Delete(p->pExpression);
-	String_Destroy(&p->Name);
-	TScannerItemList_Destroy(&p->ClueList0);
-	TScannerItemList_Destroy(&p->ClueList1);
+    String_Destroy(&p->Name);
+    TExpression_Delete(p->pExpression);
+    TScannerItemList_Destroy(&p->ClueList0);
+    TScannerItemList_Destroy(&p->ClueList1);
 }
 
 
-void  TInitializerListType_Destroy(TInitializerListType* pTInitializerListType)
+void  TInitializerListType_Destroy(TInitializerListType* pTInitializerListType) _default
 {
-	TInitializerList_Destroy(&pTInitializerListType->InitializerList);
-	TScannerItemList_Destroy(&pTInitializerListType->ClueList00);
-	TScannerItemList_Destroy(&pTInitializerListType->ClueList0);
-	TScannerItemList_Destroy(&pTInitializerListType->ClueList1);
+    TInitializerList_Destroy(&pTInitializerListType->InitializerList);
+    TScannerItemList_Destroy(&pTInitializerListType->ClueList00);
+    TScannerItemList_Destroy(&pTInitializerListType->ClueList0);
+    TScannerItemList_Destroy(&pTInitializerListType->ClueList1);
 }
 
 void TInitializerList_Destroy(TInitializerList* p) 

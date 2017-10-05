@@ -808,7 +808,7 @@ typedef struct TDeclaration
     TInitDeclaratorList InitDeclaratorList;
 
     //se for funcao
-    TCompoundStatement*_auto  pCompoundStatementOpt;
+    TCompoundStatement* _auto  pCompoundStatementOpt;
 
     int FileIndex;
     int Line;
