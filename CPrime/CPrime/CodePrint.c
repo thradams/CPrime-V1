@@ -2246,51 +2246,60 @@ void InstanciateDestroy2(TProgram* program,
                     //procura o declarator
                     TDeclarator* pTypedefTargetDeclarator =
                         TDeclaration_FindDeclarator(pTypedefTargetDeclaration, pSingleTypeSpecifier->TypedefName);
-
-                    bool bTypedefTargetDeclaratorIsPointer =
-                        TDeclarator_IsPointer(pTypedefTargetDeclarator);
-
-                    bool bTypedefTargetDeclaratorIsAutoPointer =
-                        TDeclarator_IsAutoPointer(pTypedefTargetDeclarator);
-
-                    //tODO teria que criar um  declarator resultante
-                    TDeclarator declarator = TDECLARATOR_INIT;
-                    //TPointerList_add
-                    //declarator.PointerList
-
-                    ForEachListItem(TPointer, pItem, &pDeclatator->PointerList)
+                    if (pTypedefTargetDeclarator)
                     {
-                        TPointer * pNew = TPointer_Create();
-                        pNew->bPointer = pItem->bPointer;
-                        pNew->Qualifier = pItem->Qualifier;
-                        List_Add(&declarator.PointerList, pNew);
-                    }
+                        bool bTypedefTargetDeclaratorIsPointer =
+                            TDeclarator_IsPointer(pTypedefTargetDeclarator);
 
-                    ForEachListItem(TPointer, pItem, &pTypedefTargetDeclarator->PointerList)
+                        bool bTypedefTargetDeclaratorIsAutoPointer =
+                            TDeclarator_IsAutoPointer(pTypedefTargetDeclarator);
+
+                        //tODO teria que criar um  declarator resultante
+                        TDeclarator declarator = TDECLARATOR_INIT;
+                        //TPointerList_add
+                        //declarator.PointerList
+
+                        ForEachListItem(TPointer, pItem, &pDeclatator->PointerList)
+                        {
+                            TPointer * pNew = TPointer_Create();
+                            pNew->bPointer = pItem->bPointer;
+                            pNew->Qualifier = pItem->Qualifier;
+                            List_Add(&declarator.PointerList, pNew);
+                        }
+
+                        ForEachListItem(TPointer, pItem, &pTypedefTargetDeclarator->PointerList)
+                        {
+                            TPointer * pNew = TPointer_Create();
+                            pNew->bPointer = pItem->bPointer;
+                            pNew->Qualifier = pItem->Qualifier;
+                            List_Add(&declarator.PointerList, pNew);
+                        }
+
+                        Action action2 = action;
+                        //passa a informacao do tipo correto agora
+                        InstanciateDestroy2(program,
+                            options,
+                            (TSpecifierQualifierList*)&pTypedefTargetDeclaration->Specifiers,
+                            &declarator,
+                            NULL,
+                            pInitExpressionText,
+                            action2,
+                            bCanApplyFunction,
+                            fp);
+
+                        TDeclarator_Destroy(&declarator);
+                    }
+                    else
                     {
-                        TPointer * pNew = TPointer_Create();
-                        pNew->bPointer = pItem->bPointer;
-                        pNew->Qualifier = pItem->Qualifier;
-                        List_Add(&declarator.PointerList, pNew);
+                        //nao achou declarator
+                        //ASSERT(false);
                     }
-
-                    Action action2 = action;
-                    //passa a informacao do tipo correto agora
-                    InstanciateDestroy2(program,
-                        options,
-                        (TSpecifierQualifierList*)&pTypedefTargetDeclaration->Specifiers,
-                        &declarator,
-                        NULL,
-                        pInitExpressionText,
-                        action2,
-                        bCanApplyFunction,
-                        fp);
-
-                    TDeclarator_Destroy(&declarator);
+                   
                 }
                 else
                 {
                     //nao achou a declaracao
+                    ASSERT(false);
                 }
             }
         }

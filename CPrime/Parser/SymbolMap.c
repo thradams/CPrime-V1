@@ -466,6 +466,11 @@ TDeclaration* SymbolMap_FindObjFunction(SymbolMap* pMap,
     const char* objName,
     const char* funcName)
 {
+    if (objName == NULL || funcName == NULL)
+    {
+        return NULL;
+    }
+
     char buffer[500] = {0};
     strcat(buffer, objName);
     strcat(buffer, "_");

@@ -633,24 +633,27 @@ bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
 {
 	bool bIsPointer = false;
 	bool bIsAuto = false;
-	ForEachListItem(TPointer, pItem, pPointerlist)
-	{
-		if (pItem->bPointer)
-		{
-			bIsPointer = true;
-		}
-		ForEachListItem(TTypeQualifier, pQualifier, &pItem->Qualifier)
-		{
-			if (pQualifier->Token == TK__AUTO ||
-				pQualifier->Token == TK_OWN_QUALIFIER)
-			{
-				bIsAuto = true;
-				break;
-			}
-		}
-		if (bIsAuto && bIsPointer)
-			break;
-	}
+    if (pPointerlist)
+    {
+        ForEachListItem(TPointer, pItem, pPointerlist)
+        {
+            if (pItem->bPointer)
+            {
+                bIsPointer = true;
+            }
+            ForEachListItem(TTypeQualifier, pQualifier, &pItem->Qualifier)
+            {
+                if (pQualifier->Token == TK__AUTO ||
+                    pQualifier->Token == TK_OWN_QUALIFIER)
+                {
+                    bIsAuto = true;
+                    break;
+                }
+            }
+            if (bIsAuto && bIsPointer)
+                break;
+        }
+    }
 	return bIsAuto;
 }
 
@@ -662,14 +665,17 @@ void TPointerList_Destroy(TPointerList* p)
 bool TPointerList_IsPointer(TPointerList* pPointerlist)
 {
 	bool bIsPointer = false;
-	ForEachListItem(TPointer, pItem, pPointerlist)
-	{
-		if (pItem->bPointer)
-		{
-			bIsPointer = true;
-			break;
-		}
-	}
+    if (pPointerlist)
+    {
+        ForEachListItem(TPointer, pItem, pPointerlist)
+        {
+            if (pItem->bPointer)
+            {
+                bIsPointer = true;
+                break;
+            }
+        }
+    }
 	return bIsPointer;
 }
 
