@@ -836,6 +836,18 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                     else
                     {
                         //'e um typedef direto - retorna a declaracao que ele aparece
+                        TDeclarator* pDeclarator =
+                            TDeclaration_FindDeclarator(pDeclaration, typedefName);
+
+                        //copiar o pointer list deste typedef para o outro
+                        ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
+                        {
+                            TPointer * pNew = TPointer_Create();
+                            pNew->bPointer = pItem->bPointer;
+                            pNew->Qualifier = pItem->Qualifier;
+                            List_Add(&declarator->PointerList, pNew);
+                        }
+
                         pSpecifiersResult = &pDeclaration->Specifiers;
                     }
                     break;
