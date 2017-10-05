@@ -65,3 +65,12 @@ struct TDeclaration* SymbolMap_FindFunction(SymbolMap* pMap, const char* funcNam
 struct TDeclaration* SymbolMap_FindObjFunction(SymbolMap* pMap,
     const char* objName,
     const char* funcName);
+
+
+struct TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
+    const char* typedefName,
+    struct TDeclarator* declarator);
+
+struct TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
+    const char* typedefName,
+    struct TDeclarator* declarator);

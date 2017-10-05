@@ -581,7 +581,12 @@ bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList* p);
 
 
-typedef List(TSpecifier) TDeclarationSpecifiers; //tODO pode ser 4 TSpecifier no max
+//typedef List(TSpecifier) TDeclarationSpecifiers; //tODO pode ser 4 TSpecifier no max
+typedef struct TDeclarationSpecifiers {    
+        TSpecifier* pHead; 
+        TSpecifier* pTail; 
+} TDeclarationSpecifiers;
+
 #define TDECLARATION_SPECIFIERS_INIT LIST_INIT
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers);
 

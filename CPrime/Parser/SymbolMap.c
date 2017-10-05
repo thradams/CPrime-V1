@@ -635,6 +635,219 @@ TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
     return pDeclarationResult;
 }
 
+//Acha o tipo final de um typedef
+//e vai somando as partes dos declaratos
+//por exemplo no meio do caminho dos typedefs
+//pode ter ponteiros e depois const etc.
+TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
+    const char* typedefName,
+    TDeclarator* declarator)
+{
+    //TDeclaration* pDeclarationResult = NULL;
+    TDeclarationSpecifiers* pSpecifiersResult = NULL;
+
+    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+
+    if (pMap->pHashTable != NULL)
+    {
+        unsigned int nHashBucket, HashValue;
+        SymbolMapItem* pKeyValue =
+            SymbolMap_GetAssocAt(pMap,
+                typedefName,
+                &nHashBucket,
+                &HashValue);
+
+        while (pKeyValue != NULL)
+        {
+            if (pKeyValue->pValue->Type == TDeclaration_ID &&
+                strcmp(pKeyValue->Key, typedefName) == 0)
+            {
+                TDeclaration *pDeclaration =
+                    (TDeclaration *)pKeyValue->pValue;
+
+                //typedef X Y;
+                bool bIsTypedef = false;
+                const char* indirectTypedef = NULL;
+                ForEachListItem(TTypeSpecifier, pItem, &pDeclaration->Specifiers)
+                {
+                    switch (pItem->Type)
+                    {
+                    case TStorageSpecifier_ID:
+                    {
+                        TStorageSpecifier* pStorageSpecifier =
+                            (TStorageSpecifier*)pItem;
+                        if (pStorageSpecifier->bIsTypedef)
+                        {
+                            bIsTypedef = true;
+                        }
+                    }
+                    break;
+                    case TSingleTypeSpecifier_ID:
+                    {
+                        TSingleTypeSpecifier* pSingleTypeSpecifier =
+                            (TSingleTypeSpecifier*)pItem;
+
+                        if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+                        {
+                            indirectTypedef = pSingleTypeSpecifier->TypedefName;
+                        }
+                    }
+                    break;
+                    }
+                }
+                if (!bIsTypedef)
+                {
+                    //Nao eh um typedef
+                    break;
+                }
+                else
+                {
+                    if (indirectTypedef != NULL)
+                    {
+                        TDeclarator* pDeclarator =
+                            TDeclaration_FindDeclarator(pDeclaration, typedefName);
+                        if (pDeclarator)
+                        {
+                            //copiar o pointer list deste typedef para o outro
+                            ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
+                            {
+                                TPointer * pNew = TPointer_Create();
+                                pNew->bPointer = pItem->bPointer;
+                                pNew->Qualifier = pItem->Qualifier;
+                                List_Add(&declarator->PointerList, pNew);
+                            }
+
+                            //eh um typedef indireto
+                            pSpecifiersResult =
+                                SymbolMap_FindTypedefTarget(pMap, indirectTypedef, declarator);
+                        }
+                        else
+                        {
+                            ASSERT(false);
+                        }
+                    }
+                    else
+                    {
+                        //'e um typedef direto - retorna a declaracao que ele aparece
+                        pSpecifiersResult = &pDeclaration->Specifiers;
+                    }
+                    break;
+                }
+            }
+            pKeyValue = pKeyValue->pNext;
+        }
+    }
+
+    return pSpecifiersResult;// &pDeclarationResult->Specifiers;
+}
+
+
+
+//Acha o primeiro typedef
+//somas as partes do declarator
+TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
+    const char* typedefName,
+    TDeclarator* declarator)
+{
+    //TDeclaration* pDeclarationResult = NULL;
+    TDeclarationSpecifiers* pSpecifiersResult = NULL;
+
+    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+
+    if (pMap->pHashTable != NULL)
+    {
+        unsigned int nHashBucket, HashValue;
+        SymbolMapItem* pKeyValue =
+            SymbolMap_GetAssocAt(pMap,
+                typedefName,
+                &nHashBucket,
+                &HashValue);
+
+        while (pKeyValue != NULL)
+        {
+            if (pKeyValue->pValue->Type == TDeclaration_ID &&
+                strcmp(pKeyValue->Key, typedefName) == 0)
+            {
+                TDeclaration *pDeclaration =
+                    (TDeclaration *)pKeyValue->pValue;
+
+                //typedef X Y;
+                bool bIsTypedef = false;
+                const char* indirectTypedef = NULL;
+                ForEachListItem(TTypeSpecifier, pItem, &pDeclaration->Specifiers)
+                {
+                    switch (pItem->Type)
+                    {
+                    case TStorageSpecifier_ID:
+                    {
+                        TStorageSpecifier* pStorageSpecifier =
+                            (TStorageSpecifier*)pItem;
+                        if (pStorageSpecifier->bIsTypedef)
+                        {
+                            bIsTypedef = true;
+                        }
+                    }
+                    break;
+                    case TSingleTypeSpecifier_ID:
+                    {
+                        TSingleTypeSpecifier* pSingleTypeSpecifier =
+                            (TSingleTypeSpecifier*)pItem;
+
+                        if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+                        {
+                            indirectTypedef = pSingleTypeSpecifier->TypedefName;
+                        }
+                    }
+                    break;
+                    }
+                }
+                if (!bIsTypedef)
+                {
+                    //Nao eh um typedef
+                    break;
+                }
+                else
+                {
+                    if (indirectTypedef != NULL)
+                    {
+                        TDeclarator* pDeclarator =
+                            TDeclaration_FindDeclarator(pDeclaration, typedefName);
+                        if (pDeclarator)
+                        {
+                            //copiar o pointer list deste typedef para o outro
+                            ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
+                            {
+                                TPointer * pNew = TPointer_Create();
+                                pNew->bPointer = pItem->bPointer;
+                                pNew->Qualifier = pItem->Qualifier;
+                                List_Add(&declarator->PointerList, pNew);
+                            }
+
+                            //eh um typedef indireto
+                            pSpecifiersResult = &pDeclaration->Specifiers;
+                            //pSpecifiersResult =
+                                //SymbolMap_FindTypedefTarget(pMap, indirectTypedef, declarator);
+                        }
+                        else
+                        {
+                            ASSERT(false);
+                        }
+                    }
+                    else
+                    {
+                        //'e um typedef direto - retorna a declaracao que ele aparece
+                        pSpecifiersResult = &pDeclaration->Specifiers;
+                    }
+                    break;
+                }
+            }
+            pKeyValue = pKeyValue->pNext;
+        }
+    }
+
+    return pSpecifiersResult;// &pDeclarationResult->Specifiers;
+
+}
 TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
     const char* typedefName)
 {

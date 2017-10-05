@@ -1097,7 +1097,7 @@ static void TInitializerList_CodePrint(TProgram* program,
     }
     else
     {
-        
+
         ForEachListItem(TInitializerListItem, pItem, p)
         {
             if (!List_IsFirstItem(p, pItem))
@@ -1109,8 +1109,8 @@ static void TInitializerList_CodePrint(TProgram* program,
                 pDeclarationSpecifiers,
                 pItem,
                 fp);
-        }       
-        
+        }
+
     }
 }
 
@@ -2174,7 +2174,278 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 
 
 
+static bool FindHighLevelFunction(TProgram* program,
+    Options* options,
+    TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
+    TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
+    TInitializer* pInitializerOpt,
+    const char* pInitExpressionText, //(x->p->i = 0)    
+    const Action action,    
+    const char* nameToFind,
+    StrBuilder* fp)
+{
+    bool bComplete = false;
+    bool bCanApplyFunction = true;
 
+    bool bDeclaratorIsPointer = pDeclatator ? TDeclarator_IsPointer(pDeclatator) : false;
+    bool bDeclaratorIsAutoPointer = pDeclatator ? TDeclarator_IsAutoPointer(pDeclatator) : false;
+
+
+    if (action == ActionDestroy || action == ActionDestroyContent)
+    {
+        if (bDeclaratorIsPointer)
+        {
+            if (bDeclaratorIsAutoPointer)
+            {
+                //nao eh ponteiro
+                if (bCanApplyFunction)
+                {
+                    //vamos procurar pela funcao conceito _Delete
+                    TDeclaration* pDeclarationDestroy =
+                        SymbolMap_FindObjFunction(&program->GlobalScope,
+                            nameToFind,
+                            "Delete");
+                    if (pDeclarationDestroy)
+                    {
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                            "%s_Delete(%s);",
+                            nameToFind,
+                            pInitExpressionText);
+                        bComplete = true;
+                    }
+                    else
+                    {
+                        //se nao achou delete procura a destroy 
+                        //e depois chama free
+                        TDeclaration* pDeclarationDestroy =
+                            SymbolMap_FindObjFunction(&program->GlobalScope,
+                                nameToFind,
+                                "Destroy");
+                        if (pDeclarationDestroy)
+                        {
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                "%s_Destroy(%s);",
+                                nameToFind,
+                                pInitExpressionText);
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                "free(%s);",
+                                pInitExpressionText);
+                            bComplete = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (action != ActionDestroyContent)
+                {
+                    //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = NULL;", pInitExpressionText);
+                    bComplete = true;
+                }
+            }
+
+        }
+        else
+        {
+            //nao eh ponteiro
+            if (bCanApplyFunction)
+            {
+                //vamos procurar pela funcao conceito _Destroy
+                TDeclaration* pDeclarationDestroy =
+                    SymbolMap_FindObjFunction(&program->GlobalScope,
+                        nameToFind,
+                        "Destroy");
+                if (pDeclarationDestroy)
+                {
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "%s_Destroy(&%s);",
+                        nameToFind,
+                        pInitExpressionText);
+                    bComplete = true;
+                }
+            }
+        }
+    }
+    else if (action == ActionDelete)
+    {
+        //nao eh ponteiro
+        if (bCanApplyFunction)
+        {
+            //vamos procurar pela funcao conceito _Delete
+            TDeclaration* pDeclarationDestroy =
+                SymbolMap_FindObjFunction(&program->GlobalScope,
+                    nameToFind,
+                    "Delete");
+            if (pDeclarationDestroy)
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "%s_Delete(%s);",
+                    nameToFind,
+                    pInitExpressionText);
+                bComplete = true;
+            }
+            else
+            {
+                //se nao achou delete procura a destroy 
+                //e depois chama free
+                TDeclaration* pDeclarationDestroy =
+                    SymbolMap_FindObjFunction(&program->GlobalScope,
+                        nameToFind,
+                        "Destroy");
+                if (pDeclarationDestroy)
+                {
+                    StrBuilder_AppendFmtLn(fp, 4 * 1,
+                        "%s_Destroy(%s);",
+                        nameToFind,
+                        pInitExpressionText);
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "free(%s);",
+                        pInitExpressionText);
+                    bComplete = true;
+                }
+            }
+        }
+        else
+        {
+            //nao procurar pela delete mas procurar pela destroy
+            //posso procurar pela destroy
+            //se nao achou delete procura a destroy 
+            //e depois chama free
+            TDeclaration* pDeclarationDestroy =
+                SymbolMap_FindObjFunction(&program->GlobalScope,
+                    nameToFind,
+                    "Destroy");
+            if (pDeclarationDestroy)
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "if (%s){\n",
+                    pInitExpressionText);
+                options->IdentationLevel++;
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "%s_Destroy(%s);",
+                    nameToFind,
+                    pInitExpressionText);
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "free(%s);",
+                    pInitExpressionText);
+                options->IdentationLevel--;
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "}\n",
+                    pInitExpressionText);
+
+                bComplete = true;
+            }
+        }
+    }
+    else if (action == ActionInit)
+    {
+        if (bDeclaratorIsPointer)
+        {
+            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                "%s = 0/*NULL*/;",
+                pInitExpressionText);
+            bComplete = true;
+        }
+        else
+        {
+            TDeclaration* pDeclarationInit =
+                SymbolMap_FindObjFunction(&program->GlobalScope,
+                    nameToFind,
+                    "Init");
+            if (pDeclarationInit)
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "%s_Init(&%s);",
+                    nameToFind,
+                    pInitExpressionText);
+                bComplete = true;
+            }
+        }
+    }
+    else if (action == ActionInitContent)
+    {
+        if (bCanApplyFunction)
+        {
+            TDeclaration* pDeclarationInit =
+                SymbolMap_FindObjFunction(&program->GlobalScope,
+                    nameToFind,
+                    "Init");
+            if (pDeclarationInit)
+            {
+                if (bDeclaratorIsPointer)
+                {
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "%s_Init(%s);",
+                        nameToFind,
+                        pInitExpressionText);
+                }
+                else
+                {
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "%s_Init(&%s);",
+                        nameToFind,
+                        pInitExpressionText);
+                }
+            }
+            bComplete = true;
+        }
+    }
+    else if (action == ActionCreate)
+    {
+        if (true /*bCanApplyFunction*/)
+        {
+            TDeclaration* pDeclarationInit =
+                SymbolMap_FindObjFunction(&program->GlobalScope,
+                    nameToFind,
+                    "Init");
+            if (pDeclarationInit)
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "struct %s *p = malloc(sizeof * p);",
+                    nameToFind);
+
+
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "if (p)");
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "{");
+                options->IdentationLevel++;
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "%s_Init(p);",
+                    nameToFind);
+
+                options->IdentationLevel--;
+
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "}");
+
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "return p;");
+
+                bComplete = true;
+            }
+
+        }
+    }
+    else if (action == ActionStaticInit)
+    {
+        if (pInitializerOpt)
+        {
+            StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "/*%s=*/", pInitExpressionText);
+            Options options2 = *options;
+            TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
+
+        }
+        else if (bDeclaratorIsPointer)
+        {
+            StrBuilder_AppendFmt(fp, "/*%s=*/0/*NULL*/", pInitExpressionText);
+            bComplete = true;
+        }
+
+
+    }
+    return bComplete;
+}
 
 void InstanciateDestroy2(TProgram* program,
     Options* options,
@@ -2206,101 +2477,66 @@ void InstanciateDestroy2(TProgram* program,
         if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
         {
             bool bComplete = false;
-            if (action == ActionDestroy)
-            {
-                if (bDeclaratorIsPointer)
-                {
-                }
-                else
-                {
-                    if (bCanApplyFunction)
-                    {
-                        //vamos procurar pela funcao conceito _Destroy
-                        TDeclaration* pDeclarationDestroy =
-                            SymbolMap_FindObjFunction(&program->GlobalScope,
-                                pSingleTypeSpecifier->TypedefName,
-                                "Destroy");
-                        if (pDeclarationDestroy)
-                        {
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                "%s_Destroy(&%s);",
-                                pSingleTypeSpecifier->TypedefName,
-                                pInitExpressionText);
-                            bComplete = true;
-                        }
-                    }
-                }
 
+            if (bCanApplyFunction)
+            {
+                bComplete = FindHighLevelFunction(program,
+                     options,
+                     pSpecifierQualifierList,//<-dupla para entender o tipo
+                     pDeclatator,                        //<-dupla para entender o tipo
+                     pInitializerOpt,
+                    pInitExpressionText, //(x->p->i = 0)    
+                    action,
+                    pSingleTypeSpecifier->TypedefName,
+                    fp);
             }
+            
 
             if (!bComplete)
             {
-                TDeclaration* pTypedefTargetDeclaration
-                    = SymbolMap_FindTypedefDeclarationTarget(&program->GlobalScope,
-                        pSingleTypeSpecifier->TypedefName);
+                TDeclarator declarator = TDECLARATOR_INIT;
 
-                if (pTypedefTargetDeclaration)
+                //Copia as partes deste declarador já
+                //(vai acumulando ponteiros) typedef para typedef para typedef...
+                ForEachListItem(TPointer, pItem, &pDeclatator->PointerList)
                 {
-                    //achou declaracao
+                    TPointer * pNew = TPointer_Create();
+                    pNew->bPointer = pItem->bPointer;
+                    pNew->Qualifier = pItem->Qualifier;
+                    List_Add(&declarator.PointerList, pNew);
+                }
 
-                    //procura o declarator
-                    TDeclarator* pTypedefTargetDeclarator =
-                        TDeclaration_FindDeclarator(pTypedefTargetDeclaration, pSingleTypeSpecifier->TypedefName);
-                    if (pTypedefTargetDeclarator)
-                    {
-                        bool bTypedefTargetDeclaratorIsPointer =
-                            TDeclarator_IsPointer(pTypedefTargetDeclarator);
+                //Pode ter uma cadeia de typdefs
+                //ele vai entrandando em cada uma ...
+                //ate que chega no fim recursivamente
+                //enquanto ele vai andando ele vai tentando
+                //algo com o nome do typedef
+                TDeclarationSpecifiers* pDeclarationSpecifiers =
+                    SymbolMap_FindTypedefFirstTarget(&program->GlobalScope,
+                        pSingleTypeSpecifier->TypedefName,
+                        &declarator);
 
-                        bool bTypedefTargetDeclaratorIsAutoPointer =
-                            TDeclarator_IsAutoPointer(pTypedefTargetDeclarator);
+                if (pDeclarationSpecifiers)
+                {
 
-                        //tODO teria que criar um  declarator resultante
-                        TDeclarator declarator = TDECLARATOR_INIT;
-                        //TPointerList_add
-                        //declarator.PointerList
-
-                        ForEachListItem(TPointer, pItem, &pDeclatator->PointerList)
-                        {
-                            TPointer * pNew = TPointer_Create();
-                            pNew->bPointer = pItem->bPointer;
-                            pNew->Qualifier = pItem->Qualifier;
-                            List_Add(&declarator.PointerList, pNew);
-                        }
-
-                        ForEachListItem(TPointer, pItem, &pTypedefTargetDeclarator->PointerList)
-                        {
-                            TPointer * pNew = TPointer_Create();
-                            pNew->bPointer = pItem->bPointer;
-                            pNew->Qualifier = pItem->Qualifier;
-                            List_Add(&declarator.PointerList, pNew);
-                        }
-
-                        Action action2 = action;
-                        //passa a informacao do tipo correto agora
-                        InstanciateDestroy2(program,
-                            options,
-                            (TSpecifierQualifierList*)&pTypedefTargetDeclaration->Specifiers,
-                            &declarator,
-                            NULL,
-                            pInitExpressionText,
-                            action2,
-                            bCanApplyFunction,
-                            fp);
-
-                        TDeclarator_Destroy(&declarator);
-                    }
-                    else
-                    {
-                        //nao achou declarator
-                        //ASSERT(false);
-                    }
-                   
+                    Action action2 = action;
+                    //passa a informacao do tipo correto agora
+                    InstanciateDestroy2(program,
+                        options,
+                        (TSpecifierQualifierList*)&pDeclarationSpecifiers,
+                        &declarator,
+                        NULL,
+                        pInitExpressionText,
+                        action2,
+                        bCanApplyFunction,
+                        fp);
                 }
                 else
                 {
                     //nao achou a declaracao
                     ASSERT(false);
                 }
+                TDeclarator_Destroy(&declarator);
             }
         }
         else
@@ -2314,7 +2550,7 @@ void InstanciateDestroy2(TProgram* program,
                 }
                 else
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = 0;", pInitExpressionText);
+                    //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = 0;", pInitExpressionText);
                 }
             }
             else if (action == ActionInit)
@@ -2369,258 +2605,17 @@ void InstanciateDestroy2(TProgram* program,
         //Indica se consegui fazer sem entrar na struct
         bool bComplete = false;
 
-        if (action == ActionDestroy || action == ActionDestroyContent)
+        if (bCanApplyFunction)
         {
-            if (bDeclaratorIsPointer)
-            {
-                if (bDeclaratorIsAutoPointer)
-                {
-                    //nao eh ponteiro
-                    if (bCanApplyFunction)
-                    {
-                        //vamos procurar pela funcao conceito _Delete
-                        TDeclaration* pDeclarationDestroy =
-                            SymbolMap_FindObjFunction(&program->GlobalScope,
-                                pStructUnionSpecifier->Name,
-                                "Delete");
-                        if (pDeclarationDestroy)
-                        {
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                "%s_Delete(%s);",
-                                pStructUnionSpecifier->Name,
-                                pInitExpressionText);
-                            bComplete = true;
-                        }
-                        else
-                        {
-                            //se nao achou delete procura a destroy 
-                            //e depois chama free
-                            TDeclaration* pDeclarationDestroy =
-                                SymbolMap_FindObjFunction(&program->GlobalScope,
-                                    pStructUnionSpecifier->Name,
-                                    "Destroy");
-                            if (pDeclarationDestroy)
-                            {
-                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                    "%s_Destroy(%s);",
-                                    pStructUnionSpecifier->Name,
-                                    pInitExpressionText);
-                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                    "free(%s);",
-                                    pInitExpressionText);
-                                bComplete = true;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if (action != ActionDestroyContent)
-                    {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = NULL;", pInitExpressionText);
-                        bComplete = true;
-                    }
-                }
-
-            }
-            else
-            {
-                //nao eh ponteiro
-                if (bCanApplyFunction)
-                {
-                    //vamos procurar pela funcao conceito _Destroy
-                    TDeclaration* pDeclarationDestroy =
-                        SymbolMap_FindObjFunction(&program->GlobalScope,
-                            pStructUnionSpecifier->Name,
-                            "Destroy");
-                    if (pDeclarationDestroy)
-                    {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                            "%s_Destroy(&%s);",
-                            pStructUnionSpecifier->Name,
-                            pInitExpressionText);
-                        bComplete = true;
-                    }
-                }
-            }
-        }
-        else if (action == ActionDelete)
-        {
-            //nao eh ponteiro
-            if (bCanApplyFunction)
-            {
-                //vamos procurar pela funcao conceito _Delete
-                TDeclaration* pDeclarationDestroy =
-                    SymbolMap_FindObjFunction(&program->GlobalScope,
-                        pStructUnionSpecifier->Name,
-                        "Delete");
-                if (pDeclarationDestroy)
-                {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "%s_Delete(%s);",
-                        pStructUnionSpecifier->Name,
-                        pInitExpressionText);
-                    bComplete = true;
-                }
-                else
-                {
-                    //se nao achou delete procura a destroy 
-                    //e depois chama free
-                    TDeclaration* pDeclarationDestroy =
-                        SymbolMap_FindObjFunction(&program->GlobalScope,
-                            pStructUnionSpecifier->Name,
-                            "Destroy");
-                    if (pDeclarationDestroy)
-                    {
-                        StrBuilder_AppendFmtLn(fp, 4 * 1,
-                            "%s_Destroy(%s);",
-                            pStructUnionSpecifier->Name,
-                            pInitExpressionText);
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                            "free(%s);",
-                            pInitExpressionText);
-                        bComplete = true;
-                    }
-                }
-            }
-            else
-            {
-                //nao procurar pela delete mas procurar pela destroy
-                //posso procurar pela destroy
-                //se nao achou delete procura a destroy 
-                //e depois chama free
-                TDeclaration* pDeclarationDestroy =
-                    SymbolMap_FindObjFunction(&program->GlobalScope,
-                        pStructUnionSpecifier->Name,
-                        "Destroy");
-                if (pDeclarationDestroy)
-                {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "if (%s){\n",
-                        pInitExpressionText);
-                    options->IdentationLevel++;
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "%s_Destroy(%s);",
-                        pStructUnionSpecifier->Name,
-                        pInitExpressionText);
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "free(%s);",
-                        pInitExpressionText);
-                    options->IdentationLevel--;
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "}\n",
-                        pInitExpressionText);
-
-                    bComplete = true;
-                }
-            }
-        }
-        else if (action == ActionInit)
-        {
-            if (bDeclaratorIsPointer)
-            {
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                    "%s = 0/*NULL*/;",
-                    pInitExpressionText);
-                bComplete = true;
-            }
-            else
-            {
-                TDeclaration* pDeclarationInit =
-                    SymbolMap_FindObjFunction(&program->GlobalScope,
-                        pStructUnionSpecifier->Name,
-                        "Init");
-                if (pDeclarationInit)
-                {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "%s_Init(&%s);",
-                        pStructUnionSpecifier->Name,
-                        pInitExpressionText);
-                    bComplete = true;
-                }
-            }
-        }
-        else if (action == ActionInitContent)
-        {
-            if (bCanApplyFunction)
-            {
-                TDeclaration* pDeclarationInit =
-                    SymbolMap_FindObjFunction(&program->GlobalScope,
-                        pStructUnionSpecifier->Name,
-                        "Init");
-                if (pDeclarationInit)
-                {
-                    if (bDeclaratorIsPointer)
-                    {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                            "%s_Init(%s);",
-                            pStructUnionSpecifier->Name,
-                            pInitExpressionText);
-                    }
-                    else
-                    {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                            "%s_Init(&%s);",
-                            pStructUnionSpecifier->Name,
-                            pInitExpressionText);
-                    }
-                }
-                bComplete = true;
-            }
-        }
-        else if (action == ActionCreate)
-        {
-            if (true /*bCanApplyFunction*/)
-            {
-                TDeclaration* pDeclarationInit =
-                    SymbolMap_FindObjFunction(&program->GlobalScope,
-                        pStructUnionSpecifier->Name,
-                        "Init");
-                if (pDeclarationInit)
-                {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "struct %s *p = malloc(sizeof * p);",
-                        pStructUnionSpecifier->Name);
-
-
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "if (p)");
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "{");
-                    options->IdentationLevel++;
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "%s_Init(p);",
-                        pStructUnionSpecifier->Name);
-
-                    options->IdentationLevel--;
-
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "}");
-
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "return p;");
-
-                    bComplete = true;
-                }
-
-            }
-        }
-        else if (action == ActionStaticInit)
-        {
-            if (pInitializerOpt)
-            {
-                StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "/*%s=*/", pInitExpressionText);
-                Options options2 = *options;
-                TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
-                
-            }
-            else if (bDeclaratorIsPointer)
-            {
-                StrBuilder_AppendFmt(fp, "/*%s=*/0/*NULL*/", pInitExpressionText);
-                bComplete = true;
-            }
-
-
+            bComplete = FindHighLevelFunction(program,
+                options,
+                pSpecifierQualifierList,//<-dupla para entender o tipo
+                pDeclatator,                        //<-dupla para entender o tipo
+                pInitializerOpt,
+                pInitExpressionText, //(x->p->i = 0)    
+                action,
+                pStructUnionSpecifier->Name,
+                fp);
         }
         //Exemplos
         //struct Y *pY e é para destruir o conteudo
@@ -2808,7 +2803,7 @@ void InstanciateDestroy2(TProgram* program,
             {
                 //error nao tem a definicao completa da struct
             }
-            if (action != ActionStaticInit)
+            if (action != ActionStaticInit && bCanApplyFunction)
             {
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "");
             }
@@ -2830,7 +2825,7 @@ void InstanciateDestroy2(TProgram* program,
             }
             else
             {
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = 0;", pInitExpressionText);
+                //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = 0;", pInitExpressionText);
             }
         }
         else if (action == ActionInit)
@@ -2858,7 +2853,7 @@ void InstanciateDestroy2(TProgram* program,
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, firstValue);
                 }
             }
-            
+
         }
         else if (action == ActionInitContent)
         {
