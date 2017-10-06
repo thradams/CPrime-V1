@@ -2213,6 +2213,37 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 }
 
 
+static const char* GetFalseStr(TProgram* program,
+    Options* options,    
+    StrBuilder* fp)
+{
+    bool bHasFalse=
+        MacroMap_Find(&program->Defines, "false") != NULL;
+
+    return bHasFalse ? "false" : "0";
+}
+
+static void PrintIfNotNullLn(TProgram* program,
+    Options* options,
+    const char* pInitExpressionText, //(x->p->i = 0)    
+    StrBuilder* fp)
+{
+    bool bHasNULL =
+        MacroMap_Find(&program->Defines, "NULL") != NULL;
+
+    if (bHasNULL)
+    {
+        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+            "if (%s != NULL)",
+            pInitExpressionText);
+    }
+    else
+    {
+        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+            "if (%s)",
+            pInitExpressionText);
+    }
+}
 
 
 static bool FindHighLevelFunction(TProgram* program,
@@ -2380,9 +2411,13 @@ static bool FindHighLevelFunction(TProgram* program,
                         "Destroy");
                 if (pDeclarationDestroy)
                 {
+                    PrintIfNotNullLn(program, options, pInitExpressionText, fp);
+
+                    
+
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "if (%s){\n",
-                        pInitExpressionText);
+                        "{");
+
                     options->IdentationLevel++;
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                         "%s_Destroy(%s);",
@@ -2478,8 +2513,9 @@ static bool FindHighLevelFunction(TProgram* program,
                     nameToFind);
 
 
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                    "if (p)");
+                PrintIfNotNullLn(program, options, "p", fp);
+
+
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                     "{");
                 options->IdentationLevel++;
@@ -2594,8 +2630,8 @@ void InstanciateDestroy2(TProgram* program,
                         pSingleTypeSpecifier->TypedefName,
                         pSingleTypeSpecifier->TypedefName);
 
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "if (p != NULL)");
+                    PrintIfNotNullLn(program, options, "p", fp);
+
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                         "{");
 
@@ -2717,7 +2753,10 @@ void InstanciateDestroy2(TProgram* program,
                     {
                         if (TSpecifierQualifierList_IsBool(pSpecifierQualifierList))
                         {
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = 0;/*false*/", pInitExpressionText);
+
+                            
+
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetFalseStr(program, options, fp));
                         }
                         else
                         {
@@ -2790,8 +2829,8 @@ void InstanciateDestroy2(TProgram* program,
                 pStructUnionSpecifier->StructDeclarationList.size > 0)
             {
                 if (action == ActionDelete)
-                {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "if (%s)", pInitExpressionText);
+                {                    
+                    PrintIfNotNullLn(program, options, pInitExpressionText, fp);
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{", pInitExpressionText);
                     options->IdentationLevel++;
                 }
@@ -2799,7 +2838,7 @@ void InstanciateDestroy2(TProgram* program,
                 {
                     if (bDeclaratorIsAutoPointer)
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "if (%s)", pInitExpressionText);
+                        PrintIfNotNullLn(program, options, pInitExpressionText, fp);
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
                         options->IdentationLevel++;
                     }
