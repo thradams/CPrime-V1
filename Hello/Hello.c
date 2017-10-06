@@ -16,7 +16,7 @@ void Person_Delete(struct Person* person);
 
 int main()
 {
-    struct Person person = _default {/*.Name=*/0/*NULL*/, /*.age=*/0, /*.b=*/0};
+    struct Person person = _default {0};
     struct Person* pPerson = Person_Create();
     Person_Delete(pPerson);
     return 0;
@@ -24,26 +24,26 @@ int main()
 
 struct Person* Person_Create() _default
 {
-    struct Person *p = malloc(sizeof * p);
-    if (p)
+    struct Person* p = (struct Person*)malloc(sizeof * p);
+    if (p != NULL)
     {
-        p->Name = 0/*NULL*/;
+        p->Name = NULL;
         p->age = 0;
         p->b = 0;
     }
     return p;
-    
+}
+void Person_Destroy(struct Person* person) _default
+{
+    free(person->Name);
 
 }
+
 void Person_Delete(struct Person* person) _default
 {
-    if (person)
+    if (person != NULL)
     {
-        free(person->Name);
-        //person->age = 0;
-        //person->b = 0;
+        Person_Destroy(person);
         free(person);
     }
-    
-
 }
