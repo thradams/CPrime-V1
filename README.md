@@ -1,61 +1,40 @@
-# C' (C Prime)
+# C'
 
-C' is a pre-processor for the C language plus some extensions that ouputs C 89 code.
-The language accept for C' can be created using macros in C but C' will collect more informations.
+## What is C' ?
+C'(pronounced c prime) is tool to help writing C programs.
+
+The input for C' is your C source code with some annotations. 
+The annotations are done using some empty macros and your input and 
+ouput are C sources. Your includes, macros, formatting, comments 
+are preserved at the ouput.
+
+
+## How can C' help?
+C' can generate code for you.
+Currently, C' is generating default constructor, destructor, create, delete and static initializers.
 
 Sample
 ```c
-typedef struct 
+struct X
 {
-   int type _defval(1);
-} Z;
-
-int main()
-{
-   Z z = _default {0};
-}
-
+  int i;
+};
 ```
-When you compile this code the following code is generated:
+To generate a initialization function for this struct just type:
 
 ```c
-typedef struct 
+void X_Init(struct X* pX) _default;
+```
+When you compile this code you get:
+```c
+void X_Init(struct X* pX) _default
 {
-   int type _defval(1);
-} Z;
-
-int main()
-{
-   Z z = _default {1};
+   pX->i= 0;
 }
-
 ```
 
-
-## How can it help?
-
-The task of code abstraction creates patterns and these patterns repeats.
-C' has some build-in patterns and let you write your compiler extension to instanciate new parametrized types and functions.
-
-## Language reference
-
-### Initializers
-
-### Build-in function instanciations Destroy, Delete, Create, Swap
-
-### Buil-in parametrized types and its function instanciations
-
-### Union types
-
-
-## C11 grammar modifications
-
-```
-struct-union-specifier:
- 
-```
-
-
+## Using the compiler
+Donload the zip folder that contains the compiler and samples.
 
 ## References
 This section will contain external references
