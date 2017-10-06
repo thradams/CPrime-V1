@@ -284,14 +284,16 @@ const char* TokenToString(Tokens tk)
 ScannerItem* ScannerItem_Create() _default
 {
     ScannerItem *p = (ScannerItem*) malloc(sizeof * p);
-    if (p != NULL) {
+    if (p != NULL)
+    {
         ScannerItem_Init(p);
     }
     return p;
 }
 void ScannerItem_Delete(ScannerItem* pScannerItem) _default
 {
-    if (pScannerItem != NULL) {
+    if (pScannerItem != NULL)
+    {
         ScannerItem_Destroy(pScannerItem);
         free(pScannerItem);
     }
@@ -414,7 +416,8 @@ void BasicScanner_Destroy(BasicScanner* pBasicScanner) _default
 
 void BasicScanner_Delete(BasicScanner* pBasicScanner) _default
 {
-    if (pBasicScanner != NULL) {
+    if (pBasicScanner != NULL)
+    {
         BasicScanner_Destroy(pBasicScanner);
         free(pBasicScanner);
     }
