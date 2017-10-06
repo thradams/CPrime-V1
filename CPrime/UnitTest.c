@@ -743,4 +743,5 @@ void AllTests()
   {
     printf("ALL TESTS OK\n");
   }
+  printf("\n");
 }

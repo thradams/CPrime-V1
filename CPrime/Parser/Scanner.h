@@ -71,7 +71,9 @@ typedef struct
   ///////////////////////////////////////////////////
 } Scanner;
 
-void Scanner_SetError(Scanner* pScanner, const char* message);
+void Scanner_SetError(Scanner* pScanner, const char* fmt, ...);
+
+void Scanner_GetFilePositionString(Scanner* pScanner, StrBuilder* sb);
 
 
 Result Scanner_InitString(Scanner* pScanner,

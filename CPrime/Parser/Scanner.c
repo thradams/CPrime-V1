@@ -2,6 +2,8 @@
 #include "..\Base\Path.h"
 #include "Macro.h"
 #include "Parser.h"
+#include <stdarg.h>
+
 BasicScanner* Scanner_Top(Scanner* pScanner);
 ;
 void Scanner_MatchDontExpand(Scanner* pScanner);
@@ -181,7 +183,23 @@ void Scanner_GetError(Scanner* pScanner, StrBuilder* str)
   }
 }
 
-void Scanner_SetError(Scanner* pScanner, const char* message)
+
+void Scanner_GetFilePositionString(Scanner* pScanner, StrBuilder* sb)
+{
+    if (Scanner_Top(pScanner) != NULL)
+    {
+        StrBuilder_Set(sb,
+            Scanner_Top(pScanner)->stream.NameOrFullPath);
+    }
+    StrBuilder_Append(sb, "(");
+    if (Scanner_Top(pScanner))
+    {
+        StrBuilder_AppendInt(sb, Scanner_Top(pScanner)->stream.currentLine);
+    }
+    StrBuilder_Append(sb, "): ");
+}
+
+void Scanner_SetError(Scanner* pScanner, const char* fmt, ...)
 {
   if (!pScanner->bError)
   {
@@ -199,8 +217,16 @@ void Scanner_SetError(Scanner* pScanner, const char* message)
       StrBuilder_AppendInt(&pScanner->ErrorString,
                            Scanner_Top(pScanner)->stream.currentLine);
     }
-    StrBuilder_Append(&pScanner->ErrorString, ")");
-    StrBuilder_Append(&pScanner->ErrorString, message);
+    StrBuilder_Append(&pScanner->ErrorString, "): ");
+    
+    va_list args;
+    va_start(args, fmt);
+    StrBuilder_AppendFmtV(&pScanner->ErrorString, fmt, args);
+    va_end(args);
+
+    
+    //StrBuilder_Append(&pScanner->ErrorString, message);
+
   }
 }
 
@@ -508,9 +534,7 @@ void Scanner_IncludeFile(Scanner* pScanner, const char* includeFileName,
   }
   else
   {
-    Scanner_SetError(pScanner, "file '");
-    StrBuilder_Append(&pScanner->ErrorString, includeFileName);
-    StrBuilder_Append(&pScanner->ErrorString, "' not found");
+    Scanner_SetError(pScanner, "Cannot open include file: '%s': No such file or directory", includeFileName);    
   }
 
   String_Destroy(&fullPath);
@@ -2283,7 +2307,7 @@ ScannerItem* Scanner_ScannerItemAt(Scanner* pScanner, int index)
     }
   }
 
-  ASSERT(pScannerItem != NULL);
+  
   return pScannerItem;
 }
 

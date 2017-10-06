@@ -4,6 +4,7 @@
 #include "Parser.h"
 #include "Scanner.h"
 #include "..\Base\Path.h"
+#include <stdarg.h>
 //Define to include modications
 
 void Declarator(Parser* ctx, bool bAbstract, TDeclarator** ppTDeclarator2);
@@ -169,18 +170,17 @@ bool Parser_HasError(Parser* pParser)
 
 
 
-void SetError2(Parser* parser, const char* message, const char* message2)
+void SetError(Parser* parser, const char* fmt, ...)
 {
     //    ASSERT(false);
     if (!Parser_HasError(parser))
     {
-        Scanner_GetError(&parser->Scanner, &parser->ErrorMessage);
+        Scanner_GetFilePositionString(&parser->Scanner, &parser->ErrorMessage);  
         parser->bError = true;
-        StrBuilder_Append(&parser->ErrorMessage, "(");
-        StrBuilder_AppendInt(&parser->ErrorMessage, Scanner_LineAt(&parser->Scanner, 0));
-        StrBuilder_Append(&parser->ErrorMessage, ") : error :");
-        StrBuilder_Append(&parser->ErrorMessage, message);
-        StrBuilder_Append(&parser->ErrorMessage, message2);
+        va_list args;
+        va_start(args, fmt);
+        StrBuilder_AppendFmtV(&parser->ErrorMessage, fmt, args);
+        va_end(args);
     }
 
     else
@@ -190,10 +190,10 @@ void SetError2(Parser* parser, const char* message, const char* message2)
     }
 }
 
-void SetUnexpectedError(Parser* parser, const char* message, const char* message2)
-{
-    SetError2(parser, message, message2);
-}
+//void SetUnexpectedError(Parser* parser, const char* message, const char* message2)
+//{
+  //  SetError(parser, message, message2);
+//}
 
 //void SetError(Parser* parser, const char* message)
 //{
@@ -288,8 +288,8 @@ Tokens Parser_CurrentToken(Parser* parser)
     Tokens token = Scanner_TokenAt(&parser->Scanner, 0);
 
     if (IsPreprocessorTokenPhase(token))
-    {
-        SetUnexpectedError(parser, "!IsPreprocessorTokenPhase", "");
+    {        
+        SetError(parser, "!IsPreprocessorTokenPhase");
     }
     return token;
 }
@@ -311,6 +311,7 @@ Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt)
 
         token = Scanner_TokenAt(&parser->Scanner, 0);
         while (token != TK_EOF &&
+               token != TK_NONE &&
             (!Scanner_IsActiveAt(&parser->Scanner, 0) ||
                 IsPreprocessorTokenPhase(token)))
         {
@@ -340,7 +341,7 @@ Tokens Parser_MatchToken(Parser* parser,
 
     if (tk != currentToken)
     {
-        SetError2(parser, "Unexpected token - ", TokenToString(tk));
+        SetError(parser, "Unexpected token - %s", TokenToString(tk));
         return TK_EOF;
     }
 
@@ -449,8 +450,8 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 
 
     if (!IsFirstOfPrimaryExpression(token))
-    {
-        SetUnexpectedError(ctx, "1", "IsFirstOfPrimaryExpression");
+    {        
+        SetError(ctx, "unexpected error IsFirstOfPrimaryExpression");
     }
 
     switch (token)
@@ -553,12 +554,12 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
         break;
 
     default:
-        SetUnexpectedError(ctx, "", "");
+        SetError(ctx, "unexpected error");
     }
 
     if (*ppPrimaryExpression == NULL)
     {
-        SetUnexpectedError(ctx, "*ppPrimaryExpression != NULL", "");
+        SetError(ctx, "unexpected error NULL");
     }
 
 }
@@ -749,7 +750,7 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
 
         if (pPostfixExpressionCore->pNext != NULL)
         {
-            SetUnexpectedError(ctx, "", "");
+            SetError(ctx, "unexpected error");
         }
         pPostfixExpressionCore->pNext = pPostfixExpressionCoreNext;
     }
@@ -2695,7 +2696,7 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
 
     default:
 
-        SetUnexpectedError(ctx, "e", "");
+        SetError(ctx, "unexpected error");
         //bResult = true;
         //SetType(pStatement, "expression-statement");
         //Expression_Statement(ctx, pStatement);
@@ -2863,7 +2864,7 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
         }
         else
         {
-            SetError2(ctx, "error", "");
+            SetError(ctx, "invalid specifier-qualifier-list");
         }
 
     }
@@ -2875,7 +2876,7 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
     }
     else
     {
-        SetError2(ctx, "a", "b");
+        SetError(ctx, "internal error 1");
     }
 
 
@@ -2995,7 +2996,15 @@ void Struct_Declarator_List(Parser* ctx,
         }
         else
         {
-            SetUnexpectedError(ctx, "Struct_Declarator_List unexpected", "");
+            if (token == TK_RIGHT_CURLY_BRACKET)
+            {
+                SetError(ctx, "syntax error: missing ';' before '}'");
+            }
+            else
+            {
+                SetError(ctx, "syntax error: expected ',' or ';'");
+            }
+            
             break;
         }
     }
@@ -3294,7 +3303,7 @@ void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
 
     else
     {
-        SetError2(ctx, "expected enum name or {", "");
+        SetError(ctx, "expected enum name or {");
     }
 }
 
@@ -4170,7 +4179,7 @@ void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier)
         else
         {
             ASSERT(false); //temque chegar aqui limpo ja
-            SetError2(ctx, "internal error", "");
+            SetError(ctx, "internal error 2");
         }
     }
     break;
@@ -4244,7 +4253,7 @@ void Declaration_Specifiers(Parser* ctx,
         }
         else
         {
-            SetError2(ctx, "double typedef", "");
+            SetError(ctx, "double typedef");
         }
 
     }
@@ -4268,7 +4277,7 @@ void Declaration_Specifiers(Parser* ctx,
     }
     else
     {
-        SetError2(ctx, "not exp", "");
+        SetError(ctx, "internal error 3");
     }
 
     token = Parser_CurrentToken(ctx);
@@ -4768,7 +4777,7 @@ void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
             else
             {
                 //nao ter mais declaracao nao eh erro
-                SetError2(ctx, "declaration expected", "");
+                SetError(ctx, "declaration expected");
             }
             break;
         }
@@ -4872,7 +4881,7 @@ bool GetAST(const char*  filename,
 
     MacroMap_Swap(&parser.Scanner.Defines2, &pProgram->Defines);
 
-    bResult = !parser.bError;
+    bResult = !Parser_HasError(&parser);
 
     Parser_Destroy(&parser);
     String_Destroy(&fullFileNamePath);

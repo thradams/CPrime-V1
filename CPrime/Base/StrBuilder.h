@@ -67,3 +67,4 @@ void StrBuilder_AppendFmtLn(StrBuilder * p,
     int nspaces,
     const char* fmt,
     ...);
+void StrBuilder_AppendFmtV(StrBuilder * p, const char* fmt, va_list va);
