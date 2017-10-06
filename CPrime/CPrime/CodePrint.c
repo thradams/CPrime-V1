@@ -2226,6 +2226,12 @@ static bool FindHighLevelFunction(TProgram* program,
     const char* nameToFind,
     StrBuilder* fp)
 {
+    if (nameToFind == NULL)
+    {
+        //pode ser null struct sem nome
+        return false;
+    }
+
     bool bComplete = false;
 
 
@@ -2451,8 +2457,9 @@ static bool FindHighLevelFunction(TProgram* program,
                         nameToFind,
                         pInitExpressionText);
                 }
+                bComplete = true;
             }
-            bComplete = true;
+            
         }
     }
     else if (action == ActionCreate)
@@ -2548,23 +2555,19 @@ void InstanciateDestroy2(TProgram* program,
 
         if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
         {
-            bool bComplete = FindHighLevelFunction(program,
-                options,
-                pSpecifierQualifierList,//<-dupla para entender o tipo
-                pDeclatator,                        //<-dupla para entender o tipo
-                pInitializerOpt,
-                pInitExpressionText, //(x->p->i = 0)    
-                action,
-                search,
-                pSingleTypeSpecifier->TypedefName,
-                fp);
-
-
-
-            if (!bComplete)
+            bool bComplete = false;
+            TDeclarator declarator = TDECLARATOR_INIT;
+            //Pode ter uma cadeia de typdefs
+            //ele vai entrandando em cada uma ...
+            //ate que chega no fim recursivamente
+            //enquanto ele vai andando ele vai tentando
+            //algo com o nome do typedef
+            TDeclarationSpecifiers* pDeclarationSpecifiers =
+                SymbolMap_FindTypedefFirstTarget(&program->GlobalScope,
+                    pSingleTypeSpecifier->TypedefName,
+                    &declarator);
+            if (pDeclarationSpecifiers)
             {
-                TDeclarator declarator = TDECLARATOR_INIT;
-
                 //Copia as partes deste declarador já
                 //(vai acumulando ponteiros) typedef para typedef para typedef...
                 ForEachListItem(TPointer, pItem, &pDeclatator->PointerList)
@@ -2575,39 +2578,111 @@ void InstanciateDestroy2(TProgram* program,
                     List_Add(&declarator.PointerList, pNew);
                 }
 
-                //Pode ter uma cadeia de typdefs
-                //ele vai entrandando em cada uma ...
-                //ate que chega no fim recursivamente
-                //enquanto ele vai andando ele vai tentando
-                //algo com o nome do typedef
-                TDeclarationSpecifiers* pDeclarationSpecifiers =
-                    SymbolMap_FindTypedefFirstTarget(&program->GlobalScope,
-                        pSingleTypeSpecifier->TypedefName,
-                        &declarator);
 
-                if (pDeclarationSpecifiers)
+                if (action == ActionCreate)
                 {
+                    //create do typedef eh um pouco difernet
+                    //das outras
 
-                    Action action2 = action;
-                    //passa a informacao do tipo correto agora
-                    InstanciateDestroy2(program,
-                        options,
-                        (TSpecifierQualifierList*)&pDeclarationSpecifiers,
-                        &declarator,
-                        NULL,
-                        pInitExpressionText,
-                        action2,
-                        SearchAll,
-                        pbHasInitializers,
-                        fp);
+                    //vou deixar o malloc aqui fora
+                    //existe typedef p struct sem nome
+                    //entao queremos usar o nome do typedef
+                    //typedef struct { int i; } X; X* X_Create();
+                    //para poder fazer 
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "%s *p = (%s*) malloc(sizeof * p);",
+                        pSingleTypeSpecifier->TypedefName,
+                        pSingleTypeSpecifier->TypedefName);
+
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "if (p != NULL)");
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "{");
+
+                    options->IdentationLevel++;
+
+                    /////////////////
+                    //vou ver se tem init para typedef
+
+                    TDeclaration* pDeclarationInit =
+                        SymbolMap_FindObjFunction(&program->GlobalScope,
+                            pSingleTypeSpecifier->TypedefName,
+                            "Init");
+
+                    if (pDeclarationInit)
+                    {
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                            "%s_Init(p);",
+                            pSingleTypeSpecifier->TypedefName);
+
+                        bComplete = true;
+                    }
+                    ////////////////
+
+
+                    if (!bComplete)
+                    {
+                        
+                        //passa a informacao do tipo correto agora
+                        InstanciateDestroy2(program,
+                            options,
+                            (TSpecifierQualifierList*)pDeclarationSpecifiers,
+                            &declarator,
+                            NULL,
+                            "p",
+                            ActionInitContent,
+                            SearchNone, //se tivesse init ja tinha achado
+                            pbHasInitializers,
+                            fp);                        
+                    }
+
+                    options->IdentationLevel--;
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "}");
+
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                        "return p;");
+
                 }
                 else
                 {
-                    //nao achou a declaracao
-                    ASSERT(false);
+                    bComplete = FindHighLevelFunction(program,
+                        options,
+                        pSpecifierQualifierList,//<-dupla para entender o tipo
+                        pDeclatator,                        //<-dupla para entender o tipo
+                        pInitializerOpt,
+                        pInitExpressionText, //(x->p->i = 0)    
+                        action,
+                        search,
+                        pSingleTypeSpecifier->TypedefName,
+                        fp);
+
+
+                    if (!bComplete)
+                    {
+                        Action action2 = action;
+
+                        //passa a informacao do tipo correto agora
+                        InstanciateDestroy2(program,
+                            options,
+                            (TSpecifierQualifierList*)pDeclarationSpecifiers,
+                            &declarator,
+                            NULL,
+                            pInitExpressionText,
+                            action2,
+                            SearchAll,
+                            pbHasInitializers,
+                            fp);
+                    }
                 }
                 TDeclarator_Destroy(&declarator);
             }
+            else
+            {
+                //nao achou a declaracao
+                ASSERT(false);
+            }
+
         }
         else
         {
@@ -2640,7 +2715,15 @@ void InstanciateDestroy2(TProgram* program,
                     }
                     else
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = 0;", pInitExpressionText);
+                        if (TSpecifierQualifierList_IsBool(pSpecifierQualifierList))
+                        {
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = 0;/*false*/", pInitExpressionText);
+                        }
+                        else
+                        {
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = 0;", pInitExpressionText);
+                        }
+                        
                     }
                 }
             }
@@ -2723,9 +2806,27 @@ void InstanciateDestroy2(TProgram* program,
                 }
                 else if (action == ActionCreate)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "struct %s *p = malloc(sizeof * p);",
-                        pStructUnionSpecifier->Name);
+                    Options op = OPTIONS_INIT;
+                    op.IdentationLevel = options->IdentationLevel;
+                    op.bDontPrintClueList = true;
+
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "");
+
+                    TSpecifierQualifierList_CodePrint(program,
+                        &op,
+                        pSpecifierQualifierList,
+                        fp);
+
+                    StrBuilder_Append(fp, "*p = (");
+
+                    TSpecifierQualifierList_CodePrint(program,
+                        &op,
+                        pSpecifierQualifierList,
+                        fp);
+                    StrBuilder_Append(fp, ")");
+
+                    StrBuilder_Append(fp, "malloc(sizeof * p);\n");
+
 
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                         "if (p)");
@@ -2822,7 +2923,7 @@ void InstanciateDestroy2(TProgram* program,
                                 strVariableName.c_str,
                                 action2,
                                 SearchAll,
-                                pbHasInitializers,                                
+                                pbHasInitializers,
                                 fp);
 
 

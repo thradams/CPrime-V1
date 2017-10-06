@@ -545,12 +545,13 @@ bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList* p)
 	{
 		TSingleTypeSpecifier* pSingleTypeSpecifier =
 			TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
-		if (pSingleTypeSpecifier &&
-			pSingleTypeSpecifier->Token == TK_IDENTIFIER)
-		{
-			bResult = true;
-			break;
-		}
+        
+        if (pSingleTypeSpecifier &&
+            pSingleTypeSpecifier->Token == TK__BOOL)
+        {
+            bResult = true;
+            break;
+        }
 	}
 	return bResult;
 }
