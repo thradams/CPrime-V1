@@ -16,7 +16,7 @@ void AstPlayground(TProgram* program);
 
 void Compile(const char* configFileName,
     const char* inputFileName,
-	const char* outputFileName,
+    const char* outputFileName,
     Options* options,
     bool bPrintASTFile)
 {
@@ -28,6 +28,7 @@ void Compile(const char* configFileName,
     printf("Parsing...\n");
     if (GetAST(inputFileName, configFileName, &program))
     {
+        
         AstPlayground(&program);
 
         char drive[_MAX_DRIVE];
@@ -36,23 +37,35 @@ void Compile(const char* configFileName,
         char ext[_MAX_EXT];
         SplitPath(inputFileName, drive, dir, fname, ext); // C4996
 
-        if (bPrintASTFile)
+
+        printf("Generating code for %s...\n", inputFileName);
+        if (outputFileName)
         {
-            printf("Generating ast for %s...\n", inputFileName);
-            char outjs[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT + 1];
-            MakePath(outjs, drive, dir, fname, ".json");
-            TProgram_PrintAstToFile(&program, outjs, inputFileName);
+            if (bPrintASTFile)
+            {
+                TProgram_PrintAstToFile(&program, outputFileName, inputFileName);
+            }
+            else
+            {
+                TProgram_PrintCodeToFile(&program, options, outputFileName, inputFileName);
+            }
         }
         else
         {
             char outc[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT + 1];
-            MakePath(outc, drive, dir, fname, ".json");
 
-            //strcat(dir, "\\out\\");
-            //MakePath(outc, drive, dir, fname, ext);
-
-            printf("Generating code for %s...\n", inputFileName);
-            TProgram_PrintCodeToFile(&program, options, outputFileName, inputFileName);
+            if (bPrintASTFile)
+            {
+                //faz um  arquivo com extensao json
+                MakePath(outc, drive, dir, fname, ".json");
+                TProgram_PrintAstToFile(&program, outc, inputFileName);
+            }
+            else
+            {
+                //gera em cima do proprio arquivo
+                MakePath(outc, drive, dir, fname, ext);
+                TProgram_PrintCodeToFile(&program, options, outc, inputFileName);
+            }
         }
 
         printf("Done!\n");
@@ -69,8 +82,8 @@ void PrintHelp()
     printf("\n");
     printf("Examples: cp hello.c\n");
     printf("          cp -config config.h hello.c\n");
-	printf("          cp -config config.h hello.c -o hello.c\n");
-    printf("          cp -config config.h -P hello.c\n");	
+    printf("          cp -config config.h hello.c -o hello.c\n");
+    printf("          cp -config config.h -P hello.c\n");
     printf("          cp -E hello.c\n");
     printf("          cp -P hello.c\n");
     printf("          cp -A hello.c\n");
@@ -78,7 +91,7 @@ void PrintHelp()
     printf("Options:\n");
     printf("-config FILE                          Configuration file.\n");
     printf("-help                                 Print this message.\n");
-	printf("-o FILE                               Sets ouput file name.\n");
+    printf("-o FILE                               Sets ouput file name.\n");
     printf("-E                                    Preprocess to console.\n");
     printf("-P                                    Preprocess to file.\n");
     printf("-A                                    Output AST to file.\n");
@@ -102,9 +115,9 @@ int main(int argc, char* argv[])
 
     const char* configFileName = NULL;
 
-	String outputFullPath = NULL;
+    String outputFullPath = NULL;
     String inputFullPath = NULL;
-	
+
 
     Options options = OPTIONS_INIT;
     //options.bShrink = true;
@@ -148,28 +161,28 @@ int main(int argc, char* argv[])
                 printf("missing file\n");
             }
         }
-		else if (strcmp(option, "-o") == 0)
-		{
-			if (i + 1 < argc)
-			{
-				GetFullPath(argv[i + 1], &outputFullPath);
-				i++;
-			}
-			else
-			{
-				printf("missing file\n");
-			}
-		}
+        else if (strcmp(option, "-o") == 0)
+        {
+            if (i + 1 < argc)
+            {
+                GetFullPath(argv[i + 1], &outputFullPath);
+                i++;
+            }
+            else
+            {
+                printf("missing file\n");
+            }
+        }
         else
         {
             //const char* inputFileName = option;
             //String inputFullPath = NULL;
             GetFullPath(option, &inputFullPath);
 
-            
+
             //String_Destroy(&inputFullPath);
-		        
-		}
+
+        }
 
     }
 
@@ -186,7 +199,7 @@ int main(int argc, char* argv[])
         Compile(configFileName, inputFullPath, outputFullPath, &options, bPrintASTFile);
     }
 
-	String_Destroy(&outputFullPath);
+    String_Destroy(&outputFullPath);
     String_Destroy(&inputFullPath);
 
     return 0;
@@ -195,9 +208,9 @@ int main(int argc, char* argv[])
 
 
 bool EachStructDeclarator(TStructUnionSpecifier* pStruct,
-                          int *i,
-                          TSpecifierQualifierList **ppSpecifierQualifierList,
-                          TStructDeclarator** ppStructDeclarator)
+    int *i,
+    TSpecifierQualifierList **ppSpecifierQualifierList,
+    TStructDeclarator** ppStructDeclarator)
 {
     /*
      Exemplo:
@@ -244,15 +257,15 @@ bool EachStructDeclarator(TStructUnionSpecifier* pStruct,
 
 void AstPlayground(TProgram* program)
 {
-   
-   // SymbolMap_Print(&program->GlobalScope);
 
-   // TStructUnionSpecifier* p =
-   //     SymbolMap_FindStructUnion(&program->GlobalScope, "X");
+    // SymbolMap_Print(&program->GlobalScope);
+
+    // TStructUnionSpecifier* p =
+    //     SymbolMap_FindStructUnion(&program->GlobalScope, "X");
 
 
-   // TTypeSpecifier* p2 = 
-    //    SymbolMap_FindTypedefSpecifierTarget(&program->GlobalScope, "Y");
-    //find struct X
-    //find X
+    // TTypeSpecifier* p2 = 
+     //    SymbolMap_FindTypedefSpecifierTarget(&program->GlobalScope, "Y");
+     //find struct X
+     //find X
 }

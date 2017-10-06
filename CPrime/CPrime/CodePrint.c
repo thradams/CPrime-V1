@@ -88,115 +88,126 @@ static void TNodeClueList_CodePrint(Options* options, TScannerItemList* list,
 
     if (options->bDontPrintClueList)
     {
-        if (list->pHead != NULL)
+        //a unica coisa que vou imprimir eh espaco senao vai grudar
+        //os tokens
+        ForEachListItem(ScannerItem, pNodeClue, list)
         {
-            //Output_Append(fp, options,  " ");
-        }
-        return;
-    }
-
-    ForEachListItem(ScannerItem, pNodeClue, list)
-    {
-        switch (pNodeClue->token)
-        {
-        case TK_PRE_INCLUDE:
-
-            Output_Append(fp, options, pNodeClue->lexeme.c_str);
-            Output_Append(fp, options, "\n");
-            //if (pNodeClue->bActive)
-
-            options->IncludeLevel++;
-            //}
-            break;
-
-        case TK_FILE_EOF:
-            options->IncludeLevel--;
-            //ASSERT(IncludeLevel > 0);
-            //bInclude = true;
-            break;
-        case TK_PRE_DEFINE:
-            //TODO gerar macros como init
-            Output_Append(fp, options, pNodeClue->lexeme.c_str);
-            Output_Append(fp, options, "\n");
-            break;
-
-        case TK_PRE_UNDEF:
-        case TK_PRE_PRAGMA:
-        case TK_PRE_IF:
-        case TK_PRE_ENDIF:
-        case TK_PRE_ELSE:
-        case TK_PRE_IFDEF:
-        case TK_PRE_IFNDEF:
-        case TK_PRE_ELIF:
-            Output_Append(fp, options, pNodeClue->lexeme.c_str);
-            Output_Append(fp, options, "\n");
-            break;
-
-        case TK_COMMENT:
-            if (options->bIncludeComments)
+            switch (pNodeClue->token)
             {
-                Output_Append(fp, options, pNodeClue->lexeme.c_str);
-            }
-            else
-            {
+            case TK_SPACES:
                 Output_Append(fp, options, " ");
+                break;
+            default:                
+                break;
             }
-
-            break;
-
-        case TK_LINE_COMMENT:
-            if (options->bIncludeComments)
-            {
-                Output_Append(fp, options, pNodeClue->lexeme.c_str);
-            }
-            else
-            {
-                Output_Append(fp, options, "\n");
-            }
-            break;
-
-        case TK_BREAKLINE:
-            Output_Append(fp, options, "\n");
-
-            break;
-
-        case TK_MACRO_CALL:
-            if (options->bExpandMacros)
-            {
-
-            }
-            else
-            {
-                Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                options->bInclude = false;
-            }
-            break;
-
-
-        case TK_MACRO_EOF:
-            if (options->bExpandMacros)
-            {
-
-            }
-            else
-            {
-                options->bInclude = true;
-            }
-
-
-            break;
-
-        case TK_SPACES:
-            Output_Append(fp, options, pNodeClue->lexeme.c_str);
-            break;
-
-            //case NodeClueTypeNone:      
-        default:
-            Output_Append(fp, options, pNodeClue->lexeme.c_str);
-            break;
         }
-
     }
+    else
+    {
+        ForEachListItem(ScannerItem, pNodeClue, list)
+        {
+            switch (pNodeClue->token)
+            {
+            case TK_PRE_INCLUDE:
+
+                Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                Output_Append(fp, options, "\n");
+                //if (pNodeClue->bActive)
+
+                options->IncludeLevel++;
+                //}
+                break;
+
+            case TK_FILE_EOF:
+                options->IncludeLevel--;
+                //ASSERT(IncludeLevel > 0);
+                //bInclude = true;
+                break;
+            case TK_PRE_DEFINE:
+                //TODO gerar macros como init
+                Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                Output_Append(fp, options, "\n");
+                break;
+
+            case TK_PRE_UNDEF:
+            case TK_PRE_PRAGMA:
+            case TK_PRE_IF:
+            case TK_PRE_ENDIF:
+            case TK_PRE_ELSE:
+            case TK_PRE_IFDEF:
+            case TK_PRE_IFNDEF:
+            case TK_PRE_ELIF:
+                Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                Output_Append(fp, options, "\n");
+                break;
+
+            case TK_COMMENT:
+                if (options->bIncludeComments)
+                {
+                    Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                }
+                else
+                {
+                    Output_Append(fp, options, " ");
+                }
+
+                break;
+
+            case TK_LINE_COMMENT:
+                if (options->bIncludeComments)
+                {
+                    Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                }
+                else
+                {
+                    Output_Append(fp, options, "\n");
+                }
+                break;
+
+            case TK_BREAKLINE:
+                Output_Append(fp, options, "\n");
+
+                break;
+
+            case TK_MACRO_CALL:
+                if (options->bExpandMacros)
+                {
+
+                }
+                else
+                {
+                    Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                    options->bInclude = false;
+                }
+                break;
+
+
+            case TK_MACRO_EOF:
+                if (options->bExpandMacros)
+                {
+
+                }
+                else
+                {
+                    options->bInclude = true;
+                }
+
+
+                break;
+
+            case TK_SPACES:
+                Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                break;
+
+                //case NodeClueTypeNone:      
+            default:
+                Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                break;
+            }
+
+        }
+    }
+    
 }
 
 
@@ -1391,13 +1402,13 @@ void TStructDeclarator_CodePrint(TProgram* program,
 
         Output_Append(fp, options, "(");
 
-        Options opt = *options;
-        opt.bExpandMacros = true;
-        opt.bIncludeComments = false;
+        Options options2 = *options;
+        options2.bExpandMacros = true;
+        options2.bIncludeComments = false;
 
 
         TInitializer_CodePrint(program,
-            &opt,
+            &options2,
             p->pDeclarator,
             (TDeclarationSpecifiers*)pSpecifierQualifierList,
             p->pInitializer,
@@ -1820,7 +1831,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 
         InstanciateDestroy2(program,
             options,
-            (TSpecifierQualifierList*)(&pSpecifiers),
+            (TSpecifierQualifierList*)(pSpecifiers),
             p->InitDeclaratorList.pHead->pDeclarator,
             NULL,
             "p",
@@ -2858,30 +2869,16 @@ void InstanciateDestroy2(TProgram* program,
                 }
                 else if (action == ActionCreate)
                 {
-                    Options op = OPTIONS_INIT;
-                    op.IdentationLevel = options->IdentationLevel;
-                    op.bDontPrintClueList = true;
-
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "");
-
-                    TSpecifierQualifierList_CodePrint(program,
-                        &op,
-                        pSpecifierQualifierList,
-                        fp);
-
-                    StrBuilder_Append(fp, "*p = (");
-
-                    TSpecifierQualifierList_CodePrint(program,
-                        &op,
-                        pSpecifierQualifierList,
-                        fp);
-                    StrBuilder_Append(fp, ")");
-
-                    StrBuilder_Append(fp, "malloc(sizeof * p);\n");
-
+                    //struct sem nome tem que ser criada
+                    //com typedef que chama outro codigo
+                    ASSERT(pStructUnionSpecifier->Name != NULL);
 
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "if (p)");
+                        "struct %s* p = (struct %s*)malloc(sizeof * p);",
+                        pStructUnionSpecifier->Name,
+                        pStructUnionSpecifier->Name);
+                    
+                    PrintIfNotNullLn(program, options, pInitExpressionText, fp);                    
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                         "{");
                     options->IdentationLevel++;
