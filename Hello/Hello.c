@@ -13,7 +13,7 @@ struct Person
 
 struct Person* Person_Create();
 void Person_Delete(struct Person* person);
-
+ 
 int main()
 {
     struct Person person = _default {0};
