@@ -2213,15 +2213,23 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 }
 
 
-static const char* GetFalseStr(TProgram* program,
-    Options* options,    
-    StrBuilder* fp)
+static const char* GetFalseStr(TProgram* program)
 {
     bool bHasFalse=
         MacroMap_Find(&program->Defines, "false") != NULL;
 
     return bHasFalse ? "false" : "0";
 }
+
+static const char* GetNullStr(TProgram* program)
+{
+    bool bHasFalse =
+        MacroMap_Find(&program->Defines, "NULL") != NULL;
+
+    return bHasFalse ? "NULL" : "0";
+}
+
+
 
 static void PrintIfNotNullLn(TProgram* program,
     Options* options,
@@ -2442,8 +2450,9 @@ static bool FindHighLevelFunction(TProgram* program,
         if (bDeclaratorIsPointer)
         {
             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                "%s = 0/*NULL*/;",
-                pInitExpressionText);
+                "%s = %s;",
+                pInitExpressionText, 
+                GetNullStr(program));
             bComplete = true;
         }
         else
@@ -2547,7 +2556,7 @@ static bool FindHighLevelFunction(TProgram* program,
         }
         else if (bDeclaratorIsPointer)
         {
-            StrBuilder_AppendFmt(fp, "/*%s=*/0/*NULL*/", pInitExpressionText);
+            StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(program));
             bComplete = true;
         }
 
@@ -2747,7 +2756,7 @@ void InstanciateDestroy2(TProgram* program,
                 {
                     if (bDeclaratorIsPointer)
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = 0/*NULL*/;", pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetNullStr(program));
                     }
                     else
                     {
@@ -2756,7 +2765,7 @@ void InstanciateDestroy2(TProgram* program,
 
                             
 
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetFalseStr(program, options, fp));
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetFalseStr(program));
                         }
                         else
                         {
@@ -2778,8 +2787,7 @@ void InstanciateDestroy2(TProgram* program,
                 {
                     if (bDeclaratorIsPointer)
                     {
-                        StrBuilder_AppendFmt(fp, "/*%s=*/0/*NULL*/", pInitExpressionText);
-
+                        StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(program));
                     }
                     else
                     {
@@ -3053,7 +3061,7 @@ void InstanciateDestroy2(TProgram* program,
 
                 if (bDeclaratorIsPointer)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = 0/*NULL*/;", pInitExpressionText);
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetNullStr(program));
                 }
                 else
                 {
@@ -3080,7 +3088,7 @@ void InstanciateDestroy2(TProgram* program,
 
                 if (bDeclaratorIsPointer)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "*%s = 0/*NULL*/;", pInitExpressionText);
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "*%s = %s;", pInitExpressionText, GetNullStr(program));
                 }
                 else
                 {
@@ -3106,7 +3114,7 @@ void InstanciateDestroy2(TProgram* program,
 
                 if (bDeclaratorIsPointer)
                 {
-                    StrBuilder_AppendFmt(fp, "/*%s=*/0/*NULL*/", pInitExpressionText);
+                    StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(program));
                 }
                 else
                 {
