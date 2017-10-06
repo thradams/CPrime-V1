@@ -525,10 +525,7 @@ void Scanner_IncludeFile(Scanner* pScanner, const char* includeFileName,
       }
       else
       {
-        ASSERT(false);
-        Scanner_SetError(pScanner, "error in file '");
-        StrBuilder_Append(&pScanner->ErrorString, fullPath);
-        StrBuilder_Append(&pScanner->ErrorString, "'");
+        Scanner_SetError(pScanner, "Cannot open source file: '%s': No such file or directory", fullPath);        
       }
     }
   }

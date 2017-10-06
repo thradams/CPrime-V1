@@ -236,12 +236,17 @@ static void TLabeledStatement_CodePrint(TProgram* program, Options * options, TL
     {
         TNodeClueList_CodePrint(options, &p->ClueList0, fp);
         Output_Append(fp, options, "case");
-        if (p->pStatementOpt)
+        if (p->pExpression)
         {
             TExpression_CodePrint(program, options, p->pExpression, "", fp);
         }
+        else
+        {            
+            ASSERT(false);
+        }
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         Output_Append(fp, options, ":");
+
         TStatement_CodePrint(program, options, p->pStatementOpt, fp);
     }
     else if (p->token == TK_DEFAULT)
