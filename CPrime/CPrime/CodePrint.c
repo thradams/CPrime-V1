@@ -2428,7 +2428,7 @@ static bool FindHighLevelFunction(TProgram* program,
                         pInitExpressionText);
                     options->IdentationLevel--;
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "}\n",
+                        "}",
                         pInitExpressionText);
 
                     bComplete = true;
