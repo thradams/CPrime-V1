@@ -191,6 +191,7 @@ typedef struct
 	struct Node* _auto pHead, pTail;
 } List;
 
+struct Node* Node_Create() _default;
 void Node_Delete(struct Node* pNode) _default;
 void List_Destroy(List* pList) _default;
 ```
