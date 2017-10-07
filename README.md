@@ -144,8 +144,8 @@ int main()
 
 ```
 If your struct has only empty initializers the generated code is
-default {0}, otherwise the initialization list is expanded for C89 version.
-(designed initializers are considered, easy to implement)
+default {0}, otherwise the initialization list is expanded for its C89 version.
+(designed initializers are considered, but they are less portable)
 
 The default is used to tell the compiler to keep the initialization 
 list updated.
@@ -154,7 +154,12 @@ list updated.
 ## constructor / destructor / create / delete / _auto
 
 The generated functions are based on name patterns X_Init, X_Create, X_Destroy, X_Delete.
+
 Where X can be typedef or struct name.
+
+The auto modifier tells the compiler that the variable is owner
+of the pointed object.
+Destroying the variable you also destroy and free the pointed object.
 
 ```c
 
@@ -202,6 +207,8 @@ void X_destructor(X* p) _cp("destroy");
 
 Simple linked list:
 
+
+
 ```c
 struct Node {
 	struct Node* _auto pNext;
@@ -209,6 +216,7 @@ struct Node {
 
 typedef struct
 {
+        //Note that only pHead is auto. 
 	struct Node* _auto pHead, pTail;
 } List;
 
