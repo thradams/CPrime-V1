@@ -4,13 +4,17 @@
 C'(pronounced c prime) is tool to help writing C programs.
 
 The input for C' is your C source code with some annotations. 
+
 The annotations are done using some empty macros and your input and 
-ouput are C sources. Your includes, macros, formatting, comments 
+ouput are C sources.
+
+Your includes, macros, formatting, comments 
 are preserved at the ouput.
 
 
 ## How can C' help?
-C' can generate code for you.
+C' can **generate** and **maintain** code for you.
+
 Currently, C' is generating default constructor, destructor, create, delete and static initializers.
 
 Sample
@@ -32,6 +36,10 @@ void X_Init(struct X* pX) _default
    pX->i= 0;
 }
 ```
+
+You can choose the place where you are going to instanciate this function.
+You can use the normal declaration in header files.
+
 
 ## Using the compiler
 Donload the zip folder that contains the compiler and samples.
