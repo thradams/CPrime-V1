@@ -185,6 +185,12 @@ define empty macros _auto, _default.
 I use the option /FI from microsoft compiler for this task.
 https://msdn.microsoft.com/en-us/library/8c5ztk84.aspx
 
+
+I have posted on twitter GIFs that have some samples
+of code generation.
+
+https://twitter.com/thradams
+
 ## Old Videos
 
 
