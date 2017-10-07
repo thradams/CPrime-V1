@@ -15,6 +15,7 @@ ouput are C sources.
 Your includes, macros, formatting, comments 
 are preserved at the ouput.
 
+This compiler is written in C and it is already being used to generate itself.
 
 ## How can C' help?
 C' can **generate** and **maintain** code for you.
@@ -54,6 +55,7 @@ Feel free to sugest features.
 
  * Be useful today. It can help existing C code at any time together with
    your existing compiler and code.
+   This tool is already being used to generate itself.
  * Create a tool to help creation and maintenance of  C code
  * Keep the input valid C code, then we can use in existing IDEs and compilers
  * Make the C development more produtive
@@ -236,6 +238,19 @@ I have posted on twitter GIFs that have some samples
 of code generation.
 
 https://twitter.com/thradams
+
+
+## More details
+
+The Create function uses the Init function if present.
+
+The Delete function uses the Destroy function if present.
+
+You can override any function removing default. For instance,
+you can create your custom Destroy and the Delete function
+will call your customized Destroy.
+
+If you have typedef X for typedef Y  for typedef Z then the functions will search first X_Init then Y_Init etc.
 
 ## Old Videos
 
