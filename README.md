@@ -43,13 +43,48 @@ C' will maintain this implementation for you because the function use the macro 
 
 
 ## Using the compiler
-Download the zip folder that contains the compiler and samples.
 
-## References
-This section will contain external references
+Download the cp.zip here:
+https://github.com/thradams/CPrime/releases
 
-## Videos
+Open the command line and try some samples:
 
+See samples.txt
+
+```c
+cp hello.c -o hello2.c
+```
+
+type cp
+
+```
+C' Version Oct  6 2017
+https://github.com/thradams/CPrime
+
+Syntax: cp [options] [file ...]
+
+Examples: cp hello.c
+          cp -config config.h hello.c
+          cp -config config.h hello.c -o hello.c
+          cp -config config.h -P hello.c
+          cp -E hello.c
+          cp -P hello.c
+          cp -A hello.c
+
+Options:
+-config FILE                          Configuration file.
+-help                                 Print this message.
+-o FILE                               Sets ouput file name.
+-E                                    Preprocess to console.
+-P                                    Preprocess to file.
+-A                                    Output AST to file.
+-r                                    Reverts generation.
+
+```
+
+
+
+## Old Videos
 
 
 https://www.youtube.com/edit?o=U&video_id=LmUebDRGE1A
