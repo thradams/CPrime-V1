@@ -143,6 +143,13 @@ int main()
 }
 
 ```
+If your struct has only empty initializers the generated code is
+default {0}, otherwise the initialization list is expanded for C89 version.
+(designed initializers are considered, easy to implement)
+
+The default is used to tell the compiler to keep the initialization 
+list updated.
+ 
 
 ## constructor / destructor / create / delete / _auto
 
