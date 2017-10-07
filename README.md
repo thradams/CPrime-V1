@@ -254,9 +254,9 @@ If you have typedef X for typedef Y  for typedef Z then the functions will searc
 
 This tool can be extended in the future with a template language without breaking compatibility with C.
 For instance, template functions , metaclasses can be defined in a separated file. The C' will read these
-files to learn how to generated code. More complex tasks can be done using "plugins" for the compiler.
-The generation of these init, destroy etc were very complex to write in a meta language for instance, them
-in some cases plugins for the compiler can be better.
+files to learn how to generate code. 
+
+More complex tasks like these Init/Destroy etc can be done using "plugins" for the compiler.
 
 
 
