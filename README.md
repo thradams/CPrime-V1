@@ -204,8 +204,6 @@ Build-in enum to string
 
 https://www.youtube.com/watch?v=2qvCglaRNDU
 
-### Function and Parametric API documentation
-This section will contain the API reference to access the AST and build your own patterns.
 
 
 
