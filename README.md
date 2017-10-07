@@ -162,6 +162,11 @@ void Person_Destroy(struct Person* person) _default;
 void Person_Delete(struct Person* person) _default;
 ```
 
+If you want to compile the generated code in a tradicional C compiler you must
+define empty macros _auto, _default.
+
+I use the option /FI from microsoft compiler for this task.
+https://msdn.microsoft.com/en-us/library/8c5ztk84.aspx
 
 ## Old Videos
 
