@@ -41,7 +41,13 @@ void X_Init(struct X* pX) _default
 
 C' will maintain this implementation for you because the function use the macro _default.
 
+## Goals
 
+ * Create a tool to help creation and maintenance of  C code
+ * Keep the input valid C code, then we can use in existing IDEs and compilers
+ * Make the C development more produtive
+ * For the future, lint, format, anything that can help
+ 
 ## Using the compiler
 
 Download the cp.zip here:
