@@ -1,5 +1,6 @@
 # C'
 
+How can I help you write and maitanig your code?
 ![robot](/robots.jpg)
 
 ## What is C' ?
@@ -18,6 +19,7 @@ are preserved at the ouput.
 C' can **generate** and **maintain** code for you.
 
 Currently, C' is generating constructor, destructor, create, delete and static initializers.
+
 
 Sample
 ```c
@@ -40,6 +42,12 @@ void X_Init(struct X* pX) _default
 ```
 
 C' will maintain this implementation for you because the function use the macro _default.
+
+More features are being considered like containers, helper functions etc. 
+
+Feel free to sugest features.
+
+
 
 ## Goals
 
