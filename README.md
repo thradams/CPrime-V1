@@ -1,6 +1,6 @@
 # C'
 
-How can I help you write and maitanig your code?
+How can I help you write and maintain your code?
 
 ![robot](/robots.jpg)
 
