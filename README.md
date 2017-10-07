@@ -43,6 +43,8 @@ C' will maintain this implementation for you because the function use the macro 
 
 ## Goals
 
+ * Be useful today. It can help existing C code at any time together with
+   your existing compiler and code.
  * Create a tool to help creation and maintenance of  C code
  * Keep the input valid C code, then we can use in existing IDEs and compilers
  * Make the C development more produtive
