@@ -82,7 +82,71 @@ Options:
 
 ```
 
+Things to try:
 
+### Static initialization
+
+```c
+typedef struct 
+{
+  int x, y;
+} Point;
+
+int main()
+{  
+  Point pt = _default {}
+}
+
+```
+
+```c
+typedef struct 
+{
+  int x = 1;
+  int y = 2;
+} Point;
+
+int main()
+{  
+  Point pt = _default {}
+}
+
+```
+
+## constructor / destructor / create / delete / _auto
+
+```c
+
+typedef char * _auto String;
+
+struct Person
+{
+    String Name;
+    int age /*= -1*/;
+    _Bool b /*= true*/;
+};
+
+struct Person* Person_Create();
+void Person_Delete(struct Person* person);
+ 
+int main()
+{
+    struct Person person = _default {0};
+    struct Person* pPerson = Person_Create();
+    Person_Delete(pPerson);
+    return 0;
+}
+
+struct Person* Person_Create() _default;
+
+//Remove Destroy and see what happens with Delete
+//Create Init and see what happens with Create
+//void Person_Init(struct Person* person) _default;
+//Remove _auto from String and see what happens
+
+void Person_Destroy(struct Person* person) _default;
+void Person_Delete(struct Person* person) _default;
+```
 
 ## Old Videos
 
