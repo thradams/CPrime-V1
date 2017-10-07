@@ -1,8 +1,6 @@
 # C'
 
-[robots.jpg]
-
-![](/robots.jpg)
+![robot](/robots.jpg)
 
 ## What is C' ?
 C'(pronounced c prime) is tool to help writing C programs.
