@@ -17,7 +17,7 @@ are preserved at the ouput.
 ## How can C' help?
 C' can **generate** and **maintain** code for you.
 
-Currently, C' is generating default constructor, destructor, create, delete and static initializers.
+Currently, C' is generating constructor, destructor, create, delete and static initializers.
 
 Sample
 ```c
@@ -39,12 +39,11 @@ void X_Init(struct X* pX) _default
 }
 ```
 
-You can choose the place where you are going to instanciate this function.
-You can use the normal declaration in header files.
+C' will maintain this implementation for you because the function use the macro _default.
 
 
 ## Using the compiler
-Donload the zip folder that contains the compiler and samples.
+Download the zip folder that contains the compiler and samples.
 
 ## References
 This section will contain external references
