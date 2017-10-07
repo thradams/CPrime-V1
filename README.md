@@ -146,6 +146,9 @@ int main()
 
 ## constructor / destructor / create / delete / _auto
 
+The generated functions are based on name patterns X_Init, X_Create, X_Destroy, X_Delete.
+Where X can be typedef or struct name.
+
 ```c
 
 typedef char * _auto String;
@@ -177,6 +180,17 @@ struct Person* Person_Create() _default;
 
 void Person_Destroy(struct Person* person) _default;
 void Person_Delete(struct Person* person) _default;
+```
+Diferent name patterns can be configured in the future.
+
+Other designs have been considered:
+
+```c
+void X_init(X* p) _init;
+void X_dtor(X* p) _destroy;
+or
+void X_init(X* p) _cp("init");
+void X_destructor(X* p) _cp("destroy");
 ```
 
 Simple linked list:
