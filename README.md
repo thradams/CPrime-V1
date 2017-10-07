@@ -84,7 +84,7 @@ Options:
 
 ## Include directories
 
-See config.h.
+Use #pragma dir , see sample on config.h.
 
 I tested the compiler only with includes of Visual Studio 2017.
 
