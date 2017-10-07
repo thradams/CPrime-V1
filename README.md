@@ -179,6 +179,22 @@ void Person_Destroy(struct Person* person) _default;
 void Person_Delete(struct Person* person) _default;
 ```
 
+Simple linked list:
+
+```c
+struct Node {
+	struct Node* _auto pNext;
+};
+
+typedef struct
+{
+	struct Node* _auto pHead, pTail;
+} List;
+
+void Node_Delete(struct Node* pNode) _default;
+void List_Destroy(List* pList) _default;
+```
+
 If you want to compile the generated code in a tradicional C compiler you must
 define empty macros _auto, _default.
 
