@@ -36,7 +36,6 @@ struct Person* Person_Create() _default
 void Person_Destroy(struct Person* person) _default
 {
     free(person->Name);
-
 }
 
 void Person_Delete(struct Person* person) _default
