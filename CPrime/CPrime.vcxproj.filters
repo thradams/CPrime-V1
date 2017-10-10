@@ -5,181 +5,166 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Source Files\Base">
-      <UniqueIdentifier>{2ef3e700-3622-4bae-8c3c-adcf0a0f5931}</UniqueIdentifier>
+      <UniqueIdentifier>{ef550433-81f9-4738-9f77-037f855bceea}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Parser">
-      <UniqueIdentifier>{ffe93bbb-34ae-48de-a502-e641fe272744}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\CPrime">
-      <UniqueIdentifier>{3b3e2765-0c07-4713-8d58-db583f98ab6e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\CPrime\Templates">
-      <UniqueIdentifier>{4132fa68-cd4e-4e7d-b7dc-51a696039475}</UniqueIdentifier>
+      <UniqueIdentifier>{11a86ba6-b397-4d79-9eae-68b11490adea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Base\Array.c">
-      <Filter>Source Files\Base</Filter>
+    <ClCompile Include="CPrime.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Base\Map.c">
-      <Filter>Source Files\Base</Filter>
+    <ClCompile Include="CodePrint.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Base\Map2.c">
-      <Filter>Source Files\Base</Filter>
+    <ClCompile Include="AllTemplates.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Base\Path.c">
-      <Filter>Source Files\Base</Filter>
+    <ClCompile Include="ArrayTemplate.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Base\StrBuilder.c">
-      <Filter>Source Files\Base</Filter>
+    <ClCompile Include="ListTemplate.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Base\Stream.c">
-      <Filter>Source Files\Base</Filter>
+    <ClCompile Include="MapTemplate.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Base\StringEx.c">
-      <Filter>Source Files\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Parser\Ast.c">
-      <Filter>Source Files\Parser</Filter>
-    </ClCompile>
-    <ClCompile Include="Parser\AstPrint.c">
-      <Filter>Source Files\Parser</Filter>
-    </ClCompile>
-    <ClCompile Include="Parser\BasicScanner.c">
-      <Filter>Source Files\Parser</Filter>
-    </ClCompile>
-    <ClCompile Include="Parser\Macro.c">
-      <Filter>Source Files\Parser</Filter>
-    </ClCompile>
-    <ClCompile Include="Parser\Parser.c">
-      <Filter>Source Files\Parser</Filter>
-    </ClCompile>
-    <ClCompile Include="Parser\PPToken.c">
-      <Filter>Source Files\Parser</Filter>
-    </ClCompile>
-    <ClCompile Include="Parser\Scanner.c">
-      <Filter>Source Files\Parser</Filter>
-    </ClCompile>
-    <ClCompile Include="Parser\TokenArray.c">
-      <Filter>Source Files\Parser</Filter>
-    </ClCompile>
-    <ClCompile Include="CPrime\CodePrint.c">
-      <Filter>Source Files\CPrime</Filter>
+    <ClCompile Include="UnionTemplate.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UnitTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CPrime.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Array.c">
+      <Filter>Source Files\Base</Filter>
     </ClCompile>
-    <ClCompile Include="CPrime\Templates\ListTemplate.c">
-      <Filter>Source Files\CPrime\Templates</Filter>
+    <ClCompile Include="Stream.c">
+      <Filter>Source Files\Base</Filter>
     </ClCompile>
-    <ClCompile Include="CPrime\Templates\MapTemplate.c">
-      <Filter>Source Files\CPrime\Templates</Filter>
+    <ClCompile Include="StrBuilder.c">
+      <Filter>Source Files\Base</Filter>
     </ClCompile>
-    <ClCompile Include="CPrime\Templates\UnionTemplate.c">
-      <Filter>Source Files\CPrime\Templates</Filter>
+    <ClCompile Include="StringEx.c">
+      <Filter>Source Files\Base</Filter>
     </ClCompile>
-    <ClCompile Include="CPrime\Templates\AllTemplates.c">
-      <Filter>Source Files\CPrime\Templates</Filter>
+    <ClCompile Include="Ast.c">
+      <Filter>Source Files\Parser</Filter>
     </ClCompile>
-    <ClCompile Include="CPrime\Templates\ArrayTemplate.c">
-      <Filter>Source Files\CPrime\Templates</Filter>
+    <ClCompile Include="AstPrint.c">
+      <Filter>Source Files\Parser</Filter>
     </ClCompile>
-    <ClCompile Include="Parser\SymbolMap.c">
+    <ClCompile Include="BasicScanner.c">
+      <Filter>Source Files\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Macro.c">
+      <Filter>Source Files\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.c">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Map2.c">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="PPToken.c">
+      <Filter>Source Files\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="SymbolMap.c">
+      <Filter>Source Files\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Scanner.c">
+      <Filter>Source Files\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser.c">
+      <Filter>Source Files\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Path.c">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="TokenArray.c">
       <Filter>Source Files\Parser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Base\Array.h">
-      <Filter>Source Files\Base</Filter>
+    <ClInclude Include="config.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Base\config.h">
-      <Filter>Source Files\Base</Filter>
+    <ClInclude Include="CodePrint.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Base\List.h">
-      <Filter>Source Files\Base</Filter>
+    <ClInclude Include="AllTemplates.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Base\Map.h">
-      <Filter>Source Files\Base</Filter>
+    <ClInclude Include="ArrayTemplate.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Base\Map2.h">
-      <Filter>Source Files\Base</Filter>
+    <ClInclude Include="ListTemplate.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Base\Path.h">
-      <Filter>Source Files\Base</Filter>
+    <ClInclude Include="MapTemplate.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Base\Result.h">
-      <Filter>Source Files\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Base\StrBuilder.h">
-      <Filter>Source Files\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Base\Stream.h">
-      <Filter>Source Files\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Base\StringEx.h">
-      <Filter>Source Files\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Parser\Ast.h">
-      <Filter>Source Files\Parser</Filter>
-    </ClInclude>
-    <ClInclude Include="Parser\AstPrint.h">
-      <Filter>Source Files\Parser</Filter>
-    </ClInclude>
-    <ClInclude Include="Parser\BasicScanner.h">
-      <Filter>Source Files\Parser</Filter>
-    </ClInclude>
-    <ClInclude Include="Parser\Macro.h">
-      <Filter>Source Files\Parser</Filter>
-    </ClInclude>
-    <ClInclude Include="Parser\Parser.h">
-      <Filter>Source Files\Parser</Filter>
-    </ClInclude>
-    <ClInclude Include="Parser\PPToken.h">
-      <Filter>Source Files\Parser</Filter>
-    </ClInclude>
-    <ClInclude Include="Parser\Scanner.h">
-      <Filter>Source Files\Parser</Filter>
-    </ClInclude>
-    <ClInclude Include="Parser\TokenArray.h">
-      <Filter>Source Files\Parser</Filter>
-    </ClInclude>
-    <ClInclude Include="CPrime\CodePrint.h">
-      <Filter>Source Files\CPrime</Filter>
+    <ClInclude Include="UnionTemplate.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="UnitTest.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="vs2017.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Array.h">
+      <Filter>Source Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="CPrime\Templates\ListTemplate.h">
-      <Filter>Source Files\CPrime\Templates</Filter>
+    <ClInclude Include="List.h">
+      <Filter>Source Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="CPrime\Templates\MapTemplate.h">
-      <Filter>Source Files\CPrime\Templates</Filter>
+    <ClInclude Include="Result.h">
+      <Filter>Source Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="CPrime\Templates\UnionTemplate.h">
-      <Filter>Source Files\CPrime\Templates</Filter>
+    <ClInclude Include="Stream.h">
+      <Filter>Source Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="CPrime\Templates\AllTemplates.h">
-      <Filter>Source Files\CPrime\Templates</Filter>
+    <ClInclude Include="StrBuilder.h">
+      <Filter>Source Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="CPrime\Templates\ArrayTemplate.h">
-      <Filter>Source Files\CPrime\Templates</Filter>
+    <ClInclude Include="StringEx.h">
+      <Filter>Source Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="settings.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parser\SymbolMap.h">
+    <ClInclude Include="Ast.h">
       <Filter>Source Files\Parser</Filter>
     </ClInclude>
+    <ClInclude Include="AstPrint.h">
+      <Filter>Source Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicScanner.h">
+      <Filter>Source Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Macro.h">
+      <Filter>Source Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Source Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Map2.h">
+      <Filter>Source Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="PPToken.h">
+      <Filter>Source Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolMap.h">
+      <Filter>Source Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Scanner.h">
+      <Filter>Source Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser.h">
+      <Filter>Source Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Path.h">
+      <Filter>Source Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="TokenArray.h">
+      <Filter>Source Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="vs2017.h" />
   </ItemGroup>
 </Project>

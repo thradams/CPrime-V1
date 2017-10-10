@@ -20,11 +20,10 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{E7556546-1A33-4177-82A8-02DAF7385CD0}</ProjectGuid>
+    <ProjectGuid>{8B0D6FA4-2048-4922-9B4F-FF7CB7A98ABF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CPrime</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
-    <ProjectName>cp</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -36,7 +35,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v141_clang_c2</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -90,8 +89,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <CompileAs>CompileAsCpp</CompileAs>
-      <ForcedIncludeFiles>$(ProjectDir)settings.h</ForcedIncludeFiles>
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -111,15 +109,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <ForcedIncludeFiles>$(ProjectDir)settings.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,60 +140,59 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Base\Array.c" />
-    <ClCompile Include="Base\Map.c" />
-    <ClCompile Include="Base\Map2.c" />
-    <ClCompile Include="Base\Path.c" />
-    <ClCompile Include="Base\StrBuilder.c" />
-    <ClCompile Include="Base\Stream.c" />
-    <ClCompile Include="Base\StringEx.c" />
+    <ClCompile Include="AllTemplates.c" />
+    <ClCompile Include="Array.c" />
+    <ClCompile Include="ArrayTemplate.c" />
+    <ClCompile Include="Ast.c" />
+    <ClCompile Include="AstPrint.c" />
+    <ClCompile Include="BasicScanner.c" />
+    <ClCompile Include="CodePrint.c" />
     <ClCompile Include="CPrime.c" />
-    <ClCompile Include="CPrime\CodePrint.c" />
-    <ClCompile Include="CPrime\Templates\AllTemplates.c" />
-    <ClCompile Include="CPrime\Templates\ArrayTemplate.c" />
-    <ClCompile Include="CPrime\Templates\ListTemplate.c" />
-    <ClCompile Include="CPrime\Templates\MapTemplate.c" />
-    <ClCompile Include="CPrime\Templates\UnionTemplate.c" />
-    <ClCompile Include="Parser\Ast.c" />
-    <ClCompile Include="Parser\AstPrint.c" />
-    <ClCompile Include="Parser\BasicScanner.c" />
-    <ClCompile Include="Parser\Macro.c" />
-    <ClCompile Include="Parser\Parser.c" />
-    <ClCompile Include="Parser\PPToken.c" />
-    <ClCompile Include="Parser\Scanner.c" />
-    <ClCompile Include="Parser\SymbolMap.c" />
-    <ClCompile Include="Parser\TokenArray.c" />
+    <ClCompile Include="ListTemplate.c" />
+    <ClCompile Include="Macro.c" />
+    <ClCompile Include="Map.c" />
+    <ClCompile Include="Map2.c" />
+    <ClCompile Include="MapTemplate.c" />
+    <ClCompile Include="Parser.c" />
+    <ClCompile Include="Path.c" />
+    <ClCompile Include="PPToken.c" />
+    <ClCompile Include="Scanner.c" />
+    <ClCompile Include="StrBuilder.c" />
+    <ClCompile Include="Stream.c" />
+    <ClCompile Include="StringEx.c" />
+    <ClCompile Include="SymbolMap.c" />
+    <ClCompile Include="TokenArray.c" />
+    <ClCompile Include="UnionTemplate.c" />
     <ClCompile Include="UnitTest.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Base\Array.h" />
-    <ClInclude Include="Base\config.h" />
-    <ClInclude Include="Base\List.h" />
-    <ClInclude Include="Base\Map.h" />
-    <ClInclude Include="Base\Map2.h" />
-    <ClInclude Include="Base\Path.h" />
-    <ClInclude Include="Base\Result.h" />
-    <ClInclude Include="Base\StrBuilder.h" />
-    <ClInclude Include="Base\Stream.h" />
-    <ClInclude Include="Base\StringEx.h" />
-    <ClInclude Include="CPrime\CodePrint.h" />
-    <ClInclude Include="CPrime\Templates\AllTemplates.h" />
-    <ClInclude Include="CPrime\Templates\ArrayTemplate.h" />
-    <ClInclude Include="CPrime\Templates\ListTemplate.h" />
-    <ClInclude Include="CPrime\Templates\MapTemplate.h" />
-    <ClInclude Include="CPrime\Templates\UnionTemplate.h" />
-    <ClInclude Include="Parser\SymbolMap.h" />
-    <ClInclude Include="settings.h" />
-    <ClInclude Include="vs2017.h" />
-    <ClInclude Include="Parser\Ast.h" />
-    <ClInclude Include="Parser\AstPrint.h" />
-    <ClInclude Include="Parser\BasicScanner.h" />
-    <ClInclude Include="Parser\Macro.h" />
-    <ClInclude Include="Parser\Parser.h" />
-    <ClInclude Include="Parser\PPToken.h" />
-    <ClInclude Include="Parser\Scanner.h" />
-    <ClInclude Include="Parser\TokenArray.h" />
+    <ClInclude Include="AllTemplates.h" />
+    <ClInclude Include="Array.h" />
+    <ClInclude Include="ArrayTemplate.h" />
+    <ClInclude Include="Ast.h" />
+    <ClInclude Include="AstPrint.h" />
+    <ClInclude Include="BasicScanner.h" />
+    <ClInclude Include="CodePrint.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="List.h" />
+    <ClInclude Include="ListTemplate.h" />
+    <ClInclude Include="Macro.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="Map2.h" />
+    <ClInclude Include="MapTemplate.h" />
+    <ClInclude Include="Parser.h" />
+    <ClInclude Include="Path.h" />
+    <ClInclude Include="PPToken.h" />
+    <ClInclude Include="Result.h" />
+    <ClInclude Include="Scanner.h" />
+    <ClInclude Include="StrBuilder.h" />
+    <ClInclude Include="Stream.h" />
+    <ClInclude Include="StringEx.h" />
+    <ClInclude Include="SymbolMap.h" />
+    <ClInclude Include="TokenArray.h" />
+    <ClInclude Include="UnionTemplate.h" />
     <ClInclude Include="UnitTest.h" />
+    <ClInclude Include="vs2017.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

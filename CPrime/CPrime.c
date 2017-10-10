@@ -3,14 +3,14 @@
 
 #include <stdio.h>
 #include <time.h>  
-#include ".\Parser\AstPrint.h"
-#include ".\Parser\Parser.h"
-#include ".\CPrime\CodePrint.h"
-#include "..\CPrime\Base\Path.h"
+#include "AstPrint.h"
+#include "Parser.h"
+#include "CodePrint.h"
+#include "Path.h"
 #include "UnitTest.h"
 
 ///
-#include "..\CPrime\CPrime\Templates\ListTemplate.h"
+#include "ListTemplate.h"
 ///
 void AstPlayground(TProgram* program);
 
@@ -70,7 +70,7 @@ void Compile(const char* configFileName,
 
         printf("Done!\n");
         clock_t tend = clock();
-        printf("%d seconds", (tend - tstart) / CLOCKS_PER_SEC);
+        printf("%d seconds", (int)((tend - tstart) / CLOCKS_PER_SEC));
 
     }
     TProgram_Destroy(&program);

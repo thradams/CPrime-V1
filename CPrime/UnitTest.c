@@ -1,9 +1,9 @@
 #include "UnitTest.h"
-#include "Base\Stream.h"
-#include "Parser\BasicScanner.h"
-#include "Parser\Scanner.h"
+#include "Stream.h"
+#include "BasicScanner.h"
+#include "Scanner.h"
 
-#include "Parser\Parser.h"
+#include "Parser.h"
 
 #include <stdio.h>
 #include <string.h>

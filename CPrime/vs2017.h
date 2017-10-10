@@ -1,10 +1,5 @@
 
-#define VISUAL_STUDIO_2017
-//#define MINGW
-
-
-#ifdef VISUAL_STUDIO_2017
-
+#if 1
 #define _M_IX86 400
 #define WIN32
 #define __STDC__ 0
@@ -25,25 +20,29 @@
 //#define _MSC_VER  1300
 #define __ptr64
 
-#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\shared"
-#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\um"
-#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\ucrt" 
-#pragma dir "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include"
 
-#elif MINGW
 
-#define __cdecl
-#define __inline__
-#define __declspec(x)
+
+#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\shared"
+#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\um"
+#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\ucrt" 
+#pragma dir "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include"
+
+
+
+#else 
+
+
 #define __restrict__
+#define __MINGW_IMPORT 
 
-#pragma dir "C:\MinGW\include"
-#pragma dir "C:\MinGW\lib\gcc\mingw32\6.3.0\include"
+#define _CRTIMP 
+#define __cdecl  
+#define __MINGW_NOTHROW 
+//#define __mingw_stdio_redirect__(x)
+#define __inline__
+
+#pragma dir "C:\TDM-GCC-32\include"
+#pragma dir "C:\TDM-GCC-32\lib\gcc\mingw32\5.1.0\include"
 
 #endif
-
-#undef VISUAL_STUDIO_2017
-
-
-
-
