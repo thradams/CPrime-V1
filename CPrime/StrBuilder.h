@@ -4,6 +4,7 @@
 
 #include <string.h>
 #include <stdarg.h>
+#include <wchar.h>
 
 #include "Result.h"
 
@@ -47,8 +48,6 @@ Result StrBuilder_Append(StrBuilder* p,
                          const char* source);
 
 char* StrBuilder_Release(StrBuilder* p);
-
-Result StrBuilder_AppendInt(StrBuilder * p, int i);
 
 
 void StrBuilder_AppendFmt(StrBuilder * p, const char* fmt, ...);

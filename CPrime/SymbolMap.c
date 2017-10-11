@@ -46,7 +46,7 @@ void SymbolMap_RemoveAll(SymbolMap* pMap)
 {
     if (pMap->pHashTable != NULL)
     {
-        for (unsigned int nHash = 0;
+        for (int nHash = 0;
             nHash < pMap->nHashTableSize;
             nHash++)
         {

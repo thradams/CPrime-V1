@@ -179,10 +179,9 @@ void Scanner_GetError(Scanner* pScanner, StrBuilder* str)
 
   ForEachBasicScanner(p, pScanner->stack)
   {
-    StrBuilder_Append(str, p->stream.NameOrFullPath);
-    StrBuilder_Append(str, "(");
-    StrBuilder_AppendInt(str, p->stream.currentLine);
-    StrBuilder_Append(str, ")\n");
+    StrBuilder_AppendFmt(str, "%s(%d)\n",
+        p->stream.NameOrFullPath, 
+        p->stream.currentLine);        
   }
 }
 
@@ -195,12 +194,14 @@ void Scanner_GetFilePositionString(Scanner* pScanner, StrBuilder* sb)
             Scanner_Top(pScanner)->stream.NameOrFullPath);
     }
     
-    StrBuilder_Append(sb, "(");
     if (Scanner_Top(pScanner))
     {
-        StrBuilder_AppendInt(sb, Scanner_Top(pScanner)->stream.currentLine);
+        StrBuilder_AppendFmt(sb, "(%d): ", Scanner_Top(pScanner)->stream.currentLine);
     }
-    StrBuilder_Append(sb, "): ");
+    else
+    {
+        StrBuilder_Append(sb, "(1): ");
+    }
 }
 
 void Scanner_SetError(Scanner* pScanner, const char* fmt, ...)
@@ -209,28 +210,22 @@ void Scanner_SetError(Scanner* pScanner, const char* fmt, ...)
   {
     pScanner->bError = true;
 
-    if (Scanner_Top(pScanner) != NULL)
-    {
-      StrBuilder_Set(&pScanner->ErrorString,
-                     Scanner_Top(pScanner)->stream.NameOrFullPath);
-    }
-
-    StrBuilder_Append(&pScanner->ErrorString, "(");
     if (Scanner_Top(pScanner))
     {
-      StrBuilder_AppendInt(&pScanner->ErrorString,
-                           Scanner_Top(pScanner)->stream.currentLine);
+        StrBuilder_AppendFmt(&pScanner->ErrorString, "%s(%d) :",
+            Scanner_Top(pScanner)->stream.NameOrFullPath,
+            Scanner_Top(pScanner)->stream.currentLine);      
     }
-    StrBuilder_Append(&pScanner->ErrorString, "): ");
+    else
+    {
+        StrBuilder_Append(&pScanner->ErrorString, "(0) :");
+    }
+    
     
     va_list args;
     va_start(args, fmt);
     StrBuilder_AppendFmtV(&pScanner->ErrorString, fmt, args);
     va_end(args);
-
-    
-    //StrBuilder_Append(&pScanner->ErrorString, message);
-
   }
 }
 
@@ -1979,13 +1974,13 @@ void PrintPreprocessedToFile(const char* fileIn, const char* configFileName)
   }
 
   ///
-  char drive[_MAX_DRIVE];
-  char dir[_MAX_DIR];
-  char fname[_MAX_FNAME];
-  char ext[_MAX_EXT];
+  char drive[CPRIME_MAX_DRIVE];
+  char dir[CPRIME_MAX_DIR];
+  char fname[CPRIME_MAX_FNAME];
+  char ext[CPRIME_MAX_EXT];
   SplitPath(fullFileNamePath, drive, dir, fname, ext); // C4996
 
-  char fileNameOut[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT + 1];
+  char fileNameOut[CPRIME_MAX_DRIVE + CPRIME_MAX_DIR + CPRIME_MAX_FNAME + CPRIME_MAX_EXT + 1];
   strcat(fname, "_pre");
   MakePath(fileNameOut, drive, dir, fname, ".c");
 

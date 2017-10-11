@@ -199,14 +199,6 @@ char* StrBuilder_Release(StrBuilder* p)
   return pResult;
 }
 
-Result StrBuilder_AppendInt(StrBuilder* p, int i)
-{
-  Result r = RESULT_FAIL;
-  char buffer[20];
-  _itoa(i, buffer, 10);
-  r = StrBuilder_Append(p, buffer);
-  return r;
-}
 
 void StrBuilder_Attach(StrBuilder* pStrBuilder,
                        char*  psz,

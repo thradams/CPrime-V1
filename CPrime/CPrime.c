@@ -31,10 +31,10 @@ void Compile(const char* configFileName,
         
         AstPlayground(&program);
 
-        char drive[_MAX_DRIVE];
-        char dir[_MAX_DIR];
-        char fname[_MAX_FNAME];
-        char ext[_MAX_EXT];
+        char drive[CPRIME_MAX_DRIVE];
+        char dir[CPRIME_MAX_DIR];
+        char fname[CPRIME_MAX_FNAME];
+        char ext[CPRIME_MAX_EXT];
         SplitPath(inputFileName, drive, dir, fname, ext); // C4996
 
 
@@ -52,7 +52,7 @@ void Compile(const char* configFileName,
         }
         else
         {
-            char outc[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT + 1];
+            char outc[CPRIME_MAX_DRIVE + CPRIME_MAX_DIR + CPRIME_MAX_FNAME +CPRIME_MAX_EXT + 1];
 
             if (bPrintASTFile)
             {

@@ -2,6 +2,7 @@
 #include "Result.h"
 #include "StringEx.h"
 #include <stdio.h>
+#include <wchar.h>
 
 typedef struct
 {

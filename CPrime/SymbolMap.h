@@ -17,7 +17,7 @@ typedef struct SymbolMapItem
 typedef struct SymbolMap
 {
 	SymbolMapItem** pHashTable;
-	unsigned int nHashTableSize;
+	int nHashTableSize;
 	int  nCount;
     struct SymbolMap* pPrevious;
 } SymbolMap;

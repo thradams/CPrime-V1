@@ -4,23 +4,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "StrBuilder.h"
-#include <Shlwapi.h>
+#include <limits.h>
 #include <ctype.h>
 
-//#define _MAX_DRIVE 255
-//#define _MAX_DIR 255
-//#define _MAX_FNAME 255
-//#define _MAX_EXT 255
-//#define MAX_PATH 260
+#include "StrBuilder.h"
 
-/*
- char drive[_MAX_DRIVE];
- char dir[_MAX_DIR];
- char fname[_MAX_FNAME];
- char ext[_MAX_EXT];
- SplitPath(buffer, drive, dir, fname, ext); // C4996
-*/
 void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
 {
 	const char* end; /* end of processed string */
@@ -76,13 +64,6 @@ void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
 }
 
 
-/*
-char drive[_MAX_DRIVE];
-char dir[_MAX_DIR];
-char fname[_MAX_FNAME];
-char ext[_MAX_EXT];
-SplitPath(buffer, drive, dir, fname, ext); // C4996
-*/
 void MakePath(char* path, char* drv, char* dir, char* name, char* ext)
 {
   if (drv && drv[0] != '\0')
@@ -199,17 +180,24 @@ bool FileExists(const char* fullPath)
 
 void GetFullDir(const char* fileName, String* out)
 {
-	char buffer[MAX_PATH];
-	/*DWORD r =*/ GetFullPathNameA(
-		fileName,
-		sizeof(buffer),
-		buffer,
-		NULL
-	);
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	char fname[_MAX_FNAME];
-	char ext[_MAX_EXT];
+	char buffer[CPRIME_MAX_PATH];
+
+#ifdef WIN32
+
+    _fullpath(
+        buffer,
+        fileName,
+        CPRIME_MAX_PATH);
+    
+
+#else
+    realpath(fileName, buffer);
+#endif
+
+	char drive[CPRIME_MAX_DRIVE];
+	char dir[CPRIME_MAX_DIR];
+	char fname[CPRIME_MAX_FNAME];
+	char ext[CPRIME_MAX_EXT];
 	SplitPath(buffer, drive, dir, fname, ext); // C4996
 	StrBuilder s;// = STRBUILDER_INIT;
 	StrBuilder_Init(&s, 100);
@@ -222,17 +210,24 @@ void GetFullDir(const char* fileName, String* out)
 
 void GetFullPath(const char* fileName, String* out)
 {
-	char buffer[MAX_PATH];
-	/*DWORD r =*/ GetFullPathNameA(
-		fileName,
-		sizeof(buffer),
-		buffer,
-		NULL
-	);
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	char fname[_MAX_FNAME];
-	char ext[_MAX_EXT];
+    char buffer[CPRIME_MAX_PATH];
+
+#ifdef WIN32
+   
+
+    _fullpath(
+        buffer,
+        fileName,
+        CPRIME_MAX_PATH);
+
+#else
+    realpath(fileName, buffer);
+#endif
+
+	char drive[CPRIME_MAX_DRIVE];
+	char dir[CPRIME_MAX_DIR];
+	char fname[CPRIME_MAX_FNAME];
+	char ext[CPRIME_MAX_EXT];
 	SplitPath(buffer, drive, dir, fname, ext); // C4996
 	StrBuilder s = STRBUILDER_INIT;
 	// StrBuilder_Init(&s, 100);

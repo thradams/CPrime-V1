@@ -1,5 +1,5 @@
 #pragma once
-#include "String.h"
+#include "StringEx.h"
 #include  "TokenArray.h"
 
 typedef enum

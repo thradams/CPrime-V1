@@ -106,7 +106,7 @@ static inline TYPE*  TYPE##_Create()\
   }\
   else \
   {\
-    _exit(EXIT_FAILURE); \
+    exit(EXIT_FAILURE); \
   }\
   return p;\
 }\

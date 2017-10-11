@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "StrBuilder.h"
-#include <Shlwapi.h>
+
 #include <ctype.h>
 #include "Path.h"
 

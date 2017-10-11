@@ -1,4 +1,6 @@
+#include "config.h"
 #include <stdio.h>
+
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +13,6 @@ struct X {
 void X_Init(struct X* pX) _default
 {
     pX->i = 0;
-
 }
 
 int main(int argc, char **argv)
