@@ -5,7 +5,7 @@
 #include <stdarg.h>
 
 BasicScanner* Scanner_Top(Scanner* pScanner);
-;
+
 void Scanner_MatchDontExpand(Scanner* pScanner);
 
 PPTokenType TokenToPPToken(Tokens token)
@@ -429,7 +429,11 @@ bool Scanner_GetFullPath(Scanner* pScanner, const char* fileName,
     {
       const char* pItem = pScanner->IncludeDir.pItems[i];
       StrBuilder_Set(&path, pItem);
-      StrBuilder_Append(&path, "\\");
+      
+      //barra para o outro lado funciona
+      //windows e linux
+      StrBuilder_Append(&path, "/");
+
       StrBuilder_Append(&path, fileName);
       bool bFileExists = FileExists(path.c_str);
 
