@@ -14,6 +14,63 @@ PPTokenType TokenToPPToken(Tokens token)
 
   switch (token)
   {
+      case TK_AUTO:
+      case    TK__AUTO:
+      case TK_BREAK:
+      case TK_CASE:
+      case     TK_char:
+      case TK_CONST:
+      case TK_CONTINUE:
+      case TK_DEFAULT:
+      case TK__DEFAULT:
+      case TK__DEFVAL:
+      case TK_DO:
+      case TK_DOUBLE:
+      case TK_ELSE:
+      case TK_ENUM:
+      case TK_EXTERN:
+      case TK_FLOAT:
+      case TK_FOR:
+      case TK_GOTO:
+      case TK_IF:
+      case TK_INT:
+      case TK_LONG:
+          ////////////////
+          //Microsoft - specific
+      case TK__INT8:
+      case TK__INT16:
+      case TK__INT32:
+      case TK__INT64:
+      case TK__WCHAR_T:
+          ////////////////
+      case TK_REGISTER:
+      case TK_RETURN:
+      case TK_SHORT:
+      case TK_SIGNED:
+      case TK_SIZEOF:
+      case TK_STATIC:
+      case TK_STRUCT:
+      case TK_SWITCH:
+      case TK_TYPEDEF:
+      case  TK_UNION:
+      case TK_UNSIGNED:
+      case TK_VOID:
+      case TK_VOLATILE:
+      case TK_WHILE:
+      case TK__THREAD_LOCAL:
+      case TK__BOOL:
+      case TK__COMPLEX:
+      case TK__ATOMIC:
+      case TK_RESTRICT:
+      case TK__STATIC_ASSERT:
+      case TK_INLINE:
+      case TK__INLINE://ms
+      case TK__FORCEINLINE: //ms
+      case TK__NORETURN:
+      case TK__ALIGNAS:
+      case TK__GENERIC:
+      case  TK__IMAGINARY:
+      case TK__ALINGOF:
     case TK_IDENTIFIER:
       result = PPTokenType_Identifier;
       break;
@@ -68,11 +125,49 @@ PPTokenType TokenToPPToken(Tokens token)
     case TK_LESSLESSEQUAL:
     case TK_PERCENTCOLONPERCENTCOLON:
 
-    case TK_NUMBER_SIGN:
+    case     TK_EXCLAMATION_MARK:// = '!';
+    case    TK_QUOTATION_MARK:// = '\"';
+    case    TK_NUMBER_SIGN:// = '#';
+
+    case    TK_DOLLAR_SIGN:// = '$';
+    case     TK_PERCENT_SIGN:// = '%';
+    case    TK_AMPERSAND:// = '&';
+    case     TK_APOSTROPHE:// = '\'';
+    case    TK_LEFT_PARENTHESIS:// = '(';
+    case    TK_RIGHT_PARENTHESIS:// = ')';
+    case    TK_ASTERISK:// = '*';
+    case    TK_PLUS_SIGN:// = '+';
+    case    TK_COMMA:// = ':';
+    case    TK_HYPHEN_MINUS:// = '-';
+    case    TK_HYPHEN_MINUS_NEG:// = '-'; //nao retorna no basic string mas eh usado para saber se eh - unario
+    case    TK_FULL_STOP:// = '.';
+    case    TK_SOLIDUS:// = '/';
+
+    case    TK_COLON:// = ':';
+    case    TK_SEMICOLON:// = ';';
+    case    TK_LESS_THAN_SIGN:// = '<';
+    case    TK_EQUALS_SIGN:// = '=';
+    case    TK_GREATER_THAN_SIGN:// = '>';
+    case    TK_QUESTION_MARK:// = '\?';
+    case    TK_COMMERCIAL_AT:// = '@';
+        
+    case     TK_LEFT_SQUARE_BRACKET:// = '[';
+    case    REVERSE_SOLIDUS:// = '\\';
+    case     TK_RIGHT_SQUARE_BRACKET:// = ']';
+    case    TK_CIRCUMFLEX_ACCENT:// = '^';
+    case    TK_LOW_LINE:// = '_';
+    case    TK_GRAVE_ACCENT:// = '`';
+
+    case    TK_LEFT_CURLY_BRACKET:// = '{';
+    case    TK_VERTICAL_LINE:// = '|';
+    case    TK_RIGHT_CURLY_BRACKET:// = '}';
+    case    TK_TILDE: // ~
+
       result = PPTokenType_Punctuator;
       break;
     default:
         ASSERT(false);
+        result = PPTokenType_Punctuator;
         break;
   }
 
@@ -1112,7 +1207,7 @@ int EvalPre(Scanner* pScanner, StrBuilder* sb)
   TokenArray pptokens = TOKENARRAY_INIT;
   GetPPTokens(pBasicScanner, &pptokens, sb);
   StrBuilder strBuilder = STRBUILDER_INIT;
-  ExpandMacroToText(&pptokens, &pScanner->Defines2, false, true, NULL,
+  ExpandMacroToText(&pptokens, &pScanner->Defines2, false, true, true, NULL, 
                     &strBuilder);
 
   int iRes = EvalExpression(strBuilder.c_str, pScanner);
@@ -1217,7 +1312,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
 
       StrBuilder strExpanded = STRBUILDER_INIT;
 
-      ExpandMacroToText(&ppTokenArray, &pScanner->Defines2, false, false, NULL,
+      ExpandMacroToText(&ppTokenArray, &pScanner->Defines2, false, false, false,NULL,
                         &strExpanded);
 
       // se expandir para identificador e ele for uma macro do tipo funcao
@@ -1303,6 +1398,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
 
         ExpandMacroToText(&ppTokenArray,
                           &pScanner->Defines2,
+                          false,
                           false,
                           false,
                           NULL,

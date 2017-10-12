@@ -7,10 +7,6 @@
 //#//include <time.h>
 
 
-#if (! _Noreturn )
-
-#endif
-
 
 #if (! _Noreturn  && ( 0 ? __STDC_VERSION__ : 0) < 201112  && !0)
 

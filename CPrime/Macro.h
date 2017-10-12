@@ -59,6 +59,7 @@ void ExpandMacro(const TokenArray* tsOriginal,
                  const MacroMap* macros,
                  bool get_more,
                  bool skip_defined,
+    bool evalmode,
                  Macro* caller,
                  TokenArray* pOutputSequence);
 
@@ -66,6 +67,7 @@ void ExpandMacroToText(const TokenArray* pTokenSequence,
                        const MacroMap* macros,
                        bool get_more,
                        bool skip_defined,
+    bool evalmode,
                        Macro* caller,
                        StrBuilder* strBuilder);
 

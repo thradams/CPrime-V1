@@ -80,6 +80,7 @@ void ExpandMacro(const TokenArray* pTokenSequence,
                  const MacroMap* macros,
                  bool get_more,
                  bool skip_defined,
+    bool evalmode,
                  Macro* caller,
                  TokenArray* pOutputSequence);
 
@@ -203,6 +204,7 @@ void SubstituteArgs(Macro *pMacro,
                     const TokenArrayMap *args,
                     TokenSet* hs,
                     bool skip_defined,
+    bool evalmode,
                     Macro *pCaller,
                     TokenArray* pOutputSequence)
 {
@@ -388,7 +390,7 @@ void SubstituteArgs(Macro *pMacro,
       {
         //expand head
         TokenArray expanded = TOKENARRAY_INIT;
-        ExpandMacro(argseq, macros, false, skip_defined, pCaller, &expanded);
+        ExpandMacro(argseq, macros, false, skip_defined, evalmode, pCaller, &expanded);
         TokenArray_AppendMove(&os, &expanded);
         TokenArray_Destroy(&expanded);
         continue;
@@ -727,6 +729,7 @@ void ExpandMacro(const TokenArray* tsOriginal,
                  const MacroMap* macros,
                  bool get_more,
                  bool skip_defined,
+    bool evalmode,
                  Macro* caller,
                  TokenArray* pOutputSequence2)
 {
@@ -768,11 +771,18 @@ void ExpandMacro(const TokenArray* tsOriginal,
       TokenArray_Destroy(&result);
       continue;
     }
-
+   
     Macro * pMacro = MacroMap_Find(macros, pHead->Lexeme);
 
-    if (pMacro == NULL)
+    if (pMacro == NULL) 
     {
+      //if eval mode se nao achar a macro
+      //ela vira zero
+        if (evalmode)
+        {
+            String_Set(&pHead->Lexeme, "0");
+            pHead->Token = PPTokenType_Number;
+        }
       // Nothing to do if the identifier is not a macro
       TokenArray_Push(&r, pHead);
       pHead = NULL; //moved
@@ -814,6 +824,7 @@ void ExpandMacro(const TokenArray* tsOriginal,
                      NULL, //empty args
                      &hiddenSet,
                      skip_defined,
+          evalmode,
                      caller,
                      &s);
 
@@ -869,6 +880,7 @@ void ExpandMacro(const TokenArray* tsOriginal,
                      &args,
                      &hs,
                      skip_defined,
+          evalmode,
                      caller,
                      &s);
 
@@ -1038,6 +1050,7 @@ void ExpandMacroToText(const TokenArray* pTokenSequence,
                        const MacroMap* macros,
                        bool get_more,
                        bool skip_defined,
+    bool evalmode,
                        Macro* caller,
                        StrBuilder* strBuilder)
 {
@@ -1047,7 +1060,9 @@ void ExpandMacroToText(const TokenArray* pTokenSequence,
               macros,
               get_more,
               skip_defined,
+      evalmode,
               caller,
+ 
               &tks);
 
   for (int i = 0; i < tks.Size; i++)
