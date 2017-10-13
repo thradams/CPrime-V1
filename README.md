@@ -1,27 +1,15 @@
 # C'
 
-How can I help you write and maintain your C code?
-
+Let´s do pair programming! I want to be your co-pilot.
 ![robot](/robots.jpg)
 
 ## What is C' ?
-C'(pronounced c prime) is tool to help writing C programs.
-
-The input for C' is your C source code with some annotations. 
-
-The annotations are done using some empty macros and your input and 
-ouput are C sources.
-
-Your includes, macros, formatting, comments 
-are preserved at the ouput.
-
-This compiler is written in C and it is already being used to generate itself.
+C'(pronounced c prime) is a co-pilot that can write and maintain  C source code  with you.
 
 ## How can C' help?
 C' can **generate** and **maintain** code for you.
 
 Currently, C' is generating constructor, destructor, create, delete and static initializers.
-
 
 Sample
 ```c
@@ -36,6 +24,7 @@ To generate a initialization function for this struct just type:
 void X_Init(struct X* pX) _default;
 ```
 When you compile this code you get:
+
 ```c
 void X_Init(struct X* pX) _default
 {
@@ -43,23 +32,14 @@ void X_Init(struct X* pX) _default
 }
 ```
 
-C' will maintain this implementation for you because the function use the macro _default.
+I the struct X is changed then the C' will update the implementation for you.
+C' is responsable to implement functions market as _default.
 
-More features are being considered like containers, helper functions etc. 
+More features are being considered like lint, containers generation, helper functions etc. 
 
 Feel free to sugest features.
 
 
-
-## Goals
-
- * Be useful today. It can help existing C code at any time together with
-   your existing compiler and code.
-   This tool is already being used to generate itself.
- * Create a tool to help creation and maintenance of  C code
- * Keep the input valid C code, then we can use in existing IDEs and compilers
- * Make the C development more produtive
- * For the future, lint, format, anything that can help
  
 ## Using the compiler
 
@@ -68,13 +48,24 @@ https://github.com/thradams/CPrime/releases
 
 Open the command line and try some samples:
 
-See samples.txt
-
 ```c
 cp hello.c -o hello2.c
 ```
+This will compile hello.c to hello2.c
 
-type cp
+## Include directories
+
+Use #pragma dir and configuration files.
+See [config files](config.md) for some configuration files.
+
+
+
+```
+
+# Things to try:
+
+
+## type cp to see the documentation
 
 ```
 C' Version Oct  6 2017
@@ -99,16 +90,6 @@ Options:
 -A                                    Output AST to file.
 -r                                    Reverts generation.
 
-```
-
-## Include directories
-
-Use #pragma dir and configuration files.
-See [config files](config.md) for some configuration files.
-
-
-
-# Things to try:
 
 ### Static initialization
 
