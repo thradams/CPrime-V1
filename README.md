@@ -103,17 +103,10 @@ Options:
 
 ## Include directories
 
-Use #pragma dir , see sample on config.h.
+Use #pragma dir and configuration files.
+See [config.md](config files) for some configuration files.
 
-I tested the compiler only with includes of Visual Studio 2017.
 
-I added some macros to parse the headers. This is the config file that works 
-for me using Visual Studio 2017.
-
-https://github.com/thradams/CPrime/blob/master/CPrime/vs2017.h
-
-Maybe we can find some parser problems using gcc. I can fix the problems
-and help to create the configuration file for gcc.
 
 # Things to try:
 
