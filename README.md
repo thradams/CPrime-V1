@@ -104,7 +104,7 @@ Options:
 ## Include directories
 
 Use #pragma dir and configuration files.
-See [config.md](config files) for some configuration files.
+See [config files](config.md) for some configuration files.
 
 
 
