@@ -60,7 +60,6 @@ See [config files](config.md) for some configuration files.
 
 
 
-```
 
 # Things to try:
 
@@ -90,6 +89,7 @@ Options:
 -A                                    Output AST to file.
 -r                                    Reverts generation.
 
+```
 
 ### Static initialization
 
