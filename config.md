@@ -6,7 +6,10 @@ Configuration files are used to inform the include directories and define some t
 
 ## config.h for Visual Studio
 
-Please, not that the numbers may change.
+Please, note that the numbers may change. 
+To fix includes for your Visual Studio, just click on the include file name and use the option "Open Document <stdio.h>" and then
+use the option "Copy Full Path"  to see what is the path used in your compiler.
+
 
 ```c
 #define _M_IX86 400
