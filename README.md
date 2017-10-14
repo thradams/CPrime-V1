@@ -55,12 +55,15 @@ cp hello.c -o hello2.c
 ```
 This will compile hello.c to hello2.c
 
-## Include directories
+## Include directories (Configuration file)
 
 Use #pragma dir and configuration files.
 See [config files](config.md) for some configuration files.
 
-
+Command line:
+```c
+cp -config config.h hello.c -o hello2.c
+```
 
 
 # Things to try:
