@@ -70,7 +70,7 @@ Please, not that the numbers may change.
 #define _CRTIMP 
 #define __cdecl  
 #define __MINGW_NOTHROW 
-//#define __mingw_stdio_redirect__(x)
+
 #define __inline__
 #define __x86_64__ 
 #define  __LP64__
