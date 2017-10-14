@@ -2,9 +2,9 @@
 
 Configuration files are used to inform the include directories and define some types and macros to allow parsing.
 
-Atention: Use only preprocessor in config files! Don't use declarations.
+**Atention: Use only preprocessor in config files! Don't use declarations.**
 
-## cpconfig.h for Visual Studio
+## config.h for Visual Studio
 
 Please, not that the numbers may change.
 
@@ -37,7 +37,7 @@ Please, not that the numbers may change.
 ```
 
 
-## cpconfig.h for CodeLite Windows
+## config.h for CodeLite Windows
 
 ```c
 
@@ -58,7 +58,7 @@ Please, not that the numbers may change.
 
 ```
 
-## cpconfig.h for Linux
+## config.h for Linux
 
 ```c
 
