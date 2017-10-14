@@ -74,7 +74,6 @@ Please, not that the numbers may change.
 #define __inline__
 #define __x86_64__ 
 #define  __LP64__
-//typedef char * __gnuc_va_list;
 
 #define __GNUC_VA_LIST
 #define __gnuc_va_list char *
