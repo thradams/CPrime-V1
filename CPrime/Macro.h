@@ -14,7 +14,7 @@ typedef struct
   int FileIndex;
 } Macro;
 
-Macro* Macro_Create();
+Macro* Macro_Create(void);
 
 
 typedef struct MacroMapItem

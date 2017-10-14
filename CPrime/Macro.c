@@ -14,7 +14,7 @@
 #include <stdio.h>
 
 
-Macro* Macro_Create() _default
+Macro* Macro_Create(void) _default
 {
     Macro *p = (Macro*) malloc(sizeof * p);
     if (p != NULL) {

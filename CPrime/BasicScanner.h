@@ -214,7 +214,7 @@ void ScannerItem_Reset(ScannerItem* scannerItem);
 void ScannerItem_Swap(ScannerItem* scannerItem, ScannerItem* other);
 void ScannerItem_Destroy(ScannerItem* scannerItem);
 void ScannerItem_Copy(ScannerItem* scannerItem, ScannerItem* other);
-ScannerItem* ScannerItem_Create();
+ScannerItem* ScannerItem_Create(void);
 void ScannerItem_Delete(ScannerItem* scannerItem);
 
 typedef enum 

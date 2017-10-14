@@ -38,7 +38,7 @@ bool Map2_RemoveKey(Map2* pMap,
 void Map2_Init(Map2* p);
 void Map2_Destroy(Map2* p);
 
-Map2*  Map2_Create();
+Map2*  Map2_Create(void);
 void Map2_Delete(Map2 * p);
 
 void Map2_Swap(Map2 * pA, Map2 * pB);

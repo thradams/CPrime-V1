@@ -256,7 +256,7 @@ void Map2_Swap(Map2 * pA, Map2 * pB)
   *pB = temp;
 }
 
-Map2* Map2_Create()
+Map2* Map2_Create(void)
 {
   Map2* p = (Map2*)malloc(sizeof(Map2));
 

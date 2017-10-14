@@ -281,7 +281,7 @@ const char* TokenToString(Tokens tk)
     return "???";
 }
 
-ScannerItem* ScannerItem_Create() _default
+ScannerItem* ScannerItem_Create(void) _default
 {
     ScannerItem *p = (ScannerItem*) malloc(sizeof * p);
     if (p != NULL)

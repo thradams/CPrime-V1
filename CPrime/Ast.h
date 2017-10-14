@@ -96,7 +96,7 @@ static inline void TYPE##_DeleteVoid(void*  p)\
 
 
 #define CREATETYPE(TYPE, INIT) \
-static inline TYPE*  TYPE##_Create()\
+static inline TYPE*  TYPE##_Create(void)\
 {\
   TYPE* p = (TYPE*)malloc(sizeof * p);\
   if (p)\

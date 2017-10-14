@@ -59,7 +59,7 @@ void Match(Scanner* pScanner,
 #define  MATCH2(scanner, TK, lexeme)\
   Match(scanner, TK, true, lexeme, __FUNCTION__, __LINE__)
 
-void Scanner_Test1()
+void Scanner_Test1(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -86,7 +86,7 @@ void Scanner_Test1()
   Scanner_Destroy(&scanner2);
 }
 
-void Scanner_Test2()
+void Scanner_Test2(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -103,7 +103,7 @@ void Scanner_Test2()
 
   Scanner_Destroy(&scanner2);
 }
-void Scanner_Test3()
+void Scanner_Test3(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -134,7 +134,7 @@ void Scanner_Test3()
 
 }
 
-void Scanner_Test4()
+void Scanner_Test4(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -159,7 +159,7 @@ void Scanner_Test4()
   Scanner_Destroy(&scanner2);
 }
 
-void Scanner_Test5()
+void Scanner_Test5(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -177,7 +177,7 @@ void Scanner_Test5()
   Scanner_Destroy(&scanner2);
 }
 
-void Scanner_Test10()
+void Scanner_Test10(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -198,7 +198,7 @@ void Scanner_Test10()
   Scanner_Destroy(&scanner2);
 }
 
-void Scanner_Test11()
+void Scanner_Test11(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -219,7 +219,7 @@ void Scanner_Test11()
 
 
 
-void Scanner_Test12()
+void Scanner_Test12(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -240,7 +240,7 @@ void Scanner_Test12()
   Scanner_Destroy(&scanner2);
 }
 
-void Scanner_Test13()
+void Scanner_Test13(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -264,7 +264,7 @@ void Scanner_Test13()
   Scanner_Destroy(&scanner2);
 }
 
-void Scanner_Test14()
+void Scanner_Test14(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -290,7 +290,7 @@ void Scanner_Test14()
 }
 
 
-void Scanner_Test6()
+void Scanner_Test6(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -321,7 +321,7 @@ void Scanner_Test6()
   ///////////////////////////
 }
 
-void Scanner_Test7()
+void Scanner_Test7(void)
 {
   //
   Scanner scanner2;
@@ -380,7 +380,7 @@ void Scanner_Test7()
 }
 
 
-void Scanner_Test9()
+void Scanner_Test9(void)
 {
   Scanner scanner2;
   Scanner_Init(&scanner2);
@@ -415,7 +415,7 @@ void Scanner_Test9()
 }
 
 
-void Scanner_Test8()
+void Scanner_Test8(void)
 {
 
   //
@@ -458,7 +458,7 @@ void Scanner_Test8()
 
 }
 
-void Stream_Test1()
+void Stream_Test1(void)
 {
   SStream stream;
   SStream_Init(&stream, "name", "123");
@@ -471,7 +471,7 @@ void Stream_Test1()
   SStream_Destroy(&stream);
 }
 
-void BasicScanner_Test1()
+void BasicScanner_Test1(void)
 {
   BasicScanner scanner;
 
@@ -486,7 +486,7 @@ void BasicScanner_Test1()
   BasicScanner_Destroy(&scanner);
 }
 
-void BasicScanner_Test2()
+void BasicScanner_Test2(void)
 {
   BasicScanner scanner;
   BasicScanner_Init(&scanner, "name", "123\r\n", BasicScannerType_File);
@@ -499,7 +499,7 @@ void BasicScanner_Test2()
   BasicScanner_Destroy(&scanner);
 }
 
-void BasicScanner_Test3()
+void BasicScanner_Test3(void)
 {
   BasicScanner scanner;
   BasicScanner_Init(&scanner, "name", "#pragma once\r\n", BasicScannerType_File);
@@ -515,7 +515,7 @@ void BasicScanner_Test3()
   BasicScanner_Destroy(&scanner);
 }
 
-void BasicScanner_Test4()
+void BasicScanner_Test4(void)
 {
   BasicScanner scanner;
 
@@ -527,7 +527,7 @@ void BasicScanner_Test4()
   BasicScanner_Destroy(&scanner);
 }
 
-void BasicScanner_Test5()
+void BasicScanner_Test5(void)
 {
   BasicScanner scanner;
 
@@ -544,7 +544,7 @@ void BasicScanner_Test5()
  Parser_MatchToken((parser), (token), NULL); \
  TEST(!Parser_HasError((parser)));
 
-void Parser_Test1()
+void Parser_Test1(void)
 {
   Parser parser;
   Parser_InitString(&parser, "a", "int a /*comment*/ = 1 + 2;");
@@ -562,7 +562,7 @@ void Parser_Test1()
   Parser_Destroy(&parser);
 }
 
-void Parser_Test2()
+void Parser_Test2(void)
 {
   Parser parser;
   Parser_InitString(&parser, "a", "int a = 1 + 2;");
@@ -580,7 +580,7 @@ void Parser_Test2()
 }
 
 
-void Parser_Test3()
+void Parser_Test3(void)
 {
   Parser parser;
   Parser_InitString(&parser, "a", "int a  =  1 + 2;");
@@ -600,7 +600,7 @@ void Parser_Test3()
 }
 
 
-void Parser_Test4()
+void Parser_Test4(void)
 {
   const char* code =
     "a = \n"
@@ -622,7 +622,7 @@ void Parser_Test4()
 }
 
 
-void Parser_Test5()
+void Parser_Test5(void)
 {
   const char* code =
     "#define false 0\n"
@@ -665,7 +665,7 @@ void Parser_Test5()
   Parser_Destroy(&parser);
 }
 
-void Parser_Test6()
+void Parser_Test6(void)
 {
   const char* code =
     "#define false 0\n"
@@ -693,7 +693,7 @@ void Parser_Test6()
 }
 
 
-void AllTests()
+void AllTests(void)
 {
   printf("RUNNING TESTS ...\n");
   Scanner_Test10();
