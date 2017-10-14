@@ -1,3 +1,7 @@
+
+ [Home](readme.md)
+ 
+ 
 # Configuration files
 
 Configuration files are used to inform the include directories and define some types and macros to allow parsing.
