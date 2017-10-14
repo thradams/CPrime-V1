@@ -1,5 +1,5 @@
 #!/bin/bash
-# A sample Bash script, by Ryan
+# A sample Bash script
 gcc -c Ast.c
 gcc -c AllTemplates.c
 gcc -c CodePrint.c
