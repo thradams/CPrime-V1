@@ -2,6 +2,8 @@
 
 Configuration files are used to inform the include directories and define some types and macros to allow parsing.
 
+Atention: Use only preprocessor in config files! Don't use declarations.
+
 ## cpconfig.h for Visual Studio
 
 Please, not that the numbers may change.
@@ -60,6 +62,7 @@ Please, not that the numbers may change.
 
 ```c
 
+
 #define __restrict__
 #define __restrict
 #define __MINGW_IMPORT 
@@ -67,15 +70,20 @@ Please, not that the numbers may change.
 #define _CRTIMP 
 #define __cdecl  
 #define __MINGW_NOTHROW 
-
+//#define __mingw_stdio_redirect__(x)
 #define __inline__
 #define __x86_64__ 
 #define  __LP64__
-typedef char * __gnuc_va_list;
+//typedef char * __gnuc_va_list;
+
+#define __GNUC_VA_LIST
+#define __gnuc_va_list char *
+        
 
 #pragma dir "/usr/include"
 #pragma dir "/usr/include/x86_64-linux-gnu"
 #pragma dir "/usr/lib/gcc/x86_64-linux-gnu/5/include"
+
 
 ```
 
