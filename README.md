@@ -43,7 +43,7 @@ Feel free to sugest features.
  
 ## Using the compiler
 
-Download the cp.zip here:
+Download binaries here:
 https://github.com/thradams/CPrime/releases
 
 Open the command line and try some samples:
