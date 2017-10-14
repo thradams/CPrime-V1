@@ -6,6 +6,8 @@ Let´s do pair programming! I want to be your co-pilot.
 ## What is C' ?
 C'(pronounced c prime) is a co-pilot that can write and maintain  C source code  with you.
 
+(I am considering new name like C auto-pilot, or C co-pilot.)
+
 ## How can C' help?
 C' can **generate** and **maintain** code for you.
 
