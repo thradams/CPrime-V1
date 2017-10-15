@@ -60,7 +60,8 @@ void TokenArray_Init(TokenArray* p) _default
 TokenArray* TokenArray_Create() _default
 {
     TokenArray *p = (TokenArray*) malloc(sizeof * p);
-    if (p != NULL) {
+    if (p != NULL)
+    {
         TokenArray_Init(p);
     }
     return p;
@@ -80,7 +81,8 @@ void TokenArray_Swap(TokenArray* p1, TokenArray* p2)
 
 void TokenArray_Delete(TokenArray* st) _default
 {
-    if (st != NULL) {
+    if (st != NULL)
+    {
         TokenArray_Destroy(st);
         free(st);
     }

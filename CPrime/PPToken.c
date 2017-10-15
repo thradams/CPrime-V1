@@ -45,7 +45,8 @@ PPToken* PPToken_Create(const char* s, PPTokenType token)
 
 void PPToken_Delete(PPToken * p) _default
 {
-    if (p != NULL) {
+    if (p != NULL)
+    {
         PPToken_Destroy(p);
         free(p);
     }

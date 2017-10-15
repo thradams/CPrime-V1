@@ -177,7 +177,8 @@ PPTokenType TokenToPPToken(Tokens token)
 TFile* TFile_Create() _default
 {
     TFile *p = (TFile*) malloc(sizeof * p);
-    if (p != NULL) {
+    if (p != NULL)
+    {
         String_Init(&p->FullPath);
         String_Init(&p->IncludePath);
         p->FileIndex = 0;
@@ -196,7 +197,8 @@ void TFile_Destroy(TFile* p) _default
 
 void TFile_Delete(TFile* p) _default
 {
-    if (p != NULL) {
+    if (p != NULL)
+    {
         TFile_Destroy(p);
         free(p);
     }
@@ -659,6 +661,7 @@ void Scanner_Destroy(Scanner* pScanner) _default
     StrArray_Destroy(&pScanner->IncludeDir);
     StrBuilder_Destroy(&pScanner->DebugString);
     StrBuilder_Destroy(&pScanner->ErrorString);
+    TScannerItemList_Destroy(&pScanner->AcumulatedTokens);
 }
 
 /*int Scanner_GetCurrentLine(Scanner* pScanner)

@@ -17,7 +17,8 @@
 Macro* Macro_Create(void) _default
 {
     Macro *p = (Macro*) malloc(sizeof * p);
-    if (p != NULL) {
+    if (p != NULL)
+    {
         String_Init(&p->Name);
         p->bIsFunction = false;
         TokenArray_Init(&p->TokenSequence);
@@ -36,7 +37,8 @@ void Macro_Destroy(Macro * p) _default
 
 void Macro_Delete(Macro * p) _default
 {
-    if (p != NULL) {
+    if (p != NULL)
+    {
         Macro_Destroy(p);
         free(p);
     }
