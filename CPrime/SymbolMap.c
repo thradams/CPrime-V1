@@ -721,7 +721,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
                             ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
                             {
                                 TPointer * pNew = TPointer_Create();
-                                pNew->bPointer = pItem->bPointer;
+                                pNew->Token = pItem->Token;
                                 pNew->Qualifier = pItem->Qualifier;
                                 List_Add(&declarator->PointerList, pNew);
                             }
@@ -830,7 +830,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                             ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
                             {
                                 TPointer * pNew = TPointer_Create();
-                                pNew->bPointer = pItem->bPointer;
+                                pNew->Token = pItem->Token;
                                 pNew->Qualifier = pItem->Qualifier;
                                 List_Add(&declarator->PointerList, pNew);
                             }
@@ -855,7 +855,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                         ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
                         {
                             TPointer * pNew = TPointer_Create();
-                            pNew->bPointer = pItem->bPointer;
+                            pNew->Token = pItem->Token;
                             pNew->Qualifier = pItem->Qualifier;
                             List_Add(&declarator->PointerList, pNew);
                         }

@@ -1579,7 +1579,7 @@ static void TTypeQualifierList_CodePrint(TProgram* program, Options * options, T
 }
 static void TPointer_CodePrint(TProgram* program, Options * options, TPointer* pPointer, StrBuilder* fp)
 {
-    if (pPointer->bPointer)
+    if (pPointer->Token == TK_ASTERISK)
     {
         TNodeClueList_CodePrint(options, &pPointer->ClueList0, fp);
         Output_Append(fp, options, "*");
@@ -2578,7 +2578,7 @@ void InstanciateDestroy2(TProgram* program,
                 ForEachListItem(TPointer, pItem, &pDeclatator->PointerList)
                 {
                     TPointer * pNew = TPointer_Create();
-                    pNew->bPointer = pItem->bPointer;
+                    pNew->Token = pItem->Token;
                     pNew->Qualifier = pItem->Qualifier;
                     List_Add(&declarator.PointerList, pNew);
                 }

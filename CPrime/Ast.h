@@ -435,7 +435,7 @@ CAST(TStatement, TSwitchStatement)
 typedef struct TPointer
 {
     TTypeQualifierList Qualifier;
-    bool bPointer;
+    Tokens Token;
     struct TPointer* pNext;
     TScannerItemList ClueList0;
 } TPointer;

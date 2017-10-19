@@ -113,6 +113,8 @@ const char* TokenToString(Tokens tk)
         return "auto";
     case TK__AUTO:
         return "_auto";
+    case TK__SIZE:
+        return "_size";
     case TK_BREAK:
         return "break";
     case TK_CASE:
@@ -503,6 +505,7 @@ static struct TkPair keywords[] =
     //keywords
     { "auto", TK_AUTO },
     { "_auto", TK__AUTO },
+    { "_size", TK__SIZE },
     { "break", TK_BREAK },
     { "case", TK_CASE },
     { "char", TK_char },

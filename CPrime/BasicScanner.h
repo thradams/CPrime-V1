@@ -102,6 +102,7 @@ typedef enum
 
     TK_AUTO,
 	TK__AUTO,
+    TK__SIZE,
     TK_BREAK,
     TK_CASE,
     TK_char,

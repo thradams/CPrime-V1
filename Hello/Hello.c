@@ -1,7 +1,8 @@
 #include "config.h"
+#define _size
 
 struct X {
-  int i;  
+  int _size i;  
 };
 
 void X_Init(struct X* pX) _default

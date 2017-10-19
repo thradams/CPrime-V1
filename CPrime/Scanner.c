@@ -15,7 +15,8 @@ PPTokenType TokenToPPToken(Tokens token)
   switch (token)
   {
       case TK_AUTO:
-      case    TK__AUTO:
+      case TK__AUTO:
+      case TK__SIZE:
       case TK_BREAK:
       case TK_CASE:
       case     TK_char:

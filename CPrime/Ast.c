@@ -636,7 +636,7 @@ bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
     {
         ForEachListItem(TPointer, pItem, pPointerlist)
         {
-            if (pItem->bPointer)
+            if (pItem->Token == TK_ASTERISK)
             {
                 bIsPointer = true;
             }
@@ -668,7 +668,7 @@ bool TPointerList_IsPointer(TPointerList* pPointerlist)
     {
         ForEachListItem(TPointer, pItem, pPointerlist)
         {
-            if (pItem->bPointer)
+            if (pItem->Token == TK_ASTERISK)
             {
                 bIsPointer = true;
                 break;
@@ -1081,7 +1081,7 @@ bool TDeclarator_IsDirectPointer(TDeclarator* p)
 	int n = 0;
 	ForEachListItem(TPointer, pPointer, &p->PointerList)
 	{
-		if (pPointer->bPointer)
+		if (pPointer->Token == TK_ASTERISK)
 		{
 			n++;
 			if (n > 1)

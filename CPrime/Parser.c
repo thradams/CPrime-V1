@@ -961,6 +961,7 @@ static bool IsTypeQualifierToken(Tokens token)
         //type-qualifier-extensions 
 
     case TK__AUTO:
+    case TK__SIZE:
 
     case TK_OPT_QUALIFIER:
     case TK_OWN_QUALIFIER:
@@ -1002,6 +1003,7 @@ bool IsTypeName(Parser* ctx, Tokens token, const char * lexeme)
 
 #ifdef LANGUAGE_EXTENSIONS
     case TK__AUTO:
+    case TK__SIZE:
         //type-qualifier-extensions 
     case TK_OPT_QUALIFIER:
     case TK_OWN_QUALIFIER:
@@ -3796,7 +3798,7 @@ static bool TTypeQualifier_IsFirst(Tokens token)
 #ifdef LANGUAGE_EXTENSIONS
         //type-qualifier-extensions 
     case TK__AUTO:
-
+    case TK__SIZE:
     case TK_OPT_QUALIFIER:
     case TK_OWN_QUALIFIER:
     case TK_DTOR_QUALIFIER:
@@ -3822,6 +3824,13 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
     volatile
     _Atomic
     */
+
+    /*
+    _auto
+    _size(identifier)
+    _size(int)
+    */
+
     bool bResult = false;
     Tokens token = Parser_CurrentToken(ctx);
 
@@ -3841,6 +3850,7 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
 #ifdef LANGUAGE_EXTENSIONS
 
     case TK__AUTO:
+    case TK__SIZE:
         //type-qualifier-extensions 
     case TK_OPT_QUALIFIER:
     case TK_OWN_QUALIFIER:
@@ -3902,16 +3912,16 @@ int PointerOpt(Parser* ctx, TPointerList* pPointerList)
     {
         TPointer* pPointer = TPointer_Create();
         List_Add(pPointerList, pPointer);
+        
+        pPointer->Token = token;
 
         if (IsTypeQualifierToken(token))
-        {
-            pPointer->bPointer = false;
+        {            
             Type_Qualifier_ListOpt(ctx, &pPointer->Qualifier);
         }
         else if (token == TK_ASTERISK)
         {
             Parser_Match(ctx, &pPointer->ClueList0);
-            pPointer->bPointer = true;
         }
 
 
