@@ -201,10 +201,6 @@ int main(int argc, char* argv[])
 
     String_Destroy(&outputFullPath);
     String_Destroy(&inputFullPath);
-#ifdef _DEBUG
-    int i;
-    scanf("%d", &i);
-#endif
 
     return 0;
 }

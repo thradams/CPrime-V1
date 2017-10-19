@@ -2675,7 +2675,7 @@ void InstanciateDestroy2(TProgram* program,
                             NULL,
                             pInitExpressionText,
                             action2,
-                            SearchAll,
+                            search,
                             pbHasInitializers,
                             fp);
                     }

@@ -1,16 +1,4 @@
 #include "config.h"
-//#/include <stdio.h>
-
-//#include <stdbool.h>
-//#include <stdlib.h>
-//#//include <string.h>
-//#//include <time.h>
-
-
-
-#if (! _Noreturn  && ( 0 ? __STDC_VERSION__ : 0) < 201112  && !0)
-
-#endif
 
 struct X {
   int i;  
