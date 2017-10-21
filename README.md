@@ -1,17 +1,19 @@
 # C'
 
-Let´s do pair programming! I want to be your co-pilot.
+Let´s do pair programming!
+
 ![robot](/robots.jpg)
 
 ## What is C' ?
-C'(pronounced c prime) is a co-pilot that can write and maintain  C source code  with you.
-
-(I am considering new name like C auto-pilot, or C co-pilot.)
+C'(pronounced c prime) is a robot that can help you generate and maintain C source code.
 
 ## How can C' help?
-C' can **generate** and **maintain** code for you.
 
-Currently, C' is generating constructor, destructor, create, delete and static initializers.
+Currently, C' is generating:
+ * constructor / destructor
+ * create, delete
+ * static initializers.
+ * Dynamic arrays functions PushBack and Reserve
 
 Sample
 ```c
@@ -65,6 +67,13 @@ Command line:
 cp -config config.h hello.c -o hello2.c
 ```
 
+
+# Keywords
+
+ * __auto
+ * __default
+ * __defval(X)
+ * __size(X)
 
 # Things to try:
 
@@ -218,6 +227,41 @@ of code generation.
 
 https://twitter.com/thradams
 
+## auto auto and __size (new)
+
+```c
+struct Item
+{
+    int  i;
+};
+
+
+void Item_Delete(struct Item* p) _default
+{
+    if (p)
+    {
+        free((void*)p);
+    }
+}
+
+
+struct Items
+{
+    struct Item * _auto * _auto _size(Size) pData;
+    int Size;
+    int Capacity;
+};
+
+void Items_Destroy(struct Items* pItems) _default
+{
+    for (int i = 0; i < pItems->Size; i++)
+    {
+        Item_Delete(pItems->pData[i]);
+    }
+    free((void*)pItems->pData);
+}
+
+```
 
 ## More details
 
