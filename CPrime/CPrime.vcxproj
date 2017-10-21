@@ -141,19 +141,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AllTemplates.c" />
     <ClCompile Include="Array.c" />
-    <ClCompile Include="ArrayTemplate.c" />
     <ClCompile Include="Ast.c" />
     <ClCompile Include="AstPrint.c" />
     <ClCompile Include="BasicScanner.c" />
     <ClCompile Include="CodePrint.c" />
     <ClCompile Include="CPrime.c" />
-    <ClCompile Include="ListTemplate.c" />
     <ClCompile Include="Macro.c" />
     <ClCompile Include="Map.c" />
     <ClCompile Include="Map2.c" />
-    <ClCompile Include="MapTemplate.c" />
     <ClCompile Include="Parser.c" />
     <ClCompile Include="Path.c" />
     <ClCompile Include="PPToken.c" />
@@ -163,24 +159,19 @@
     <ClCompile Include="StringEx.c" />
     <ClCompile Include="SymbolMap.c" />
     <ClCompile Include="TokenArray.c" />
-    <ClCompile Include="UnionTemplate.c" />
     <ClCompile Include="UnitTest.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AllTemplates.h" />
     <ClInclude Include="Array.h" />
-    <ClInclude Include="ArrayTemplate.h" />
     <ClInclude Include="Ast.h" />
     <ClInclude Include="AstPrint.h" />
     <ClInclude Include="BasicScanner.h" />
     <ClInclude Include="CodePrint.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="List.h" />
-    <ClInclude Include="ListTemplate.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Map2.h" />
-    <ClInclude Include="MapTemplate.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="PPToken.h" />
@@ -191,7 +182,6 @@
     <ClInclude Include="StringEx.h" />
     <ClInclude Include="SymbolMap.h" />
     <ClInclude Include="TokenArray.h" />
-    <ClInclude Include="UnionTemplate.h" />
     <ClInclude Include="UnitTest.h" />
     <ClInclude Include="vs2017.h" />
   </ItemGroup>

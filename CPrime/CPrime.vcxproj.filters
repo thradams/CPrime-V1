@@ -19,21 +19,6 @@
     <ClCompile Include="CodePrint.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AllTemplates.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ArrayTemplate.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ListTemplate.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MapTemplate.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UnionTemplate.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="UnitTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -91,21 +76,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="CodePrint.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AllTemplates.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ArrayTemplate.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ListTemplate.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MapTemplate.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UnionTemplate.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="UnitTest.h">

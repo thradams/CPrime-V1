@@ -9,11 +9,6 @@
 
 
 
-#include "AllTemplates.h"
-
-
-//bool bExpandMacros;
-
 void Options_Destroy(Options* options) _default
 {
 }
@@ -954,14 +949,6 @@ static void TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
 
     if (p->TemplateName != NULL)
     {
-
-        //TNodeClueList_CodePrint(options, &p->ClueList2, fp);
-
-        AllPlugin_InstanciateType(program,
-            options,
-            p,
-
-            fp);
 
     }
     else
