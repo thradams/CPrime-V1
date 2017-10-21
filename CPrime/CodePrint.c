@@ -62,9 +62,6 @@ static void TBlockItem_CodePrint(TProgram* program, Options * options, TBlockIte
 
 static void TPointer_CodePrint(TProgram* program, Options * options, TPointer* pPointer, StrBuilder* fp);
 static void TParameter_CodePrint(TProgram* program, Options * options, TParameter* p, StrBuilder* fp);
-//static void TInitializerListItem_CodePrint(TProgram* program, Options * options, TTypeSpecifier* pTypeSpecifier, bool bIsPointer, TInitializerListItem* p,  StrBuilder* fp);
-
-
 
 void Output_Append(StrBuilder* p,
     Options* options,
@@ -201,14 +198,6 @@ static void TNodeClueList_CodePrint(Options* options, TScannerItemList* list,
     }
     
 }
-
-
-
-
-
-
-
-
 
 static void TCompoundStatement_CodePrint(TProgram* program,
     Options * options,
@@ -2115,17 +2104,6 @@ static void TInitializerListItem_CodePrint(TProgram* program,
 }
 
 
-/*
-static void TProgram_PrintToFile(TProgram* pProgram,
-const char* fileName)
-{
-StrBuilder * fp = fopen(fileName, "w");
-TDeclarations_CodePrint(&pProgram->Declarations, fp);
-fclose(fp);
-}*/
-
-
-
 
 void TProgram_PrintCodeToFile(TProgram* pProgram,
     Options* options,
@@ -2279,7 +2257,7 @@ static bool FindHighLevelFunction(TProgram* program,
                                     nameToFind,
                                     pInitExpressionText);
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                    "free(%s);",
+                                    "free((void*)%s);",
                                     pInitExpressionText);
                                 bComplete = true;
                             }
@@ -2356,7 +2334,7 @@ static bool FindHighLevelFunction(TProgram* program,
                             nameToFind,
                             pInitExpressionText);
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                            "free(%s);",
+                            "free((void*)%s);",
                             pInitExpressionText);
                         bComplete = true;
                     }
@@ -2392,7 +2370,7 @@ static bool FindHighLevelFunction(TProgram* program,
                         nameToFind,
                         pInitExpressionText);
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "free(%s);",
+                        "free((void*)%s);",
                         pInitExpressionText);
                     options->IdentationLevel--;
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
@@ -2478,7 +2456,8 @@ static bool FindHighLevelFunction(TProgram* program,
             if (pDeclarationInit)
             {
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                    "struct %s *p = malloc(sizeof * p);",
+                    "struct %s *p = (struct %s *) malloc(sizeof * p);",
+                    nameToFind,
                     nameToFind);
 
 
@@ -2696,7 +2675,7 @@ void InstanciateDestroy2(TProgram* program,
             {
                 if (bDeclaratorIsAutoPointer)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free(%s);", pInitExpressionText);
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
                 }
                 else
                 {
@@ -2818,7 +2797,7 @@ void InstanciateDestroy2(TProgram* program,
                     ASSERT(pStructUnionSpecifier->Name != NULL);
 
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "struct %s* p = (struct %s*)malloc(sizeof * p);",
+                        "struct %s* p = (struct %s*) malloc(sizeof * p);",
                         pStructUnionSpecifier->Name,
                         pStructUnionSpecifier->Name);
                     
@@ -2928,7 +2907,7 @@ void InstanciateDestroy2(TProgram* program,
                 {
                     if (bDeclaratorIsAutoPointer)
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free(%s);", pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
                         options->IdentationLevel--;
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
@@ -2936,7 +2915,7 @@ void InstanciateDestroy2(TProgram* program,
                 }
                 else if (action == ActionDelete)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free(%s);", pInitExpressionText);
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
                     options->IdentationLevel--;
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
@@ -2978,7 +2957,7 @@ void InstanciateDestroy2(TProgram* program,
         {
             if (bDeclaratorIsAutoPointer)
             {
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free(%s);", pInitExpressionText);
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
             }
             else
             {
