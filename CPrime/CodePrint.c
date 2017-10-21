@@ -1046,6 +1046,7 @@ static void TInitializerList_CodePrint(TProgram* program,
             pDeclatator,                        //<-dupla para entender o tipo
             NULL,
             "",
+            NULL /*not used*/,
             ActionStaticInit,
             SearchNone,
             &bHasInitializers,
@@ -1111,6 +1112,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
                 pDeclarator,                        //<-dupla para entender o tipo
                 pInitializer,
                 "",
+                NULL /*not used*/,
                 ActionStaticInit,
                 SearchNone,
                 &bHasInitializers,
@@ -1715,12 +1717,14 @@ void InstanciateDestroy2(TProgram* program,
     TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
     TInitializer* pInitializerOpt,
     const char* pInitExpressionText, //(x->p->i = 0),
+    const char* pszAutoPointerLenExpressionOpt,
     const Action action,
     Search search,
     bool * pbHasInitializers,
     StrBuilder* fp);
 
 TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifiers* specifiers);
+
 
 static bool FindVectorStructPattern(TProgram* program,
     TParameter* pParameter,
@@ -1813,6 +1817,8 @@ static bool FindVectorStructPattern(TProgram* program,
 
     return bHasSize &&  bHasCapacity && bHasVector;
 }
+
+
 struct TemplateVar
 {
     const char* Name;
@@ -1879,7 +1885,7 @@ void StrBuilder_Template(StrBuilder * p,
             {
                 StrBuilder_AppendChar(p, *pch);
             }
-            
+
             pch++;
         }
     }
@@ -1918,7 +1924,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 
     StrBuilder functionPrefix = STRBUILDER_INIT;
     StrBuilder functionSuffix = STRBUILDER_INIT;
-    
+
     GetPrefixSuffix(funcName, &functionPrefix, &functionSuffix);
 
     //parametros
@@ -1949,6 +1955,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             p->InitDeclaratorList.pHead->pDeclarator,
             NULL,
             "p",
+            NULL /*not used*/,
             ActionCreate,
             SearchInit,
             NULL,
@@ -1965,6 +1972,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             &pFirstParameter[0]->Declarator,
             NULL,
             firstParameterName[0],
+            NULL /*not used*/,
             ActionInitContent,
             SearchNone,
             NULL,
@@ -1981,6 +1989,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             &pFirstParameter[0]->Declarator,
             NULL,
             firstParameterName[0],
+            NULL /*not used*/,
             ActionDestroyContent,
             SearchNone,
             NULL,
@@ -1997,6 +2006,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             &pFirstParameter[0]->Declarator,
             NULL,
             firstParameterName[0],
+            NULL /*not used*/,
             ActionDelete,
             SearchDestroy,
             NULL,
@@ -2081,7 +2091,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                 const char* pszTemplate =
                     "    if ($p->Size + 1 > $p->Capacity)\n"
                     "    {\n"
-                    "        $prefix\b_Reserve($p, $p->Size + 1);\n"                    
+                    "        $prefix\b_Reserve($p, $p->Size + 1);\n"
                     "    }\n"
                     "    $p->$data[$p->Size] = $nelements;\n"
                     "    $p->Size++;\n";
@@ -2745,12 +2755,71 @@ static bool FindHighLevelFunction(TProgram* program,
     return bComplete;
 }
 
+
+//Verifica se tem "cara" de ser o vector
+static bool IsVector(TStructUnionSpecifier* pStructUnionSpecifier)
+{
+    bool bHasVector = false;
+    bool bHasSize = false;
+    bool bHasCapacity = false;
+
+    if (pStructUnionSpecifier)
+    {
+        //Vou analisar a "digital" da struct
+        //ok tem a definicao completa da struct
+        for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
+        {
+            TAnyStructDeclaration* pAnyStructDeclaration =
+                pStructUnionSpecifier->StructDeclarationList.pItems[i];
+
+            TStructDeclaration* pStructDeclaration =
+                TAnyStructDeclaration_As_TStructDeclaration(pAnyStructDeclaration);
+            if (pStructDeclaration)
+            {
+                TStructDeclarator* pStructDeclarator =
+                    pStructDeclaration->DeclaratorList.pHead;
+
+                while (pStructDeclarator)
+                {
+                    const char* structDeclaratorName =
+                        TDeclarator_GetName(pStructDeclarator->pDeclarator);
+
+                    bool bIsPointer1 =
+                        TPointerList_IsPointerN(&pStructDeclarator->pDeclarator->PointerList, 1);
+
+                    if (bIsPointer1)
+                    {
+                        bHasVector = true;
+                    }
+                    else  if (TSpecifierQualifierList_IsAnyInteger(&pStructDeclaration->SpecifierQualifierList))
+                    {
+                        if (strcmp(structDeclaratorName, "Size") == 0)
+                        {
+                            bHasSize = true;
+                        }
+                        else if (strcmp(structDeclaratorName, "Capacity") == 0)
+                        {
+                            bHasCapacity = true;
+                        }
+                    }
+
+                    pStructDeclarator = (pStructDeclarator)->pNext;
+                }
+            }
+        }
+    }
+
+    return bHasSize &&  bHasCapacity && bHasVector;
+}
+
 void InstanciateDestroy2(TProgram* program,
     Options* options,
     TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
     TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
     TInitializer* pInitializerOpt,
     const char* pInitExpressionText, //(x->p->i = 0)    
+    const char* pszAutoPointerLenExpressionOpt, //expressao usada para definir o tamanho de um spaw de auto pointers
+                                                //se passar null eh pq nao interessa
     const Action action,
     Search search,
     bool* pbHasInitializers,
@@ -2855,6 +2924,7 @@ void InstanciateDestroy2(TProgram* program,
                             &declarator,
                             NULL,
                             "p",
+                            NULL /*not used*/,
                             ActionInitContent,
                             SearchNone, //se tivesse init ja tinha achado
                             pbHasInitializers,
@@ -2894,6 +2964,7 @@ void InstanciateDestroy2(TProgram* program,
                             &declarator,
                             NULL,
                             pInitExpressionText,
+                            NULL /*not used*/,
                             action2,
                             search,
                             pbHasInitializers,
@@ -3057,6 +3128,7 @@ void InstanciateDestroy2(TProgram* program,
                     //}
                 }
 
+                
                 //ok tem a definicao completa da struct
                 for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
                 {
@@ -3123,13 +3195,31 @@ void InstanciateDestroy2(TProgram* program,
                             {
                                 action2 = ActionInit;
                             }
+                            
+                            if (action2 == ActionDestroy)
+                            {
+                                //Tem que detectar isso aqui!
+                                // String * _auto pItems;
+                                // X * _auto * _auto pItems;
+                                //sef or ele vai precisar da informacao do _size
+                                // X * _auto * _auto _size(Size) pItems;
+                                //e dai ele passa a string para  funcao gerar
 
+                                bool b3 = TPointerList_IsPointerN(&pStructDeclarator->pDeclarator->PointerList, 2);
+                                if (b3)
+                                {
+                                    b3 = 0;
+                                }
+                            }
+
+                            //Se for destroy e sor 
                             InstanciateDestroy2(program,
                                 options,
                                 &pStructDeclaration->SpecifierQualifierList,
                                 pStructDeclarator->pDeclarator,
                                 pStructDeclarator->pInitializer,
                                 strVariableName.c_str,
+                                NULL /*not used*/,
                                 action2,
                                 SearchAll,
                                 pbHasInitializers,
@@ -3143,6 +3233,7 @@ void InstanciateDestroy2(TProgram* program,
                         StrBuilder_Destroy(&strVariableName);
                     }
                 }
+
 
                 if (action == ActionDestroy)
                 {
@@ -3182,7 +3273,7 @@ void InstanciateDestroy2(TProgram* program,
             else
             {
                 //error nao tem a definicao completa da struct
-                StrBuilder_AppendFmt(fp, "/*type not found %s*/", pInitExpressionText);
+                StrBuilder_AppendFmt(fp, "/*incomplete type %s*/\n", pInitExpressionText);
             }
         }//complete
 
