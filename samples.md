@@ -1,4 +1,4 @@
-##  Sample 1
+##  Sample 
 Input
 ```c
 
@@ -64,28 +64,59 @@ int main(int argc, char **argv)
 
 ```
 
-##  Sample 2
+##  Sample (Init and Destroy not used)
 
 Input
 ```c
 
-struct X {
-  int  i;  
-};
+#include <stdbool.h>
 
-void X_Init(struct X* pX) _default;
-
-```
-Output
-```c
-
-struct X {
-  int  i;  
-};
-
-void X_Init(struct X* pX) _default
+enum E
 {
-   p->i = 0;
+    A, B, C
+};
+
+struct X {
+  int  i;
+  char ch;
+  enum E e;
+  bool b;
+  double d;
+  float f;
+  long l;
+  struct Y { int i;  } y;
+};
+
+struct X* X_Create() _default
+{
+    struct X* p = (struct X*) malloc(sizeof * p);
+    if (p)
+    {
+        p->i = 0;
+        p->ch = 0;
+        p->e = 0;
+        p->b = false;
+        p->d = 0;
+        p->f = 0;
+        p->l = 0;
+        p->y.i = 0;
+    }
+    return p;
+}
+
+void X_Delete(struct X* pX)  _default
+{
+    if (pX)
+    {
+        free(pX);
+    }
+}
+
+
+int main(int argc, char **argv)
+{
+    struct X x = _default {0};
+	return 0;
 }
 
 ```
