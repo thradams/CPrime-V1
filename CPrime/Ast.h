@@ -447,6 +447,7 @@ CREATETYPE(TPointer, TPOINTER_INIT)
 typedef List(TPointer) TPointerList;
 void TPointerList_Destroy(TPointerList* p);
 bool TPointerList_IsPointer(TPointerList* pPointerlist);
+bool TPointerList_IsPointerN(TPointerList* pPointerlist, int n);
 bool TPointerList_IsAutoPointer(TPointerList* pPointerlist);
 
 typedef struct

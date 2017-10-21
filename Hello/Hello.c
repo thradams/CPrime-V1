@@ -1,17 +1,51 @@
 #include "config.h"
-#define _size
 
-struct X {
-  int _size i;  
+#include <stdlib.h>
+#include <stdbool.h>
+
+
+
+struct Item
+{
+    int i;
 };
 
-void X_Init(struct X* pX) _default
+struct Items
 {
-    pX->i = 0;
+    int* pData;
+    int Size;
+    int Capacity;
+};
+
+
+
+void Items_Reserve(struct Items* pItems, int n) _default
+{
+    if (n > pItems->Capacity)
+    {
+        int* pnew = pItems->pData;
+        pnew = (int*)realloc(pnew, n * sizeof(int));
+        if (pnew)
+        {
+            pItems->pData = pnew;
+            pItems->Capacity = n;
+        }
+    }
+}
+
+void Items_PushBack(struct Items* pItems, int v) _default
+{
+    if (pItems->Size + 1 > pItems->Capacity)
+    {
+        Items_Reserve(pItems, pItems->Size + 1);
+    }
+    pItems->pData[pItems->Size] = v;
+    pItems->Size++;
 }
 
 int main(int argc, char **argv)
 {
-	printf("hello world\n");
-	return 0;
+    struct Items items = _default {0};
+    Items_PushBack(&items, 1);
+    return 0;
 }

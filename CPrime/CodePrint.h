@@ -35,7 +35,12 @@ typedef struct Options
     ////////////
 	bool bExpandMacros;
 	bool bIncludeComments _defval(1);
-	bool bDontPrintClueList;
+    
+    //Usado para converter para string 
+    //exemplo unsigned   /*algo*/ int   
+    //tem que imprimir so 'unsigned int'
+    bool bPrintRepresentation;
+
 	int IdentationLevel;
     bool bHideDefaultImplementation;
 } Options;

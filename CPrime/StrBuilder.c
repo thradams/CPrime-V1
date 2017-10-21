@@ -362,3 +362,5 @@ void StrBuilder_AppendFmtLn(StrBuilder * p,
 
     StrBuilder_Append(p, "\n");
 }
+
+

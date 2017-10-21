@@ -678,6 +678,23 @@ bool TPointerList_IsPointer(TPointerList* pPointerlist)
 	return bIsPointer;
 }
 
+bool TPointerList_IsPointerN(TPointerList* pPointerlist, int n)
+{
+    int k = 0;
+    if (pPointerlist)
+    {
+        ForEachListItem(TPointer, pItem, pPointerlist)
+        {
+            if (pItem->Token == TK_ASTERISK)
+            {
+                k++;
+            }
+        }
+    }
+    return k == n;
+}
+
+
 void TPointer_Destroy(TPointer* p) _default
 {
     TScannerItemList_Destroy(&p->ClueList0);
