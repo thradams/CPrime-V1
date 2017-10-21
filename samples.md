@@ -1,4 +1,56 @@
 ##  Sample 
+
+
+```c
+
+#include <stdlib.h>
+#include <stdbool.h>
+
+
+typedef char * _auto String;
+
+struct X {
+    String Name;
+};
+
+void X_Init(struct X* pX) _default
+{
+    pX->Name = NULL;
+}
+
+void X_Destroy(struct X* pX) _default
+{
+    free(pX->Name);
+}
+
+struct X* X_Create() _default
+{
+    struct X *p = (struct X *) malloc(sizeof * p);
+    if (p != NULL)
+    {
+        X_Init(p);
+    }
+    return p;
+}
+
+void X_Delete(struct X* pX)  _default
+{
+    if (pX != NULL)
+    {
+        X_Destroy(pX);
+        free(pX);
+    }
+}
+
+
+int main(int argc, char **argv)
+{
+    struct X x = _default {0};
+    return 0;
+}
+
+```
+
 Input
 ```c
 
