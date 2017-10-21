@@ -42,12 +42,15 @@ void X_Init(struct X* pX) _default
 ```
 
 I the struct X is changed then the C' will update the implementation for you.
-C' is responsable to implement functions market as _default.
+The robot uses the name of the function return, arguments and all AST to decide what to do.
+
+The names are fixed for now but I can add lowercase or synonyms for instance.
+
+(This is just a matter of more people using the software)
 
 More features are being considered like lint, containers generation, helper functions etc. 
 
 Feel free to sugest features.
-
 
  
 ## Using the compiler
