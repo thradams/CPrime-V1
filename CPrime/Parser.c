@@ -9,7 +9,7 @@
 
 void Declarator(Parser* ctx, bool bAbstract, TDeclarator** ppTDeclarator2);
 
-#define LANGUAGE_EXTENSIONS 
+
 Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt);
 Tokens Parser_MatchToken(Parser* parser,
     Tokens tk,
@@ -3813,6 +3813,27 @@ static bool TTypeQualifier_IsFirst(Tokens token)
     return bResult;
 }
 
+#ifdef LANGUAGE_EXTENSIONS
+void Size_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
+{
+    Tokens token = Parser_CurrentToken(ctx);
+    pQualifier->Token = token;
+    token = Parser_Match(ctx, &pQualifier->ClueList0);
+    
+    token = Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, NULL);
+
+    switch (token)
+    {
+    case TK_IDENTIFIER:
+        String_Set(&pQualifier->SizeIdentifier, Lexeme(ctx));
+        token = Parser_MatchToken(ctx,  TK_IDENTIFIER, NULL);
+        break;
+    }
+    
+
+    token = Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, NULL);
+}
+#endif
 
 
 bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
@@ -3825,6 +3846,7 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
     _Atomic
     */
 
+    //extensions
     /*
     _auto
     _size(identifier)
@@ -3849,8 +3871,12 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
 
 #ifdef LANGUAGE_EXTENSIONS
 
-    case TK__AUTO:
     case TK__SIZE:
+        Size_Qualifier(ctx, pQualifier);
+            bResult = true;
+            break;
+    case TK__AUTO:
+    
         //type-qualifier-extensions 
     case TK_OPT_QUALIFIER:
     case TK_OWN_QUALIFIER:

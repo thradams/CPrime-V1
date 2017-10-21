@@ -1535,8 +1535,14 @@ static void TTypeQualifier_CodePrint(TProgram* program, Options * options, TType
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
     Output_Append(fp, options, TokenToString(p->Token));
-
-
+#ifdef LANGUAGE_EXTENSIONS
+    if (p->Token == TK__SIZE)
+    {
+        Output_Append(fp, options, "(");
+        Output_Append(fp, options, p->SizeIdentifier);
+        Output_Append(fp, options, ")");
+    }
+#endif
 }
 
 static void TTypeQualifierList_CodePrint(TProgram* program, Options * options, TTypeQualifierList* p, StrBuilder* fp)
@@ -1710,18 +1716,6 @@ void TInitDeclaratorList_CodePrint(TProgram* program,
 }
 
 
-
-void InstanciateDestroy2(TProgram* program,
-    Options* options,
-    TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
-    TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
-    TInitializer* pInitializerOpt,
-    const char* pInitExpressionText, //(x->p->i = 0),
-    const char* pszAutoPointerLenExpressionOpt,
-    const Action action,
-    Search search,
-    bool * pbHasInitializers,
-    StrBuilder* fp);
 
 TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifiers* specifiers);
 
@@ -2449,6 +2443,7 @@ static bool FindHighLevelFunction(TProgram* program,
     TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
     TInitializer* pInitializerOpt,
     const char* pInitExpressionText, //(x->p->i = 0)    
+    const char* pszAutoPointerLenExpressionOpt,
     const Action action,
     Search search,
     const char* nameToFind,
@@ -2460,18 +2455,24 @@ static bool FindHighLevelFunction(TProgram* program,
         return false;
     }
 
+
+
+
     bool bComplete = false;
 
+    //TODO FAZER FLAGS e OLHAR P TIPO E DECLARATOR AMBOS
+    bool bIsPointerToObject = TPointerList_IsPointerToObject(&pDeclatator->PointerList);
+    bool bIsAutoPointerToObject = TPointerList_IsAutoPointerToObject(&pDeclatator->PointerList);
+    bool bIsAutoPointerToAutoPointer = TPointerList_IsAutoPointerToAutoPointer(&pDeclatator->PointerList);
+    bool bIsAutoPointerToPointer = TPointerList_IsAutoPointerToPointer(&pDeclatator->PointerList);
 
-    bool bDeclaratorIsPointer = pDeclatator ? TDeclarator_IsPointer(pDeclatator) : false;
-    bool bDeclaratorIsAutoPointer = pDeclatator ? TDeclarator_IsAutoPointer(pDeclatator) : false;
 
 
     if (action == ActionDestroy || action == ActionDestroyContent)
     {
-        if (bDeclaratorIsPointer)
+        if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer || bIsAutoPointerToPointer)
         {
-            if (bDeclaratorIsAutoPointer)
+            if (bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
             {
                 //nao eh ponteiro
                 if (search == SearchAll ||
@@ -2484,11 +2485,51 @@ static bool FindHighLevelFunction(TProgram* program,
                             "Delete");
                     if (pDeclarationDestroy)
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                            "%s_Delete(%s);",
-                            nameToFind,
-                            pInitExpressionText);
-                        bComplete = true;
+                        if (bIsAutoPointerToObject)
+                        {
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                "%s_Delete(%s);",
+                                nameToFind,
+                                pInitExpressionText);
+                            bComplete = true;
+                        }
+                        else if (bIsAutoPointerToAutoPointer)
+                        {
+
+                            if (pszAutoPointerLenExpressionOpt)
+                            {
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "for (int i = 0; i < %s; i++)", pszAutoPointerLenExpressionOpt);
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
+
+                                options->IdentationLevel++;
+
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                    "%s_Delete(%s[i]);",
+                                    nameToFind,
+                                    pInitExpressionText);
+
+                                options->IdentationLevel--;
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                    "free((void*)%s);",
+                                    pInitExpressionText);
+                            }
+                            else
+                            {
+                                //1 auto pointer para 1 autopointer
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                    "%s_Delete(%s[0]);",
+                                    nameToFind,
+                                    pInitExpressionText);
+
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                    "free((void*)%s);",
+                                    pInitExpressionText);
+                            }
+
+                            bComplete = true;
+                        }
                     }
                     else
                     {
@@ -2503,18 +2544,76 @@ static bool FindHighLevelFunction(TProgram* program,
                                     "Destroy");
                             if (pDeclarationDestroy)
                             {
-                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                    "%s_Destroy(%s);",
-                                    nameToFind,
-                                    pInitExpressionText);
-                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                    "free((void*)%s);",
-                                    pInitExpressionText);
+                                if (bIsAutoPointerToObject)
+                                {
+                                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                        "%s_Destroy(%s);",
+                                        nameToFind,
+                                        pInitExpressionText);
+
+                                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                        "free((void*)%s);",
+                                        pInitExpressionText);
+                                }
+                                else if (bIsAutoPointerToAutoPointer)
+                                {
+                                    if (pszAutoPointerLenExpressionOpt)
+                                    {
+                                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "for (int i = 0; i < %s; i++)", pszAutoPointerLenExpressionOpt);
+                                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
+
+                                        options->IdentationLevel++;
+
+                                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                            "%s_Destroy(%s[i]);",
+                                            nameToFind,
+                                            pInitExpressionText);
+
+                                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                            "free((void*)%s[i]);",
+                                            pInitExpressionText);
+
+                                        options->IdentationLevel--;
+                                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+
+                                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                            "free((void*)%s);",
+                                            pInitExpressionText);
+                                    }
+                                    else
+                                    {
+                                        //1 auto pointer para 1 auto pointer
+
+                                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                            "%s_Destroy(%s[0]);",
+                                            nameToFind,
+                                            pInitExpressionText);
+
+                                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                            "free((void*)%s[0]);",
+                                            pInitExpressionText);
+
+                                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                            "free((void*)%s);",
+                                            pInitExpressionText);
+                                    }
+
+                                }
+
                                 bComplete = true;
                             }
                         }
                     }
                 }
+            }
+            else if (bIsAutoPointerToPointer)
+            {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                    "free((void*)%s);",
+                    pInitExpressionText);
+
+                //nada
+                bComplete = true;
             }
             else
             {
@@ -2529,23 +2628,27 @@ static bool FindHighLevelFunction(TProgram* program,
         else
         {
             //nao eh ponteiro
-            if (search == SearchAll ||
-                search == SearchDestroy)
+            if (!bIsAutoPointerToPointer)
             {
-                //vamos procurar pela funcao conceito _Destroy
-                TDeclaration* pDeclarationDestroy =
-                    SymbolMap_FindObjFunction(&program->GlobalScope,
-                        nameToFind,
-                        "Destroy");
-                if (pDeclarationDestroy)
+                if (search == SearchAll ||
+                    search == SearchDestroy)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                        "%s_Destroy(&%s);",
-                        nameToFind,
-                        pInitExpressionText);
-                    bComplete = true;
+                    //vamos procurar pela funcao conceito _Destroy
+                    TDeclaration* pDeclarationDestroy =
+                        SymbolMap_FindObjFunction(&program->GlobalScope,
+                            nameToFind,
+                            "Destroy");
+                    if (pDeclarationDestroy)
+                    {
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                            "%s_Destroy(&%s);",
+                            nameToFind,
+                            pInitExpressionText);
+                        bComplete = true;
+                    }
                 }
             }
+            
         }
     }
     else if (action == ActionDelete)
@@ -2584,6 +2687,7 @@ static bool FindHighLevelFunction(TProgram* program,
                             "%s_Destroy(%s);",
                             nameToFind,
                             pInitExpressionText);
+
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                             "free((void*)%s);",
                             pInitExpressionText);
@@ -2636,7 +2740,9 @@ static bool FindHighLevelFunction(TProgram* program,
     }
     else if (action == ActionInit)
     {
-        if (bDeclaratorIsPointer)
+        if (bIsPointerToObject ||
+            bIsAutoPointerToObject ||
+            bIsAutoPointerToAutoPointer)
         {
             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                 "%s = %s;",
@@ -2676,7 +2782,8 @@ static bool FindHighLevelFunction(TProgram* program,
                     "Init");
             if (pDeclarationInit)
             {
-                if (bDeclaratorIsPointer)
+
+                if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                 {
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                         "%s_Init(%s);",
@@ -2744,7 +2851,7 @@ static bool FindHighLevelFunction(TProgram* program,
             TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
 
         }
-        else if (bDeclaratorIsPointer)
+        else if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
         {
             StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(program));
             bComplete = true;
@@ -2830,8 +2937,12 @@ void InstanciateDestroy2(TProgram* program,
         *pbHasInitializers = true;
     }
 
-    bool bDeclaratorIsPointer = pDeclatator ? TDeclarator_IsPointer(pDeclatator) : false;
-    bool bDeclaratorIsAutoPointer = pDeclatator ? TDeclarator_IsAutoPointer(pDeclatator) : false;
+
+    bool bIsPointerToObject = TPointerList_IsPointerToObject(&pDeclatator->PointerList);
+    bool bIsAutoPointerToObject = TPointerList_IsAutoPointerToObject(&pDeclatator->PointerList);
+    bool bIsAutoPointerToAutoPointer = TPointerList_IsAutoPointerToAutoPointer(&pDeclatator->PointerList);
+    bool bIsAutoPointerToPointer = TPointerList_IsAutoPointerToPointer(&pDeclatator->PointerList);
+
 
     TSpecifier* pMainSpecifier =
         TSpecifierQualifierList_GetMainSpecifier(pSpecifierQualifierList);
@@ -2947,6 +3058,7 @@ void InstanciateDestroy2(TProgram* program,
                         pDeclatator,                        //<-dupla para entender o tipo
                         pInitializerOpt,
                         pInitExpressionText, //(x->p->i = 0)    
+                        pszAutoPointerLenExpressionOpt,
                         action,
                         search,
                         pSingleTypeSpecifier->TypedefName,
@@ -2985,9 +3097,29 @@ void InstanciateDestroy2(TProgram* program,
             //nao eh typedef, deve ser int, double etc..
             if (action == ActionDestroy)
             {
-                if (bDeclaratorIsAutoPointer)
+                if (bIsAutoPointerToObject)
                 {
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                }
+                else if (bIsAutoPointerToAutoPointer)
+                {
+                    if (pszAutoPointerLenExpressionOpt)
+                    {
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "for (int i = 0; i < %s; i++)", pszAutoPointerLenExpressionOpt);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
+
+                        options->IdentationLevel++;
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                        options->IdentationLevel--;
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+                    }
+                    else
+                    {
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s[0]);", pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                    }
+
+                    //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
                 }
                 else
                 {
@@ -3005,7 +3137,9 @@ void InstanciateDestroy2(TProgram* program,
                 }
                 else
                 {
-                    if (bDeclaratorIsPointer)
+
+
+                    if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                     {
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetNullStr(program));
                     }
@@ -3013,9 +3147,6 @@ void InstanciateDestroy2(TProgram* program,
                     {
                         if (TSpecifierQualifierList_IsBool(pSpecifierQualifierList))
                         {
-
-
-
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetFalseStr(program));
                         }
                         else
@@ -3036,7 +3167,7 @@ void InstanciateDestroy2(TProgram* program,
                 }
                 else
                 {
-                    if (bDeclaratorIsPointer)
+                    if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                     {
                         StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(program));
                     }
@@ -3063,6 +3194,7 @@ void InstanciateDestroy2(TProgram* program,
             pDeclatator,                        //<-dupla para entender o tipo
             pInitializerOpt,
             pInitExpressionText, //(x->p->i = 0)    
+            pszAutoPointerLenExpressionOpt,
             action,
             search,
             pStructUnionSpecifier->Name,
@@ -3095,12 +3227,32 @@ void InstanciateDestroy2(TProgram* program,
                 }
                 else if (action == ActionDestroy)
                 {
-                    if (bDeclaratorIsAutoPointer)
+                    if (bIsAutoPointerToObject)
                     {
                         PrintIfNotNullLn(program, options, pInitExpressionText, fp);
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
                         options->IdentationLevel++;
                     }
+                    else if (bIsAutoPointerToAutoPointer)
+                    {
+
+                        PrintIfNotNullLn(program, options, pInitExpressionText, fp);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
+                        options->IdentationLevel++;
+
+                        if (pszAutoPointerLenExpressionOpt)
+                        {
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "for (int i = 0; i < %s; i++)", pszAutoPointerLenExpressionOpt);
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
+                            options->IdentationLevel++;
+                        }
+                        else
+                        {
+                            //ASSERT(false);
+                        }
+
+                    }
+
                 }
                 else if (action == ActionCreate)
                 {
@@ -3128,7 +3280,7 @@ void InstanciateDestroy2(TProgram* program,
                     //}
                 }
 
-                
+
                 //ok tem a definicao completa da struct
                 for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
                 {
@@ -3151,11 +3303,13 @@ void InstanciateDestroy2(TProgram* program,
 
 
                         StrBuilder strVariableName = STRBUILDER_INIT;
+                        StrBuilder strPonterSizeExpr = STRBUILDER_INIT;
 
 
                         while (pStructDeclarator)
                         {
                             StrBuilder_Clear(&strVariableName);
+                            StrBuilder_Clear(&strPonterSizeExpr);
 
                             const char* structDeclaratorName =
                                 TDeclarator_GetName(pStructDeclarator->pDeclarator);
@@ -3164,7 +3318,20 @@ void InstanciateDestroy2(TProgram* program,
                                 if (pInitExpressionText)
                                     StrBuilder_Set(&strVariableName, pInitExpressionText);
 
-                                if (bDeclaratorIsPointer)
+
+                                if (bIsAutoPointerToAutoPointer)
+                                {
+                                    if (pszAutoPointerLenExpressionOpt)
+                                    {
+                                        StrBuilder_Append(&strVariableName, "[i]");
+                                    }
+                                    else
+                                    {
+                                        StrBuilder_Append(&strVariableName, "[0]");
+                                    }
+                                }
+
+                                if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                                 {
                                     StrBuilder_Append(&strVariableName, "->");
                                 }
@@ -3179,6 +3346,7 @@ void InstanciateDestroy2(TProgram* program,
                             }
 
                             StrBuilder_Append(&strVariableName, structDeclaratorName);
+
 
                             Action action2 = action;
                             if (action == ActionDestroyContent ||
@@ -3195,7 +3363,7 @@ void InstanciateDestroy2(TProgram* program,
                             {
                                 action2 = ActionInit;
                             }
-                            
+
                             if (action2 == ActionDestroy)
                             {
                                 //Tem que detectar isso aqui!
@@ -3205,10 +3373,33 @@ void InstanciateDestroy2(TProgram* program,
                                 // X * _auto * _auto _size(Size) pItems;
                                 //e dai ele passa a string para  funcao gerar
 
-                                bool b3 = TPointerList_IsPointerN(&pStructDeclarator->pDeclarator->PointerList, 2);
-                                if (b3)
+                                //TEm que somar com o typespecifier (strnig)
+                                bool bAutoPtrToAutoPtr =
+                                    TPointerList_IsAutoPointerToAutoPointer(&pStructDeclarator->pDeclarator->PointerList);
+
+                                if (bAutoPtrToAutoPtr)
                                 {
-                                    b3 = 0;
+                                    const char * pszSize =
+                                        TPointerList_GetSize(&pStructDeclarator->pDeclarator->PointerList);
+                                    if (pszSize)
+                                    {
+                                        if (pInitExpressionText)
+                                            StrBuilder_Set(&strPonterSizeExpr, pInitExpressionText);
+
+                                        if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
+                                        {
+                                            StrBuilder_Append(&strPonterSizeExpr, "->");
+                                        }
+                                        else
+                                        {
+                                            StrBuilder_Append(&strPonterSizeExpr, ".");
+                                        }
+                                        StrBuilder_Append(&strPonterSizeExpr, pszSize);
+                                    }
+                                    else
+                                    {
+                                        //nao tem size
+                                    }
                                 }
                             }
 
@@ -3219,7 +3410,7 @@ void InstanciateDestroy2(TProgram* program,
                                 pStructDeclarator->pDeclarator,
                                 pStructDeclarator->pInitializer,
                                 strVariableName.c_str,
-                                NULL /*not used*/,
+                                strPonterSizeExpr.c_str,
                                 action2,
                                 SearchAll,
                                 pbHasInitializers,
@@ -3231,22 +3422,55 @@ void InstanciateDestroy2(TProgram* program,
                         }
 
                         StrBuilder_Destroy(&strVariableName);
+                        StrBuilder_Destroy(&strPonterSizeExpr);
+
                     }
                 }
 
 
                 if (action == ActionDestroy)
                 {
-                    if (bDeclaratorIsAutoPointer)
+                    if (bIsAutoPointerToObject)
                     {
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
                         options->IdentationLevel--;
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
                     }
+                    else if (bIsAutoPointerToAutoPointer)
+                    {
+                        if (pszAutoPointerLenExpressionOpt)
+                        {
+                            options->IdentationLevel--;
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}"); //fecha  for
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                            options->IdentationLevel--;
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
+                        }
+                        else
+                        {                            
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                            options->IdentationLevel--;
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
+                        }
+                        
+
+                        //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                    }
+                }
+                else if (action == ActionDestroyContent)
+                {
+                    if (bIsAutoPointerToAutoPointer)
+                    {
+                        //    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                          //  options->IdentationLevel--;
+                            //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+                            //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                    }
                 }
                 else if (action == ActionDelete)
                 {
+
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
                     options->IdentationLevel--;
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
@@ -3287,8 +3511,13 @@ void InstanciateDestroy2(TProgram* program,
         //nao eh typedef, deve ser int, double etc..
         if (action == ActionDestroy)
         {
-            if (bDeclaratorIsAutoPointer)
+            if (bIsAutoPointerToObject)
             {
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+            }
+            else if (bIsAutoPointerToAutoPointer)
+            {
+                ASSERT(false);
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
             }
             else
@@ -3312,7 +3541,7 @@ void InstanciateDestroy2(TProgram* program,
                     pEnumSpecifier->EnumeratorList.pHead ? pEnumSpecifier->EnumeratorList.pHead->Name :
                     "0";
 
-                if (bDeclaratorIsPointer)
+                if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                 {
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetNullStr(program));
                 }
@@ -3339,7 +3568,7 @@ void InstanciateDestroy2(TProgram* program,
                     pEnumSpecifier->EnumeratorList.pHead ? pEnumSpecifier->EnumeratorList.pHead->Name :
                     "0";
 
-                if (bDeclaratorIsPointer)
+                if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                 {
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "*%s = %s;", pInitExpressionText, GetNullStr(program));
                 }
@@ -3365,7 +3594,7 @@ void InstanciateDestroy2(TProgram* program,
                     pEnumSpecifier->EnumeratorList.pHead ? pEnumSpecifier->EnumeratorList.pHead->Name :
                     "0";
 
-                if (bDeclaratorIsPointer)
+                if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                 {
                     StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(program));
                 }

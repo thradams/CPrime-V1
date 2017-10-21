@@ -275,9 +275,14 @@ typedef struct TTypeQualifier
 {
     Type Type;
     struct TTypeQualifier* pNext;
-    
+
+//#ifdef LANGUAGE_EXTENSIONS
+    String SizeIdentifier;
+//#endif
+
     Tokens Token;
     TScannerItemList ClueList0;
+
 
 } TTypeQualifier;
 
@@ -285,7 +290,7 @@ typedef List(TTypeQualifier) TTypeQualifierList;
 #define TTYPEQUALIFIERLIST_INIT LIST_INIT
 #define TTypeQualifierList_Destroy(p) List_Destroy(TTypeQualifier, p)
 
-#define TTYPE_QUALIFIER_INIT {TTypeQualifier_ID, NULL, TK_NONE, TSCANNERITEMLIST_INIT}
+#define TTYPE_QUALIFIER_INIT {TTypeQualifier_ID, NULL, STRING_INIT, TK_NONE, TSCANNERITEMLIST_INIT}
 CREATETYPE(TTypeQualifier, TTYPE_QUALIFIER_INIT)
 
 ////////////////////////////
@@ -449,6 +454,11 @@ void TPointerList_Destroy(TPointerList* p);
 bool TPointerList_IsPointer(TPointerList* pPointerlist);
 bool TPointerList_IsPointerN(TPointerList* pPointerlist, int n);
 bool TPointerList_IsAutoPointer(TPointerList* pPointerlist);
+bool TPointerList_IsAutoPointerToAutoPointer(TPointerList* pPointerlist);
+bool TPointerList_IsPointerToObject(TPointerList* pPointerlist);
+bool TPointerList_IsAutoPointerToObject(TPointerList* pPointerlist);
+bool TPointerList_IsAutoPointerToPointer(TPointerList* pPointerlist);
+const char * TPointerList_GetSize(TPointerList* pPointerlist);
 
 typedef struct
 {
@@ -686,9 +696,9 @@ typedef struct TDeclarator
 
 #define TDECLARATOR_INIT {LIST_INIT, NULL, TSCANNERITEMLIST_INIT}
 CREATETYPE(TDeclarator, TDECLARATOR_INIT)
-bool TDeclarator_IsPointer(TDeclarator* p);
-bool TDeclarator_IsAutoPointer(TDeclarator* p);
-bool TDeclarator_IsDirectPointer(TDeclarator* p);
+//bool TDeclarator_IsPointer(TDeclarator* p);
+//bool TDeclarator_IsAutoPointer(TDeclarator* p);
+//bool TDeclarator_IsDirectPointer(TDeclarator* p);
 const char* TDeclarator_GetName(TDeclarator* p);
 
 //typedef struct TAbstractDeclarator

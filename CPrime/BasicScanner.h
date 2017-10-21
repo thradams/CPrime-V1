@@ -5,6 +5,9 @@
 #include "Result.h"
 #include "Array.h"
 
+#define LANGUAGE_EXTENSIONS
+//
+
 typedef enum
 {
     TK_NONE,
@@ -101,16 +104,20 @@ typedef enum
     TK_CHAR_LITERAL,
 
     TK_AUTO,
-	TK__AUTO,
+	
+#ifdef LANGUAGE_EXTENSIONS
+    TK__AUTO,
     TK__SIZE,
+    TK__DEFAULT,
+    TK__DEFVAL,
+#endif
+
     TK_BREAK,
     TK_CASE,
     TK_char,
     TK_CONST,
     TK_CONTINUE,
-    TK_DEFAULT,
-	TK__DEFAULT,
-    TK__DEFVAL,
+    TK_DEFAULT,	
     TK_DO,
     TK_DOUBLE,
     TK_ELSE,

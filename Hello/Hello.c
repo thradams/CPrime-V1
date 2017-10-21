@@ -1,51 +1,48 @@
 #include "config.h"
 
-#include <stdlib.h>
-#include <stdbool.h>
+void free(void*);
 
-
+typedef char * _auto String;
 
 struct Item
 {
-    int i;
+    int  * _auto i;
 };
+
+
+void Item_Destroy(struct Item* p) _default
+{
+    free((void*)p->i);
+}
+
+void Item_Delete(struct Item* p) _default
+{
+    if (p)
+    {
+        Item_Destroy(p);
+        free((void*)p);
+    }
+}
+
 
 struct Items
 {
-    int* pData;
+    struct Item * _auto * _auto _size(Size) pData;
     int Size;
     int Capacity;
 };
 
-
-
-void Items_Reserve(struct Items* pItems, int n) _default
+void Items_Destroy(struct Items* pItems) _default
 {
-    if (n > pItems->Capacity)
+    for (int i = 0; i < pItems->Size; i++)
     {
-        int* pnew = pItems->pData;
-        pnew = (int*)realloc(pnew, n * sizeof(int));
-        if (pnew)
-        {
-            pItems->pData = pnew;
-            pItems->Capacity = n;
-        }
+        Item_Delete(pItems->pData[i]);
     }
+    free((void*)pItems->pData);
 }
 
-void Items_PushBack(struct Items* pItems, int v) _default
-{
-    if (pItems->Size + 1 > pItems->Capacity)
-    {
-        Items_Reserve(pItems, pItems->Size + 1);
-    }
-    pItems->pData[pItems->Size] = v;
-    pItems->Size++;
-}
 
 int main(int argc, char **argv)
 {
-    struct Items items = _default {0};
-    Items_PushBack(&items, 1);
     return 0;
 }
