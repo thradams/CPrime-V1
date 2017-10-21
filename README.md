@@ -7,12 +7,17 @@ Let´s do pair programming!
 ## What is C' ?
 C'(pronounced c prime) is a robot that can help you generate and maintain C source code.
 
-## How can C' help?
+## How it works?
+
+You can delegate to the robot the implementation of some functions.
+
+To do this, you just add an empty macro called __default .
 
 Currently, C' is generating:
- * constructor / destructor
- * create, delete
- * static initializers.
+
+ * Constructor / Destructor (Init and Destroy)
+ * Create, Delete
+ * Static initializers
  * Dynamic arrays functions PushBack and Reserve
 
 Sample
@@ -140,6 +145,96 @@ default {0}, otherwise the initialization list is expanded for its C89 version.
 The default is used to tell the compiler to keep the initialization 
 list updated.
  
+## Dynamic arrays
+
+```c
+#include <stdlib.h>
+#include <stdio.h>
+
+struct Item
+{
+    int  i;
+};
+
+
+struct Item* Item_Create() _default
+{
+    struct Item* p = (struct Item*) malloc(sizeof * p);
+    if (p)
+    {
+        p->i = 0;
+    }
+    return p;
+}
+
+void Item_Delete(struct Item* p) _default
+{
+    if (p)
+    {
+        free((void*)p);
+    }
+}
+
+
+struct Items
+{
+    struct Item * _auto * _auto _size(Size) pData;
+    int Size;
+    int Capacity;
+};
+
+void Items_Reserve(struct Items* pItems, int n) _default
+{
+    if (n > pItems->Capacity)
+    {
+        struct Item** pnew = pItems->pData;
+        pnew = (struct Item**)realloc(pnew, n * sizeof(struct Item*));
+        if (pnew)
+        {
+            pItems->pData = pnew;
+            pItems->Capacity = n;
+        }
+    }
+}
+
+void Items_PushBack(struct Items* pItems, struct Item* pItem) _default
+{
+    if (pItems->Size + 1 > pItems->Capacity)
+    {
+        Items_Reserve(pItems, pItems->Size + 1);
+    }
+    pItems->pData[pItems->Size] = pItem;
+    pItems->Size++;
+}
+
+void Items_Destroy(struct Items* pItems) _default
+{
+    for (int i = 0; i < pItems->Size; i++)
+    {
+        Item_Delete(pItems->pData[i]);
+    }
+    free((void*)pItems->pData);
+}
+
+
+int main(int argc, char **argv)
+{
+    struct Items items = { 0 };
+
+    Items_PushBack(&items, Item_Create());
+    Items_PushBack(&items, Item_Create());
+    Items_PushBack(&items, Item_Create());
+
+    for (int i = 0; i < items.Size; i++)
+    {
+        printf("%d\n", items.pData[i]->i);
+    }
+
+    Items_Destroy(&items);
+    return 0;
+}
+
+```
 
 ## constructor / destructor / create / delete / _auto
 
