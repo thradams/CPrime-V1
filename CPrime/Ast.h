@@ -78,8 +78,13 @@ typedef enum
 
 #define CASE(T) case T##_ID
 
-#define TYPEOF(x) *((EType*)(x))
-#define IS_TYPE(x, ID) (TYPEOF((x)) == (ID))
+struct TypeStruct
+{
+    EType type;
+};
+
+#define TYPEOF(x) (((struct TypeStruct*)(x))->type)
+#define IS_TYPE(x, ID) (TYPEOF(x) == (ID))
 
 
 #define CREATETYPEOR(TYPE)\

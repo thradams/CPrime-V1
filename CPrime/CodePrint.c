@@ -2148,62 +2148,63 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
         }
         else
         {
-
-
-            TStructUnionSpecifier* pStructUnionSpecifier =
-                GetStructSpecifier(program, &parameters[0]->Specifiers);
-            if (pStructUnionSpecifier &&
-                pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
+            if (numberOfArguments > 0)
             {
-                Map2 map = MAPSTRINGTOPTR_INIT;
-                FindUnionSetOf(program, pStructUnionSpecifier->Name, &map);
-
-                struct TemplateVar vars0[] = {
-                    { "p", parameterName[0] }
-                };
-
-                StrBuilder_Template(fp,
-                    "    switch (*((int*)$p))\n"
-                    "    {\n",
-                    vars0,
-                    sizeof(vars0) / sizeof(vars0[0]));
-
-                for (int i = 0; i < map.nHashTableSize; i++)
+                TStructUnionSpecifier* pStructUnionSpecifier =
+                    GetStructSpecifier(program, &parameters[0]->Specifiers);
+                if (pStructUnionSpecifier &&
+                    pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
                 {
-                    if (map.pHashTable[i])
+                    Map2 map = MAPSTRINGTOPTR_INIT;
+                    FindUnionSetOf(program, pStructUnionSpecifier->Name, &map);
+
+                    struct TemplateVar vars0[] = {
+                        { "p", parameterName[0] }
+                    };
+
+                    StrBuilder_Template(fp,
+                        "    switch (*((int*)$p))\n"
+                        "    {\n",
+                        vars0,
+                        sizeof(vars0) / sizeof(vars0[0]));
+
+                    for (int i = 0; i < map.nHashTableSize; i++)
                     {
-                        struct TemplateVar vars[] = {
-                            { "p", parameterName[0] },
-                            { "type", (const char*)map.pHashTable[i]->Key },
-                            { "prefix", functionPrefix.c_str },
-                            { "suffix", functionSuffix.c_str }
-                        };
-                        if ((int)map.pHashTable[i]->pValue == 2)
+                        if (map.pHashTable[i])
                         {
-                            //2 is struct
-                            StrBuilder_Template(fp,
-                                "        case $type\b_ID: $type\b_$suffix((struct $type*)$p); break; \n",
-                                vars,
-                                sizeof(vars) / sizeof(vars[0]));
-                        }
-                        else
-                        {
-                            //1 is typedef
-                            StrBuilder_Template(fp,
-                                "        case $type\b_ID: $type\b_$suffix(($type*)$p); break; \n",
-                                vars,
-                                sizeof(vars) / sizeof(vars[0]));
-                        }
+                            struct TemplateVar vars[] = {
+                                { "p", parameterName[0] },
+                                { "type", (const char*)map.pHashTable[i]->Key },
+                                { "prefix", functionPrefix.c_str },
+                                { "suffix", functionSuffix.c_str }
+                            };
+                            if ((int)map.pHashTable[i]->pValue == 2)
+                            {
+                                //2 is struct
+                                StrBuilder_Template(fp,
+                                    "        case $type\b_ID: $type\b_$suffix((struct $type*)$p); break; \n",
+                                    vars,
+                                    sizeof(vars) / sizeof(vars[0]));
+                            }
+                            else
+                            {
+                                //1 is typedef
+                                StrBuilder_Template(fp,
+                                    "        case $type\b_ID: $type\b_$suffix(($type*)$p); break; \n",
+                                    vars,
+                                    sizeof(vars) / sizeof(vars[0]));
+                            }
 
+                        }
                     }
+
+                    StrBuilder_Template(fp,
+                        "    }\n",
+                        NULL,
+                        0);
+
+                    Map2_Destroy(&map);
                 }
-
-                StrBuilder_Template(fp,
-                    "    }\n",
-                    NULL,
-                    0);
-
-                Map2_Destroy(&map);
             }
         }
     }
