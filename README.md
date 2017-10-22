@@ -37,16 +37,25 @@ The robot uses the name of the function return, arguments and all AST to decide 
 
 ## Table Functions x Types
 
-|         | Any Type  | Vector | List  |   |   |
-|---------|-----------|--------|-------|---|---|
-|Init     |      x    | x      | x     |   |   |
-|Destroy  |      x    | x      | x     |   |   |
-|Create   |      x    | x      | x     |   |   |
-|Delete   |      x    | x      | x     |   |   |
-|Swap     |           |        |       |   |   |
-|Clear    |           |        |       |   |   |
-|Reserve  |           | x      |       |   |   |
-|PushBack |           | x      |       |   |   |
+x implemented
+- missing but considered
+
+
+|         | Any Type  | Vector | List  | enum  |   |
+|---------|-----------|--------|-------|-------|---|
+|Init     |      x    | x      | x     |       |   |
+|Destroy  |      x    | x      | x     |       |   |
+|Create   |      x    | x      | x     |       |   |
+|Delete   |      x    | x      | x     |       |   |
+|Swap     |      -    | -      | -     |       |   |
+|Clear    |           |        | -     |       |   |
+|Reserve  |           | x      |       |       |   |
+|PushBack |           | x      | -     |       |   |
+|PopBack  |           | -      | -     |       |   |
+|PopFront |           | -      | -     |       |   |
+|Top      |           | -      | -     |       |   |
+|Back     |           | -      | -     |       |   |
+|ToString |           | -      | -     |   -   |   |
 
 
  
