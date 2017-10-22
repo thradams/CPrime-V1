@@ -681,7 +681,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
                 const char* indirectTypedef = NULL;
                 for (int i =0 ; i <pDeclaration->Specifiers.Size; i++)
                 {
-                    TTypeSpecifier* pItem = pDeclaration->Specifiers.pData[i];
+                    TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
 
                     switch (TYPEOF(pItem))
                     {

@@ -98,11 +98,6 @@ void TokenArray_RemoveAt(TokenArray* p, int index)
 
 
 
-bool TokenArray_Contain(TokenArray *pArray, PPToken* pToken)
-{
-  return false;
-}
-
 void TokenArray_AppendTokensCopy(TokenArray *pArray, PPToken** pToken, int len)
 {
   for (int i = 0; i < len; i++)

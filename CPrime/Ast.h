@@ -10,16 +10,22 @@
 #include "Macro.h"
 #include "SymbolMap.h"
 
+
+#define TYPEOF(x) (((struct TypeStruct*)(x))->type)
+#define IS_TYPE(x, ID) (TYPEOF(x) == (ID))
+
+
+
 #define CAST(FROM, TO) \
-static inline TO *  FROM##_As_##TO(struct FROM*  p)\
+static inline TO *  FROM##_As_##TO( FROM*  p)\
 {\
-if (p != NULL && *((EType*)(p)) == TO##_ID)\
+if (p != NULL && IS_TYPE( (p), TO##_ID))\
     return (  TO * )p;\
   return NULL;\
 }\
-static inline struct FROM *  TO##_As_##FROM(struct TO*  p)\
+static inline  FROM *  TO##_As_##FROM( TO*  p)\
 {\
-    return ( struct FROM * )p;\
+    return (  FROM * )p;\
 }
 
 #define CASTSAME(FROM, TO) \
@@ -76,15 +82,13 @@ typedef enum
     TParameter_ID
 } EType;
 
-#define CASE(T) case T##_ID
-
 struct TypeStruct
 {
     EType type;
 };
 
-#define TYPEOF(x) (((struct TypeStruct*)(x))->type)
-#define IS_TYPE(x, ID) (TYPEOF(x) == (ID))
+
+#define CASE(T) case T##_ID
 
 
 #define CREATETYPEOR(TYPE)\
