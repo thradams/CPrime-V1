@@ -458,6 +458,8 @@ bool TPointerList_IsAutoPointerToAutoPointer(TPointerList* pPointerlist);
 bool TPointerList_IsPointerToObject(TPointerList* pPointerlist);
 bool TPointerList_IsAutoPointerToObject(TPointerList* pPointerlist);
 bool TPointerList_IsAutoPointerToPointer(TPointerList* pPointerlist);
+bool TPointerList_IsPointer(TPointerList* pPointerlist);
+
 const char * TPointerList_GetSize(TPointerList* pPointerlist);
 
 typedef struct

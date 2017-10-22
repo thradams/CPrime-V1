@@ -751,6 +751,8 @@ bool TPointerList_IsAutoPointerToObject(TPointerList* pPointerlist)
     return bResult;
 }
 
+
+
 bool TPointerList_IsAutoPointerToPointer(TPointerList* pPointerlist)
 {
     bool bResult = false;

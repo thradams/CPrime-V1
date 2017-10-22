@@ -84,7 +84,7 @@ void TokenArray_Delete(TokenArray* st) _default
     if (st != NULL)
     {
         TokenArray_Destroy(st);
-        free(st);
+        free((void*)st);
     }
 }
 

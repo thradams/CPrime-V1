@@ -2551,12 +2551,12 @@ static bool FindHighLevelFunction(TProgram* program,
     bool bIsAutoPointerToObject = TPointerList_IsAutoPointerToObject(&pDeclatator->PointerList);
     bool bIsAutoPointerToAutoPointer = TPointerList_IsAutoPointerToAutoPointer(&pDeclatator->PointerList);
     bool bIsAutoPointerToPointer = TPointerList_IsAutoPointerToPointer(&pDeclatator->PointerList);
-
+    bool bIsPointer = TPointerList_IsPointer(&pDeclatator->PointerList);
 
 
     if (action == ActionDestroy || action == ActionDestroyContent)
     {
-        if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer || bIsAutoPointerToPointer)
+        if (bIsPointer)
         {
             if (bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
             {
@@ -2826,9 +2826,7 @@ static bool FindHighLevelFunction(TProgram* program,
     }
     else if (action == ActionInit)
     {
-        if (bIsPointerToObject ||
-            bIsAutoPointerToObject ||
-            bIsAutoPointerToAutoPointer)
+        if (bIsPointer)
         {
             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                 "%s = %s;",
@@ -2869,7 +2867,7 @@ static bool FindHighLevelFunction(TProgram* program,
             if (pDeclarationInit)
             {
 
-                if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
+                if (bIsPointer)
                 {
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                         "%s_Init(%s);",
@@ -2937,7 +2935,7 @@ static bool FindHighLevelFunction(TProgram* program,
             TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
 
         }
-        else if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
+        else if (bIsPointer)
         {
             StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(program));
             bComplete = true;
@@ -3028,7 +3026,7 @@ void InstanciateDestroy2(TProgram* program,
     bool bIsAutoPointerToObject = TPointerList_IsAutoPointerToObject(&pDeclatator->PointerList);
     bool bIsAutoPointerToAutoPointer = TPointerList_IsAutoPointerToAutoPointer(&pDeclatator->PointerList);
     bool bIsAutoPointerToPointer = TPointerList_IsAutoPointerToPointer(&pDeclatator->PointerList);
-
+    bool bIsPointer = TPointerList_IsPointer(&pDeclatator->PointerList);
 
     TSpecifier* pMainSpecifier =
         TSpecifierQualifierList_GetMainSpecifier(pSpecifierQualifierList);
@@ -3417,7 +3415,7 @@ void InstanciateDestroy2(TProgram* program,
                                     }
                                 }
 
-                                if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
+                                if (bIsPointer)
                                 {
                                     StrBuilder_Append(&strVariableName, "->");
                                 }
