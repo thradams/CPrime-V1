@@ -11,20 +11,20 @@
 #include "SymbolMap.h"
 
 #define CAST(FROM, TO) \
-static inline TO *  FROM##_As_##TO(FROM*  p)\
+static inline TO *  FROM##_As_##TO(struct FROM*  p)\
 {\
-if (p != NULL && p->Type == TO##_ID)\
-    return ( TO * )p;\
+if (p != NULL && *((EType*)(p)) == TO##_ID)\
+    return (  TO * )p;\
   return NULL;\
 }\
-static inline FROM *  TO##_As_##FROM(TO*  p)\
+static inline struct FROM *  TO##_As_##FROM(struct TO*  p)\
 {\
-    return ( FROM * )p;\
+    return ( struct FROM * )p;\
 }
 
 #define CASTSAME(FROM, TO) \
-static inline TO * FROM##_As_##TO(FROM* p) { return p; }\
-static inline FROM * TO##_As_##FROM(TO* p) { return p; }
+static inline struct TO * FROM##_As_##TO(struct FROM* p) { return (struct TO * ) p; }\
+static inline struct FROM * TO##_As_##FROM(struct TO* p) { return (struct FROM *) p; }
 
 
 /*
@@ -74,12 +74,17 @@ typedef enum
     TTernaryExpression_ID,
 
     TParameter_ID
-} Type;
+} EType;
+
 #define CASE(T) case T##_ID
+
+#define TYPEOF(x) *((EType*)(x))
+#define IS_TYPE(x, ID) (TYPEOF((x)) == (ID))
 
 
 #define CREATETYPEOR(TYPE)\
-  typedef TTypePointer TYPE ;\
+  struct TYPE ;\
+  typedef struct TYPE TYPE ;\
   void TYPE##_Destroy(TYPE* p);\
 static inline void TYPE##_Delete(TYPE*  p)\
 {\
@@ -132,16 +137,12 @@ typedef struct
 } TPosition;
 #define TPOSITION_INIT {0,0}
 
-typedef struct TTypePointer
-{
-    Type Type;
-} TTypePointer;
-
-typedef TTypePointer TExpression;
+struct TExpression;
+typedef struct TExpression TExpression;
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
 
     TExpression*_auto  pConstantExpression;
     String Text;
@@ -159,7 +160,7 @@ CREATETYPE(TStaticAssertDeclaration, TSTATIC_ASSERT_DECLARATION_INIT)
 
 typedef struct
 {
-	TTypePointer Type;
+	EType Type;
 	TScannerItemList ClueList0;
 } TEofDeclaration;
 
@@ -167,13 +168,19 @@ typedef struct
 CREATETYPE(TEofDeclaration, TEOFDECLARATION_INIT)
 
 
-typedef TTypePointer TStatement;
-typedef TTypePointer TBlockItem;
+struct TStatement;
+struct TBlockItem;
+
+typedef struct TStatement TStatement;
+typedef struct TBlockItem TBlockItem;
+
 
 CREATETYPEOR(TBlockItem)
 CASTSAME(TBlockItem, TStatement)
 
-typedef TTypePointer TAnyDeclaration;
+struct TAnyDeclaration;
+typedef struct TAnyDeclaration TAnyDeclaration;
+
 CASTSAME(TBlockItem, TAnyDeclaration)
 CREATETYPEOR(TAnyDeclaration)
 
@@ -182,7 +189,7 @@ void TBlockItemList_Destroy(TBlockItemList* p);
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     TBlockItemList BlockItemList;
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
@@ -198,7 +205,7 @@ CREATETYPE(TCompoundStatement, TCOMPOUNDSTATEMENT_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     Tokens token;
     String lexeme;
     TExpression*_auto   pExpressionOpt;
@@ -226,7 +233,7 @@ void TPrimaryExpressionLiteralItemList_Destroy(TPrimaryExpressionLiteralItemList
 #define TPRIMARYEXPRESSIONLITERALITEMLIST_INIT LIST_INIT
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     TPrimaryExpressionLiteralItemList List;
 } TPrimaryExpressionLiteral;
 
@@ -241,7 +248,7 @@ void TInitializerList_Destroy(TInitializerList* p);
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     Tokens token;
     TExpression*_auto   pExpressionLeft;
     TExpression*_auto    pExpressionRight;
@@ -255,7 +262,7 @@ CREATETYPE(TBinaryExpression, TBINARYEXPRESSION_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     Tokens token;
     TExpression*_auto   pExpressionLeft;
     TExpression*_auto    pExpressionMiddle;
@@ -272,7 +279,7 @@ CREATETYPEOR(TExpression)
 
 typedef struct TTypeQualifier
 {
-    Type Type;
+    EType Type;
     struct TTypeQualifier* pNext;
 
 //#ifdef LANGUAGE_EXTENSIONS
@@ -303,7 +310,7 @@ CREATETYPE(TTypeQualifier, TTYPE_QUALIFIER_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     TExpression *_auto    pExpression;
     TScannerItemList ClueList0;
 } TExpressionStatement;
@@ -312,7 +319,7 @@ CREATETYPE(TExpressionStatement, TEXPRESSION_STATEMENT_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     Tokens token;
     String Identifier;
     TExpression *_auto   pExpression;
@@ -327,7 +334,7 @@ CREATETYPE(TJumpStatement, TJUMP_STATEMENT_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     TScannerItemList ClueList;
 } TAsmStatement;
 
@@ -337,7 +344,7 @@ CREATETYPE(TAsmStatement, TASM_STATEMENT_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     TAnyDeclaration*_auto   pInitDeclarationOpt;
     TExpression*_auto   pExpression1;
     TExpression*_auto  pExpression2;
@@ -355,7 +362,7 @@ CREATETYPE(TForStatement, TFORSTATEMENT_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     TExpression*_auto   pExpression;
     TStatement*_auto   pStatement;
     TScannerItemList ClueList0;
@@ -369,7 +376,7 @@ CREATETYPE(TWhileStatement, TWHILESTATEMENT_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     TExpression *_auto    pExpression;
     TStatement*_auto    pStatement;
     TScannerItemList ClueList0; //do
@@ -384,7 +391,7 @@ CREATETYPE(TDoStatement, TDOSTATEMENT_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
 
     TStatement *_auto   pStatementOpt;
     TExpression *_auto   pExpression;
@@ -400,7 +407,7 @@ CREATETYPE(TLabeledStatement, TLABEDSTATEMENT_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     TExpression *_auto   pConditionExpression;
     TStatement*_auto    pExpression;
     TScannerItemList ClueList0;
@@ -414,7 +421,7 @@ CREATETYPE(TSwitchStatement, TSWITCH_STATEMENT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     TExpression*_auto    pConditionExpression;
     TStatement*_auto   pStatement;
     TStatement*_auto   pElseStatement;
@@ -470,7 +477,7 @@ const char * TPointerList_GetSize(TPointerList* pPointerlist);
 
 typedef struct
 {
-    Type Type;
+    EType Type;
     void* pNext;
     bool bIsInline;
     bool bIsNoReturn;
@@ -485,7 +492,7 @@ CREATETYPE(TFunctionSpecifier, TFUNCTION_SPECIFIER_INIT)
 
 typedef struct
 {
-    Type Type;
+    EType Type;
     void* pNext;
     bool bIsTypedef;
     bool bIsExtern;
@@ -502,7 +509,7 @@ CREATETYPE(TStorageSpecifier, TSTORAGE_SPECIFIER_INIT)
 
 typedef struct
 {
-    Type Type;
+    EType Type;
     void *pNext;
     String TypeName;
     //_Alignas(type - name)
@@ -534,7 +541,7 @@ void TEnumeratorList_Destroy(TEnumeratorList* p);
 
 typedef struct TEnumSpecifier
 {
-    TTypePointer Type;
+    EType Type;
     String Name;
     TEnumeratorList EnumeratorList;
     TScannerItemList ClueList0;
@@ -548,7 +555,7 @@ CREATETYPE(TEnumSpecifier, ENUM_SPECIFIER_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     void *pNext;
     Tokens Token;
     String TypedefName;  
@@ -560,8 +567,8 @@ CREATETYPE(TSingleTypeSpecifier, TBUILDINTYPE_SPECIFIER_INIT)
 
 const char* TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier* p);
 
-
-typedef TTypePointer TTypeSpecifier;
+struct TTypeSpecifier;
+typedef struct TTypeSpecifier TTypeSpecifier;
 
 
 CREATETYPEOR(TSpecifier)
@@ -667,7 +674,8 @@ typedef struct TDesignation
 #define TDESIGNATION_INIT { LIST_INIT, TSCANNERITEMLIST_INIT}
 CREATETYPE(TDesignation, TDESIGNATION_INIT)
 
-typedef TTypePointer TInitializer;
+struct TInitializer;
+typedef struct TInitializer TInitializer;
 
 typedef struct TInitializerListItem
 {
@@ -685,7 +693,7 @@ CREATETYPE(TInitializerListItem, TINITIALIZER_LIST_ITEM_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     TInitializerList InitializerList;
 	TScannerItemList ClueList00;
     TScannerItemList ClueList0;
@@ -767,9 +775,9 @@ const char* TInitDeclarator_FindName(TInitDeclarator* p);
 typedef TInitDeclaratorList TStructDeclaratorList;
 
 
-typedef struct
+typedef struct TStructDeclaration
 {
-    TTypePointer Type;//= {TStructDeclaration_ID
+    EType Type;//= {TStructDeclaration_ID
 
     TSpecifierQualifierList SpecifierQualifierList;
     TStructDeclaratorList DeclaratorList;
@@ -799,7 +807,7 @@ typedef enum StructUnionStereotype
 
 typedef struct TStructUnionSpecifier
 {
-    TTypePointer Type;
+    EType Type;
     TStructDeclarationList StructDeclarationList;
     String Name;
     String StereotypeStr;
@@ -827,7 +835,7 @@ CAST(TSpecifierQualifier, TStructUnionSpecifier)
 
 typedef struct TDeclaration
 {
-    TTypePointer Type;
+    EType Type;
     TDeclarationSpecifiers Specifiers;
     TInitDeclaratorList InitDeclaratorList;
 
@@ -941,7 +949,7 @@ CAST(TBlockItem, TStaticAssertDeclaration)
 
 typedef struct TTypeName
 {
-    Type Type;
+    EType Type;
     TSpecifierQualifierList SpecifierQualifierList;
     TDeclarator Declarator;
 } TTypeName;
@@ -953,7 +961,7 @@ CREATETYPE(TTypeName, TTYPENAME_INIT)
 
 typedef struct TAtomicTypeSpecifier
 {
-    Type Type;
+    EType Type;
     void* pNext;
     TTypeName TypeName;
     TScannerItemList ClueList0;
@@ -968,7 +976,7 @@ CAST(TTypeSpecifier, TAtomicTypeSpecifier)
 
 typedef struct TPostfixExpressionCoreTag
 {
-    TTypePointer Type;
+    EType Type;
     Tokens token;
     String lexeme;
     TExpression*_auto   pExpressionLeft;
@@ -995,7 +1003,7 @@ CREATETYPE(TPostfixExpressionCore, TPOSTFIX_EXPRESSION_CORE)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     TExpression*_auto    pExpression;
     TTypeName TypeName;
     TScannerItemList ClueList0;
@@ -1009,7 +1017,7 @@ CREATETYPE(TCastExpressionType, TCAST_EXPRESSION_INIT)
 
 typedef struct
 {
-    TTypePointer Type;
+    EType Type;
     Tokens token;
     TExpression*_auto   pExpressionRight;
     TTypeName TypeName;

@@ -101,7 +101,7 @@ void TIfStatement_Destroy(TIfStatement *p) _default
 
 void TStatement_Destroy(TStatement* p)
 {
-    switch (p->Type)
+    switch (TYPEOF(p))
     {
     case TExpressionStatement_ID:
         TExpressionStatement_Destroy((TExpressionStatement*)p);
@@ -143,7 +143,7 @@ void TStatement_Destroy(TStatement* p)
 void TBlockItem_Destroy(TBlockItem* p)
 {
 
-    switch (p->Type)
+    switch (TYPEOF(p))
     {
     case TDeclaration_ID:
         TDeclaration_Destroy((TDeclaration*)p);
@@ -255,7 +255,7 @@ void TPrimaryExpressionLiteral_Destroy(TPrimaryExpressionLiteral* p) _default
 
 void TExpression_Destroy(TExpression* p)
 {
-    switch (p->Type)
+    switch (TYPEOF(p))
     {
         CASE(TPrimaryExpressionLiteral) :
             TPrimaryExpressionLiteral_Destroy((TPrimaryExpressionLiteral*)p);
@@ -358,7 +358,7 @@ const char* TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier* p)
 
 void TTypeSpecifier_Destroy(TTypeSpecifier* p)
 {
-    switch (p->Type)
+    switch (TYPEOF(p))
     {
     case TSingleTypeSpecifier_ID:
         TSingleTypeSpecifier_Destroy((TSingleTypeSpecifier*)p);
@@ -421,9 +421,9 @@ TSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p)
     for (int i = 0; i < p->Size; i++)
     {
         TSpecifierQualifier* pSpecifierQualifier = p->pData[i];
-        if (pSpecifierQualifier->Type == TSingleTypeSpecifier_ID ||
-            pSpecifierQualifier->Type == TStructUnionSpecifier_ID ||
-            pSpecifierQualifier->Type == TEnumSpecifier_ID)
+        if (IS_TYPE(pSpecifierQualifier , TSingleTypeSpecifier_ID) ||
+            IS_TYPE(pSpecifierQualifier,TStructUnionSpecifier_ID) ||
+            IS_TYPE(pSpecifierQualifier, TEnumSpecifier_ID))
         {
             pSpecifier = pSpecifierQualifier;
             break;
@@ -612,7 +612,7 @@ void TStructDeclaration_Destroy(TStructDeclaration* p)
 
 void TAnyStructDeclaration_Destroy(TAnyStructDeclaration* p)
 {
-    switch (p->Type)
+    switch (TYPEOF(p))
     {
     case TStructDeclaration_ID:
         TStructDeclaration_Destroy((TStructDeclaration*)p);
@@ -953,7 +953,7 @@ bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList* p, Tokens token, co
     for (int i = 0; i < p->Size; i++)
     {
         TSpecifierQualifier* pSpecifier = p->pData[i];
-        switch (pSpecifier->Type)
+        switch (TYPEOF(pSpecifier))
         {
             CASE(TSingleTypeSpecifier) :
             {     TSingleTypeSpecifier* pTSingleTypeSpecifier =
@@ -1039,7 +1039,7 @@ bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers* pDeclaration
     {
         TSpecifier* pSpecifier = pDeclarationSpecifiers->pData[i];
 
-        switch (pSpecifier->Type)
+        switch (TYPEOF(pSpecifier))
         {
             CASE(TSingleTypeSpecifier) :
             {     TSingleTypeSpecifier* pTSingleTypeSpecifier =
@@ -1136,7 +1136,7 @@ const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDecla
 
 void TSpecifierQualifier_Destroy(TSpecifierQualifier* pItem)
 {
-    switch (pItem->Type)
+    switch (TYPEOF(pItem))
     {
         CASE(TSingleTypeSpecifier) :
             TSingleTypeSpecifier_Destroy((TSingleTypeSpecifier*)pItem);
@@ -1176,7 +1176,7 @@ void TSpecifier_Destroy(TSpecifier* pItem)
 {
 
   
-        switch (pItem->Type)
+        switch (TYPEOF(pItem))
         {
             CASE(TSingleTypeSpecifier) :
                 TSingleTypeSpecifier_Destroy((TSingleTypeSpecifier*)pItem);
@@ -1289,7 +1289,7 @@ bool TDeclaration_Is_StructOrUnionDeclaration(TDeclaration* p)
     for (int i = 0; i < p->Specifiers.Size; i++)
     {
         TSpecifier* pItem = p->Specifiers.pData[i];
-        if (TTypeSpecifier_As_TStructUnionSpecifier(pItem))
+        if (TSpecifier_As_TStructUnionSpecifier(pItem))
         {
             bIsStructOrUnion = true;
             break;
@@ -1323,7 +1323,7 @@ const char* TSpecifier_GetTypedefName(TDeclarationSpecifiers* p)
     const char* typedefName = NULL;
     for (int i = 0; i < p->Size; i++)
     {
-        TTypeSpecifier* pSpecifier = p->pData[i];
+        TSpecifier* pSpecifier = p->pData[i];
         TSingleTypeSpecifier *pSingleTypeSpecifier =
             TSpecifier_As_TSingleTypeSpecifier(pSpecifier);
         if (pSingleTypeSpecifier &&
@@ -1398,8 +1398,8 @@ bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecif
     bool bResult = false;
     for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
     {
-        TTypeSpecifier* pItem = pDeclarationSpecifiers->pData[i];
-        switch (pItem->Type)
+        TSpecifier* pItem = pDeclarationSpecifiers->pData[i];
+        switch (TYPEOF(pItem))
         {
             CASE(TStorageSpecifier) :
             {
@@ -1429,7 +1429,7 @@ bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecif
 bool TAnyDeclaration_IsTypedef(TAnyDeclaration* pDeclaration)
 {
     bool bResult = false;
-    switch (pDeclaration->Type)
+    switch (TYPEOF(pDeclaration))
     {
     case TDeclaration_ID:
     {
@@ -1447,7 +1447,7 @@ bool TAnyDeclaration_IsTypedef(TAnyDeclaration* pDeclaration)
 int TAnyDeclaration_GetFileIndex(TAnyDeclaration* pDeclaration)
 {
     int result = -1;
-    switch (pDeclaration->Type)
+    switch (TYPEOF(pDeclaration))
     {
     case TDeclaration_ID:
         result = ((TDeclaration*)pDeclaration)->FileIndex;
@@ -1462,7 +1462,7 @@ int TAnyDeclaration_GetFileIndex(TAnyDeclaration* pDeclaration)
 }
 void TAnyDeclaration_Destroy(TAnyDeclaration* pDeclaration)
 {
-    switch (pDeclaration->Type)
+    switch (TYPEOF(pDeclaration))
     {
     case TEofDeclaration_ID:
         TEofDeclaration_Destroy((TEofDeclaration*)pDeclaration);
@@ -1509,7 +1509,7 @@ void TInitializerList_Destroy(TInitializerList* p)
 
 void TInitializer_Destroy(TInitializer* p)
 {
-    if (p->Type == TInitializerListType_ID)
+    if (IS_TYPE(p, TInitializerListType_ID))
     {
         TInitializerListType_Destroy((TInitializerListType*)p);
 
@@ -1533,7 +1533,7 @@ TDeclaration* TProgram_FindDeclaration(TProgram* p, const char* name)
 {
     TTypePointer* pt = SymbolMap_Find(&p->GlobalScope, name);
     if (pt != NULL &&
-        pt->Type == TDeclaration_ID)
+        IS_TYPE(pt, TDeclaration_ID))
     {
         return (TDeclaration*)pt;
     }
@@ -1545,7 +1545,7 @@ TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name)
 {
     TTypePointer* pt = SymbolMap_Find(&p->GlobalScope, name);
     if (pt != NULL &&
-        pt->Type == TDeclaration_ID)
+        IS_TYPE(pt,TDeclaration_ID))
     {
         return (TDeclaration*)pt;
     }
@@ -1662,7 +1662,7 @@ bool EvaluateConstantExpression(TExpression *  p, int *pResult)
     }
     bool b = false;
 
-    switch (p->Type)
+    switch (TYPEOF(p))
     {
         CASE(TBinaryExpression) :
         {
@@ -1935,7 +1935,7 @@ TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration* p)
             {
                 if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
                 {
-                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+                    if (IS_TYPE(p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator, TDirectDeclaratorTypeFunction))
                     {
                         pParameterTypeList =
                             &p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Parameters;
@@ -1960,7 +1960,7 @@ const char* TDeclaration_GetFunctionName(TDeclaration* p)
             {
                 if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
                 {
-                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+                    if (IS_TYPE(p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator, TDirectDeclaratorTypeFunction))
                     {
                         functionName =
                             p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Identifier;
@@ -1984,7 +1984,7 @@ TCompoundStatement* TDeclaration_Is_FunctionDefinition(TDeclaration* p)
             {
                 if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
                 {
-                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Type == TDirectDeclaratorTypeFunction)
+                    if (IS_TYPE(p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator, TDirectDeclaratorTypeFunction))
                     {
                         pCompoundStatement = p->pCompoundStatementOpt;
                     }

@@ -296,7 +296,7 @@ void SymbolMap_Delete(SymbolMap * p)
     }
 }
 
-const char* PrintType(Type type)
+const char* PrintType(EType type)
 {
 
     switch (type)
@@ -371,7 +371,7 @@ static void SymbolMap_PrintCore(SymbolMap* pMap, int* n)
             SymbolMapItem* pSymbolMapItem = pMap->pHashTable[i];
             while (pSymbolMapItem != NULL)
             {
-                printf("%s = %s\n", pSymbolMapItem->Key, PrintType(pSymbolMapItem->pValue->Type));
+                printf("%s = %s\n", pSymbolMapItem->Key, PrintType(TYPEOF(pSymbolMapItem->pValue)));
                 pSymbolMapItem = pSymbolMapItem->pNext;
             }
         }
@@ -398,7 +398,7 @@ bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 
         while (pBucket)
         {
-            if (pBucket->pValue->Type == TDeclaration_ID &&
+            if (IS_TYPE(pBucket->pValue, TDeclaration_ID) &&
                 strcmp(pBucket->Key, identifierName) == 0)
             {
                 TDeclaration* pDeclaration =
@@ -408,7 +408,7 @@ bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
                 {
                     TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
 
-                    if (pItem->Type == TStorageSpecifier_ID)
+                    if (IS_TYPE(pItem, TStorageSpecifier_ID))
                     {
                         TStorageSpecifier* pStorageSpecifier =
                             (TStorageSpecifier*)pItem;
@@ -451,7 +451,7 @@ TDeclaration* SymbolMap_FindFunction(SymbolMap* pMap, const char* funcName)
         while (pKeyValue != NULL)
         {
             //Obs enum struct e union compartilham um mapa unico
-            if (pKeyValue->pValue->Type == TDeclaration_ID)
+            if (IS_TYPE(pKeyValue->pValue, TDeclaration_ID))
             {
                 if (strcmp(pKeyValue->Key, funcName) == 0)
                 {
@@ -501,7 +501,7 @@ TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* st
         while (pKeyValue != NULL)
         {
             //Obs enum struct e union compartilham um mapa unico
-            if (pKeyValue->pValue->Type == TStructUnionSpecifier_ID)
+            if (IS_TYPE(pKeyValue->pValue, TStructUnionSpecifier_ID))
             {
                 if (strcmp(pKeyValue->Key, structTagName) == 0)
                 {
@@ -538,7 +538,7 @@ TEnumSpecifier* SymbolMap_FindEnum(SymbolMap* pMap, const char* enumTagName)
         while (pKeyValue != NULL)
         {
             //Obs enum struct e union compartilham um mapa unico
-            if (pKeyValue->pValue->Type == TEnumSpecifier_ID)
+            if (IS_TYPE(pKeyValue->pValue,TEnumSpecifier_ID))
             {
                 if (strcmp(pKeyValue->Key, enumTagName) == 0)
                 {
@@ -576,7 +576,7 @@ TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
 
         while (pKeyValue != NULL)
         {
-            if (pKeyValue->pValue->Type == TDeclaration_ID &&
+            if (IS_TYPE(pKeyValue->pValue , TDeclaration_ID) &&
                 strcmp(pKeyValue->Key, typedefName) == 0)
             {
                 TDeclaration *pDeclaration =
@@ -590,7 +590,7 @@ TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
                     TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
 
                 
-                    switch (pItem->Type)
+                    switch (TYPEOF(pItem))
                     {
                     case TStorageSpecifier_ID:
                     {
@@ -670,7 +670,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
 
         while (pKeyValue != NULL)
         {
-            if (pKeyValue->pValue->Type == TDeclaration_ID &&
+            if (IS_TYPE(pKeyValue->pValue, TDeclaration_ID) &&
                 strcmp(pKeyValue->Key, typedefName) == 0)
             {
                 TDeclaration *pDeclaration =
@@ -683,7 +683,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
                 {
                     TTypeSpecifier* pItem = pDeclaration->Specifiers.pData[i];
 
-                    switch (pItem->Type)
+                    switch (TYPEOF(pItem))
                     {
                     case TStorageSpecifier_ID:
                     {
@@ -782,7 +782,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
 
         while (pKeyValue != NULL)
         {
-            if (pKeyValue->pValue->Type == TDeclaration_ID &&
+            if (IS_TYPE(pKeyValue->pValue, TDeclaration_ID) &&
                 strcmp(pKeyValue->Key, typedefName) == 0)
             {
                 TDeclaration *pDeclaration =
@@ -797,7 +797,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                         TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
 
                 
-                    switch (pItem->Type)
+                    switch (TYPEOF(pItem))
                     {
                     case TStorageSpecifier_ID:
                     {
@@ -905,7 +905,7 @@ TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
             TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
 
         
-            switch (pItem->Type)
+            switch (TYPEOF(pItem))
             {
             case TSingleTypeSpecifier_ID:
                 pSpecifierTarget = pItem;

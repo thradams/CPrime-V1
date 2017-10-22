@@ -55,7 +55,10 @@ struct TEnumSpecifier* SymbolMap_FindEnum(SymbolMap* pMap, const char* enumTagNa
 
 struct TTypePointer;
 typedef struct TTypePointer TTypePointer;
-typedef TTypePointer TTypeSpecifier;
+
+struct TTypeSpecifier;
+typedef struct TTypeSpecifier TTypeSpecifier;
+
 TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
     const char* typedefName);
 

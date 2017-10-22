@@ -589,7 +589,7 @@ bool BasicScanner_MatchToken(BasicScanner* scanner, Tokens token)
 
 void BasicScanner_Next(BasicScanner* scanner)
 {
-    if (scanner->Type == BasicScannerType_Token)
+    if (IS_TYPE(scanner->Type ,BasicScannerType_Token))
     {
         if (scanner->bLineStart)
         {
