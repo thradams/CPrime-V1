@@ -872,7 +872,7 @@ void TTypeQualifierList_PushBack(TTypeQualifierList* p, TTypeQualifier* pItem) _
         int n = p->Capacity * 2;
         if (n == 0)
         {
-            n = 1;
+          n = 1;
         }
         TTypeQualifierList_Reserve(p, n);
     }
@@ -930,7 +930,7 @@ void TSpecifierQualifierList_PushBack(TSpecifierQualifierList* p, TSpecifierQual
         int n = p->Capacity * 2;
         if (n == 0)
         {
-            n = 1;
+          n = 1;
         }
         TSpecifierQualifierList_Reserve(p, n);
     }
@@ -1239,16 +1239,12 @@ void TDeclarationSpecifiers_Reserve(TDeclarationSpecifiers* p, int n) _default
 
 void TDeclarationSpecifiers_PushBack(TDeclarationSpecifiers* p, TSpecifier* pItem) _default
 {
-    if (pItem == NULL || pItem->Type < 0 || pItem->Type > 100)
-    {
-        pItem = NULL;
-    }
     if (p->Size + 1 > p->Capacity)
     {
         int n = p->Capacity * 2;
         if (n == 0)
         {
-            n = 1;
+          n = 1;
         }
         TDeclarationSpecifiers_Reserve(p, n);
     }
