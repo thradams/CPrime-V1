@@ -1,17 +1,15 @@
 # C'
 
-Let´s do pair programming! I want to be your co-pilot.
+Let´s do pair programming!
+
 ![robot](/robots.jpg)
 
 ## What is C' ?
-C'(pronounced c prime) is a co-pilot that can write and maintain  C source code  with you.
+C'(pronounced c prime) is a robot that can help you generate and maintain C source code.
 
-(I am considering new name like C auto-pilot, or C co-pilot.)
+## How it works?
 
-## How can C' help?
-C' can **generate** and **maintain** code for you.
-
-Currently, C' is generating constructor, destructor, create, delete and static initializers.
+You can delegate to the robot the implementation of some functions.
 
 Sample
 ```c
@@ -35,11 +33,29 @@ void X_Init(struct X* pX) _default
 ```
 
 I the struct X is changed then the C' will update the implementation for you.
-C' is responsable to implement functions market as _default.
+The robot uses the name of the function return, arguments and all AST to decide what to do.
 
-More features are being considered like lint, containers generation, helper functions etc. 
+## Table Functions x Types
 
-Feel free to sugest features.
+x implemented
+- missing but considered
+
+
+|         | Any Type  | Vector | List  | enum  |   |
+|---------|-----------|--------|-------|-------|---|
+|Init     |      x    | x      | x     |       |   |
+|Destroy  |      x    | x      | x     |       |   |
+|Create   |      x    | x      | x     |       |   |
+|Delete   |      x    | x      | x     |       |   |
+|Swap     |      -    | -      | -     |       |   |
+|Clear    |           |        | -     |       |   |
+|Reserve  |           | x      |       |       |   |
+|PushBack |           | x      | -     |       |   |
+|PopBack  |           | -      | -     |       |   |
+|PopFront |           | -      | -     |       |   |
+|Top      |           | -      | -     |       |   |
+|Back     |           | -      | -     |       |   |
+|ToString |           | -      | -     |   -   |   |
 
 
  
@@ -65,6 +81,13 @@ Command line:
 cp -config config.h hello.c -o hello2.c
 ```
 
+
+# Keywords
+
+ * __auto
+ * __default
+ * __defval(X)
+ * __size(X)
 
 # Things to try:
 
@@ -131,6 +154,155 @@ default {0}, otherwise the initialization list is expanded for its C89 version.
 The default is used to tell the compiler to keep the initialization 
 list updated.
  
+## Dynamic arrays
+
+```c
+
+
+struct Items
+{
+    int * _auto  pData;
+    int Size;
+    int Capacity;
+};
+
+void Items_Reserve(struct Items* pItems, int n) _default
+{
+    if (n > pItems->Capacity)
+    {
+        int* pnew = pItems->pData;
+        pnew = (int*)realloc(pnew, n * sizeof(int));
+        if (pnew)
+        {
+            pItems->pData = pnew;
+            pItems->Capacity = n;
+        }
+    }
+}
+
+void Items_PushBack(struct Items* pItems, int v) _default
+{
+    if (pItems->Size + 1 > pItems->Capacity)
+    {
+        Items_Reserve(pItems, pItems->Size + 1);
+    }
+    pItems->pData[pItems->Size] = v;
+    pItems->Size++;
+}
+
+void Items_Destroy(struct Items* pItems) _default
+{
+    free((void*)pItems->pData);
+}
+
+
+int main(int argc, char **argv)
+{
+    struct Items items = { 0 };
+
+    Items_PushBack(&items, 1);
+    Items_PushBack(&items, 2);
+    Items_PushBack(&items, 3);
+
+    for (int i = 0; i < items.Size; i++)
+    {
+        printf("%d\n", items.pData[i]);
+    }
+
+    Items_Destroy(&items);
+    return 0;
+}
+
+```
+
+```c
+#include <stdlib.h>
+#include <stdio.h>
+
+struct Item
+{
+    int  i;
+};
+
+
+struct Item* Item_Create() _default
+{
+    struct Item* p = (struct Item*) malloc(sizeof * p);
+    if (p)
+    {
+        p->i = 0;
+    }
+    return p;
+}
+
+void Item_Delete(struct Item* p) _default
+{
+    if (p)
+    {
+        free((void*)p);
+    }
+}
+
+
+struct Items
+{
+    struct Item * _auto * _auto _size(Size) pData;
+    int Size;
+    int Capacity;
+};
+
+void Items_Reserve(struct Items* pItems, int n) _default
+{
+    if (n > pItems->Capacity)
+    {
+        struct Item** pnew = pItems->pData;
+        pnew = (struct Item**)realloc(pnew, n * sizeof(struct Item*));
+        if (pnew)
+        {
+            pItems->pData = pnew;
+            pItems->Capacity = n;
+        }
+    }
+}
+
+void Items_PushBack(struct Items* pItems, struct Item* pItem) _default
+{
+    if (pItems->Size + 1 > pItems->Capacity)
+    {
+        Items_Reserve(pItems, pItems->Size + 1);
+    }
+    pItems->pData[pItems->Size] = pItem;
+    pItems->Size++;
+}
+
+void Items_Destroy(struct Items* pItems) _default
+{
+    for (int i = 0; i < pItems->Size; i++)
+    {
+        Item_Delete(pItems->pData[i]);
+    }
+    free((void*)pItems->pData);
+}
+
+
+int main(int argc, char **argv)
+{
+    struct Items items = { 0 };
+
+    Items_PushBack(&items, Item_Create());
+    Items_PushBack(&items, Item_Create());
+    Items_PushBack(&items, Item_Create());
+
+    for (int i = 0; i < items.Size; i++)
+    {
+        printf("%d\n", items.pData[i]->i);
+    }
+
+    Items_Destroy(&items);
+    return 0;
+}
+
+```
 
 ## constructor / destructor / create / delete / _auto
 
@@ -218,6 +390,41 @@ of code generation.
 
 https://twitter.com/thradams
 
+## auto auto and __size (new)
+
+```c
+struct Item
+{
+    int  i;
+};
+
+
+void Item_Delete(struct Item* p) _default
+{
+    if (p)
+    {
+        free((void*)p);
+    }
+}
+
+
+struct Items
+{
+    struct Item * _auto * _auto _size(Size) pData;
+    int Size;
+    int Capacity;
+};
+
+void Items_Destroy(struct Items* pItems) _default
+{
+    for (int i = 0; i < pItems->Size; i++)
+    {
+        Item_Delete(pItems->pData[i]);
+    }
+    free((void*)pItems->pData);
+}
+
+```
 
 ## More details
 
