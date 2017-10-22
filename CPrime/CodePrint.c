@@ -2085,7 +2085,12 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                 const char* pszTemplate =
                     "    if ($p->Size + 1 > $p->Capacity)\n"
                     "    {\n"
-                    "        $prefix\b_Reserve($p, $p->Size + 1);\n"
+                    "        int n = $p->Capacity * 2;\n"
+                    "        if (n == 0)\n"
+                    "        {\n"
+                    "          n = 1;\n"
+                    "        }\n"
+                    "        $prefix\b_Reserve($p, n);\n"
                     "    }\n"
                     "    $p->$data[$p->Size] = $nelements;\n"
                     "    $p->Size++;\n";
