@@ -286,9 +286,16 @@ typedef struct TTypeQualifier
 
 } TTypeQualifier;
 
-typedef List(TTypeQualifier) TTypeQualifierList;
-#define TTYPEQUALIFIERLIST_INIT LIST_INIT
-#define TTypeQualifierList_Destroy(p) List_Destroy(TTypeQualifier, p)
+typedef struct {
+    TTypeQualifier * _auto * _auto _size(Size) pData;
+    int Size;
+    int Capacity;
+} TTypeQualifierList;
+
+
+#define TTYPEQUALIFIERLIST_INIT {0,0,0}
+void TTypeQualifierList_Destroy(TTypeQualifierList* p);
+void TTypeQualifierList_PushBack(TTypeQualifierList* p, TTypeQualifier* pItem);
 
 #define TTYPE_QUALIFIER_INIT {TTypeQualifier_ID, NULL, STRING_INIT, TK_NONE, TSCANNERITEMLIST_INIT}
 CREATETYPE(TTypeQualifier, TTYPE_QUALIFIER_INIT)

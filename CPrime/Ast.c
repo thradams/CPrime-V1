@@ -630,8 +630,10 @@ bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
             {
                 bIsPointer = true;
             }
-            ForEachListItem(TTypeQualifier, pQualifier, &pItem->Qualifier)
+            
+            for (int i =0 ; i < pItem->Qualifier.Size; i++)
             {
+                TTypeQualifier* pQualifier = pItem->Qualifier.pData[i];
                 if (pQualifier->Token == TK__AUTO ||
                     pQualifier->Token == TK_OWN_QUALIFIER)
                 {
@@ -679,8 +681,11 @@ const char * TPointerList_GetSize(TPointerList* pPointerlist)
         {
             if (pItem->Token != TK_ASTERISK)
             {
-                ForEachListItem(TTypeQualifier, pQualifier, &pItem->Qualifier)
+
+                for (int i = 0; i < pItem->Qualifier.Size; i++)
                 {
+                    TTypeQualifier* pQualifier = pItem->Qualifier.pData[i];
+                
                     if (pQualifier->Token == TK__SIZE)
                     {
                         pszResult = pQualifier->SizeIdentifier;
@@ -816,10 +821,49 @@ bool TPointerList_IsAutoPointerToAutoPointer(TPointerList* pPointerlist)
 
 void TPointer_Destroy(TPointer* p) _default
 {
+    TTypeQualifierList_Destroy(&p->Qualifier);
     TScannerItemList_Destroy(&p->ClueList0);
 }
 
 
+void TTypeQualifierList_Destroy(TTypeQualifierList* p) _default
+{
+    for (int i = 0; i < p->Size; i++)
+    {
+        TTypeQualifier_Delete(p->pData[i]);
+    }
+    free((void*)p->pData);
+}
+
+void TTypeQualifierList_Reserve(TTypeQualifierList* p, int n) _default
+{
+    if (n > p->Capacity)
+    {
+        TTypeQualifier** pnew = p->pData;
+        pnew = (TTypeQualifier**)realloc(pnew, n * sizeof(TTypeQualifier*));
+        if (pnew)
+        {
+            p->pData = pnew;
+            p->Capacity = n;
+        }
+    }
+
+}
+
+void TTypeQualifierList_PushBack(TTypeQualifierList* p, TTypeQualifier* pItem) _default
+{
+    if (p->Size + 1 > p->Capacity)
+    {
+        int n = p->Capacity * 2;
+        if (n == 0)
+        {
+          n = 1;
+        }
+        TTypeQualifierList_Reserve(p, n);
+    }
+    p->pData[p->Size] = pItem;
+    p->Size++;
+}
 
 void TTypeQualifier_Destroy(TTypeQualifier* p) _default
 {

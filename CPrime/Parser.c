@@ -3900,7 +3900,7 @@ bool Type_Qualifier_ListOpt(Parser* ctx,
     {
         TTypeQualifier* pTypeQualifier = TTypeQualifier_Create();
         Type_Qualifier(ctx, pTypeQualifier);
-        List_Add(pQualifiers, pTypeQualifier);
+        TTypeQualifierList_PushBack(pQualifiers, pTypeQualifier);
 
         if (IsTypeQualifierToken(Parser_CurrentToken(ctx)))
         {

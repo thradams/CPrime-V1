@@ -1497,8 +1497,9 @@ static void TTypeQualifier_CodePrint(TProgram* program, Options * options, TType
 
 static void TTypeQualifierList_CodePrint(TProgram* program, Options * options, TTypeQualifierList* p, StrBuilder* fp)
 {
-    ForEachListItem(TTypeQualifier, pItem, p)
+    for (int i =0; i < p->Size; i++)
     {
+        TTypeQualifier* pItem = p->pData[i];
         TTypeQualifier_CodePrint(program, options, pItem, fp);
     }
 

@@ -1198,8 +1198,10 @@ bool TTypeQualifierList_Print(TTypeQualifierList* p, bool b, FILE* fp)
 {
     fprintf(fp, "\"type-qualifier-list\":[");
     b = false;
-    ForEachListItem(TTypeQualifier, pItem, p)
+    for (int i = 0; i < p->Size; i++)
     {
+        TTypeQualifier* pItem = p->pData[i];
+    
         if (b)
         {
             fprintf(fp, ",");
