@@ -696,19 +696,7 @@ typedef struct TDeclarator
 
 #define TDECLARATOR_INIT {LIST_INIT, NULL, TSCANNERITEMLIST_INIT}
 CREATETYPE(TDeclarator, TDECLARATOR_INIT)
-//bool TDeclarator_IsPointer(TDeclarator* p);
-//bool TDeclarator_IsAutoPointer(TDeclarator* p);
-//bool TDeclarator_IsDirectPointer(TDeclarator* p);
 const char* TDeclarator_GetName(TDeclarator* p);
-
-//typedef struct TAbstractDeclarator
-//{
-  //TPointerList PointerList;
-  //struct TAbstractDeclarator* pDirectDeclarator;
-//} TAbstractDeclarator;
-
-//#define TDECLARATOR_INIT {TPOINTERLIST_INIT, NULL}
-//CREATETYPE(TDeclarator, TDECLARATOR_INIT)
 
 
 typedef enum TDirectDeclaratorType
@@ -936,10 +924,7 @@ typedef struct TTypeName
     TDeclarator Declarator;
 } TTypeName;
 
-//Na verdade Typename nao precisa umas partes do
-//TParameterDeclaration
-//mas para simplificar vou usar o mesmo
-//typedef TParameterDeclaration TTypeName;
+
 #define TTYPENAME_INIT {TypeName_ID, TSPECIFIERQUALIFIERLIST_INIT, TDECLARATOR_INIT}
 CREATETYPE(TTypeName, TTYPENAME_INIT)
 
