@@ -635,7 +635,10 @@ bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
     bool bIsAuto = false;
     if (pPointerlist)
     {
-        ForEachListItem(TPointer, pItem, pPointerlist)
+        //ForEachListItem(TPointer, pItem, pPointerlist)
+        TPointer* pItem = pPointerlist->pHead;
+        //for (T * var = (list)->pHead; var != NULL; var = var->pNext)
+        while (pItem)
         {
             if (pItem->Token == TK_ASTERISK)
             {
@@ -654,6 +657,8 @@ bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
             }
             if (bIsAuto && bIsPointer)
                 break;
+
+            pItem = pItem->pNext;
         }
     }
     return bIsAuto;

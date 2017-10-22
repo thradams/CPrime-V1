@@ -3070,7 +3070,11 @@ void InstanciateDestroy2(TProgram* program,
                 {
                     TPointer * pNew = TPointer_Create();
                     pNew->Token = pItem->Token;
-                    pNew->Qualifier = pItem->Qualifier;
+                    /////////////////////////////
+                    pNew->Qualifier = pItem->Qualifier; //ELE NAO EH DONO !
+                    //nao pode destruir essa parte 
+                    //////////////////////////////
+
                     List_Add(&declarator.PointerList, pNew);
                 }
 
@@ -3174,6 +3178,16 @@ void InstanciateDestroy2(TProgram* program,
                             fp);
                     }
                 }
+
+                
+                ForEachListItem(TPointer, pItem, &declarator.PointerList)
+                {                                        
+                    //ELE NAO EH DONO !
+                    pItem->Qualifier.Capacity = 0;
+                    pItem->Qualifier.Size = 0;
+                    pItem->Qualifier.pData = NULL;
+                }
+
                 TDeclarator_Destroy(&declarator);
             }
             else
