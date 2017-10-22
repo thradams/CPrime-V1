@@ -3,6 +3,7 @@
 Let´s do pair programming!
 
 ![robot](/robots.jpg)
+(Picture courtesy of my nephew Bethina)
 
 ## What is C' ?
 C'(pronounced c prime) is a robot that can help you generate and maintain C source code.
