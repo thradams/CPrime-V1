@@ -390,7 +390,7 @@ void SymbolMap_Print(SymbolMap* pMap)
 bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 {
     bool bIsTypeName = false;
-    
+
     while (pMap)
     {
         SymbolMapItem* pBucket =
@@ -403,8 +403,11 @@ bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
             {
                 TDeclaration* pDeclaration =
                     (TDeclaration*)pBucket->pValue;
-                ForEachListItem(TSpecifier, pItem, &pDeclaration->Specifiers)
+
+                for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
                 {
+                    TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
+
                     if (pItem->Type == TStorageSpecifier_ID)
                     {
                         TStorageSpecifier* pStorageSpecifier =
@@ -434,38 +437,38 @@ bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 
 TDeclaration* SymbolMap_FindFunction(SymbolMap* pMap, const char* funcName)
 {
-	TDeclaration* pDeclaration = NULL;
+    TDeclaration* pDeclaration = NULL;
 
-	if (pMap->pHashTable != NULL)
-	{
-		unsigned int nHashBucket, HashValue;
-		SymbolMapItem* pKeyValue =
-			SymbolMap_GetAssocAt(pMap,
-				funcName,
-				&nHashBucket,
-				&HashValue);
+    if (pMap->pHashTable != NULL)
+    {
+        unsigned int nHashBucket, HashValue;
+        SymbolMapItem* pKeyValue =
+            SymbolMap_GetAssocAt(pMap,
+                funcName,
+                &nHashBucket,
+                &HashValue);
 
-		while (pKeyValue != NULL)
-		{
-			//Obs enum struct e union compartilham um mapa unico
-			if (pKeyValue->pValue->Type == TDeclaration_ID)
-			{
-				if (strcmp(pKeyValue->Key, funcName) == 0)
-				{
-					pDeclaration =
-						(TDeclaration*)pKeyValue->pValue;
-					
-					break;					
-				}
-			}
-			pKeyValue = pKeyValue->pNext;
-		}
-	}
+        while (pKeyValue != NULL)
+        {
+            //Obs enum struct e union compartilham um mapa unico
+            if (pKeyValue->pValue->Type == TDeclaration_ID)
+            {
+                if (strcmp(pKeyValue->Key, funcName) == 0)
+                {
+                    pDeclaration =
+                        (TDeclaration*)pKeyValue->pValue;
 
-	return pDeclaration;
+                    break;
+                }
+            }
+            pKeyValue = pKeyValue->pNext;
+        }
+    }
+
+    return pDeclaration;
 }
 
-TDeclaration* SymbolMap_FindObjFunction(SymbolMap* pMap, 
+TDeclaration* SymbolMap_FindObjFunction(SymbolMap* pMap,
     const char* objName,
     const char* funcName)
 {
@@ -474,7 +477,7 @@ TDeclaration* SymbolMap_FindObjFunction(SymbolMap* pMap,
         return NULL;
     }
 
-    char buffer[500] = {0};
+    char buffer[500] = { 0 };
     strcat(buffer, objName);
     strcat(buffer, "_");
     strcat(buffer, funcName);
@@ -514,7 +517,7 @@ TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* st
             pKeyValue = pKeyValue->pNext;
         }
     }
-   
+
     return pStructUnionSpecifier;
 }
 
@@ -560,7 +563,7 @@ TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
     const char* typedefName)
 {
     TDeclaration* pDeclarationResult = NULL;
-    
+
 
     if (pMap->pHashTable != NULL)
     {
@@ -582,8 +585,11 @@ TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
                 //typedef X Y;
                 bool bIsTypedef = false;
                 const char* indirectTypedef = NULL;
-                ForEachListItem(TTypeSpecifier, pItem, &pDeclaration->Specifiers)
+                for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
                 {
+                    TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
+
+                
                     switch (pItem->Type)
                     {
                     case TStorageSpecifier_ID:
@@ -651,7 +657,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
     //TDeclaration* pDeclarationResult = NULL;
     TDeclarationSpecifiers* pSpecifiersResult = NULL;
 
-    
+
 
     if (pMap->pHashTable != NULL)
     {
@@ -673,8 +679,10 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
                 //typedef X Y;
                 bool bIsTypedef = false;
                 const char* indirectTypedef = NULL;
-                ForEachListItem(TTypeSpecifier, pItem, &pDeclaration->Specifiers)
+                for (int i =0 ; i <pDeclaration->Specifiers.Size; i++)
                 {
+                    TTypeSpecifier* pItem = pDeclaration->Specifiers.pData[i];
+
                     switch (pItem->Type)
                     {
                     case TStorageSpecifier_ID:
@@ -761,7 +769,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
     //TDeclaration* pDeclarationResult = NULL;
     TDeclarationSpecifiers* pSpecifiersResult = NULL;
 
-    
+
 
     if (pMap->pHashTable != NULL)
     {
@@ -783,8 +791,12 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                 //typedef X Y;
                 bool bIsTypedef = false;
                 const char* indirectTypedef = NULL;
-                ForEachListItem(TTypeSpecifier, pItem, &pDeclaration->Specifiers)
-                {
+                
+                    for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
+                    {
+                        TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
+
+                
                     switch (pItem->Type)
                     {
                     case TStorageSpecifier_ID:
@@ -888,8 +900,11 @@ TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
         SymbolMap_FindTypedefDeclarationTarget(pMap, typedefName);
     if (pDeclaration)
     {
-        ForEachListItem(TTypeSpecifier, pItem, &pDeclaration->Specifiers)
+        for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
         {
+            TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
+
+        
             switch (pItem->Type)
             {
             case TSingleTypeSpecifier_ID:
@@ -937,7 +952,7 @@ TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
                     pSpecifierTarget = (TTypeSpecifier*)pEnumSpecifier;
                 }
             }
-             break;
+            break;
 
             default:
                 break;

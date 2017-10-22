@@ -2923,8 +2923,8 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
             TTypeSpecifier* pTypeSpecifier = NULL;
             Type_Specifier(ctx, &pTypeSpecifier);
             if (pTypeSpecifier != NULL)
-            {
-                List_Add(pSpecifierQualifierList, pTypeSpecifier);
+            {                
+                TSpecifierQualifierList_PushBack(pSpecifierQualifierList, pTypeSpecifier);
             }
         }
         else
@@ -2936,8 +2936,8 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
     else if (TTypeQualifier_IsFirst(token))
     {
         TTypeQualifier* pTypeQualifier = TTypeQualifier_Create();
-        Type_Qualifier(ctx, pTypeQualifier);
-        List_Add(pSpecifierQualifierList, TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
+        Type_Qualifier(ctx, pTypeQualifier);        
+        TSpecifierQualifierList_PushBack(pSpecifierQualifierList, TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
     }
     else
     {
@@ -4250,7 +4250,7 @@ void Declaration_Specifiers(Parser* ctx,
 
         Storage_Class_Specifier(ctx, pStorageSpecifier);
 
-        List_Add(pDeclarationSpecifiers, TStorageSpecifier_As_TSpecifier(pStorageSpecifier));
+        TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, TStorageSpecifier_As_TSpecifier(pStorageSpecifier));
     }
     else if (TTypeSpecifier_IsFirst(ctx, token, lexeme))
     {        
@@ -4260,7 +4260,7 @@ void Declaration_Specifiers(Parser* ctx,
         {
             TTypeSpecifier* pTypeSpecifier = NULL;
             Type_Specifier(ctx, &pTypeSpecifier);
-            List_Add(pDeclarationSpecifiers, pTypeSpecifier);
+            TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, pTypeSpecifier);
         }
         else
         {
@@ -4272,13 +4272,13 @@ void Declaration_Specifiers(Parser* ctx,
     {
         TTypeQualifier* pTypeQualifier = TTypeQualifier_Create();
         Type_Qualifier(ctx, pTypeQualifier);
-        List_Add(pDeclarationSpecifiers, TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
+        TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
     }
     else if (TFunctionSpecifier_IsFirst(token))
     {
         TFunctionSpecifier* pFunctionSpecifier = TFunctionSpecifier_Create();
         Function_Specifier(ctx, pFunctionSpecifier);
-        List_Add(pDeclarationSpecifiers, TFunctionSpecifier_As_TSpecifier(pFunctionSpecifier));
+        TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, TFunctionSpecifier_As_TSpecifier(pFunctionSpecifier));
     }
     else if (TAlignmentSpecifier_IsFirst(token))
     {
@@ -4684,7 +4684,7 @@ bool  Declaration(Parser* ctx,
                 {
                     //Ativa o escopo dos parametros
                     //Adiconar os parametros em um escopo um pouco a cima.
-                    SymbolMap BlockScope = SYMBOLMAP_INIT;
+                    SymbolMap BlockScope2 = SYMBOLMAP_INIT;
 
                     TInitDeclarator* pDeclarator3 =
                         pFuncVarDeclaration->InitDeclaratorList.pHead;
@@ -4694,7 +4694,7 @@ bool  Declaration(Parser* ctx,
                         const char* parameterName = TDeclarator_GetName(&pParameter->Declarator);
                         if (parameterName != NULL)
                         {
-                            SymbolMap_SetAt(&BlockScope, parameterName, (TTypePointer*)pParameter);
+                            SymbolMap_SetAt(&BlockScope2, parameterName, (TTypePointer*)pParameter);
                         }
                         else
                         {
@@ -4702,8 +4702,8 @@ bool  Declaration(Parser* ctx,
                         }
                     }
 
-                    BlockScope.pPrevious = ctx->pCurrentScope;
-                    ctx->pCurrentScope = &BlockScope;
+                    BlockScope2.pPrevious = ctx->pCurrentScope;
+                    ctx->pCurrentScope = &BlockScope2;
 
 
                     //SymbolMap_Print(ctx->pCurrentScope);
@@ -4715,8 +4715,8 @@ bool  Declaration(Parser* ctx,
                     Compound_Statement(ctx, &pStatement);
                     //TODO cast
 
-                    ctx->pCurrentScope = BlockScope.pPrevious;
-                    SymbolMap_Destroy(&BlockScope);
+                    ctx->pCurrentScope = BlockScope2.pPrevious;
+                    SymbolMap_Destroy(&BlockScope2);
 
 
                     pFuncVarDeclaration->pCompoundStatementOpt = (TCompoundStatement*)pStatement;

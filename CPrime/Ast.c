@@ -337,7 +337,7 @@ void TStructUnionSpecifier_Destroy(TStructUnionSpecifier* p)
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
     TScannerItemList_Destroy(&p->ClueList2);
-    TScannerItemList_Destroy(&p->ClueList3);    
+    TScannerItemList_Destroy(&p->ClueList3);
 }
 
 void TSingleTypeSpecifier_Destroy(TSingleTypeSpecifier* p) _default
@@ -418,8 +418,9 @@ void TDirectDeclarator_Destroy(TDirectDeclarator* p) _default
 TSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p)
 {
     TSpecifier* pSpecifier = NULL;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+    for (int i = 0; i < p->Size; i++)
     {
+        TSpecifierQualifier* pSpecifierQualifier = p->pData[i];
         if (pSpecifierQualifier->Type == TSingleTypeSpecifier_ID ||
             pSpecifierQualifier->Type == TStructUnionSpecifier_ID ||
             pSpecifierQualifier->Type == TEnumSpecifier_ID)
@@ -434,8 +435,12 @@ TSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p)
 const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p)
 {
     const char* typedefName = NULL;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+
+    for (int i = 0; i < p->Size; i++)
     {
+        TSpecifierQualifier* pSpecifierQualifier = p->pData[i];
+
+
         TSingleTypeSpecifier* pSingleTypeSpecifier =
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
         if (pSingleTypeSpecifier &&
@@ -451,8 +456,9 @@ const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p)
 bool TSpecifierQualifierList_IsTypedefQualifier(TSpecifierQualifierList* p)
 {
     bool bResult = false;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+    for (int i = 0; i < p->Size; i++)
     {
+        TSpecifierQualifier* pSpecifierQualifier = p->pData[i];
         TStorageSpecifier* pStorageSpecifier =
             TSpecifierQualifier_As_TStorageSpecifier(pSpecifierQualifier);
         if (pStorageSpecifier &&
@@ -468,8 +474,10 @@ bool TSpecifierQualifierList_IsTypedefQualifier(TSpecifierQualifierList* p)
 bool TSpecifierQualifierList_IsChar(TSpecifierQualifierList* p)
 {
     bool bResult = false;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+    for (int i = 0; i < p->Size; i++)
     {
+        TSpecifierQualifier* pSpecifierQualifier = p->pData[i];
+
         TSingleTypeSpecifier* pSingleTypeSpecifier =
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
         if (pSingleTypeSpecifier &&
@@ -486,8 +494,9 @@ bool TSpecifierQualifierList_IsChar(TSpecifierQualifierList* p)
 bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p)
 {
     bool bResult = false;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+    for (int i = 0; i < p->Size; i++)
     {
+        TSpecifierQualifier* pSpecifierQualifier = p->pData[i];
         TSingleTypeSpecifier* pSingleTypeSpecifier =
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
         if (pSingleTypeSpecifier &&
@@ -513,8 +522,9 @@ bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p)
 bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList* p)
 {
     bool bResult = false;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+    for (int i = 0; i < p->Size; i++)
     {
+        TSpecifierQualifier* pSpecifierQualifier = p->pData[i];
         TSingleTypeSpecifier* pSingleTypeSpecifier =
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
         if (pSingleTypeSpecifier &&
@@ -531,8 +541,9 @@ bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList* p)
 bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList* p)
 {
     bool bResult = false;
-    ForEachListItem(TSpecifierQualifier, pSpecifierQualifier, p)
+    for (int i = 0; i < p->Size; i++)
     {
+        TSpecifierQualifier* pSpecifierQualifier = p->pData[i];
         TSingleTypeSpecifier* pSingleTypeSpecifier =
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
 
@@ -630,8 +641,8 @@ bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
             {
                 bIsPointer = true;
             }
-            
-            for (int i =0 ; i < pItem->Qualifier.Size; i++)
+
+            for (int i = 0; i < pItem->Qualifier.Size; i++)
             {
                 TTypeQualifier* pQualifier = pItem->Qualifier.pData[i];
                 if (pQualifier->Token == TK__AUTO ||
@@ -685,7 +696,7 @@ const char * TPointerList_GetSize(TPointerList* pPointerlist)
                 for (int i = 0; i < pItem->Qualifier.Size; i++)
                 {
                     TTypeQualifier* pQualifier = pItem->Qualifier.pData[i];
-                
+
                     if (pQualifier->Token == TK__SIZE)
                     {
                         pszResult = pQualifier->SizeIdentifier;
@@ -856,7 +867,7 @@ void TTypeQualifierList_PushBack(TTypeQualifierList* p, TTypeQualifier* pItem) _
         int n = p->Capacity * 2;
         if (n == 0)
         {
-          n = 1;
+            n = 1;
         }
         TTypeQualifierList_Reserve(p, n);
     }
@@ -883,49 +894,47 @@ void TAtomicTypeSpecifier_Destroy(TAtomicTypeSpecifier* p) _default
     TScannerItemList_Destroy(&p->ClueList2);
 }
 
-
-void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecifiers)
+void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecifiers) _default
 {
-    ForEachListItem(TTypeSpecifier, pItem, pDeclarationSpecifiers)
+    for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
     {
-        TTypeSpecifier* pNext = pItem->pNext;
-        switch (pItem->Type)
+        TSpecifierQualifier_Delete(pDeclarationSpecifiers->pData[i]);
+    }
+    free((void*)pDeclarationSpecifiers->pData);
+}
+
+
+void TSpecifierQualifierList_Reserve(TSpecifierQualifierList* p, int n) _default
+{
+    if (n > p->Capacity)
+    {
+        TSpecifierQualifier** pnew = p->pData;
+        pnew = (TSpecifierQualifier**)realloc(pnew, n * sizeof(TSpecifierQualifier*));
+        if (pnew)
         {
-            CASE(TSingleTypeSpecifier) :
-                TSingleTypeSpecifier_Delete((TSingleTypeSpecifier*)pItem);
-            break;
-
-            CASE(TStructUnionSpecifier) :
-                TStructUnionSpecifier_Delete((TStructUnionSpecifier*)pItem);
-            break;
-
-            CASE(TEnumSpecifier) :
-                TEnumSpecifier_Delete((TEnumSpecifier*)pItem);
-            break;
-
-            CASE(TStorageSpecifier) :
-                TStorageSpecifier_Delete((TStorageSpecifier*)pItem);
-            break;
-            CASE(TTypeQualifier) :
-                TTypeQualifier_Delete((TTypeQualifier*)pItem);
-            break;
-            CASE(TFunctionSpecifier) :
-                TFunctionSpecifier_Delete((TFunctionSpecifier*)pItem);
-            break;
-            CASE(TAlignmentSpecifier) :
-                TAlignmentSpecifier_Delete((TAlignmentSpecifier*)pItem);
-            break;
-        default:
-            ASSERT(false);
-            break;
-        }
-        pItem = pNext;
-        if (pItem == NULL)
-        {
-            break;
+            p->pData = pnew;
+            p->Capacity = n;
         }
     }
 }
+
+void TSpecifierQualifierList_PushBack(TSpecifierQualifierList* p, TSpecifierQualifier* pItem) _default
+{
+    if (p->Size + 1 > p->Capacity)
+    {
+        int n = p->Capacity * 2;
+        if (n == 0)
+        {
+            n = 1;
+        }
+        TSpecifierQualifierList_Reserve(p, n);
+    }
+    p->pData[p->Size] = pItem;
+    p->Size++;
+}
+
+
+
 
 bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList* p, Tokens token, const char* lexeme)
 {
@@ -936,8 +945,9 @@ bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList* p, Tokens token, co
 
     bool bTypeDef = false;
     bool bInt = false;
-    ForEachListItem(TSpecifierQualifier, pSpecifier, p)
+    for (int i = 0; i < p->Size; i++)
     {
+        TSpecifierQualifier* pSpecifier = p->pData[i];
         switch (pSpecifier->Type)
         {
             CASE(TSingleTypeSpecifier) :
@@ -1019,8 +1029,11 @@ bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers* pDeclaration
 
     bool bTypeDef = false;
     bool bInt = false;
-    ForEachListItem(TSpecifier, pSpecifier, pDeclarationSpecifiers)
+
+    for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
     {
+        TSpecifier* pSpecifier = pDeclarationSpecifiers->pData[i];
+
         switch (pSpecifier->Type)
         {
             CASE(TSingleTypeSpecifier) :
@@ -1097,8 +1110,11 @@ const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDecla
     }
     const char* typeName = NULL;
 
-    ForEachListItem(TSpecifier, pItem, pDeclarationSpecifiers)
+
+    for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
     {
+        TSpecifier* pItem = pDeclarationSpecifiers->pData[i];
+
         TSingleTypeSpecifier* pSingleTypeSpecifier =
             TSpecifier_As_TSingleTypeSpecifier(pItem);
         if (pSingleTypeSpecifier != NULL)
@@ -1113,37 +1129,74 @@ const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDecla
     return typeName;
 }
 
-void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers)
+void TSpecifierQualifier_Destroy(TSpecifierQualifier* pItem)
 {
-    ForEachListItem(TTypeSpecifier, pItem, pDeclarationSpecifiers)
+    switch (pItem->Type)
     {
-        TTypeSpecifier* pNext = pItem->pNext;
+        CASE(TSingleTypeSpecifier) :
+            TSingleTypeSpecifier_Delete((TSingleTypeSpecifier*)pItem);
+        break;
+
+        CASE(TStructUnionSpecifier) :
+            TStructUnionSpecifier_Delete((TStructUnionSpecifier*)pItem);
+        break;
+
+        CASE(TEnumSpecifier) :
+            TEnumSpecifier_Delete((TEnumSpecifier*)pItem);
+        break;
+
+        CASE(TStorageSpecifier) :
+            TStorageSpecifier_Delete((TStorageSpecifier*)pItem);
+        break;
+        CASE(TTypeQualifier) :
+            TTypeQualifier_Delete((TTypeQualifier*)pItem);
+        break;
+        CASE(TFunctionSpecifier) :
+            TFunctionSpecifier_Delete((TFunctionSpecifier*)pItem);
+        break;
+
+        CASE(TAlignmentSpecifier) :
+            TAlignmentSpecifier_Delete((TAlignmentSpecifier*)pItem);
+        break;
+
+
+    default:
+        ASSERT(false);
+        break;
+    }
+}
+
+
+void TSpecifier_Destroy(TSpecifier* pItem)
+{
+
+  
         switch (pItem->Type)
         {
             CASE(TSingleTypeSpecifier) :
-                TSingleTypeSpecifier_Delete((TSingleTypeSpecifier*)pItem);
+                TSingleTypeSpecifier_Destroy((TSingleTypeSpecifier*)pItem);
             break;
 
             CASE(TStructUnionSpecifier) :
-                TStructUnionSpecifier_Delete((TStructUnionSpecifier*)pItem);
+                TStructUnionSpecifier_Destroy((TStructUnionSpecifier*)pItem);
             break;
 
             CASE(TEnumSpecifier) :
-                TEnumSpecifier_Delete((TEnumSpecifier*)pItem);
+                TEnumSpecifier_Destroy((TEnumSpecifier*)pItem);
             break;
 
             CASE(TStorageSpecifier) :
-                TStorageSpecifier_Delete((TStorageSpecifier*)pItem);
+                TStorageSpecifier_Destroy((TStorageSpecifier*)pItem);
             break;
             CASE(TTypeQualifier) :
-                TTypeQualifier_Delete((TTypeQualifier*)pItem);
+                TTypeQualifier_Destroy((TTypeQualifier*)pItem);
             break;
             CASE(TFunctionSpecifier) :
-                TFunctionSpecifier_Delete((TFunctionSpecifier*)pItem);
+                TFunctionSpecifier_Destroy((TFunctionSpecifier*)pItem);
             break;
 
             CASE(TAlignmentSpecifier) :
-                TAlignmentSpecifier_Delete((TAlignmentSpecifier*)pItem);
+                TAlignmentSpecifier_Destroy((TAlignmentSpecifier*)pItem);
             break;
 
 
@@ -1151,11 +1204,53 @@ void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifie
             ASSERT(false);
             break;
         }
-        pItem = pNext;
-        if (pItem == NULL)
-            break;
+    
+
+}
+
+void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers) _default
+{
+    for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
+    {
+        TSpecifier_Delete(pDeclarationSpecifiers->pData[i]);
+    }
+    free((void*)pDeclarationSpecifiers->pData);
+}
+
+
+void TDeclarationSpecifiers_Reserve(TDeclarationSpecifiers* p, int n) _default
+{
+    if (n > p->Capacity)
+    {
+        TSpecifier** pnew = p->pData;
+        pnew = (TSpecifier**)realloc(pnew, n * sizeof(TSpecifier*));
+        if (pnew)
+        {
+            p->pData = pnew;
+            p->Capacity = n;
+        }
     }
 }
+
+void TDeclarationSpecifiers_PushBack(TDeclarationSpecifiers* p, TSpecifier* pItem) _default
+{
+    if (pItem == NULL || pItem->Type < 0 || pItem->Type > 100)
+    {
+        pItem = NULL;
+    }
+    if (p->Size + 1 > p->Capacity)
+    {
+        int n = p->Capacity * 2;
+        if (n == 0)
+        {
+            n = 1;
+        }
+        TDeclarationSpecifiers_Reserve(p, n);
+    }
+    p->pData[p->Size] = pItem;
+    p->Size++;
+}
+
 
 TDeclarator* TDeclaration_FindDeclarator(TDeclaration*  p, const char* name)
 {
@@ -1190,8 +1285,9 @@ void TFunctionSpecifier_Destroy(TFunctionSpecifier* p) _default
 bool TDeclaration_Is_StructOrUnionDeclaration(TDeclaration* p)
 {
     bool bIsStructOrUnion = false;
-    ForEachListItem(TSpecifier, pItem, &p->Specifiers)
+    for (int i = 0; i < p->Specifiers.Size; i++)
     {
+        TSpecifier* pItem = p->Specifiers.pData[i];
         if (TTypeSpecifier_As_TStructUnionSpecifier(pItem))
         {
             bIsStructOrUnion = true;
@@ -1224,8 +1320,9 @@ void TParameter_Swap(TParameter* a, TParameter* b)
 const char* TSpecifier_GetTypedefName(TDeclarationSpecifiers* p)
 {
     const char* typedefName = NULL;
-    ForEachListItem(TSpecifier, pSpecifier, p)
+    for (int i = 0; i < p->Size; i++)
     {
+        TTypeSpecifier* pSpecifier = p->pData[i];
         TSingleTypeSpecifier *pSingleTypeSpecifier =
             TSpecifier_As_TSingleTypeSpecifier(pSpecifier);
         if (pSingleTypeSpecifier &&
@@ -1298,9 +1395,9 @@ bool TAnyDeclaration_Is_StructOrUnionDeclaration(TAnyDeclaration* pAnyDeclaratio
 bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecifiers)
 {
     bool bResult = false;
-    ForEachListItem(TTypeSpecifier, pItem, pDeclarationSpecifiers)
+    for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
     {
-
+        TTypeSpecifier* pItem = pDeclarationSpecifiers->pData[i];
         switch (pItem->Type)
         {
             CASE(TStorageSpecifier) :
@@ -1900,8 +1997,11 @@ TCompoundStatement* TDeclaration_Is_FunctionDefinition(TDeclaration* p)
 TStructUnionSpecifier* TDeclarationSpecifiers_Find_StructUnionSpecifier(TDeclarationSpecifiers* p)
 {
     TStructUnionSpecifier* pStructUnionSpecifier = NULL;
-    ForEachListItem(TSpecifier, pDeclarationSpecifier, p)
+
+    for (int i = 0; i < p->Size; i++)
     {
+        TSpecifier* pDeclarationSpecifier = p->pData[i];
+
         pStructUnionSpecifier =
             TSpecifier_As_TStructUnionSpecifier(pDeclarationSpecifier);
         if (pStructUnionSpecifier)

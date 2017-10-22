@@ -814,7 +814,7 @@ static void TExpression_CodePrint(TProgram* program, Options * options, TExpress
 
             if (pTUnaryExpressionOperator->token == TK_SIZEOF)
             {
-                if (pTUnaryExpressionOperator->TypeName.SpecifierQualifierList.pHead != NULL)
+                if (pTUnaryExpressionOperator->TypeName.SpecifierQualifierList.Size > 0)
                 {
                     Output_Append(fp, options, "sizeof");
                     TNodeClueList_CodePrint(options, &pTUnaryExpressionOperator->ClueList1, fp);
@@ -1524,8 +1524,9 @@ void TSpecifierQualifierList_CodePrint(TProgram* program,
     TSpecifierQualifierList* pDeclarationSpecifiers,
     StrBuilder* fp)
 {
-    ForEachListItem(TSpecifierQualifier, pItem, pDeclarationSpecifiers)
+    for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
     {
+        TSpecifierQualifier* pItem = pDeclarationSpecifiers->pData[i];
         switch (pItem->Type)
         {
 
@@ -1566,8 +1567,10 @@ void TSpecifierQualifierList_CodePrint(TProgram* program,
 void TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDeclarationSpecifiers* pDeclarationSpecifiers, StrBuilder* fp)
 {
 
-    ForEachListItem(TSpecifier, pItem, pDeclarationSpecifiers)
+    for (int i = 0 ; i < pDeclarationSpecifiers->Size; i++)
     {
+        TSpecifier* pItem = pDeclarationSpecifiers->pData[i];
+
         switch (pItem->Type)
         {
 
@@ -1862,8 +1865,11 @@ void FindUnionSetOf(TProgram* program,
     if (pFinalDecl)
     {
         typeInt = 1; //typefef
-        pStructUnionSpecifier =
-            TSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pHead->pNext);
+        if (pFinalDecl->Specifiers.Size > 1)
+        {
+            pStructUnionSpecifier =
+                TSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
+        }
     }
     else
     {
@@ -2625,11 +2631,11 @@ static bool FindHighLevelFunction(TProgram* program,
                         {
                             //se nao achou delete procura a destroy 
                             //e depois chama free
-                            TDeclaration* pDeclarationDestroy =
+                            TDeclaration* pDeclarationDestroy2 =
                                 SymbolMap_FindObjFunction(&program->GlobalScope,
                                     nameToFind,
                                     "Destroy");
-                            if (pDeclarationDestroy)
+                            if (pDeclarationDestroy2)
                             {
                                 if (bIsAutoPointerToObject)
                                 {
@@ -2764,11 +2770,11 @@ static bool FindHighLevelFunction(TProgram* program,
                 {
                     //se nao achou delete procura a destroy 
                     //e depois chama free
-                    TDeclaration* pDeclarationDestroy =
+                    TDeclaration* pDeclarationDestroy2 =
                         SymbolMap_FindObjFunction(&program->GlobalScope,
                             nameToFind,
                             "Destroy");
-                    if (pDeclarationDestroy)
+                    if (pDeclarationDestroy2)
                     {
                         StrBuilder_AppendFmtLn(fp, 4 * 1,
                             "%s_Destroy(%s);",
@@ -3722,12 +3728,12 @@ TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifi
         return NULL;
 
     TStructUnionSpecifier* pTStructUnionSpecifier =
-        TSpecifier_As_TStructUnionSpecifier(specifiers->pHead);
+        TSpecifier_As_TStructUnionSpecifier(specifiers->pData[0]);
 
     if (pTStructUnionSpecifier == NULL)
     {
         TSingleTypeSpecifier *pSingleTypeSpecifier =
-            TSpecifier_As_TSingleTypeSpecifier(specifiers->pHead);
+            TSpecifier_As_TSingleTypeSpecifier(specifiers->pData[0]);
 
         if (pSingleTypeSpecifier != NULL &&
             pSingleTypeSpecifier->Token == TK_IDENTIFIER)
@@ -3737,8 +3743,11 @@ TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifi
             TDeclaration * pDeclaration = TProgram_GetFinalTypeDeclaration(program, typedefName);
             if (pDeclaration)
             {
-                pTStructUnionSpecifier =
-                    TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pHead->pNext);
+                if (pDeclaration->Specifiers.Size > 1)
+                {
+                    pTStructUnionSpecifier =
+                        TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pData[1]);
+                }
             }
         }
     }

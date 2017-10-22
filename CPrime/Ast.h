@@ -585,9 +585,17 @@ CAST(TSpecifierQualifier, TEnumSpecifier)
 
 //CAST(TSpecifierQualifier, TTypeQualifier)
 
-typedef List(TSpecifierQualifier) TSpecifierQualifierList;
-#define TSPECIFIERQUALIFIERLIST_INIT LIST_INIT
+
+typedef struct {
+    TSpecifierQualifier *_auto *_auto _size(Size) pData;
+    int Size;
+    int Capacity;
+} TSpecifierQualifierList;
+
+#define TSPECIFIERQUALIFIERLIST_INIT {0,0,0}
+
 void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecifiers);
+void TSpecifierQualifierList_PushBack(TSpecifierQualifierList* p, TSpecifierQualifier* pItem);
 bool TSpecifierQualifierList_IsTypedef(TSpecifierQualifierList* p);
 const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p);
 TSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p);
@@ -601,13 +609,17 @@ bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList* p);
 
 
-typedef struct TDeclarationSpecifiers {    
-        TSpecifier* pHead; 
-        TSpecifier* pTail; 
+
+
+typedef struct TDeclarationSpecifiers {
+    TSpecifier *_auto *_auto _size(Size) pData;
+    int Size;
+    int Capacity;
 } TDeclarationSpecifiers;
 
 #define TDECLARATION_SPECIFIERS_INIT LIST_INIT
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers);
+void TDeclarationSpecifiers_PushBack(TDeclarationSpecifiers* p, TSpecifier* pItem);
 
 const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDeclarationSpecifiers);
 bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers* pDeclarationSpecifiers, Tokens token, const char* lexeme);

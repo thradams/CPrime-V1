@@ -525,7 +525,7 @@ bool TExpression_Print(TExpression *  p, const char* name, bool b, FILE* fp)
 
 
                 //tem algo?
-                if (pTUnaryExpressionOperator->TypeName.SpecifierQualifierList.pHead != NULL)
+                if (pTUnaryExpressionOperator->TypeName.SpecifierQualifierList.Size > 0)
                 {
                     TTypeName_Print(&pTUnaryExpressionOperator->TypeName, "", b, fp);
                     //fprintf(fp, "\"type\":{");
@@ -1052,8 +1052,9 @@ bool SpecifierQualifier_Print(TSpecifierQualifier* pItem, bool b, FILE* fp)
 bool SpecifierQualifierList_Print(TSpecifierQualifierList* p, bool b, FILE* fp)
 {
     fprintf(fp, "\"specifier-qualifier-list\" : [");
-    ForEachListItem(TSpecifierQualifier, pItem, p)
+    for (int i = 0 ; i < p->Size; i++)
     {
+        TSpecifierQualifier* pItem = p->pData[i];
         if (b)
             fprintf(fp, ",");
 
@@ -1263,8 +1264,12 @@ bool TDeclarationSpecifiers_Print(TDeclarationSpecifiers* pDeclarationSpecifiers
 {
     fprintf(fp, "\"declarations-specifiers\": [");
     b = false;
-    ForEachListItem(TSpecifier, pItem, pDeclarationSpecifiers)
-    {
+    
+        for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
+        {
+            TSpecifier* pItem = pDeclarationSpecifiers->pData[i];
+
+    
         if (b)
         {
             fprintf(fp, ",");
