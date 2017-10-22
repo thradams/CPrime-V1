@@ -1913,21 +1913,23 @@ void FindUnionSetOf(TProgram* program,
 {
     TDeclaration * pFinalDecl =
         TProgram_GetFinalTypeDeclaration(program, structOrTypeName);
-
+    int typeInt = 0;
     TStructUnionSpecifier* pStructUnionSpecifier = NULL;
     if (pFinalDecl)
     {
+        typeInt = 1; //typefef
         pStructUnionSpecifier =
-            TSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pHead->pNext);        
+            TSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pHead->pNext);
     }
     else
     {
+        typeInt = 2; //struct
         pStructUnionSpecifier =
-            SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);               
+            SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);
     }
-    
+
     if (pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
-    {        
+    {
         char tname[200] = { 0 };
         char* tn = tname;
         const char* pch = pStructUnionSpecifier->StereotypeStr;
@@ -1955,10 +1957,8 @@ void FindUnionSetOf(TProgram* program,
             }
             *tn = 0;
 
-            
             printf("add set %s\n", tname);
             FindUnionSetOf(program, tname, map);
-
 
             //reseta tname
             tname[0] = 0;
@@ -1969,12 +1969,8 @@ void FindUnionSetOf(TProgram* program,
     }
     else
     {
-        
-            void *pp;
-            Map2_SetAt(map, structOrTypeName, _strdup(structOrTypeName), &pp);
-            if (pp)
-                free(pp);
-        
+        void *pp;
+        Map2_SetAt(map, structOrTypeName, typeInt, &pp);
     }
 }
 
@@ -2015,6 +2011,15 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
         }
     }
 
+    bool bIsPolimorphicStruct = false;
+    TStructUnionSpecifier* pStructUnionSpecifier =
+        GetStructSpecifier(program, &pFirstParameter[0]->Specifiers);
+    if (pStructUnionSpecifier &&
+        pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
+    {
+        bIsPolimorphicStruct = true;
+    }
+
     if (IsSuffix(funcName, "_Create"))
     {
         options->IdentationLevel++;
@@ -2049,7 +2054,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             fp);
         options->IdentationLevel--;
     }
-    else if (IsSuffix(funcName, "_Destroy"))
+    else if (!bIsPolimorphicStruct && IsSuffix(funcName, "_Destroy"))
     {
 
         options->IdentationLevel++;
@@ -2066,7 +2071,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             fp);
         options->IdentationLevel--;
     }
-    else if (IsSuffix(funcName, "_Delete"))
+    else if (!bIsPolimorphicStruct && IsSuffix(funcName, "_Delete"))
     {
 
         options->IdentationLevel++;
@@ -2190,8 +2195,8 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
         }
         else
         {
-            
-            
+
+
             TStructUnionSpecifier* pStructUnionSpecifier =
                 GetStructSpecifier(program, &pFirstParameter[0]->Specifiers);
             if (pStructUnionSpecifier &&
@@ -2220,11 +2225,23 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                             { "prefix", functionPrefix.c_str },
                             { "suffix", functionSuffix.c_str }
                         };
-
-                        StrBuilder_Template(fp,
-                            "        case $type\b_ID: $type\b_$suffix(($type*)$p); break; \n",
-                            vars,
-                            sizeof(vars) / sizeof(vars[0]));
+                        if ((int)map.pHashTable[i]->pValue == 2)
+                        {
+                            //2 is struct
+                            StrBuilder_Template(fp,
+                                "        case $type\b_ID: $type\b_$suffix((struct $type*)$p); break; \n",
+                                vars,
+                                sizeof(vars) / sizeof(vars[0]));
+                        }
+                        else
+                        {
+                            //1 is typedef
+                            StrBuilder_Template(fp,
+                                "        case $type\b_ID: $type\b_$suffix(($type*)$p); break; \n",
+                                vars,
+                                sizeof(vars) / sizeof(vars[0]));
+                        }
+                        
                     }
                 }
 

@@ -16,13 +16,13 @@ typedef struct Box {
     int i;
 } Box;
 
-typedef struct Circle {
+ struct Circle {
     int i;
-} Circle;
+} ;
 
-typedef struct Car {
+ struct Car {
     int i;
-} Car;
+} ;
 
 
 typedef struct {
@@ -32,15 +32,43 @@ typedef struct {
 void Car_Draw(struct Car* p)
 {
 }
+void Car_Delete(struct Car* p) _default
+{
+    if (p != NULL)
+    {
+        free((void*)p);
+    }
+}
 
 void Box_Draw(struct Box* p) 
 {
 }
+void Box_Delete(struct Box* p) _default
+{
+    if (p != NULL)
+    {
+        free((void*)p);
+    }
+}
 void Circle_Draw(struct Circle* p)
 {
 }
+void Circle_Delete(struct Circle* p) _default
+{
+    if (p != NULL)
+    {
+        free((void*)p);
+    }
+}
 void Triangle_Draw(Triangle* p)
 {
+}
+void Triangle_Delete(Triangle* p) _default
+{
+    if (p != NULL)
+    {
+        free((void*)p);
+    }
 }
 
 
@@ -56,61 +84,27 @@ Triangle* Triangle_Create() //_default
 
 typedef struct _union("Car | Circle") Other Other;
 
+typedef struct _union("Box Circle Triangle Other") Shape Shape;
 
- typedef struct _union("Box Circle Triangle Other") Shape Shape;
+void Shape_Delete(struct Shape* p) _default
+{
+    switch (*((int*)p))
+    {
+        case Circle_ID: Circle_Delete((struct Circle*)p); break; 
+        case Car_ID: Car_Delete((struct Car*)p); break; 
+        case Triangle_ID: Triangle_Delete((Triangle*)p); break; 
+        case Box_ID: Box_Delete((Box*)p); break; 
+    }
+}
 
 void Shape_Draw(struct Shape* p) _default
 {
     switch (*((int*)p))
     {
-        case Circle_ID: Circle_Draw((Circle*)p); break; 
-        case Car_ID: Car_Draw((Car*)p); break; 
+        case Circle_ID: Circle_Draw((struct Circle*)p); break; 
+        case Car_ID: Car_Draw((struct Car*)p); break; 
         case Triangle_ID: Triangle_Draw((Triangle*)p); break; 
         case Box_ID: Box_Draw((Box*)p); break; 
-    }
-}
-
-
-struct Boxes
-{
-    Box* _auto _size(Size) pData;
-    int Size;
-    int Capacity;
-};
-
-struct Boxes
-{
-    Box Data _size(Size);
-    Box Data[2];
-    int Size;
-    int Capacity;
-};
-
-struct Boxes
-{
-    Box* _auto _size(Size) pData;
-    int Size;
-    int Capacity;
-};
-
-void Boxes_Reserve(struct Boxes* p, int n) _default
-{
-    if (n > p->Capacity)
-    {
-        Box* pnew = p->pData;
-        pnew = (Box*)realloc(pnew, n * sizeof(Box));
-        if (pnew)
-        {
-            p->pData = pnew;
-            p->Capacity = n;
-        }
-    }
-}
-void Boxes_Destroy(struct Boxes* p) _default
-{
-    if (p->pData != NULL)
-    {
-        free((void*)p->pData);
     }
 }
 
@@ -118,5 +112,6 @@ int main(int argc, char **argv)
 {
     Shape* p = (struct Shape*)Triangle_Create();
     Shape_Draw(p);
+    Shape_Delete(p);
     return 0;
 }
