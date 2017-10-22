@@ -1935,7 +1935,7 @@ TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration* p)
             {
                 if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
                 {
-                    if (IS_TYPE(p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator, TDirectDeclaratorTypeFunction))
+                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->DeclaratorType == TDirectDeclaratorTypeFunction)
                     {
                         pParameterTypeList =
                             &p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Parameters;
@@ -1960,7 +1960,7 @@ const char* TDeclaration_GetFunctionName(TDeclaration* p)
             {
                 if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
                 {
-                    if (IS_TYPE(p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator, TDirectDeclaratorTypeFunction))
+                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->DeclaratorType == TDirectDeclaratorTypeFunction)
                     {
                         functionName =
                             p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->Identifier;
@@ -1984,7 +1984,7 @@ TCompoundStatement* TDeclaration_Is_FunctionDefinition(TDeclaration* p)
             {
                 if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator)
                 {
-                    if (IS_TYPE(p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator, TDirectDeclaratorTypeFunction))
+                    if (p->InitDeclaratorList.pHead->pDeclarator->pDirectDeclarator->DeclaratorType== TDirectDeclaratorTypeFunction)
                     {
                         pCompoundStatement = p->pCompoundStatementOpt;
                     }

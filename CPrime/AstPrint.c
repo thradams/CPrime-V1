@@ -934,7 +934,7 @@ bool TDirectDeclarator_Print(TDirectDeclarator* pDirectDeclarator,
         b = TExpression_Print(pDirectDeclarator->pExpression, "assignment-expression", b, fp);
     }
 
-    if (IS_TYPE(pDirectDeclarator, TDirectDeclaratorTypeFunction))
+    if (pDirectDeclarator->->DeclaratorType == TDirectDeclaratorTypeFunction)
     {
         //( parameter-type-list )
         fprintf(fp, ",");
