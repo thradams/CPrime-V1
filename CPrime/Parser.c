@@ -19,8 +19,6 @@ bool TTypeSpecifier_IsFirst(Parser* ctx, Tokens token, const char* lexeme);
 void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQualifierList);
 static bool TTypeQualifier_IsFirst(Tokens token);
 
-void TemplateTypeSpecifierArgumentList(Parser* ctx,
-    TTemplateTypeSpecifierArgumentList* pList);
 
 static bool IsPreprocessorTokenPhase(Tokens token)
 {
@@ -2754,7 +2752,7 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
     case TK_UNSIGNED:
     case TK__BOOL:
     case TK__COMPLEX:
-    case TK__TEMPLATE:
+    
     case TK_STRUCT:
     case TK_UNION:
     case TK_ENUM:
@@ -4049,7 +4047,7 @@ bool TTypeSpecifier_IsFirst(Parser* ctx, Tokens token, const char* lexeme)
     case TK__BOOL:
     case TK__COMPLEX:
     case TK__ATOMIC:
-    case TK__TEMPLATE:
+    
     case TK_STRUCT:
     case TK_UNION:
     case TK_ENUM:
@@ -4065,75 +4063,6 @@ bool TTypeSpecifier_IsFirst(Parser* ctx, Tokens token, const char* lexeme)
     }
 
     return bResult;
-}
-
-void TemplateTypeSpecifierArgument(Parser* ctx,
-    TTemplateTypeSpecifierArgument* p)
-{
-    /*
-    Thiago
-    template-type-specifier-argument:
-    typename
-    */
-
-    TypeName(ctx, &p->TypeName);
-}
-
-void TemplateTypeSpecifierArgumentList(Parser* ctx,
-    TTemplateTypeSpecifierArgumentList* pList)
-{
-    /*
-    template-type-specifier-argument-list:
-    template-type-specifier-argument
-    template-type-specifier-argument , template-type-specifier-argument-list
-    */
-
-    TTemplateTypeSpecifierArgument* pTemplateTypeSpecifierArgument
-        = TTemplateTypeSpecifierArgument_Create();
-
-    TemplateTypeSpecifierArgument(ctx, pTemplateTypeSpecifierArgument);
-
-    List_Add(pList, pTemplateTypeSpecifierArgument);
-
-    //Tem mais?
-    Tokens token = Parser_CurrentToken(ctx);
-    if (token == TK_COMMA)
-    {
-        Parser_Match(ctx, NULL);
-        TemplateTypeSpecifierArgumentList(ctx, pList);
-    }
-}
-
-void TemplateTypeSpecifier(Parser* ctx,
-    TTypeSpecifier** ppTypeSpecifier)
-{
-    /*
-    template-type-specifier:
-    _Template ( identifier)
-    _Template ( identifier, template-type-specifier-argument-list )
-    */
-    TTemplateTypeSpecifier* pTemplateTypeSpecifier =
-        TTemplateTypeSpecifier_Create();
-
-    *ppTypeSpecifier = TTemplateTypeSpecifier_As_TTypeSpecifier(pTemplateTypeSpecifier);
-
-    Parser_MatchToken(ctx, TK__TEMPLATE, &pTemplateTypeSpecifier->ClueList0);
-
-    Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, NULL);
-
-    String_Set(&pTemplateTypeSpecifier->Identifier, Lexeme(ctx));
-    Parser_MatchToken(ctx, TK_IDENTIFIER, NULL);
-
-    Tokens token = Parser_CurrentToken(ctx);
-    if (token == TK_COMMA)
-    {
-        Parser_MatchToken(ctx, TK_COMMA, NULL);
-        TemplateTypeSpecifierArgumentList(ctx,
-            &pTemplateTypeSpecifier->Args);
-    }
-
-    Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, NULL);
-
 }
 
 
@@ -4225,14 +4154,7 @@ void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier)
         bResult = true;
         AtomicTypeSpecifier(ctx, ppTypeSpecifier);
         break;
-
-        //extensao thiago
-        //template-type-specifier
-    case TK__TEMPLATE:
-        bResult = true;
-        TemplateTypeSpecifier(ctx, ppTypeSpecifier);
-        break;
-
+    
     case TK_STRUCT:
     case TK_UNION:
     {

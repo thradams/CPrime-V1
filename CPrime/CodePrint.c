@@ -1462,60 +1462,6 @@ static void StorageSpecifier_CodePrint(TProgram* program, Options * options, TSt
 
 }
 
-
-
-static void TTemplateTypeSpecifier_CodePrint(TProgram* program, Options * options, TTemplateTypeSpecifier* p, StrBuilder* fp)
-{
-    TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-
-    if (strcmp(p->Identifier, "List") == 0)
-    {
-
-        StrBuilder strBuilder = STRBUILDER_INIT;
-
-        if (p->Args.pHead != NULL)
-        {
-            TTypeName_CodePrint(program, options, &p->Args.pHead->TypeName, &strBuilder);
-        }
-        else
-        {
-            //TODO
-            //tem que ter 1 arg
-        }
-
-
-        Output_Append(fp, options, "struct {");
-        Output_Append(fp, options, strBuilder.c_str);
-        Output_Append(fp, options, "* pHead; ");
-        Output_Append(fp, options, strBuilder.c_str);
-        Output_Append(fp, options, "* pTail; }");
-
-        StrBuilder_Destroy(&strBuilder);
-    }
-    else if (strcmp(p->Identifier, "Union") == 0)
-    {
-        Output_Append(fp, options, "struct { int type; }");
-    }
-    else
-    {
-        //ERROR
-        printf("ERROR _Template\n");
-        Output_Append(fp, options, "struct { /*error*/}");
-
-        //TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-        //Output_Append(fp, options,  "_Template");
-
-
-        //Output_Append(fp, options,  "(");
-        //Output_Append(fp, options,  p->Identifier);
-        //Output_Append(fp, options,  ",");
-        //TTypeName_CodePrint(program, options, &p->TypeName,  fp);
-
-        //Output_Append(fp, options,  ")");
-    }
-
-}
-
 static void TFunctionSpecifier_CodePrint(TProgram* program, Options * options, TFunctionSpecifier* p, StrBuilder* fp)
 {
     if (p->bIsInline)
@@ -1646,9 +1592,6 @@ void TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDec
                 TFunctionSpecifier_CodePrint(program, options, (TFunctionSpecifier*)pItem, fp);
             break;
 
-            CASE(TTemplateTypeSpecifier) :
-                TTemplateTypeSpecifier_CodePrint(program, options, (TTemplateTypeSpecifier*)pItem, fp);
-            break;
             //CASE(TAlignmentSpecifier) : 
             ///TAlignmentSpecifier_CodePrint(program, options, (TAlignmentSpecifier*)pItem,  fp);
             //break;
@@ -1957,7 +1900,6 @@ void FindUnionSetOf(TProgram* program,
             }
             *tn = 0;
 
-            printf("add set %s\n", tname);
             FindUnionSetOf(program, tname, map);
 
             //reseta tname
@@ -1970,7 +1912,7 @@ void FindUnionSetOf(TProgram* program,
     else
     {
         void *pp;
-        Map2_SetAt(map, structOrTypeName, typeInt, &pp);
+        Map2_SetAt(map, structOrTypeName, (void*) typeInt, &pp);
     }
 }
 

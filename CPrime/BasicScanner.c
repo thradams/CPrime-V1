@@ -556,7 +556,7 @@ static struct TkPair keywords[] =
     { "_Alignas", TK__ALIGNAS },
     { "_Alignof", TK__ALINGOF },
     { "_Atomic", TK__ATOMIC },
-    {"_Template", TK__TEMPLATE},
+    
     { "_Bool", TK__BOOL },
     { "_Complex", TK__COMPLEX },
     { "_Generic", TK__GENERIC },
