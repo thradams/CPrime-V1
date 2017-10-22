@@ -1272,7 +1272,7 @@ static void TDirectDeclarator_CodePrint(TProgram* program, Options * options, TD
         Output_Append(fp, options, ")");
     }
 
-    if (IS_TYPE(pDirectDeclarator, TDirectDeclaratorTypeArray))
+    if (pDirectDeclarator->DeclaratorType == TDirectDeclaratorTypeArray)
     {
         /*
         direct-declarator [ type-qualifier-listopt assignment-expressionopt ]
@@ -1289,8 +1289,8 @@ static void TDirectDeclarator_CodePrint(TProgram* program, Options * options, TD
         Output_Append(fp, options, "]");
     }
 
-
-    if (IS_TYPE(pDirectDeclarator, TDirectDeclaratorTypeFunction))
+     
+    if (pDirectDeclarator->DeclaratorType == TDirectDeclaratorTypeFunction)
     {
         //( parameter-type-list )
         TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList2, fp);

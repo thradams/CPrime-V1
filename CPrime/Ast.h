@@ -747,7 +747,7 @@ typedef struct TDirectDeclarator
     TPosition Position;
     TParameterTypeList  Parameters;
     TExpression*   pExpression;
-    TDirectDeclaratorType Type; //para diferenciar pois null nao basta []
+    TDirectDeclaratorType DeclaratorType; //para diferenciar pois null nao basta []
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
     TScannerItemList ClueList2;

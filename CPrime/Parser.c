@@ -3622,7 +3622,7 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
         Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pDirectDeclarator->ClueList1);
 
         //Para indicar que eh uma ( declarator )
-        pDirectDeclarator->Type = TDirectDeclaratorTypeDeclarator;
+        pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeDeclarator;
         // ) para nao confundir com funcao (
     }
     break;
@@ -3634,7 +3634,7 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
 
         //Para indicar que eh uma identificador
 
-        pDirectDeclarator->Type = TDirectDeclaratorTypeIdentifier;
+        pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeIdentifier;
 
         const char* lexeme = Lexeme(ctx);
         String_Set(&pDirectDeclarator->Identifier, lexeme);
@@ -3663,7 +3663,7 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
 
         //Para indicar que eh uma identificador
 
-        pDirectDeclarator->Type = TDirectDeclaratorTypeIdentifier;
+        pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeIdentifier;
 
         //Quando tiver abstract declarator vai ser 
         //bug cair aqui
@@ -3691,7 +3691,7 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
 
             //Para indicar que eh uma funcao
 
-            pDirectDeclarator->Type = TDirectDeclaratorTypeFunction;
+            pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeFunction;
 
             if (token != TK_RIGHT_PARENTHESIS)
             {
@@ -3714,7 +3714,7 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
 
             //Para indicar que eh um array
 
-            pDirectDeclarator->Type = TDirectDeclaratorTypeArray;
+            pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeArray;
 
             token = Parser_MatchToken(ctx, TK_LEFT_SQUARE_BRACKET, &pDirectDeclarator->ClueList2);
             if (token == TK_STATIC)

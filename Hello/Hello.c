@@ -1,4 +1,7 @@
 #include "config.h"
 
 
-int i;
+void Point_Init(int* p)
+{
+}
+
