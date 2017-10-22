@@ -201,7 +201,7 @@ void TFile_Delete(TFile* p) _default
     if (p != NULL)
     {
         TFile_Destroy(p);
-        free(p);
+        free((void*)p);
     }
 }
 

@@ -1912,7 +1912,7 @@ void FindUnionSetOf(TProgram* program,
     else
     {
         void *pp;
-        Map2_SetAt(map, structOrTypeName, (void*) typeInt, &pp);
+        Map2_SetAt(map, structOrTypeName, (void*)typeInt, &pp);
     }
 }
 
@@ -1936,8 +1936,8 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
     GetPrefixSuffix(funcName, &functionPrefix, &functionSuffix);
 
     //parametros
-    TParameter* pFirstParameter[3] = { 0,0,0 };
-    const char* firstParameterName[3] = { 0,0,0 };
+    TParameter* parameters[3] = { 0,0,0 };
+    const char* parameterName[3] = { 0,0,0 };
     TParameterTypeList * pArgs =
         TDeclaration_GetFunctionArguments(p);
 
@@ -1947,22 +1947,26 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
     {
         ForEachListItem(TParameter, pParameter, &pArgs->ParameterList)
         {
-            pFirstParameter[numberOfArguments] = pParameter;
-            firstParameterName[numberOfArguments] = TParameter_GetName(pParameter);
+            parameters[numberOfArguments] = pParameter;
+            parameterName[numberOfArguments] = TParameter_GetName(pParameter);
             numberOfArguments++;
         }
     }
 
     bool bIsPolimorphicStruct = false;
-    TStructUnionSpecifier* pStructUnionSpecifier =
-        GetStructSpecifier(program, &pFirstParameter[0]->Specifiers);
-    if (pStructUnionSpecifier &&
-        pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
+
+    if (parameters[0])
     {
-        bIsPolimorphicStruct = true;
+        TStructUnionSpecifier* pStructUnionSpecifier =
+            GetStructSpecifier(program, &parameters[0]->Specifiers);
+        if (pStructUnionSpecifier &&
+            pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
+        {
+            bIsPolimorphicStruct = true;
+        }
     }
 
-    if (IsSuffix(funcName, "_Create"))
+    if (IsSuffix(funcName, "_Create") )
     {
         options->IdentationLevel++;
 
@@ -1979,16 +1983,16 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             fp);
         options->IdentationLevel--;
     }
-    else if (IsSuffix(funcName, "_Init") && pFirstParameter)
+    else if (IsSuffix(funcName, "_Init") && numberOfArguments > 0)
     {
         options->IdentationLevel++;
 
         InstanciateDestroy2(program,
             options,
-            (TSpecifierQualifierList*)(&pFirstParameter[0]->Specifiers),
-            &pFirstParameter[0]->Declarator,
+            (TSpecifierQualifierList*)(&parameters[0]->Specifiers),
+            &parameters[0]->Declarator,
             NULL,
-            firstParameterName[0],
+            parameterName[0],
             NULL /*not used*/,
             ActionInitContent,
             SearchNone,
@@ -1996,16 +2000,16 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             fp);
         options->IdentationLevel--;
     }
-    else if (!bIsPolimorphicStruct && IsSuffix(funcName, "_Destroy"))
+    else if (!bIsPolimorphicStruct && IsSuffix(funcName, "_Destroy") && numberOfArguments > 0)
     {
 
         options->IdentationLevel++;
         InstanciateDestroy2(program,
             options,
-            (TSpecifierQualifierList*)(&pFirstParameter[0]->Specifiers),
-            &pFirstParameter[0]->Declarator,
+            (TSpecifierQualifierList*)(&parameters[0]->Specifiers),
+            &parameters[0]->Declarator,
             NULL,
-            firstParameterName[0],
+            parameterName[0],
             NULL /*not used*/,
             ActionDestroyContent,
             SearchNone,
@@ -2013,16 +2017,16 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             fp);
         options->IdentationLevel--;
     }
-    else if (!bIsPolimorphicStruct && IsSuffix(funcName, "_Delete"))
+    else if (!bIsPolimorphicStruct && IsSuffix(funcName, "_Delete") && numberOfArguments > 0)
     {
 
         options->IdentationLevel++;
         InstanciateDestroy2(program,
             options,
-            (TSpecifierQualifierList*)(&pFirstParameter[0]->Specifiers),
-            &pFirstParameter[0]->Declarator,
+            (TSpecifierQualifierList*)(&parameters[0]->Specifiers),
+            &parameters[0]->Declarator,
             NULL,
-            firstParameterName[0],
+            parameterName[0],
             NULL /*not used*/,
             ActionDelete,
             SearchDestroy,
@@ -2041,7 +2045,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 
             //Implemetancao para vector
             if (FindVectorStructPattern(program,
-                pFirstParameter[0],
+                parameters[0],
                 &bItemIsPointer,
                 &bItemIsAutoPointer,
                 &itemType,
@@ -2075,8 +2079,8 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                     bItemIsPointer ? pszTemplatePointer : pszTemplateNotPointer;
 
                 struct TemplateVar vars[] = {
-                    {"p", firstParameterName[0]},
-                    {"nelements", firstParameterName[1] },
+                    {"p", parameterName[0]},
+                    {"nelements", parameterName[1] },
                     {"type", itemType.c_str},
                     {"data", arrayName.c_str}
                 };
@@ -2099,7 +2103,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 
             //Implemetancao para vector
             if (FindVectorStructPattern(program,
-                pFirstParameter[0],
+                parameters[0],
                 &bItemIsPointer,
                 &bItemIsAutoPointer,
                 &itemType,
@@ -2119,8 +2123,8 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                     "    $p->Size++;\n";
 
                 struct TemplateVar vars[] = {
-                    { "p", firstParameterName[0] },
-                    { "nelements", firstParameterName[1] },
+                    { "p", parameterName[0] },
+                    { "nelements", parameterName[1] },
                     { "type", itemType.c_str },
                     { "data", arrayName.c_str },
                     { "prefix", functionPrefix.c_str }
@@ -2140,7 +2144,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 
 
             TStructUnionSpecifier* pStructUnionSpecifier =
-                GetStructSpecifier(program, &pFirstParameter[0]->Specifiers);
+                GetStructSpecifier(program, &parameters[0]->Specifiers);
             if (pStructUnionSpecifier &&
                 pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
             {
@@ -2148,7 +2152,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                 FindUnionSetOf(program, pStructUnionSpecifier->Name, &map);
 
                 struct TemplateVar vars0[] = {
-                    { "p", firstParameterName[0] }
+                    { "p", parameterName[0] }
                 };
 
                 StrBuilder_Template(fp,
@@ -2162,7 +2166,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                     if (map.pHashTable[i])
                     {
                         struct TemplateVar vars[] = {
-                            { "p", firstParameterName[0] },
+                            { "p", parameterName[0] },
                             { "type", (const char*)map.pHashTable[i]->Key },
                             { "prefix", functionPrefix.c_str },
                             { "suffix", functionSuffix.c_str }
@@ -2183,7 +2187,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                                 vars,
                                 sizeof(vars) / sizeof(vars[0]));
                         }
-                        
+
                     }
                 }
 
@@ -3715,6 +3719,9 @@ bool IsSuffix(const char* s, const char* suffix)
 
 TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifiers* specifiers)
 {
+    if (specifiers == NULL)
+        return NULL;
+
     TStructUnionSpecifier* pTStructUnionSpecifier =
         TSpecifier_As_TStructUnionSpecifier(specifiers->pHead);
 
