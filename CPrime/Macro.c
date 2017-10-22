@@ -40,7 +40,7 @@ void Macro_Delete(Macro * p) _default
     if (p != NULL)
     {
         Macro_Destroy(p);
-        free(p);
+        free((void*)p);
     }
 }
 

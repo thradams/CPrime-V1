@@ -48,7 +48,7 @@ void PPToken_Delete(PPToken * p) _default
     if (p != NULL)
     {
         PPToken_Destroy(p);
-        free(p);
+        free((void*)p);
     }
 }
 

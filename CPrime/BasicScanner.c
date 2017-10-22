@@ -299,7 +299,7 @@ void ScannerItem_Delete(ScannerItem* pScannerItem) _default
     if (pScannerItem != NULL)
     {
         ScannerItem_Destroy(pScannerItem);
-        free(pScannerItem);
+        free((void*)pScannerItem);
     }
 }
 
@@ -423,7 +423,7 @@ void BasicScanner_Delete(BasicScanner* pBasicScanner) _default
     if (pBasicScanner != NULL)
     {
         BasicScanner_Destroy(pBasicScanner);
-        free(pBasicScanner);
+        free((void*)pBasicScanner);
     }
 }
 
