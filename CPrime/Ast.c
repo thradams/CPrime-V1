@@ -1134,29 +1134,29 @@ void TSpecifierQualifier_Destroy(TSpecifierQualifier* pItem)
     switch (pItem->Type)
     {
         CASE(TSingleTypeSpecifier) :
-            TSingleTypeSpecifier_Delete((TSingleTypeSpecifier*)pItem);
+            TSingleTypeSpecifier_Destroy((TSingleTypeSpecifier*)pItem);
         break;
 
         CASE(TStructUnionSpecifier) :
-            TStructUnionSpecifier_Delete((TStructUnionSpecifier*)pItem);
+            TStructUnionSpecifier_Destroy((TStructUnionSpecifier*)pItem);
         break;
 
         CASE(TEnumSpecifier) :
-            TEnumSpecifier_Delete((TEnumSpecifier*)pItem);
+            TEnumSpecifier_Destroy((TEnumSpecifier*)pItem);
         break;
 
         CASE(TStorageSpecifier) :
-            TStorageSpecifier_Delete((TStorageSpecifier*)pItem);
+            TStorageSpecifier_Destroy((TStorageSpecifier*)pItem);
         break;
         CASE(TTypeQualifier) :
-            TTypeQualifier_Delete((TTypeQualifier*)pItem);
+            TTypeQualifier_Destroy((TTypeQualifier*)pItem);
         break;
         CASE(TFunctionSpecifier) :
-            TFunctionSpecifier_Delete((TFunctionSpecifier*)pItem);
+            TFunctionSpecifier_Destroy((TFunctionSpecifier*)pItem);
         break;
 
         CASE(TAlignmentSpecifier) :
-            TAlignmentSpecifier_Delete((TAlignmentSpecifier*)pItem);
+            TAlignmentSpecifier_Destroy((TAlignmentSpecifier*)pItem);
         break;
 
 
