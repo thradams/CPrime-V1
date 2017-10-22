@@ -38,9 +38,6 @@ The robot uses the name of the function return, arguments and all AST to decide 
 
 ## Table Functions x Types
 
-x implemented
-- missing but considered
-
 
 |         | Any Type  | Vector | List  | enum  |   |
 |---------|-----------|--------|-------|-------|---|
@@ -58,7 +55,7 @@ x implemented
 |Back     |           | -      | -     |       |   |
 |ToString |           | -      | -     |   -   |   |
 
-
+ Legend: 'x' = implemented  '-' = missing but considered
  
 ## Using the compiler
 
@@ -423,6 +420,139 @@ void Items_Destroy(struct Items* pItems) _default
         Item_Delete(pItems->pData[i]);
     }
     free((void*)pItems->pData);
+}
+
+```
+
+## Polimorphism
+
+Use the \_union("Type1 | Type2") to define a abstract type that
+can point to Type1 Type2 etc...
+
+```c
+typedef struct _union("Car | Circle") Other Other;
+typedef struct \_union("Box Circle Triangle Other") Shape Shape;
+```
+
+Shape can be Box Circle Triangle or Other.
+Other can be Car, so Shape can be Car as well.
+
+```c
+
+#include <stdlib.h>
+#include <stdio.h>
+
+enum
+{
+    Other_ID,
+    Circle_ID,
+    Car_ID,
+    Triangle_ID,
+    Box_ID,
+};
+
+
+typedef struct Box {
+    int i;
+} Box;
+
+struct Circle {
+    int i;
+} ;
+
+ struct Car {
+    int i;
+} ;
+
+typedef struct {
+    int i;
+} Triangle;
+
+void Car_Draw(struct Car* p) { 
+}
+
+void Car_Delete(struct Car* p) _default
+{
+    if (p != NULL)
+    {
+        free((void*)p);
+    }
+}
+
+void Box_Draw(struct Box* p) 
+{
+}
+void Box_Delete(struct Box* p) _default
+{
+    if (p != NULL)
+    {
+        free((void*)p);
+    }
+}
+void Circle_Draw(struct Circle* p)
+{
+}
+void Circle_Delete(struct Circle* p) _default
+{
+    if (p != NULL)
+    {
+        free((void*)p);
+    }
+}
+void Triangle_Draw(Triangle* p)
+{
+}
+void Triangle_Delete(Triangle* p) _default
+{
+    if (p != NULL)
+    {
+        free((void*)p);
+    }
+}
+
+
+Triangle* Triangle_Create() //_default
+{
+    Triangle *p = (Triangle*) malloc(sizeof * p);
+    if (p != NULL)
+    {
+        p->i = Triangle_ID;
+    }
+    return p;
+}
+
+typedef struct _union("Car | Circle") Other Other;
+
+typedef struct _union("Box Circle Triangle Other") Shape Shape;
+
+void Shape_Delete(struct Shape* p) _default
+{
+    switch (*((int*)p))
+    {
+        case Circle_ID: Circle_Delete((struct Circle*)p); break; 
+        case Car_ID: Car_Delete((struct Car*)p); break; 
+        case Triangle_ID: Triangle_Delete((Triangle*)p); break; 
+        case Box_ID: Box_Delete((Box*)p); break; 
+    }
+}
+
+void Shape_Draw(struct Shape* p) _default
+{
+    switch (*((int*)p))
+    {
+        case Circle_ID: Circle_Draw((struct Circle*)p); break; 
+        case Car_ID: Car_Draw((struct Car*)p); break; 
+        case Triangle_ID: Triangle_Draw((Triangle*)p); break; 
+        case Box_ID: Box_Draw((Box*)p); break; 
+    }
+}
+
+int main(int argc, char **argv)
+{
+    Shape* p = (struct Shape*)Triangle_Create();
+    Shape_Draw(p);
+    Shape_Delete(p);
+    return 0;
 }
 
 ```
