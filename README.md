@@ -44,13 +44,19 @@ void X_Init(struct X* pX) _default
 I the struct X is changed then the C' will update the implementation for you.
 The robot uses the name of the function return, arguments and all AST to decide what to do.
 
-The names are fixed for now but I can add lowercase or synonyms for instance.
+## Table Functions x Types
 
-(This is just a matter of more people using the software)
+|         | Any Type  | Vector | List  |   |   |
+|---------|-----------|--------|-------|---|---|
+|Init     |      x    | x      | x     |   |   |
+|Destroy  |      x    | x      | x     |   |   |
+|Create   |      x    | x      | x     |   |   |
+|Delete   |      x    | x      | x     |   |   |
+|Swap     |           |        |       |   |   |
+|Clear    |           |        |       |   |   |
+|Reserve  |           | x      |       |   |   |
+|PushBack |           | x      |       |   |   |
 
-More features are being considered like lint, containers generation, helper functions etc. 
-
-Feel free to sugest features.
 
  
 ## Using the compiler
