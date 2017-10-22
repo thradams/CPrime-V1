@@ -11,15 +11,6 @@ C'(pronounced c prime) is a robot that can help you generate and maintain C sour
 
 You can delegate to the robot the implementation of some functions.
 
-To do this, you just add an empty macro called __default .
-
-Currently, C' is generating:
-
- * Constructor / Destructor (Init and Destroy)
- * Create, Delete
- * Static initializers
- * Dynamic arrays functions PushBack and Reserve
-
 Sample
 ```c
 struct X
