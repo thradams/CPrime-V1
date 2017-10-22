@@ -102,10 +102,6 @@ static inline void TYPE##_Delete(TYPE*  p)\
     TYPE##_Destroy(p);\
     free(p);\
   }\
-}\
-static inline void TYPE##_DeleteVoid(void*  p)\
-{\
-  TYPE##_Delete((TYPE*)p);\
 }
 
 
