@@ -847,7 +847,6 @@ void TTypeQualifierList_Reserve(TTypeQualifierList* p, int n) _default
             p->Capacity = n;
         }
     }
-
 }
 
 void TTypeQualifierList_PushBack(TTypeQualifierList* p, TTypeQualifier* pItem) _default
