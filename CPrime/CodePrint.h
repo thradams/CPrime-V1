@@ -8,14 +8,6 @@
 #include "Map.h"
 
 
-typedef enum
-{
-	BuildTypeInit,
-	BuildTypeDestroy,
-	BuildTypeCreate,
-	BuildTypeDelete,
-	BuildTypeStaticInit,
-} BuildType;
 
 typedef enum 
 {
