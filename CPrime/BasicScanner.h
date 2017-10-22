@@ -147,6 +147,9 @@ typedef enum
     TK_SWITCH,
     TK_TYPEDEF,
     TK_UNION,
+#ifdef LANGUAGE_EXTENSIONS
+    TK__UNION, //extension
+#endif
     TK_UNSIGNED,
     TK_VOID,
     TK_VOLATILE,

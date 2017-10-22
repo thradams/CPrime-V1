@@ -6,5 +6,6 @@
 #define _auto
 #define _size(x)
 #define _defval(x)
+#define _union(x)
 
 #endif

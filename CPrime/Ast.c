@@ -328,26 +328,16 @@ void TEnumSpecifier_Destroy(TEnumSpecifier* p) _default
     TScannerItemList_Destroy(&p->ClueList3);
 }
 
-bool TStructUnionSpecifier_IsTemplate(TStructUnionSpecifier* p, const char* templateName)
-{
-    bool bResult = false;
-    if (p->TemplateName != NULL)
-    {
-        bResult = strcmp(p->TemplateName, templateName) == 0;
-    }
-    return bResult;
-}
 
 void TStructUnionSpecifier_Destroy(TStructUnionSpecifier* p)
 {
     String_Destroy(&p->Name);
-    String_Destroy(&p->TemplateName);
+    String_Destroy(&p->StereotypeStr);
     ArrayT_Destroy(TAnyStructDeclaration, &p->StructDeclarationList);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
     TScannerItemList_Destroy(&p->ClueList2);
-    TScannerItemList_Destroy(&p->ClueList3);
-    TTemplateTypeSpecifierArgumentList_Destroy((TTemplateTypeSpecifierArgumentList*)&p->Args);
+    TScannerItemList_Destroy(&p->ClueList3);    
 }
 
 void TSingleTypeSpecifier_Destroy(TSingleTypeSpecifier* p) _default

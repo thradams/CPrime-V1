@@ -413,6 +413,30 @@ bool IsFirstOfPrimaryExpression(Tokens token)
     return bResult;
 }
 
+void PrimaryExpressionLiteral(Parser* ctx, TExpression** ppPrimaryExpression)
+{
+    Tokens token = Parser_CurrentToken(ctx);
+    const char* lexeme = Lexeme(ctx);
+
+     TPrimaryExpressionLiteral *  pPrimaryExpressionLiteral
+         = TPrimaryExpressionLiteral_Create();
+
+     *ppPrimaryExpression = (TExpression*)pPrimaryExpressionLiteral;
+
+     while (token == TK_STRING_LITERAL)
+     {
+         TPrimaryExpressionLiteralItem *  pPrimaryExpressionLiteralItem
+             = TPrimaryExpressionLiteralItem_Create();
+         const char* lexeme2 = Lexeme(ctx);
+         String_Set(&pPrimaryExpressionLiteralItem->lexeme, lexeme2);
+
+         token = Parser_Match(ctx,
+             &pPrimaryExpressionLiteralItem->ClueList0);
+
+         List_Add(&pPrimaryExpressionLiteral->List, pPrimaryExpressionLiteralItem);
+     } 
+}
+
 void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 {
     *ppPrimaryExpression = NULL;
@@ -445,26 +469,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
     switch (token)
     {
     case TK_STRING_LITERAL:
-    {
-        TPrimaryExpressionLiteral *  pPrimaryExpressionLiteral
-            = TPrimaryExpressionLiteral_Create();
-
-        *ppPrimaryExpression = (TExpression*)pPrimaryExpressionLiteral;
-
-        while (token == TK_STRING_LITERAL)
-        {
-            TPrimaryExpressionLiteralItem *  pPrimaryExpressionLiteralItem
-                = TPrimaryExpressionLiteralItem_Create();
-            const char* lexeme2 = Lexeme(ctx);
-            String_Set(&pPrimaryExpressionLiteralItem->lexeme, lexeme2);
-
-            token = Parser_Match(ctx,
-                &pPrimaryExpressionLiteralItem->ClueList0);
-
-            List_Add(&pPrimaryExpressionLiteral->List, pPrimaryExpressionLiteralItem);
-        }
-
-    }
+        PrimaryExpressionLiteral(ctx, ppPrimaryExpression);    
     break;
 
     case TK_IDENTIFIER:
@@ -2862,12 +2867,12 @@ void Struct_Or_Union(Parser* ctx,
     switch (token)
     {
     case TK_STRUCT:
-        pStructUnionSpecifier->bIsStruct = true;
+        pStructUnionSpecifier->Stereotype = StructUnionStereotypeStruct;
         Parser_Match(ctx, &pStructUnionSpecifier->ClueList0);
         break;
 
     case TK_UNION:
-        pStructUnionSpecifier->bIsStruct = false;
+        pStructUnionSpecifier->Stereotype = StructUnionStereotypeUnion;
         Parser_Match(ctx, &pStructUnionSpecifier->ClueList0);
         break;
 
@@ -3147,13 +3152,10 @@ void Struct_Or_Union_Specifier(Parser* ctx,
 
     /*
     struct-or-union-specifier:
-    struct-or-union { struct-declaration-list }
-    struct-or-union identifier
-
-    struct-or-union identifier (argument-list)
-    struct-or-union identifier { struct-declaration-list }
-    struct-or-union identifier identifier (argument-list)
+    struct-or-union _union("")opt identifieropt { struct-declaration-list }
+    struct-or-union _union("")opt identifier
     */
+
 
     Struct_Or_Union(ctx, pStructUnionSpecifier);//TODO
 
@@ -3161,59 +3163,52 @@ void Struct_Or_Union_Specifier(Parser* ctx,
     Tokens token = Parser_CurrentToken(ctx);
     const char* lexeme = Lexeme(ctx);
 
-    if (token == TK_IDENTIFIER)
+    if (token == TK__UNION)
     {
         
-        String_Set(&pStructUnionSpecifier->Name, lexeme);
+        pStructUnionSpecifier->Stereotype = StructUnionStereotypeUnionSet;
 
+        TScannerItemList list = TSCANNERITEMLIST_INIT;
+        Parser_Match(ctx, &list);
+        TScannerItemList_Destroy(&list);
+
+        Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS,
+            NULL);
+#if TODO
+        StrBuilder lit = STRBUILDER_INIT;
+        TExpression* pPrimaryExpression = NULL;
+        PrimaryExpressionLiteral(ctx, &pPrimaryExpression);
+        TPrimaryExpressionLiteral* pl = (TPrimaryExpressionLiteral*)pPrimaryExpression;
+        if (pl)
+        {
+            ForEachListItem(TPrimaryExpressionLiteralItem, pItem, &pl->List)
+            {                
+                StrBuilder_Append(&lit, pItem->lexeme);
+            }
+        }
+        String_Set(&pStructUnionSpecifier->StereotypeStr, lit.c_str);
+
+        StrBuilder_Destroy(&lit);
+        TExpression_Delete(pPrimaryExpression);
+#else
+         lexeme = Lexeme(ctx);
+         String_Set(&pStructUnionSpecifier->StereotypeStr, lexeme);
+         Parser_MatchToken(ctx, TK_STRING_LITERAL,
+          NULL);
+#endif
         
-        Parser_Match(ctx, &pStructUnionSpecifier->ClueList1);
-        token = Parser_CurrentToken(ctx);
-        if (token == TK_LEFT_PARENTHESIS)
-        {
-            //na verdade eh nome do template
-            String_Swap(&pStructUnionSpecifier->Name, &pStructUnionSpecifier->TemplateName);
-
-            Parser_Match(ctx, NULL);
-            TemplateTypeSpecifierArgumentList(ctx,
-                (TTemplateTypeSpecifierArgumentList *)&pStructUnionSpecifier->Args);
-            Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, NULL);
-        }
-        else if (token == TK_IDENTIFIER)
-        {
-
-            Tokens tokenAhead = Parser_LookAheadToken(ctx);
-
-            //token = Parser_CurrentToken(ctx);
-            if (tokenAhead == TK_LEFT_PARENTHESIS)
-            {
-                String_Set(&pStructUnionSpecifier->TemplateName, Lexeme(ctx));
-                Parser_Match(ctx, NULL);
-
-                Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, NULL);
-
-                TemplateTypeSpecifierArgumentList(ctx,
-                    (TTemplateTypeSpecifierArgumentList *)&pStructUnionSpecifier->Args);
-
-                Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, NULL);
-            }
-            else  if (tokenAhead == TK_SEMICOLON)
-            {
-                //typedef struct X X;
-                //                  ^
-            }
-            else  if (tokenAhead == TK_LEFT_SQUARE_BRACKET)
-            {
-                //typedef struct X {;
-                //                 ^
-            }
-            else
-            {
-                // SetError2(ctx, "unexpected struct ", "");
-            }
-        }
+        Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS,
+            NULL);        
     }
 
+    token = Parser_CurrentToken(ctx);
+    lexeme = Lexeme(ctx);
+
+    if (token == TK_IDENTIFIER)
+    {
+        String_Set(&pStructUnionSpecifier->Name, lexeme);        
+        Parser_Match(ctx, &pStructUnionSpecifier->ClueList1);       
+    }
 
     if (pStructUnionSpecifier->Name != NULL)
     {

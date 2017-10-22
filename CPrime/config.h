@@ -13,5 +13,7 @@
 #define _auto
 #define _default
 #define _defval(x)
+#define _size(x)
+#define _union(x)
 
 

@@ -932,13 +932,24 @@ static void TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
 
     //true;
 
-    if (p->bIsStruct)
+    if (p->Stereotype == StructUnionStereotypeStruct)
+    {
         Output_Append(fp, options, "struct");
-
-    else
+    }
+    else if (p->Stereotype == StructUnionStereotypeUnion)
+    {
         Output_Append(fp, options, "union");
-
+    }
+    else if (p->Stereotype == StructUnionStereotypeUnionSet)
+    {
+        Output_Append(fp, options, "struct ");
+        Output_Append(fp, options, "_union(");
+        Output_Append(fp, options, p->StereotypeStr);
+        Output_Append(fp, options, ")");
+    }
     TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+
+
 
     if (options->bPrintRepresentation)
     {
@@ -947,29 +958,22 @@ static void TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
 
     Output_Append(fp, options, p->Name);
 
-    if (p->TemplateName != NULL)
-    {
 
-    }
-    else
+    if (p->StructDeclarationList.size > 0)
     {
-        if (p->StructDeclarationList.size > 0)
+        TNodeClueList_CodePrint(options, &p->ClueList2, fp);
+
+        Output_Append(fp, options, "{");
+
+        for (int i = 0; i < p->StructDeclarationList.size; i++)
         {
-            TNodeClueList_CodePrint(options, &p->ClueList2, fp);
-
-            Output_Append(fp, options, "{");
-
-            for (int i = 0; i < p->StructDeclarationList.size; i++)
-            {
-                TAnyStructDeclaration * pStructDeclaration = p->StructDeclarationList.pItems[i];
-                TAnyStructDeclaration_CodePrint(program, options, pStructDeclaration, fp);
-            }
-
-            TNodeClueList_CodePrint(options, &p->ClueList3, fp);
-            Output_Append(fp, options, "}");
+            TAnyStructDeclaration * pStructDeclaration = p->StructDeclarationList.pItems[i];
+            TAnyStructDeclaration_CodePrint(program, options, pStructDeclaration, fp);
         }
-    }
 
+        TNodeClueList_CodePrint(options, &p->ClueList3, fp);
+        Output_Append(fp, options, "}");
+    }
 
 }
 
@@ -1903,6 +1907,78 @@ void GetPrefixSuffix(const char* psz, StrBuilder* prefix, StrBuilder* suffix)
     }
 }
 
+void FindUnionSetOf(TProgram* program,
+    const char* structOrTypeName,
+    Map2* map)
+{
+    TDeclaration * pFinalDecl =
+        TProgram_GetFinalTypeDeclaration(program, structOrTypeName);
+
+    TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+    if (pFinalDecl)
+    {
+        pStructUnionSpecifier =
+            TSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pHead->pNext);        
+    }
+    else
+    {
+        pStructUnionSpecifier =
+            SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);               
+    }
+    
+    if (pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
+    {        
+        char tname[200] = { 0 };
+        char* tn = tname;
+        const char* pch = pStructUnionSpecifier->StereotypeStr;
+        pch++; //sai do "
+        while (*pch && *pch != '"')
+        {
+            //sai de outros caracteres
+            while (*pch && !(
+                (*pch >= 'a' && *pch <= 'z') ||
+                (*pch >= 'A' && *pch <= 'Z')
+                )
+                )
+            {
+                pch++;
+            }
+
+            *tn = 0;
+
+            while ((*pch >= 'a' && *pch <= 'z') ||
+                (*pch >= 'A' && *pch <= 'Z'))
+            {
+                *tn = *pch;
+                pch++;
+                tn++;
+            }
+            *tn = 0;
+
+            
+            printf("add set %s\n", tname);
+            FindUnionSetOf(program, tname, map);
+
+
+            //reseta tname
+            tname[0] = 0;
+            tn = tname;
+
+            pch++;
+        }
+    }
+    else
+    {
+        
+            void *pp;
+            Map2_SetAt(map, structOrTypeName, _strdup(structOrTypeName), &pp);
+            if (pp)
+                free(pp);
+        
+    }
+}
+
+
 static void DefaultFunctionDefinition_CodePrint(TProgram* program,
     Options * options,
     TDeclaration* p,
@@ -2112,12 +2188,54 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
             StrBuilder_Destroy(&itemType);
             StrBuilder_Destroy(&arrayName);
         }
-        //outro
-        //AllPlugin_CodePrint(program,
-          //  options,
-            //p,
-            //fp);
+        else
+        {
+            
+            
+            TStructUnionSpecifier* pStructUnionSpecifier =
+                GetStructSpecifier(program, &pFirstParameter[0]->Specifiers);
+            if (pStructUnionSpecifier &&
+                pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
+            {
+                Map2 map = MAPSTRINGTOPTR_INIT;
+                FindUnionSetOf(program, pStructUnionSpecifier->Name, &map);
 
+                struct TemplateVar vars0[] = {
+                    { "p", firstParameterName[0] }
+                };
+
+                StrBuilder_Template(fp,
+                    "    switch (*((int*)$p))\n"
+                    "    {\n",
+                    vars0,
+                    sizeof(vars0) / sizeof(vars0[0]));
+
+                for (int i = 0; i < map.nHashTableSize; i++)
+                {
+                    if (map.pHashTable[i])
+                    {
+                        struct TemplateVar vars[] = {
+                            { "p", firstParameterName[0] },
+                            { "type", (const char*)map.pHashTable[i]->Key },
+                            { "prefix", functionPrefix.c_str },
+                            { "suffix", functionSuffix.c_str }
+                        };
+
+                        StrBuilder_Template(fp,
+                            "        case $type\b_ID: $type\b_$suffix(($type*)$p); break; \n",
+                            vars,
+                            sizeof(vars) / sizeof(vars[0]));
+                    }
+                }
+
+                StrBuilder_Template(fp,
+                    "    }\n",
+                    NULL,
+                    0);
+
+                Map2_Destroy(&map);
+            }
+        }
     }
 
     StrBuilder_Destroy(&functionPrefix);
@@ -2653,7 +2771,7 @@ static bool FindHighLevelFunction(TProgram* program,
                     }
                 }
             }
-            
+
         }
     }
     else if (action == ActionDelete)
@@ -3453,12 +3571,12 @@ void InstanciateDestroy2(TProgram* program,
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
                         }
                         else
-                        {                            
+                        {
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
                             options->IdentationLevel--;
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
                         }
-                        
+
 
                         //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
                     }

@@ -644,7 +644,7 @@ bool TStructUnionSpecifier_Print(TStructUnionSpecifier* p, bool b, FILE* fp)
 {
     b = true;
     fprintf(fp, "{");
-    if (p->bIsStruct)
+    if (p->Stereotype == StructUnionStereotypeStruct)
         fprintf(fp, "\"type:\":\"struct-specifier\",");
 
     else

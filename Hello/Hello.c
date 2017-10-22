@@ -2,95 +2,121 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct Item
+enum
 {
-    int  i;
+    Other_ID,
+    Circle_ID,
+    Car_ID,
+    Triangle_ID,
+    Box_ID,
 };
 
 
-struct Item* Item_Create() _default
+typedef struct Box {
+    int i;
+} Box;
+
+typedef struct Circle {
+    int i;
+} Circle;
+
+typedef struct Car {
+    int i;
+} Car;
+
+
+typedef struct {
+    int i;
+} Triangle;
+
+void Car_Draw(struct Car* p)
 {
-    struct Item* p = (struct Item*) malloc(sizeof * p);
+}
+
+void Box_Draw(struct Box* p) 
+{
+}
+void Circle_Draw(struct Circle* p)
+{
+}
+void Triangle_Draw(Triangle* p)
+{
+}
+
+
+Triangle* Triangle_Create() //_default
+{
+    Triangle *p = (Triangle*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->i = 0;
+        p->i = Triangle_ID;
     }
     return p;
 }
 
-void Item_Delete(struct Item* p) _default
+typedef struct _union("Car | Circle") Other Other;
+
+
+ typedef struct _union("Box Circle Triangle Other") Shape Shape;
+
+void Shape_Draw(struct Shape* p) _default
 {
-    if (p != NULL)
+    switch (*((int*)p))
     {
-        free((void*)p);
+        case Circle_ID: Circle_Draw((Circle*)p); break; 
+        case Car_ID: Car_Draw((Car*)p); break; 
+        case Triangle_ID: Triangle_Draw((Triangle*)p); break; 
+        case Box_ID: Box_Draw((Box*)p); break; 
     }
 }
 
 
-struct Items
+struct Boxes
 {
-    struct Item * _auto * _auto _size(Size) pData;
+    Box* _auto _size(Size) pData;
     int Size;
     int Capacity;
 };
 
-void Items_Reserve(struct Items* pItems, int n) _default
+struct Boxes
 {
-    if (n > pItems->Capacity)
+    Box Data _size(Size);
+    Box Data[2];
+    int Size;
+    int Capacity;
+};
+
+struct Boxes
+{
+    Box* _auto _size(Size) pData;
+    int Size;
+    int Capacity;
+};
+
+void Boxes_Reserve(struct Boxes* p, int n) _default
+{
+    if (n > p->Capacity)
     {
-        struct Item** pnew = pItems->pData;
-        pnew = (struct Item**)realloc(pnew, n * sizeof(struct Item*));
+        Box* pnew = p->pData;
+        pnew = (Box*)realloc(pnew, n * sizeof(Box));
         if (pnew)
         {
-            pItems->pData = pnew;
-            pItems->Capacity = n;
+            p->pData = pnew;
+            p->Capacity = n;
         }
     }
 }
-
-
-
-void Items_PushBack(struct Items* pItems, struct Item* pItem) _default
+void Boxes_Destroy(struct Boxes* p) _default
 {
-    if (pItems->Size + 1 > pItems->Capacity)
+    if (p->pData != NULL)
     {
-        int n = pItems->Capacity * 2;
-        if (n == 0)
-        {
-          n = 1;
-        }
-        Items_Reserve(pItems, n);
+        free((void*)p->pData);
     }
-    pItems->pData[pItems->Size] = pItem;
-    pItems->Size++;
 }
-
-void Items_Destroy(struct Items* pItems) _default
-{
-    for (int i = 0; i < pItems->Size; i++)
-    {
-        Item_Delete(pItems->pData[i]);
-    }
-    free((void*)pItems->pData);
-}
-
 
 int main(int argc, char **argv)
 {
-    struct Items items = { 0 };
-
-    for (int i = 0; i < 10; i++)
-    {
-        Items_PushBack(&items, Item_Create());
-        printf("%d %d\n", items.Size, items.Capacity);
-    }
-
-    
-    for (int i = 0; i < items.Size; i++)
-    {
-        printf("%d \n", items.pData[i]->i);
-    }
-
-    Items_Destroy(&items);
+    Shape* p = (struct Shape*)Triangle_Create();
+    Shape_Draw(p);
     return 0;
 }

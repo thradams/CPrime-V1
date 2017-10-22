@@ -774,22 +774,29 @@ CAST(TAnyStructDeclaration, TEofDeclaration)
 typedef ArrayT(TAnyStructDeclaration) TStructDeclarationList;
 void TStructDeclarationList_Destroy(TStructDeclarationList* p);
 
+typedef enum StructUnionStereotype
+{
+    StructUnionStereotypeStruct,
+    StructUnionStereotypeUnion,
+    StructUnionStereotypeUnionSet
+} StructUnionStereotype;
+
 typedef struct TStructUnionSpecifier
 {
     TTypePointer Type;
     TStructDeclarationList StructDeclarationList;
     String Name;
-    String TemplateName;
-    bool bIsStruct;
+    String StereotypeStr;
+    StructUnionStereotype Stereotype;
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
     TScannerItemList ClueList2;
     TScannerItemList ClueList3;
-    List(struct TTemplateTypeSpecifierArgument) Args;
+    
 } TStructUnionSpecifier;
-#define TSTRUCT_UNION_SPECIFIER_INIT { {TStructUnionSpecifier_ID, NULL}, ARRAYT_INIT, STRING_INIT , STRING_INIT , true , LIST_INIT, LIST_INIT, LIST_INIT}
+#define TSTRUCT_UNION_SPECIFIER_INIT { {TStructUnionSpecifier_ID, NULL}, ARRAYT_INIT, STRING_INIT , STRING_INIT , StructUnionStereotypeStruct, LIST_INIT, LIST_INIT}
 
-bool TStructUnionSpecifier_IsTemplate(TStructUnionSpecifier* p, const char* templateName);
+
 CREATETYPE(TStructUnionSpecifier, TSTRUCT_UNION_SPECIFIER_INIT)
 
 
