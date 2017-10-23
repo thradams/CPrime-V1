@@ -459,8 +459,8 @@ void TPostfixExpressionCore_Destroy(TPostfixExpressionCore* p) _default
     TExpression_Delete(p->pExpressionRight);
     TInitializerList_Destroy(&p->InitializerList);
     String_Destroy(&p->Identifier);
-    TTypeName_Destroy(p->pTypeName);
-    free((void*)p->pTypeName);
+    TTypeName_Delete(p->pTypeName);
+    
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
     TScannerItemList_Destroy(&p->ClueList2);
@@ -896,8 +896,8 @@ TDeclarator* TDeclarator_Create() _default
 void TDeclarator_Destroy(TDeclarator* p) _default
 {
     TPointerList_Destroy(&p->PointerList);
-    TDirectDeclarator_Destroy(p->pDirectDeclarator);
-    free((void*)p->pDirectDeclarator);
+    TDirectDeclarator_Delete(p->pDirectDeclarator);
+    
     TScannerItemList_Destroy(&p->ClueList);
 }
 
@@ -947,7 +947,7 @@ void TDirectDeclarator_Destroy(TDirectDeclarator* p) _default
 {
     String_Destroy(&p->Identifier);
     TDeclarator_Delete(p->pDeclarator);
-    TDirectDeclarator_Destroy(p->pDirectDeclarator);
+    TDirectDeclarator_Delete(p->pDirectDeclarator);
     free((void*)p->pDirectDeclarator);
     TParameterTypeList_Destroy(&p->Parameters);
     TScannerItemList_Destroy(&p->ClueList0);
@@ -956,6 +956,14 @@ void TDirectDeclarator_Destroy(TDirectDeclarator* p) _default
     TScannerItemList_Destroy(&p->ClueList3);
 }
 
+void TDirectDeclarator_Delete(TDirectDeclarator* p) _default
+{
+    if (p)
+    {
+        TDirectDeclarator_Destroy(p);
+        free(p);
+    }
+}
 
 TSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p)
 {
@@ -2906,6 +2914,15 @@ void TTypeName_Destroy(TTypeName* p) _default
 {
     TSpecifierQualifierList_Destroy(&p->SpecifierQualifierList);
     TDeclarator_Destroy(&p->Declarator);
+}
+
+void TTypeName_Delete(TTypeName* p) _default
+{
+    if (p)
+    {
+        TTypeName_Destroy(p);
+        free(p);
+    }
 }
 
 

@@ -720,7 +720,7 @@ typedef struct TDirectDeclarator TDirectDeclarator;
 typedef struct TDeclarator
 {
     TPointerList PointerList;
-    TDirectDeclarator*_auto  pDirectDeclarator;
+    TDirectDeclarator* _auto  pDirectDeclarator;
     TScannerItemList ClueList;
 } TDeclarator;
 
@@ -758,7 +758,7 @@ typedef struct TDirectDeclarator
 
 TDirectDeclarator* TDirectDeclarator_Create();
 void TDirectDeclarator_Destroy(TDirectDeclarator* p);
-
+void TDirectDeclarator_Delete(TDirectDeclarator* p);
 
 typedef struct TInitDeclarator
 {
@@ -970,6 +970,7 @@ typedef struct TTypeName
 
 TTypeName* TTypeName_Create();
 void TTypeName_Destroy(TTypeName* p);
+void TTypeName_Delete(TTypeName* p) ;
 void TTypeName_Init(TTypeName* p);
 
 
