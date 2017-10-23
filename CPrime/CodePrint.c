@@ -1869,6 +1869,12 @@ void FindUnionSetOf(TProgram* program,
         {
             pStructUnionSpecifier =
                 TSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
+            if (pStructUnionSpecifier->Name)
+            {
+                //procura a mais completa
+                pStructUnionSpecifier =
+                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Name);
+            }
         }
     }
     else
