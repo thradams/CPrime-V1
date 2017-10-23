@@ -2320,5 +2320,4 @@ void TScannerItemList_Init(TScannerItemList* p) _default
 {
     p->pHead = NULL;
     p->pTail = NULL;
-
 }

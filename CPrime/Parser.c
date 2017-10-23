@@ -601,11 +601,7 @@ void TTypeName_Init(TTypeName* p) _default
     p->SpecifierQualifierList.pData = NULL;
     p->SpecifierQualifierList.Size = 0;
     p->SpecifierQualifierList.Capacity = 0;
-    p->Declarator.PointerList.pHead = NULL;
-    p->Declarator.PointerList.pTail = NULL;
-    p->Declarator.pDirectDeclarator = NULL;
-    TScannerItemList_Init(&p->Declarator.ClueList);
-
+    TDeclarator_Init(&p->Declarator);
 }
 
 
