@@ -542,6 +542,7 @@ void TEnumerator_Delete(TEnumerator* p);
 
 typedef List(TEnumerator) TEnumeratorList; //OK
 void TEnumeratorList_Destroy(TEnumeratorList* p);
+void TEnumeratorList_Init(TEnumeratorList* p);
 
 typedef struct TEnumSpecifier
 {

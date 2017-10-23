@@ -855,20 +855,25 @@ void TEnumerator_Delete(TEnumerator* p) _default
     }
 }
 
+void TEnumeratorList_Init(TEnumeratorList* p) _default
+{
+    p->pHead = NULL;
+    p->pTail = NULL;
+}
+
 void TEnumeratorList_Destroy(TEnumeratorList* p)
 {
     List_Destroy(TEnumerator, p);
 }
 
-TEnumSpecifier* TEnumSpecifier_Create(void) //_default
+TEnumSpecifier* TEnumSpecifier_Create(void) _default
 {
     TEnumSpecifier *p = (TEnumSpecifier*) malloc(sizeof * p);
     if (p != NULL)
     {
         p->Type = TEnumSpecifier_ID;
         String_Init(&p->Name);
-        p->EnumeratorList.pHead = NULL;
-        p->EnumeratorList.pTail = NULL;
+        TEnumeratorList_Init(&p->EnumeratorList);
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
         TScannerItemList_Init(&p->ClueList2);
