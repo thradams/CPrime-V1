@@ -460,7 +460,6 @@ void TPostfixExpressionCore_Destroy(TPostfixExpressionCore* p) _default
     TInitializerList_Destroy(&p->InitializerList);
     String_Destroy(&p->Identifier);
     TTypeName_Delete(p->pTypeName);
-    
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
     TScannerItemList_Destroy(&p->ClueList2);
@@ -482,14 +481,12 @@ TBinaryExpression* TBinaryExpression_Create(void) _default
         TScannerItemList_Init(&p->ClueList00);
     }
     return p;
-
 }
 void TBinaryExpression_Destroy(TBinaryExpression* p) _default
 {
     TExpression_Delete(p->pExpressionLeft);
     TExpression_Delete(p->pExpressionRight);
     TScannerItemList_Destroy(&p->ClueList00);
-
 }
 void TBinaryExpression_Delete(TBinaryExpression* p) _default
 {
@@ -498,7 +495,6 @@ void TBinaryExpression_Delete(TBinaryExpression* p) _default
         TBinaryExpression_Destroy(p);
         free((void*)p);
     }
-
 }
 
 
@@ -897,7 +893,6 @@ void TDeclarator_Destroy(TDeclarator* p) _default
 {
     TPointerList_Destroy(&p->PointerList);
     TDirectDeclarator_Delete(p->pDirectDeclarator);
-    
     TScannerItemList_Destroy(&p->ClueList);
 }
 
@@ -948,7 +943,6 @@ void TDirectDeclarator_Destroy(TDirectDeclarator* p) _default
     String_Destroy(&p->Identifier);
     TDeclarator_Delete(p->pDeclarator);
     TDirectDeclarator_Delete(p->pDirectDeclarator);
-    free((void*)p->pDirectDeclarator);
     TParameterTypeList_Destroy(&p->Parameters);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
@@ -958,10 +952,10 @@ void TDirectDeclarator_Destroy(TDirectDeclarator* p) _default
 
 void TDirectDeclarator_Delete(TDirectDeclarator* p) _default
 {
-    if (p)
+    if (p != NULL)
     {
         TDirectDeclarator_Destroy(p);
-        free(p);
+        free((void*)p);
     }
 }
 
@@ -2918,10 +2912,10 @@ void TTypeName_Destroy(TTypeName* p) _default
 
 void TTypeName_Delete(TTypeName* p) _default
 {
-    if (p)
+    if (p != NULL)
     {
         TTypeName_Destroy(p);
-        free(p);
+        free((void*)p);
     }
 }
 
