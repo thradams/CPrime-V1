@@ -901,12 +901,11 @@ void TEnumSpecifier_Delete(TEnumSpecifier* p) _default
 
 
 
-void TStructUnionSpecifier_Destroy(TStructUnionSpecifier* p)
+void TStructUnionSpecifier_Destroy(TStructUnionSpecifier* p) _default
 {
+    TStructDeclarationList_Destroy(&p->StructDeclarationList);
     String_Destroy(&p->Name);
     String_Destroy(&p->StereotypeStr);
-    
-    TAnyStructDeclaration_Destroy(&p->StructDeclarationList);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
     TScannerItemList_Destroy(&p->ClueList2);
@@ -1062,7 +1061,19 @@ void TInitDeclarator_Delete(TInitDeclarator* p) _default
     }
 }
 
-void TParameterTypeList_Destroy(TParameterTypeList* p);
+void TParameterTypeList_Init(TParameterTypeList* p) _default
+{
+    TParameterList_Init(&p->ParameterList);
+    TScannerItemList_Init(&p->ClueList0);
+    TScannerItemList_Init(&p->ClueList1);
+    p->bVariadicArgs = false;
+}
+void TParameterTypeList_Destroy(TParameterTypeList* p) _default
+{
+    TParameterList_Destroy(&p->ParameterList);
+    TScannerItemList_Destroy(&p->ClueList0);
+    TScannerItemList_Destroy(&p->ClueList1);
+}
 
 void TDirectDeclarator_Destroy(TDirectDeclarator* p) _default
 {
@@ -1299,8 +1310,7 @@ TStructDeclaration* TStructDeclaration_Create() _default
         p->SpecifierQualifierList.pData = NULL;
         p->SpecifierQualifierList.Size = 0;
         p->SpecifierQualifierList.Capacity = 0;
-        p->DeclaratorList.pHead = NULL;
-        p->DeclaratorList.pTail = NULL;
+        TInitDeclaratorList_Init(&p->DeclaratorList);
         TScannerItemList_Init(&p->ClueList1);
     }
     return p;
@@ -2096,13 +2106,21 @@ bool TDeclaration_Is_StructOrUnionDeclaration(TDeclaration* p)
     return bIsStructOrUnion;
 }
 
-
-void TDeclaration_Destroy(TDeclaration* p)
+void TInitDeclaratorList_Init(TInitDeclaratorList* p) _default
 {
-    //
-    List_Destroy(TInitDeclarator, &p->InitDeclaratorList);
-    //
+    p->pHead = NULL;
+    p->pTail = NULL;
+}
+
+void TInitDeclaratorList_Destroy(TInitDeclaratorList* p)
+{
+    List_Destroy(TInitDeclarator, p);
+}
+
+void TDeclaration_Destroy(TDeclaration* p) _default
+{
     TDeclarationSpecifiers_Destroy(&p->Specifiers);
+    TInitDeclaratorList_Destroy(&p->InitDeclaratorList);
     TCompoundStatement_Delete(p->pCompoundStatementOpt);
     TScannerItemList_Destroy(&p->ClueList00);
     TScannerItemList_Destroy(&p->ClueList1);
@@ -2125,8 +2143,7 @@ TDeclaration* TDeclaration_Create() _default
         p->Specifiers.pData = NULL;
         p->Specifiers.Size = 0;
         p->Specifiers.Capacity = 0;
-        p->InitDeclaratorList.pHead = NULL;
-        p->InitDeclaratorList.pTail = NULL;
+        TInitDeclaratorList_Init(&p->InitDeclaratorList);
         p->pCompoundStatementOpt = NULL;
         p->FileIndex = 0;
         p->Line = 0;
@@ -2225,12 +2242,17 @@ void TParameter_Delete(TParameter* p) _default
     }
 }
 
-void TParameterTypeList_Destroy(TParameterTypeList* p)
+void TParameterList_Init(TParameterList* p) _default
 {
-    TParameterList_Destroy(&p->ParameterList);
-    TScannerItemList_Destroy(&p->ClueList0);
-    TScannerItemList_Destroy(&p->ClueList1);
+    p->pHead = NULL;
+    p->pTail = NULL;
 }
+
+void TParameterList_Destroy(TParameterList* p)
+{
+    List_Destroy(TParameter, p);
+}
+
 
 bool TAnyDeclaration_Is_StructOrUnionDeclaration(TAnyDeclaration* pAnyDeclaration)
 {
@@ -2328,12 +2350,10 @@ void TAnyDeclaration_Destroy(TAnyDeclaration* pDeclaration)
     }
 }
 
-void TDesignation_Destroy(TDesignation* pDesignation)
+void TDesignation_Destroy(TDesignation* pDesignation) _default
 {
-
-    List_Destroy(TDesignator, &pDesignation->DesignatorList);
+    TDesignatorList_Destroy(&pDesignation->DesignatorList);
     TScannerItemList_Destroy(&pDesignation->ClueList0);
-
 }
 
 TDesignator* TDesignator_Create(void) _default
@@ -2417,11 +2437,20 @@ void TInitializer_Destroy(TInitializer* p)
 
 }
 
-
-
-void TInitializerListItem_Destroy(TInitializerListItem* p)
+void TDesignatorList_Init(TDesignatorList* p) _default
 {
-    List_Destroy(TDesignator, &p->DesignatorList);
+    p->pHead = NULL;
+    p->pTail = NULL;
+}
+
+void TDesignatorList_Destroy(TDesignatorList* p)
+{
+    List_Destroy(TDesignator, p);
+}
+
+void TInitializerListItem_Destroy(TInitializerListItem* p) _default
+{
+    TDesignatorList_Destroy(&p->DesignatorList);
     TInitializer_Delete(p->pInitializer);
     TScannerItemList_Destroy(&p->ClueList);
 }
@@ -2431,8 +2460,7 @@ TInitializerListItem* TInitializerListItem_Create() _default
     TInitializerListItem *p = (TInitializerListItem*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->DesignatorList.pHead = NULL;
-        p->DesignatorList.pTail = NULL;
+        TDesignatorList_Init(&p->DesignatorList);
         p->pInitializer = NULL;
         p->pNext = NULL;
         TScannerItemList_Init(&p->ClueList);
@@ -3005,11 +3033,7 @@ TDirectDeclarator* TDirectDeclarator_Create() _default
         p->pDirectDeclarator = NULL;
         p->Position.FileIndex = 0;
         p->Position.Line = 0;
-        p->Parameters.ParameterList.pHead = NULL;
-        p->Parameters.ParameterList.pTail = NULL;
-        TScannerItemList_Init(&p->Parameters.ClueList0);
-        TScannerItemList_Init(&p->Parameters.ClueList1);
-        p->Parameters.bVariadicArgs = false;
+        TParameterTypeList_Init(&p->Parameters);
         p->pExpression = NULL;
         p->DeclaratorType = TDirectDeclaratorTypeNone;
         TScannerItemList_Init(&p->ClueList0);

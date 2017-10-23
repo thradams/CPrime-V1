@@ -643,7 +643,8 @@ struct TParameter;
 typedef struct TParameter TParameter;
 typedef List(TParameter) TParameterList; //OK
 
-#define TParameterList_Destroy(x) List_Destroy(TParameter, (x))
+void TParameterList_Destroy(TParameterList* p);
+void TParameterList_Init(TParameterList* p);
 const char* TParameter_GetName(TParameter* p);
 bool TParameter_IsDirectPointer(TParameter* p);
 
@@ -655,8 +656,8 @@ typedef struct TParameterTypeList
     bool bVariadicArgs;
 } TParameterTypeList;
 
-#define TPARAMETERTYPELIST_INIT {LIST_INIT, TSCANNERITEMLIST_INIT, TSCANNERITEMLIST_INIT, false}
-//int TParameterTypeList_GetNumberOfParameters(TParameterTypeList* p);
+void TParameterTypeList_Init(TParameterTypeList* p);
+void TParameterTypeList_Destroy(TParameterTypeList* p);
 
 typedef struct TDesignator
 {
@@ -673,6 +674,8 @@ void TDesignator_Destroy(TDesignator* p);
 void TDesignator_Delete(TDesignator* p);
 
 typedef List(TDesignator) TDesignatorList; //OK
+void TDesignatorList_Destroy(TDesignatorList* p);
+void TDesignatorList_Init(TDesignatorList* p) ;
 
 
 typedef struct TDesignation
@@ -784,7 +787,8 @@ void TInitDeclarator_Destroy(TInitDeclarator* p);
 
 typedef TInitDeclarator TStructDeclarator;
 typedef List(TInitDeclarator) TInitDeclaratorList; //OK
-
+void TInitDeclaratorList_Destroy(TInitDeclaratorList* p);
+void TInitDeclaratorList_Init(TInitDeclaratorList* p);
 const char* TDeclarator_GetName(TDeclarator* p);
 const char* TInitDeclarator_FindName(TInitDeclarator* p);
 
