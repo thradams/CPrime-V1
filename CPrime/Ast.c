@@ -11,14 +11,12 @@ void TDeclarations_Destroy(TDeclarations* p) _default
         TAnyDeclaration_Delete(p->pItems[i]);
     }
     free((void*)p->pItems);
-
 }
 void TDeclarations_Init(TDeclarations* p) _default
 {
     p->pItems = NULL;
     p->Size = 0;
     p->Capacity = 0;
-
 }
 void TDeclarations_Reserve(TDeclarations* p, int n) _default
 {
@@ -32,7 +30,6 @@ void TDeclarations_Reserve(TDeclarations* p, int n) _default
             p->Capacity = n;
         }
     }
-
 }
 void TDeclarations_PushBack(TDeclarations* p, TDeclarations* pItem) _default
 {
@@ -47,7 +44,6 @@ void TDeclarations_PushBack(TDeclarations* p, TDeclarations* pItem) _default
     }
     p->pItems[p->Size] = pItem;
     p->Size++;
-
 }
 
 
@@ -144,7 +140,7 @@ TCompoundStatement* TCompoundStatement_Create() _default
     TCompoundStatement *p = (TCompoundStatement*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TCompoundStatement_ID;
         TBlockItemList_Init(&p->BlockItemList);
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
@@ -172,7 +168,7 @@ TLabeledStatement* TLabeledStatement_Create(void) _default
     TLabeledStatement *p = (TLabeledStatement*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TLabeledStatement_ID;
         p->pStatementOpt = NULL;
         p->pExpression = NULL;
         String_Init(&p->Identifier);
@@ -203,7 +199,7 @@ TForStatement* TForStatement_Create(void)_default
     TForStatement *p = (TForStatement*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TForStatement_ID;
         p->pInitDeclarationOpt = NULL;
         p->pExpression1 = NULL;
         p->pExpression2 = NULL;
@@ -244,7 +240,7 @@ TWhileStatement* TWhileStatement_Create(void) _default
     TWhileStatement *p = (TWhileStatement*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TWhileStatement_ID;
         p->pExpression = NULL;
         p->pStatement = NULL;
         TScannerItemList_Init(&p->ClueList0);
@@ -275,7 +271,7 @@ TDoStatement* TDoStatement_Create(void) _default
     TDoStatement *p = (TDoStatement*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TDoStatement_ID;
         p->pExpression = NULL;
         p->pStatement = NULL;
         TScannerItemList_Init(&p->ClueList0);
@@ -311,7 +307,7 @@ TExpressionStatement* TExpressionStatement_Create(void) _default
     TExpressionStatement *p = (TExpressionStatement*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TExpressionStatement_ID;
         p->pExpression = NULL;
         TScannerItemList_Init(&p->ClueList0);
     }
@@ -336,7 +332,7 @@ TJumpStatement* TJumpStatement_Create(void) _default
     TJumpStatement *p = (TJumpStatement*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TJumpStatement_ID;
         p->token = TK_NONE;
         String_Init(&p->Identifier);
         p->pExpression = NULL;
@@ -371,7 +367,7 @@ TAsmStatement* TAsmStatement_Create(void) _default
     TAsmStatement *p = (TAsmStatement*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TAsmStatement_ID;
         TScannerItemList_Init(&p->ClueList);
     }
     return p;
@@ -394,7 +390,7 @@ TSwitchStatement* TSwitchStatement_Create(void) _default
     TSwitchStatement *p = (TSwitchStatement*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TSwitchStatement_ID;
         p->pConditionExpression = NULL;
         p->pExpression = NULL;
         TScannerItemList_Init(&p->ClueList0);
@@ -426,7 +422,7 @@ TIfStatement* TIfStatement_Create(void) _default
     TIfStatement *p = (TIfStatement*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TIfStatement_ID;
         p->pConditionExpression = NULL;
         p->pStatement = NULL;
         p->pElseStatement = NULL;
@@ -549,7 +545,7 @@ TPrimaryExpressionValue* TPrimaryExpressionValue_Create() _default
     TPrimaryExpressionValue *p = (TPrimaryExpressionValue*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TPrimaryExpressionValue_ID;
         p->token = TK_NONE;
         String_Init(&p->lexeme);
         p->pExpressionOpt = NULL;
@@ -598,7 +594,7 @@ TBinaryExpression* TBinaryExpression_Create(void) _default
     TBinaryExpression *p = (TBinaryExpression*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TBinaryExpression_ID;
         p->token = TK_NONE;
         p->pExpressionLeft = NULL;
         p->pExpressionRight = NULL;
@@ -646,7 +642,7 @@ TTernaryExpression* TTernaryExpression_Create(void) _default
     TTernaryExpression *p = (TTernaryExpression*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TTernaryExpression_ID;
         p->token = TK_NONE;
         p->pExpressionLeft = NULL;
         p->pExpressionMiddle = NULL;
@@ -704,7 +700,7 @@ TPrimaryExpressionLiteral* TPrimaryExpressionLiteral_Create() _default
     TPrimaryExpressionLiteral *p = (TPrimaryExpressionLiteral*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TPrimaryExpressionLiteral_ID;
         p->List.pHead = NULL;
         p->List.pTail = NULL;
     }
@@ -765,7 +761,7 @@ TEofDeclaration* TEofDeclaration_Create() _default
     TEofDeclaration *p = (TEofDeclaration*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TEofDeclaration_ID;
         TScannerItemList_Init(&p->ClueList0);
     }
     return p;
@@ -793,7 +789,7 @@ TStaticAssertDeclaration* TStaticAssertDeclaration_Create() _default
     TStaticAssertDeclaration *p = (TStaticAssertDeclaration*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TStaticAssertDeclaration_ID;
         p->pConstantExpression = NULL;
         String_Init(&p->Text);
         TScannerItemList_Init(&p->ClueList0);
@@ -864,12 +860,12 @@ void TEnumeratorList_Destroy(TEnumeratorList* p)
     List_Destroy(TEnumerator, p);
 }
 
-TEnumSpecifier* TEnumSpecifier_Create(void) _default
+TEnumSpecifier* TEnumSpecifier_Create(void) //_default
 {
     TEnumSpecifier *p = (TEnumSpecifier*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TEnumSpecifier_ID;
         String_Init(&p->Name);
         p->EnumeratorList.pHead = NULL;
         p->EnumeratorList.pTail = NULL;
@@ -917,7 +913,7 @@ TStructUnionSpecifier* TStructUnionSpecifier_Create() _default
     TStructUnionSpecifier *p = (TStructUnionSpecifier*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TStructUnionSpecifier_ID;
         TStructDeclarationList_Init(&p->StructDeclarationList);
         String_Init(&p->Name);
         String_Init(&p->StereotypeStr);
@@ -944,7 +940,7 @@ TSingleTypeSpecifier* TSingleTypeSpecifier_Create(void) _default
     TSingleTypeSpecifier *p = (TSingleTypeSpecifier*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TSingleTypeSpecifier_ID;
         p->pNext = NULL;
         p->Token = TK_NONE;
         String_Init(&p->TypedefName);
@@ -1269,7 +1265,7 @@ TAlignmentSpecifier* TAlignmentSpecifier_Create(void) _default
     TAlignmentSpecifier *p = (TAlignmentSpecifier*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TAlignmentSpecifier_ID;
         p->pNext = NULL;
         String_Init(&p->TypeName);
     }
@@ -1294,7 +1290,7 @@ TStructDeclaration* TStructDeclaration_Create() _default
     TStructDeclaration *p = (TStructDeclaration*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TStructDeclaration_ID;
         p->SpecifierQualifierList.pData = NULL;
         p->SpecifierQualifierList.Size = 0;
         p->SpecifierQualifierList.Capacity = 0;
@@ -1612,7 +1608,7 @@ TTypeQualifier* TTypeQualifier_Create(void) _default
     TTypeQualifier *p = (TTypeQualifier*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TTypeQualifier_ID;
         p->pNext = NULL;
         String_Init(&p->SizeIdentifier);
         p->Token = TK_NONE;
@@ -1639,7 +1635,7 @@ TStorageSpecifier* TStorageSpecifier_Create(void) _default
     TStorageSpecifier *p = (TStorageSpecifier*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TStorageSpecifier_ID;
         p->pNext = NULL;
         p->bIsTypedef = false;
         p->bIsExtern = false;
@@ -2056,7 +2052,7 @@ TFunctionSpecifier* TFunctionSpecifier_Create(void) _default
     TFunctionSpecifier *p = (TFunctionSpecifier*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TFunctionSpecifier_ID;
         p->pNext = NULL;
         p->bIsInline = false;
         p->bIsNoReturn = false;
@@ -2120,7 +2116,7 @@ TDeclaration* TDeclaration_Create() _default
     TDeclaration *p = (TDeclaration*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TDeclaration_ID;
         p->Specifiers.pData = NULL;
         p->Specifiers.Size = 0;
         p->Specifiers.Capacity = 0;
@@ -2370,7 +2366,7 @@ TInitializerListType* TInitializerListType_Create(void) _default
     TInitializerListType *p = (TInitializerListType*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TInitializerListType_ID;
         p->InitializerList.pHead = NULL;
         p->InitializerList.pTail = NULL;
         TScannerItemList_Init(&p->ClueList00);
@@ -3051,7 +3047,7 @@ TAtomicTypeSpecifier* TAtomicTypeSpecifier_Create() _default
     TAtomicTypeSpecifier *p = (TAtomicTypeSpecifier*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TAtomicTypeSpecifier_ID;
         p->pNext = NULL;
         TTypeName_Init(&p->TypeName);
         TScannerItemList_Init(&p->ClueList0);
@@ -3069,7 +3065,7 @@ TPostfixExpressionCore* TPostfixExpressionCore_Create() _default
     TPostfixExpressionCore *p = (TPostfixExpressionCore*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TPostfixExpressionCore_ID;
         p->token = TK_NONE;
         String_Init(&p->lexeme);
         p->pExpressionLeft = NULL;
@@ -3093,7 +3089,7 @@ TCastExpressionType* TCastExpressionType_Create() _default
     TCastExpressionType *p = (TCastExpressionType*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TCastExpressionType_ID;
         p->pExpression = NULL;
         TTypeName_Init(&p->TypeName);
         TScannerItemList_Init(&p->ClueList0);
@@ -3108,7 +3104,7 @@ TUnaryExpressionOperator* TUnaryExpressionOperator_Create() _default
     TUnaryExpressionOperator *p = (TUnaryExpressionOperator*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TypeNull;
+        p->Type = TUnaryExpressionOperator_ID;
         p->token = TK_NONE;
         p->pExpressionRight = NULL;
         TTypeName_Init(&p->TypeName);
