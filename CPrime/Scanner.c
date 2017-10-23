@@ -2315,3 +2315,10 @@ void TScannerItemList_Destroy(TScannerItemList* p)
 {
     List_Destroy(ScannerItem, (p));
 }
+
+void TScannerItemList_Init(TScannerItemList* p) _default
+{
+    p->pHead = NULL;
+    p->pTail = NULL;
+
+}

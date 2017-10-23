@@ -1,5 +1,28 @@
 #include "config.h"
 
+enum Enum
+{
+    EnumA, EnumB, EnumC
+};
+
+typedef enum 
+{
+    EnumTypedefA, EnumTypedefB, EnumTypedefC
+} EnumTypedef;
+
+
+
+struct X
+{
+    enum E e1 _defval(EnumB);
+    EnumTypedef  e2 _defval(EnumC);
+};
+
+void X_Init(struct X* p) _default
+{
+    p->e1 = EnumB;    p->e2 = EnumTypedefA;
+}
+
 struct Items
 {
     int * _auto  pData;

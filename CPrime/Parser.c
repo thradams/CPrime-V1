@@ -595,11 +595,20 @@ void TTypeName_Swap(TTypeName* a, TTypeName* b)
     *b = temp;
 }
 
-void TTypeName_Destroy(TTypeName* p)
+void TTypeName_Init(TTypeName* p) _default
 {
-    TDeclarator_Destroy(&p->Declarator);
-    TSpecifierQualifierList_Destroy(&p->SpecifierQualifierList);
+    p->Type = TypeName_ID;
+    p->SpecifierQualifierList.pData = NULL;
+    p->SpecifierQualifierList.Size = 0;
+    p->SpecifierQualifierList.Capacity = 0;
+    p->Declarator.PointerList.pHead = NULL;
+    p->Declarator.PointerList.pTail = NULL;
+    p->Declarator.pDirectDeclarator = NULL;
+    TScannerItemList_Init(&p->Declarator.ClueList);
+
 }
+
+
 
 void TypeName(Parser* ctx, TTypeName* pTypeName)
 {
@@ -791,7 +800,9 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
 
             Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pTPostfixExpressionCore->ClueList0);
 
-            TTypeName typeName = TTYPENAME_INIT;
+            TTypeName typeName;
+            TTypeName_Init(&typeName);
+
             TypeName(ctx, &typeName);
             TTypeName_Destroy(&typeName);
 
@@ -1216,7 +1227,8 @@ void CastExpression(Parser* ctx, TExpression** ppExpression)
             TScannerItemList tempList0 = TSCANNERITEMLIST_INIT;
             Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &tempList0);
 
-            TTypeName typeName = TTYPENAME_INIT;
+            TTypeName typeName;
+            TTypeName_Init(&typeName);
             TypeName(ctx, &typeName);
 
             TScannerItemList tempList1 = TSCANNERITEMLIST_INIT;

@@ -36,6 +36,7 @@ typedef List(ScannerItem) TScannerItemList;
 #define TSCANNERITEMLIST_INIT LIST_INIT
 
 void TScannerItemList_Destroy(TScannerItemList* p);
+void TScannerItemList_Init(TScannerItemList* p);
 
 #define TScannerItemList_Swap(a, b) List_Swap(ScannerItem, (a), (b))
 

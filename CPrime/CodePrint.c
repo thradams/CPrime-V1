@@ -3053,7 +3053,8 @@ void InstanciateDestroy2(TProgram* program,
         if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
         {
             bool bComplete = false;
-            TDeclarator declarator = TDECLARATOR_INIT;
+            TDeclarator declarator;
+            TDeclarator_Init(&declarator);
             //Pode ter uma cadeia de typdefs
             //ele vai entrandando em cada uma ...
             //ate que chega no fim recursivamente
@@ -3170,7 +3171,7 @@ void InstanciateDestroy2(TProgram* program,
                             options,
                             (TSpecifierQualifierList*)pDeclarationSpecifiers,
                             &declarator,
-                            NULL,
+                            pInitializerOpt,
                             pInitExpressionText,
                             NULL /*not used*/,
                             action2,
@@ -3638,7 +3639,7 @@ void InstanciateDestroy2(TProgram* program,
                 StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "%s = ", pInitExpressionText);
                 Options options2 = *options;
                 TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
-                StrBuilder_Append(fp, ";");
+                StrBuilder_Append(fp, ";\n");
             }
             else
             {
