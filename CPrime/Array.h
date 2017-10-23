@@ -75,7 +75,7 @@ void ArrayInt_Destroy(ArrayInt* st);
 
 #define ArrayT(T) struct\
 {\
-  T** pItems;\
+  T * _auto * _auto _size(size) pItems;\
   int size;\
   int capacity;\
 }

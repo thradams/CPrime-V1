@@ -189,7 +189,7 @@ static void TCompoundStatement_CodePrint(TProgram* program,
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "{");
 
-    for (int j = 0; j < p->BlockItemList.size; j++)
+    for (int j = 0; j < p->BlockItemList.Size; j++)
     {
         TBlockItem *pBlockItem = p->BlockItemList.pItems[j];
         TBlockItem_CodePrint(program, options, pBlockItem, fp);
@@ -959,13 +959,13 @@ static void TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
     Output_Append(fp, options, p->Name);
 
 
-    if (p->StructDeclarationList.size > 0)
+    if (p->StructDeclarationList.Size > 0)
     {
         TNodeClueList_CodePrint(options, &p->ClueList2, fp);
 
         Output_Append(fp, options, "{");
 
-        for (int i = 0; i < p->StructDeclarationList.size; i++)
+        for (int i = 0; i < p->StructDeclarationList.Size; i++)
         {
             TAnyStructDeclaration * pStructDeclaration = p->StructDeclarationList.pItems[i];
             TAnyStructDeclaration_CodePrint(program, options, pStructDeclaration, fp);
@@ -1691,7 +1691,7 @@ static bool FindVectorStructPattern(TProgram* program,
     {
         //Vou analisar a "digital" da struct
         //ok tem a definicao completa da struct
-        for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
+        for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
         {
             TAnyStructDeclaration* pAnyStructDeclaration =
                 pStructUnionSpecifier->StructDeclarationList.pItems[i];
@@ -2469,7 +2469,7 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 
     StrBuilder sb = STRBUILDER_INIT;
 
-    for (int i = 0; i < pProgram->Declarations.size; i++)
+    for (int i = 0; i < pProgram->Declarations.Size; i++)
     {
         TAnyDeclaration* pItem = pProgram->Declarations.pItems[i];
 
@@ -2966,7 +2966,7 @@ static bool IsVector(TStructUnionSpecifier* pStructUnionSpecifier)
     {
         //Vou analisar a "digital" da struct
         //ok tem a definicao completa da struct
-        for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
+        for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
         {
             TAnyStructDeclaration* pAnyStructDeclaration =
                 pStructUnionSpecifier->StructDeclarationList.pItems[i];
@@ -3324,7 +3324,7 @@ void InstanciateDestroy2(TProgram* program,
             }
 
             if (pStructUnionSpecifier &&
-                pStructUnionSpecifier->StructDeclarationList.size > 0)
+                pStructUnionSpecifier->StructDeclarationList.Size > 0)
             {
                 if (action == ActionDelete)
                 {
@@ -3389,7 +3389,7 @@ void InstanciateDestroy2(TProgram* program,
 
 
                 //ok tem a definicao completa da struct
-                for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.size; i++)
+                for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
                 {
                     if (action == ActionStaticInit && i > 0)
                     {

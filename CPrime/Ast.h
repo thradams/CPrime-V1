@@ -162,8 +162,16 @@ typedef struct TAnyDeclaration TAnyDeclaration;
 CASTSAME(TBlockItem, TAnyDeclaration)
 CREATETYPEOR(TAnyDeclaration)
 
-typedef ArrayT(TBlockItem) TBlockItemList;
+typedef struct {
+    TBlockItem * _auto * _auto _size(Size) pItems;
+    int Size; 
+    int Capacity; 
+} TBlockItemList;
+
 void TBlockItemList_Destroy(TBlockItemList* p);
+void TBlockItemList_Init(TBlockItemList* p);
+void TBlockItemList_PushBack(TBlockItemList* p, TBlockItem* pItem);
+
 
 typedef struct
 {
@@ -804,8 +812,17 @@ CAST(TAnyStructDeclaration, TStructDeclaration)
 CAST(TAnyStructDeclaration, TStaticAssertDeclaration)
 CAST(TAnyStructDeclaration, TEofDeclaration)
 
-typedef ArrayT(TAnyStructDeclaration) TStructDeclarationList;
+//typedef ArrayT(TAnyStructDeclaration) TStructDeclarationList;
+typedef struct
+{
+    TAnyStructDeclaration* _auto * _auto _size(Size) pItems;
+    int Size;
+    int Capacity;
+} TStructDeclarationList;
+
 void TStructDeclarationList_Destroy(TStructDeclarationList* p);
+void TStructDeclarationList_Init(TStructDeclarationList* p);
+void TStructDeclarationList_PushBack(TStructDeclarationList* p, TAnyStructDeclaration* pItem);
 
 typedef enum StructUnionStereotype
 {
@@ -912,7 +929,19 @@ void TParameter_Swap(TParameter* a, TParameter* b);
 const char* TParameter_GetTypedefName(TParameter* p);
 
 
-typedef ArrayT(TAnyDeclaration) TDeclarations;
+//typedef ArrayT(TAnyDeclaration) TDeclarations;
+
+typedef struct
+{
+    TAnyDeclaration * _auto * _auto _size(Size) pItems;
+    int Size;
+    int Capacity;
+} TDeclarations;
+
+void TDeclarations_Destroy(TDeclarations* p);
+void TDeclarations_Init(TDeclarations* p);
+void TDeclarations_PushBack(TDeclarations* p, TDeclarations* pItem);
+
 
 
 //Coleta o resultado do parser

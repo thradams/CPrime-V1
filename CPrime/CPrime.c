@@ -225,7 +225,7 @@ bool EachStructDeclarator(TStructUnionSpecifier* pStruct,
         goto Continue;
     }
 
-    for (; *i < pStruct->StructDeclarationList.size; (*i)++)
+    for (; *i < pStruct->StructDeclarationList.Size; (*i)++)
     {
         TAnyStructDeclaration* pAnyStructDeclaration =
             pStruct->StructDeclarationList.pItems[*i];

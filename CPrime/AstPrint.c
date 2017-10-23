@@ -33,7 +33,7 @@ bool TCompoundStatement_Print(TCompoundStatement * p, bool b, FILE* fp)
     b = true;
     fprintf(fp, "\"compound-statement\": [");
 
-    for (int j = 0; j < p->BlockItemList.size; j++)
+    for (int j = 0; j < p->BlockItemList.Size; j++)
     {
         TBlockItem *pBlockItem = p->BlockItemList.pItems[j];
         TBlockItem_Print(pBlockItem, j > 0, fp);
@@ -654,7 +654,7 @@ bool TStructUnionSpecifier_Print(TStructUnionSpecifier* p, bool b, FILE* fp)
     
     fprintf(fp, "\"struct-declaration-list\":[");
 
-    for (int i = 0; i < p->StructDeclarationList.size; i++)
+    for (int i = 0; i < p->StructDeclarationList.Size; i++)
     {
         TAnyStructDeclaration * pStructDeclaration = p->StructDeclarationList.pItems[i];
 
@@ -1386,7 +1386,7 @@ bool TDeclarations_Print(TDeclarations *p, bool b, FILE* fp)
     b = false;
     fprintf(fp, "[");
 
-    for (int i = 0; i < p->size; i++)
+    for (int i = 0; i < p->Size; i++)
     {
         if (i > 0)
             fprintf(fp, ",");
@@ -1411,7 +1411,7 @@ void TProgram_PrintAstToFile(TProgram* pProgram,
     bool b = false;
     fprintf(fp, "[");
 
-    for (int i = 0; i < pProgram->Declarations.size; i++)
+    for (int i = 0; i < pProgram->Declarations.Size; i++)
     {
         TAnyDeclaration* pItem = pProgram->Declarations.pItems[i];
         if (b)
