@@ -242,7 +242,6 @@ void TFileArray_Reserve(TFileArray* p, int n) _default
             p->Capacity = n;
         }
     }
-
 }
 
 void TFileArray_PushBack(TFileArray* p, TFile* pItem) _default
