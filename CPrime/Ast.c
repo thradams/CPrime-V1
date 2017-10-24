@@ -1979,7 +1979,6 @@ void TDeclarationSpecifiers_Init(TDeclarationSpecifiers* pDeclarationSpecifiers)
     pDeclarationSpecifiers->pData = NULL;
     pDeclarationSpecifiers->Size = 0;
     pDeclarationSpecifiers->Capacity = 0;
-
 }
 
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers) _default
