@@ -188,8 +188,6 @@ typedef struct {
     int Capacity;
 } TTypeQualifierList;
 
-
-#define TTYPEQUALIFIERLIST_INIT {0,0,0}
 void TTypeQualifierList_Destroy(TTypeQualifierList* p);
 void TTypeQualifierList_PushBack(TTypeQualifierList* p, TTypeQualifier* pItem);
 
@@ -386,7 +384,6 @@ TPointer* TPointer_Create(void);
 void TPointer_Delete(TPointer* p);
 
 
-
 typedef struct TPointerList
 {
     TPointer* _auto pHead, *pTail;
@@ -407,7 +404,6 @@ const char * TPointerList_GetSize(TPointerList* pPointerlist);
 typedef struct
 {
     EType Type  _defval(TFunctionSpecifier_ID);
-    //TTypeSpecifier*  _auto pNext;
     bool bIsInline;
     bool bIsNoReturn;
     TScannerItemList ClueList0;
@@ -433,13 +429,10 @@ TStorageSpecifier* TStorageSpecifier_Create(void);
 void TStorageSpecifier_Delete(TStorageSpecifier* p);
 
 
-
 typedef struct
 {
     EType Type  _defval(TAlignmentSpecifier_ID);    
     String TypeName;
-    //_Alignas(type - name)
-    //  _Alignas(constant - expression)
 } TAlignmentSpecifier;
 
 TAlignmentSpecifier* TAlignmentSpecifier_Create(void);
@@ -534,8 +527,6 @@ typedef struct {
     int Size;
     int Capacity;
 } TSpecifierQualifierList;
-
-#define TSPECIFIERQUALIFIERLIST_INIT {0,0,0}
 
 void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecifiers);
 void TSpecifierQualifierList_PushBack(TSpecifierQualifierList* p, TSpecifierQualifier* pItem);
@@ -697,9 +688,9 @@ typedef enum TDirectDeclaratorType
 
 typedef struct TDirectDeclarator
 {
-    String Identifier; //identifier
-    TDeclarator* _auto pDeclarator; //(declarator)
-    struct TDirectDeclarator* _auto  pDirectDeclarator; //
+    String Identifier;
+    TDeclarator* _auto pDeclarator;
+    struct TDirectDeclarator* _auto  pDirectDeclarator;
     TPosition Position;
     TParameterTypeList  Parameters;
     TExpression*   pExpression;
@@ -828,6 +819,8 @@ TStructUnionSpecifier* TStructUnionSpecifier_Create();
 void TStructUnionSpecifier_Delete(TStructUnionSpecifier* p);
 
 
+struct TAtomicTypeSpecifier;
+typedef struct TAtomicTypeSpecifier TAtomicTypeSpecifier;
 
 struct _union(TSingleTypeSpecifier |
               TEnumSpecifier |
@@ -838,10 +831,9 @@ typedef struct TTypeSpecifier TTypeSpecifier;
 CAST(TTypeSpecifier, TSingleTypeSpecifier)
 CAST(TTypeSpecifier, TEnumSpecifier)
 CAST(TTypeSpecifier, TStructUnionSpecifier)
-
 CAST(TSpecifier, TStructUnionSpecifier)
 CAST(TSpecifierQualifier, TStructUnionSpecifier)
-
+CAST(TTypeSpecifier, TAtomicTypeSpecifier)
 
 typedef struct TDeclaration
 {
@@ -895,10 +887,6 @@ typedef struct TParameter
     struct TParameter* _auto pNext;
     TDeclarationSpecifiers Specifiers;
     TDeclarator Declarator;
-    
-    //Anotacoes in out opt geradas automaticamente?
-    //para os parametros?
-    //para o retorno opt?
     TScannerItemList ClueList00; //, do parametro
     bool bHasComma;
 } TParameter;
@@ -919,7 +907,7 @@ typedef struct
 
 void TDeclarations_Destroy(TDeclarations* p);
 void TDeclarations_Init(TDeclarations* p);
-void TDeclarations_PushBack(TDeclarations* p, TDeclarations* pItem);
+void TDeclarations_PushBack(TDeclarations* p, TDeclaration* pItem);
 
 
 
@@ -980,20 +968,13 @@ TAtomicTypeSpecifier* TAtomicTypeSpecifier_Create();
 void TAtomicTypeSpecifier_Delete(TAtomicTypeSpecifier* p);
 
 
-CAST(TTypeSpecifier, TAtomicTypeSpecifier)
-
-
-
 bool EvaluateConstantExpression(TExpression * p, int *pResult);
 
 TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration * p);
 
-
 TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name);
 
 bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecifiers);
-
-
 
 typedef struct
 {
@@ -1026,7 +1007,7 @@ typedef struct
 void TPrimaryExpressionLiteralItemList_Init(TPrimaryExpressionLiteralItemList* p);
 void TPrimaryExpressionLiteralItemList_Destroy(TPrimaryExpressionLiteralItemList* p);
 
-#define TPRIMARYEXPRESSIONLITERALITEMLIST_INIT LIST_INIT
+
 typedef struct
 {
     EType Type _defval(TPrimaryExpressionLiteral_ID);
@@ -1036,8 +1017,6 @@ typedef struct
 
 TPrimaryExpressionLiteral* TPrimaryExpressionLiteral_Create();
 void TPrimaryExpressionLiteral_Delete(TPrimaryExpressionLiteral* p);
-
-
 
 
 typedef struct
@@ -1081,9 +1060,6 @@ typedef struct TPostfixExpressionCore
     TExpression*_auto   pExpressionLeft;
     TExpression*_auto   pExpressionRight;
 
-    //cast
-
-
     struct TPostfixExpressionCore* _auto  pNext;
     TInitializerList InitializerList;
     String Identifier;
@@ -1099,7 +1075,6 @@ typedef struct TPostfixExpressionCore
 
 TPostfixExpressionCore* TPostfixExpressionCore_Create();
 void TPostfixExpressionCore_Delete(TPostfixExpressionCore* p);
-
 
 
 typedef struct

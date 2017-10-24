@@ -28,8 +28,18 @@ TFile*  TFileMap_Find(TFileMap* map, const char* key);
 Result TFileMap_DeleteItem(TFileMap *map, const char* key);
 void TFile_DeleteVoid(void* p);
 
-typedef ArrayT(TFile) TFileArray;
 
+typedef struct
+{
+    TFile* _auto * _auto _size(Size) pItems;
+    int Size;
+    int Capacity;
+} TFileArray;
+
+void TFileArray_Init(TFileArray* p);
+void TFileArray_Destroy(TFileArray* p);
+void TFileArray_PushBack(TFileArray* p);
+void TFileArray_Reserve(TFileArray* p, int n);
 
 
 typedef List(ScannerItem) TScannerItemList;

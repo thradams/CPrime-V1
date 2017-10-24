@@ -31,7 +31,7 @@ void TDeclarations_Reserve(TDeclarations* p, int n) _default
         }
     }
 }
-void TDeclarations_PushBack(TDeclarations* p, TDeclarations* pItem) _default
+void TDeclarations_PushBack(TDeclarations* p, TDeclaration* pItem) _default
 {
     if (p->Size + 1 > p->Capacity)
     {
@@ -2508,19 +2508,20 @@ TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName
     return SymbolMap_FindTypedefDeclarationTarget(&p->GlobalScope, typeName);
 }
 
-#define TPROGRAM_INIT {ARRAYT_INIT, STRARRAY_INIT, SYMBOLMAP_INIT, MACROMAP_INIT}
-void TProgram_Init(TProgram* p)
+
+void TProgram_Init(TProgram* p) _default
 {
-    TProgram d = TPROGRAM_INIT;
-    *p = d;
+    TDeclarations_Init(&p->Declarations);
+    TFileArray_Init(&p->Files2);
+    SymbolMap_Init(&p->GlobalScope);
+    MacroMap_Init(&p->Defines);
 }
 
 
-void TProgram_Destroy(TProgram * p)
+void TProgram_Destroy(TProgram * p) _default
 {
-    
     TDeclarations_Destroy(&p->Declarations);
-    ArrayT_Destroy(TFile, &p->Files2);
+    TFileArray_Destroy(&p->Files2);
     SymbolMap_Destroy(&p->GlobalScope);
     MacroMap_Destroy(&p->Defines);
 }

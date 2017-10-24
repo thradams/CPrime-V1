@@ -215,6 +215,51 @@ void TFileMap_Destroy(TFileMap* p)
   Map_Destroy(p, TFile_DeleteVoid);
 }
 
+void TFileArray_Init(TFileArray* p) _default
+{
+    p->pItems = NULL;
+    p->Size = 0;
+    p->Capacity = 0;
+}
+void TFileArray_Destroy(TFileArray* p) _default
+{
+    for (int i = 0; i < p->Size; i++)
+    {
+        TFile_Delete(p->pItems[i]);
+    }
+    free((void*)p->pItems);
+}
+
+void TFileArray_Reserve(TFileArray* p, int n) _default
+{
+    if (n > p->Capacity)
+    {
+        TFile** pnew = p->pItems;
+        pnew = (TFile**)realloc(pnew, n * sizeof(TFile*));
+        if (pnew)
+        {
+            p->pItems = pnew;
+            p->Capacity = n;
+        }
+    }
+
+}
+
+void TFileArray_PushBack(TFileArray* p, TFile* pItem) _default
+{
+    if (p->Size + 1 > p->Capacity)
+    {
+        int n = p->Capacity * 2;
+        if (n == 0)
+        {
+          n = 1;
+        }
+        TFileArray_Reserve(p, n);
+    }
+    p->pItems[p->Size] = pItem;
+    p->Size++;
+}
+
 Result TFileMap_Set(TFileMap* map, const char* key, TFile* pFile)
 {
   // tem que ser case insensitive!

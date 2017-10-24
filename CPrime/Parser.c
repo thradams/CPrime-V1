@@ -2815,7 +2815,7 @@ void Block_Item_List(Parser* ctx, TBlockItemList* pBlockItemList)
 
         TBlockItem* pBlockItem = NULL;
         Block_Item(ctx, &pBlockItem);
-        ArrayT_Push(pBlockItemList, pBlockItem);
+        TBlockItemList_PushBack(pBlockItemList, pBlockItem);
         Tokens token = Parser_CurrentToken(ctx);
 
         if (token == TK_RIGHT_CURLY_BRACKET)
@@ -3137,7 +3137,8 @@ void Struct_Declaration_List(Parser* ctx,
 
     TAnyStructDeclaration* pStructDeclaration = NULL;
     Struct_Declaration(ctx, &pStructDeclaration);
-    ArrayT_Push(pStructDeclarationList, pStructDeclaration);
+    TStructDeclarationList_PushBack(pStructDeclarationList, pStructDeclaration);
+    
 
     Tokens token = Parser_CurrentToken(ctx);
     if (token != TK_RIGHT_CURLY_BRACKET)
@@ -4822,7 +4823,9 @@ void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
             //Cada Declaration poderia ter out uma lista TDeclarations
             //publica que vai ser inserida aqui.
             //
-            ArrayT_Push(declarations, pDeclarationOut);
+            TDeclarations_PushBack(declarations, pDeclarationOut);
+            
+
             declarationIndex++;
 
         }
@@ -4847,7 +4850,7 @@ void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
                 TEofDeclaration_Create();
             //ok
             Parser_Match(ctx, &pEofDeclaration->ClueList0);
-            ArrayT_Push(declarations, pEofDeclaration);
+            TDeclarations_PushBack(declarations, pEofDeclaration);
         }
 
         if (Parser_HasError(ctx))
@@ -4866,8 +4869,8 @@ void Parser_Main(Parser* ctx, TDeclarations* declarations)
 
 static void TFileMapToStrArray(TFileMap* map, TFileArray* arr)
 {
-    ArrayT_Reserve(arr, map->Size);
-    arr->size = map->Size;
+    TFileArray_Reserve(arr, map->Size);
+    arr->Size = map->Size;
 
     for (int i = 0; i < map->buckets.size; i++)
     {
@@ -4881,7 +4884,7 @@ static void TFileMapToStrArray(TFileMap* map, TFileArray* arr)
                 TFile* pFile = (TFile*)node->data;
 
                 if (pFile->FileIndex >= 0 &&
-                    pFile->FileIndex < (int)arr->size)
+                    pFile->FileIndex < (int)arr->Size)
                 {
                     arr->pItems[pFile->FileIndex] = pFile;
                     node->data = NULL; //movido para array

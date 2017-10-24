@@ -72,35 +72,3 @@ void ArrayInt_Clear(ArrayInt* p);
 void ArrayInt_Init(ArrayInt* p);
 
 void ArrayInt_Destroy(ArrayInt* st);
-
-#define ArrayT(T) struct\
-{\
-  T * _auto * _auto _size(size) pItems;\
-  int size;\
-  int capacity;\
-}
-
-#define ARRAYT_INIT {NULL, 0 , 0 }
-#define ArrayT_Push(p, pItem)\
-  Array_Push((Array*)p, (void*)pItem)
-
-#define ArrayT_Init(p)\
-  do {\
-   (p)->pItems = NULL;\
-   (p)->size = 0;\
-   (p)->capacity = 0; \
-  } while(0)
-
-
-#define ArrayT_Reserve(p, n)\
-  Array_Reserve((Array*)p, n)
-
-#define ArrayT_Destroy(T, p)\
-  do{\
-   for (int i = 0; i < (p)->size; i++)\
-   {\
-     T##_Delete((p)->pItems[i]);\
-   }\
-   free((p)->pItems);\
-  }  while (0)
-
