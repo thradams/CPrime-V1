@@ -2278,19 +2278,15 @@ TParameter* TParameter_Create() _default
     }
     return p;
 }
-void TParameter_Destroy(TParameter* p) _default
-{
-    TParameter_Delete(p->pNext);
-    TDeclarationSpecifiers_Destroy(&p->Specifiers);
-    TDeclarator_Destroy(&p->Declarator);
-    TScannerItemList_Destroy(&p->ClueList00);
-}
 
 void TParameter_Delete(TParameter* p) _default
 {
     if (p != NULL)
     {
-        TParameter_Destroy(p);
+        TParameter_Delete(p->pNext);
+        TDeclarationSpecifiers_Destroy(&p->Specifiers);
+        TDeclarator_Destroy(&p->Declarator);
+        TScannerItemList_Destroy(&p->ClueList00);
         free((void*)p);
     }
 }

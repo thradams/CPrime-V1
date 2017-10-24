@@ -1038,8 +1038,8 @@ typedef struct TParameter
 } TParameter;
 
 TParameter* TParameter_Create();
-void TParameter_Destroy(TParameter* p);
-void TParameter_Destroy(TParameter* p);
+void TParameter_Delete(TParameter* p);
+
 void TParameter_Swap(TParameter* a, TParameter* b);
 const char* TParameter_GetTypedefName(TParameter* p);
 
