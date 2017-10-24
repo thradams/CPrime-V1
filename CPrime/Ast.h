@@ -212,7 +212,7 @@ void TPrimaryExpressionValue_Delete(TPrimaryExpressionValue* p);
 
 typedef struct TPrimaryExpressionLiteralItem
 {
-    struct TPrimaryExpressionLiteralItem* pNext;
+    struct TPrimaryExpressionLiteralItem* _auto pNext;
     String lexeme;
     TScannerItemList ClueList0;
 } TPrimaryExpressionLiteralItem;
@@ -221,8 +221,12 @@ void TPrimaryExpressionLiteralItem_Delete(TPrimaryExpressionLiteralItem *p);
 TPrimaryExpressionLiteralItem* TPrimaryExpressionLiteralItem_Create();
 
 
-typedef List(TPrimaryExpressionLiteralItem) TPrimaryExpressionLiteralItemList; //OK
+typedef struct
+{
+    TPrimaryExpressionLiteralItem * _auto pHead, *pTail;
+} TPrimaryExpressionLiteralItemList; //OK
 
+void TPrimaryExpressionLiteralItemList_Init(TPrimaryExpressionLiteralItemList* p);
 void TPrimaryExpressionLiteralItemList_Destroy(TPrimaryExpressionLiteralItemList* p);
 
 #define TPRIMARYEXPRESSIONLITERALITEMLIST_INIT LIST_INIT
@@ -235,9 +239,15 @@ typedef struct
 void TPrimaryExpressionLiteral_Delete(TPrimaryExpressionLiteral* p);
 TPrimaryExpressionLiteral* TPrimaryExpressionLiteral_Create();
 
+struct TInitializerListItem;
+typedef struct TInitializerListItem TInitializerListItem;
 
-typedef  struct TInitializerListItem TInitializerListItem;
-typedef List(TInitializerListItem) TInitializerList; //OK
+typedef struct TInitializerList
+{
+    TInitializerListItem * _auto pHead, *pTail;
+} TInitializerList; //OK
+
+void TInitializerList_Init(TInitializerList* p);
 void TInitializerList_Destroy(TInitializerList* p);
 void TInitializerList_Delete(TInitializerList* p);
 
@@ -281,7 +291,6 @@ typedef struct TExpression TExpression;
 typedef struct TTypeQualifier
 {
     EType Type _defval(TTypeQualifier_ID);
-    struct TTypeQualifier* pNext;
 
 //#ifdef LANGUAGE_EXTENSIONS
     String SizeIdentifier;
@@ -480,7 +489,7 @@ typedef struct TPointer
 {
     TTypeQualifierList Qualifier;
     Tokens Token;
-    struct TPointer* pNext;
+    struct TPointer* _auto pNext;
     TScannerItemList ClueList0;
 } TPointer;
 
@@ -489,7 +498,12 @@ void TPointer_Destroy(TPointer* p);
 void TPointer_Delete(TPointer* p);
 
 
-typedef List(TPointer) TPointerList; //OK
+
+typedef struct TPointerList
+{
+    TPointer* _auto pHead, *pTail;
+} TPointerList;
+
 void TPointerList_Destroy(TPointerList* p);
 bool TPointerList_IsPointer(TPointerList* pPointerlist);
 bool TPointerList_IsPointerN(TPointerList* pPointerlist, int n);
@@ -505,7 +519,7 @@ const char * TPointerList_GetSize(TPointerList* pPointerlist);
 typedef struct
 {
     EType Type  _defval(TFunctionSpecifier_ID);
-    void* pNext;
+    //TTypeSpecifier*  _auto pNext;
     bool bIsInline;
     bool bIsNoReturn;
     TScannerItemList ClueList0;
@@ -518,8 +532,7 @@ void TFunctionSpecifier_Delete(TFunctionSpecifier* p);
 
 typedef struct
 {
-    EType Type  _defval(TStorageSpecifier_ID);
-    void* pNext;
+    EType Type  _defval(TStorageSpecifier_ID);    
     bool bIsTypedef;
     bool bIsExtern;
     bool bIsStatic;
@@ -537,8 +550,7 @@ void TStorageSpecifier_Delete(TStorageSpecifier* p);
 
 typedef struct
 {
-    EType Type  _defval(TAlignmentSpecifier_ID);
-    void *pNext;
+    EType Type  _defval(TAlignmentSpecifier_ID);    
     String TypeName;
     //_Alignas(type - name)
     //  _Alignas(constant - expression)
@@ -551,7 +563,7 @@ void TAlignmentSpecifier_Delete(TAlignmentSpecifier* p);
 
 typedef struct TEnumerator
 {
-    struct TEnumerator* pNext;
+    struct TEnumerator* _auto pNext;
     String Name;
     TExpression*_auto   pExpression;    
     TScannerItemList ClueList0;
@@ -564,7 +576,11 @@ TEnumerator* TEnumerator_Create(void);
 void TEnumerator_Destroy(TEnumerator* p);
 void TEnumerator_Delete(TEnumerator* p);
 
-typedef List(TEnumerator) TEnumeratorList; //OK
+
+typedef struct
+{
+    TEnumerator * _auto pHead, *pTail;
+} TEnumeratorList;
 void TEnumeratorList_Destroy(TEnumeratorList* p);
 void TEnumeratorList_Init(TEnumeratorList* p);
 
@@ -586,7 +602,6 @@ void TEnumSpecifier_Delete(TEnumSpecifier* p);
 typedef struct TSingleTypeSpecifier
 {
     EType Type  _defval(TSingleTypeSpecifier_ID);
-    void *pNext;
     Tokens Token;
     String TypedefName;  
     TScannerItemList ClueList0;
@@ -679,7 +694,11 @@ bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers* pDeclaration
 
 struct TParameter;
 typedef struct TParameter TParameter;
-typedef List(TParameter) TParameterList; //OK
+
+typedef struct
+{
+    TParameter* _auto pHead, *pTail;
+} TParameterList;
 
 void TParameterList_Destroy(TParameterList* p);
 void TParameterList_Init(TParameterList* p);
@@ -701,7 +720,7 @@ typedef struct TDesignator
 {
     String Name;
     TExpression *_auto  pExpression;
-    struct TDesignator *pNext;
+    struct TDesignator * _auto pNext;
     TScannerItemList ClueList0; //. ou [
     TScannerItemList ClueList1; //]
 } TDesignator;
@@ -711,7 +730,11 @@ TDesignator* TDesignator_Create(void);
 void TDesignator_Destroy(TDesignator* p);
 void TDesignator_Delete(TDesignator* p);
 
-typedef List(TDesignator) TDesignatorList; //OK
+
+typedef struct
+{
+    TDesignator* _auto pHead, *pTail;
+} TDesignatorList;
 void TDesignatorList_Destroy(TDesignatorList* p);
 void TDesignatorList_Init(TDesignatorList* p) ;
 
@@ -734,7 +757,7 @@ typedef struct TInitializerListItem
 {
     TDesignatorList  DesignatorList;
     TInitializer*_auto  pInitializer;
-    struct TInitializerListItem* pNext;
+    struct TInitializerListItem* _auto pNext;
     TScannerItemList ClueList;
 	bool bDefault;
 } TInitializerListItem;
@@ -818,17 +841,24 @@ typedef struct TInitDeclarator
 {
     TDeclarator*_auto  pDeclarator;
     TInitializer*_auto   pInitializer;
-    struct TInitDeclarator * pNext;
+    struct TInitDeclarator * _auto pNext;
     TScannerItemList ClueList00;	
 	TScannerItemList ClueList1; //defval
 } TInitDeclarator;
 
 
 TInitDeclarator* TInitDeclarator_Create();
+void TInitDeclarator_Delete(TInitDeclarator* p);
 void TInitDeclarator_Destroy(TInitDeclarator* p);
 
 typedef TInitDeclarator TStructDeclarator;
-typedef List(TInitDeclarator) TInitDeclaratorList; //OK
+
+
+typedef struct TInitDeclaratorList
+{
+    TInitDeclarator* _auto pHead, *pTail;
+} TInitDeclaratorList;
+
 void TInitDeclaratorList_Destroy(TInitDeclaratorList* p);
 void TInitDeclaratorList_Init(TInitDeclaratorList* p);
 const char* TDeclarator_GetName(TDeclarator* p);
@@ -996,7 +1026,7 @@ int TAnyDeclaration_GetFileIndex(TAnyDeclaration* pDeclaration);
 
 typedef struct TParameter
 {
-    struct TParameter* pNext;
+    struct TParameter* _auto pNext;
     TDeclarationSpecifiers Specifiers;
     TDeclarator Declarator;
     
@@ -1092,7 +1122,7 @@ void TTypeName_Init(TTypeName* p);
 typedef struct TAtomicTypeSpecifier
 {
     EType Type  _defval(TAtomicTypeSpecifier_ID);
-    void* pNext;
+    //TTypeSpecifier* _auto pNext;
     TTypeName TypeName;
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
@@ -1107,7 +1137,7 @@ void TAtomicTypeSpecifier_Destroy(TAtomicTypeSpecifier* p);
 CAST(TTypeSpecifier, TAtomicTypeSpecifier)
 
 
-typedef struct TPostfixExpressionCoreTag
+typedef struct TPostfixExpressionCore
 {
     EType Type  _defval(TPostfixExpressionCore_ID);
     Tokens token;
@@ -1118,7 +1148,7 @@ typedef struct TPostfixExpressionCoreTag
     //cast
 
 
-    struct TPostfixExpressionCoreTag*  pNext;
+    struct TPostfixExpressionCore* _auto  pNext;
     TInitializerList InitializerList;
     String Identifier;
     TTypeName*_auto  pTypeName; /*typename*/

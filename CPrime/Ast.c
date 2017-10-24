@@ -722,8 +722,7 @@ TPrimaryExpressionLiteral* TPrimaryExpressionLiteral_Create() _default
     if (p != NULL)
     {
         p->Type = TPrimaryExpressionLiteral_ID;
-        p->List.pHead = NULL;
-        p->List.pTail = NULL;
+        TPrimaryExpressionLiteralItemList_Init(&p->List);
     }
     return p;
 }
@@ -854,6 +853,7 @@ TEnumerator* TEnumerator_Create(void) _default
 }
 void TEnumerator_Destroy(TEnumerator* p)  _default
 {
+    TEnumerator_Delete(p->pNext);
     String_Destroy(&p->Name);
     TExpression_Delete(p->pExpression);
     TScannerItemList_Destroy(&p->ClueList0);
@@ -875,9 +875,9 @@ void TEnumeratorList_Init(TEnumeratorList* p) _default
     p->pTail = NULL;
 }
 
-void TEnumeratorList_Destroy(TEnumeratorList* p)
+void TEnumeratorList_Destroy(TEnumeratorList* p) _default
 {
-    List_Destroy(TEnumerator, p);
+    TEnumerator_Delete(p->pHead);
 }
 
 TEnumSpecifier* TEnumSpecifier_Create(void) _default
@@ -1019,7 +1019,7 @@ TSingleTypeSpecifier* TSingleTypeSpecifier_Create(void) _default
     if (p != NULL)
     {
         p->Type = TSingleTypeSpecifier_ID;
-        p->pNext = NULL;
+    
         p->Token = TK_NONE;
         String_Init(&p->TypedefName);
         TScannerItemList_Init(&p->ClueList0);
@@ -1122,6 +1122,7 @@ void TInitDeclarator_Destroy(TInitDeclarator* p) _default
 {
     TDeclarator_Delete(p->pDeclarator);
     TInitializer_Delete(p->pInitializer);
+    TInitDeclarator_Delete(p->pNext);
     TScannerItemList_Destroy(&p->ClueList00);
     TScannerItemList_Destroy(&p->ClueList1);
 }
@@ -1356,7 +1357,7 @@ TAlignmentSpecifier* TAlignmentSpecifier_Create(void) _default
     if (p != NULL)
     {
         p->Type = TAlignmentSpecifier_ID;
-        p->pNext = NULL;
+//        p->pNext = NULL;
         String_Init(&p->TypeName);
     }
     return p;
@@ -1461,9 +1462,9 @@ bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
     return bIsAuto;
 }
 
-void TPointerList_Destroy(TPointerList* p)
+void TPointerList_Destroy(TPointerList* p) _default
 {
-    List_Destroy(TPointer, p);
+    TPointer_Delete(p->pHead);
 }
 
 TPointer* TPointer_Create(void) _default
@@ -1483,6 +1484,7 @@ TPointer* TPointer_Create(void) _default
 void TPointer_Destroy(TPointer* p) _default
 {
     TTypeQualifierList_Destroy(&p->Qualifier);
+    TPointer_Delete(p->pNext);
     TScannerItemList_Destroy(&p->ClueList0);
 }
 
@@ -1705,7 +1707,7 @@ TTypeQualifier* TTypeQualifier_Create(void) _default
     if (p != NULL)
     {
         p->Type = TTypeQualifier_ID;
-        p->pNext = NULL;
+//        p->pNext = NULL;
         String_Init(&p->SizeIdentifier);
         p->Token = TK_NONE;
         TScannerItemList_Init(&p->ClueList0);
@@ -1732,7 +1734,7 @@ TStorageSpecifier* TStorageSpecifier_Create(void) _default
     if (p != NULL)
     {
         p->Type = TStorageSpecifier_ID;
-        p->pNext = NULL;
+//        p->pNext = NULL;
         p->bIsTypedef = false;
         p->bIsExtern = false;
         p->bIsStatic = false;
@@ -2121,7 +2123,7 @@ TFunctionSpecifier* TFunctionSpecifier_Create(void) _default
     if (p != NULL)
     {
         p->Type = TFunctionSpecifier_ID;
-        p->pNext = NULL;
+//        p->pNext = NULL;
         p->bIsInline = false;
         p->bIsNoReturn = false;
         TScannerItemList_Init(&p->ClueList0);
@@ -2165,9 +2167,9 @@ void TInitDeclaratorList_Init(TInitDeclaratorList* p) _default
     p->pTail = NULL;
 }
 
-void TInitDeclaratorList_Destroy(TInitDeclaratorList* p)
+void TInitDeclaratorList_Destroy(TInitDeclaratorList* p) _default
 {
-    List_Destroy(TInitDeclarator, p);
+    TInitDeclarator_Delete(p->pHead);
 }
 
 void TDeclaration_Destroy(TDeclaration* p) _default
@@ -2301,9 +2303,9 @@ void TParameterList_Init(TParameterList* p) _default
     p->pTail = NULL;
 }
 
-void TParameterList_Destroy(TParameterList* p)
+void TParameterList_Destroy(TParameterList* p) _default
 {
-    List_Destroy(TParameter, p);
+    TParameter_Delete(p->pHead);
 }
 
 
@@ -2447,8 +2449,7 @@ TInitializerListType* TInitializerListType_Create(void) _default
     if (p != NULL)
     {
         p->Type = TInitializerListType_ID;
-        p->InitializerList.pHead = NULL;
-        p->InitializerList.pTail = NULL;
+        TInitializerList_Init(&p->InitializerList);
         TScannerItemList_Init(&p->ClueList00);
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
@@ -2472,10 +2473,15 @@ void TInitializerListType_Delete(TInitializerListType* p) _default
     }
 }
 
-
-void TInitializerList_Destroy(TInitializerList* p)
+void TInitializerList_Init(TInitializerList* p) _default
 {
-    List_Destroy(TInitializerListItem, p)
+    p->pHead = NULL;
+    p->pTail = NULL;
+}
+
+void TInitializerList_Destroy(TInitializerList* p) _default
+{
+    TInitializerListItem_Delete(p->pHead);
 }
 
 void TInitializer_Delete(TInitializer* p) _default
@@ -2515,9 +2521,9 @@ void TDesignatorList_Init(TDesignatorList* p) _default
     p->pTail = NULL;
 }
 
-void TDesignatorList_Destroy(TDesignatorList* p)
+void TDesignatorList_Destroy(TDesignatorList* p) _default
 {
-    List_Destroy(TDesignator, p);
+   // List_Destroy(TDesignator, p);
 }
 
 void TInitializerListItem_Destroy(TInitializerListItem* p) _default
@@ -3056,9 +3062,15 @@ TStructUnionSpecifier* TParameter_Is_DirectPointerToStruct(TProgram* program, TP
     return pStructUnionSpecifier;
 }
 
-void TPrimaryExpressionLiteralItemList_Destroy(TPrimaryExpressionLiteralItemList* p)
+void TPrimaryExpressionLiteralItemList_Init(TPrimaryExpressionLiteralItemList* p) _default
 {
-    List_Destroy(TPrimaryExpressionLiteralItem, p);
+    p->pHead = NULL;
+    p->pTail = NULL;
+} 
+
+void TPrimaryExpressionLiteralItemList_Destroy(TPrimaryExpressionLiteralItemList* p) _default
+{
+    TPrimaryExpressionLiteralItem_Delete(p->pHead);
 }
 
 const char* TDeclaration_GetArgName(TDeclaration* p, int index)
@@ -3149,7 +3161,7 @@ TAtomicTypeSpecifier* TAtomicTypeSpecifier_Create() _default
     if (p != NULL)
     {
         p->Type = TAtomicTypeSpecifier_ID;
-        p->pNext = NULL;
+//        p->pNext = NULL;
         TTypeName_Init(&p->TypeName);
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
@@ -3172,8 +3184,7 @@ TPostfixExpressionCore* TPostfixExpressionCore_Create() _default
         p->pExpressionLeft = NULL;
         p->pExpressionRight = NULL;
         p->pNext = NULL;
-        p->InitializerList.pHead = NULL;
-        p->InitializerList.pTail = NULL;
+        TInitializerList_Init(&p->InitializerList);
         String_Init(&p->Identifier);
         p->pTypeName = NULL;
         TScannerItemList_Init(&p->ClueList0);
