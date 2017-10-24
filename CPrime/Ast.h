@@ -643,9 +643,9 @@ typedef struct
 {
     EType Type  _defval(TInitializerListType_ID);
     TInitializerList InitializerList;
-	TScannerItemList ClueList00;
-    TScannerItemList ClueList0;
+	TScannerItemList ClueList0;
     TScannerItemList ClueList1;
+    TScannerItemList ClueList2;
 	bool bDefault;
 } TInitializerListType;
 
@@ -710,7 +710,7 @@ typedef struct TInitDeclarator
     TDeclarator*_auto  pDeclarator;
     TInitializer*_auto   pInitializer;
     struct TInitDeclarator * _auto pNext;
-    TScannerItemList ClueList00;	
+    TScannerItemList ClueList0;	
 	TScannerItemList ClueList1; //defval
 } TInitDeclarator;
 
@@ -847,7 +847,7 @@ typedef struct TDeclaration
     int FileIndex;
     int Line;
 
-	TScannerItemList ClueList00; //default
+	TScannerItemList ClueList0; //default
 
     bool bDefault;
     TScannerItemList ClueList1;
@@ -887,7 +887,7 @@ typedef struct TParameter
     struct TParameter* _auto pNext;
     TDeclarationSpecifiers Specifiers;
     TDeclarator Declarator;
-    TScannerItemList ClueList00; //, do parametro
+    TScannerItemList ClueList0; //, do parametro
     bool bHasComma;
 } TParameter;
 
@@ -1027,7 +1027,7 @@ typedef struct
     TExpression*_auto    pExpressionRight;
     TPosition Position;
 
-    TScannerItemList ClueList00;
+    TScannerItemList ClueList0;
 
 } TBinaryExpression;
 
@@ -1096,7 +1096,7 @@ typedef struct
     Tokens token;
     TExpression*_auto   pExpressionRight;
     TTypeName TypeName;
-    TScannerItemList ClueList00;
+    TScannerItemList ClueList0;
     TScannerItemList ClueList1; //sizeof (
     TScannerItemList ClueList2; //sizeof ( )
 } TUnaryExpressionOperator;

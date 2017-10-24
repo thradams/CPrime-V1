@@ -914,7 +914,7 @@ void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
         TBinaryExpression *  pExpr =
             TBinaryExpression_Create();
 
-        Parser_Match(ctx, &pExpr->ClueList00);// &pAssignmentExpression->ClueList);
+        Parser_Match(ctx, &pExpr->ClueList0);// &pAssignmentExpression->ClueList);
 
         TExpression* pAssignmentExpressionRight;
         AssignmentExpression(ctx, &pAssignmentExpressionRight);
@@ -937,7 +937,7 @@ void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
         TBinaryExpression *  pExpr =
             TBinaryExpression_Create();
 
-        Parser_Match(ctx, &pExpr->ClueList00);
+        Parser_Match(ctx, &pExpr->ClueList0);
 
         GetPosition(ctx, &pExpr->Position);
         pExpr->token = TK_COMMA;
@@ -1101,7 +1101,7 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
         TUnaryExpressionOperator* pUnaryExpressionOperator =
             TUnaryExpressionOperator_Create();
 
-        Parser_Match(ctx, &pUnaryExpressionOperator->ClueList00);
+        Parser_Match(ctx, &pUnaryExpressionOperator->ClueList0);
 
         TExpression *pUnaryExpression;
         UnaryExpression(ctx, &pUnaryExpression);
@@ -1130,7 +1130,7 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
         TUnaryExpressionOperator* pUnaryExpressionOperator =
             TUnaryExpressionOperator_Create();
 
-        Parser_Match(ctx, &pUnaryExpressionOperator->ClueList00);
+        Parser_Match(ctx, &pUnaryExpressionOperator->ClueList0);
         TExpression* pCastExpression;
         CastExpression(ctx, &pCastExpression);
 
@@ -1153,7 +1153,7 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
 
         pUnaryExpressionOperator->token = token0;
 
-        Parser_MatchToken(ctx, TK_SIZEOF, &pUnaryExpressionOperator->ClueList00);
+        Parser_MatchToken(ctx, TK_SIZEOF, &pUnaryExpressionOperator->ClueList0);
 
         if (Parser_CurrentToken(ctx) == TK_LEFT_PARENTHESIS)
         {
@@ -1332,7 +1332,7 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         CastExpression(ctx, &pExpressionRight);
@@ -1361,7 +1361,7 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         MultiplicativeExpression(ctx, &pExpressionRight);
@@ -1404,7 +1404,7 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
         pBinaryExpression->pExpressionLeft = *ppExpression;
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         MultiplicativeExpression(ctx, &pExpressionRight);
@@ -1430,7 +1430,7 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         AdditiveExpression(ctx, &pExpressionRight);
@@ -1473,7 +1473,7 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         AdditiveExpression(ctx, &pExpressionRight);
@@ -1499,7 +1499,7 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         ShiftExpression(ctx, &pExpressionRight);
@@ -1544,7 +1544,7 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         ShiftExpression(ctx, &pExpressionRight);
@@ -1572,7 +1572,7 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         RelationalExpression(ctx, &pExpressionRight);
@@ -1613,7 +1613,7 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         RelationalExpression(ctx, &pExpressionRight);
@@ -1639,7 +1639,7 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         EqualityExpression(ctx, &pExpressionRight);
@@ -1677,7 +1677,7 @@ void AndExpression(Parser* ctx, TExpression **ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         EqualityExpression(ctx, &pExpressionRight);
@@ -1702,7 +1702,7 @@ void AndExpression(Parser* ctx, TExpression **ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         AndExpression(ctx, &pExpressionRight);
@@ -1741,7 +1741,7 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         AndExpression(ctx, &pExpressionRight);
@@ -1766,7 +1766,7 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
 
         TExpression* pExpressionRight;
@@ -1808,7 +1808,7 @@ void InclusiveOrExpression(Parser* ctx, TExpression**ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         ExclusiveOrExpression(ctx, &pExpressionRight);
@@ -1833,7 +1833,7 @@ void InclusiveOrExpression(Parser* ctx, TExpression**ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         InclusiveOrExpression(ctx, &pExpressionRight);
@@ -1873,7 +1873,7 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
         GetPosition(ctx, &pBinaryExpression->Position);
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
 
         TExpression* pExpressionRight;
@@ -1901,7 +1901,7 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
         pBinaryExpression->pExpressionLeft = *ppExpression;
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         LogicalAndExpression(ctx, &pExpressionRight);
@@ -1940,7 +1940,7 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
         pBinaryExpression->pExpressionLeft = *ppExpression;
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         LogicalAndExpression(ctx, &pExpressionRight);
@@ -1965,7 +1965,7 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
         pBinaryExpression->pExpressionLeft = *ppExpression;
 
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         TExpression* pExpressionRight;
         LogicalOrExpression(ctx, &pExpressionRight);
@@ -2055,7 +2055,7 @@ void AssignmentExpression(Parser* ctx, TExpression** ppExpression)
         TBinaryExpression *pBinaryExpression =
             TBinaryExpression_Create();
 
-        Parser_Match(ctx, &pBinaryExpression->ClueList00);
+        Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
         //Significa que o anterior deve ser do tipo  unary-expression
         //embora tenhamos feito o parser de conditional-expression
@@ -3010,7 +3010,7 @@ void Struct_Declarator(Parser* ctx,
 
         if (token == TK_COLON)
         {
-            Parser_Match(ctx, &pInitDeclarator->ClueList00);
+            Parser_Match(ctx, &pInitDeclarator->ClueList0);
 
             TExpression* p = NULL;
             ConstantExpression(ctx, &p);
@@ -3059,7 +3059,7 @@ void Struct_Declarator_List(Parser* ctx,
         if (token == TK_COMMA)
         {
 			//Tem mais
-            Parser_Match(ctx, &pTDeclarator2->ClueList00);
+            Parser_Match(ctx, &pTDeclarator2->ClueList0);
 
             Struct_Declarator_List(ctx, pStructDeclarationList);
         }
@@ -3588,7 +3588,7 @@ void Parameter_List(Parser* ctx,
     {
         //a virgula fica no anterior
         pParameter->bHasComma = true;
-        Parser_Match(ctx, &pParameter->ClueList00);
+        Parser_Match(ctx, &pParameter->ClueList0);
 
         token = Parser_CurrentToken(ctx);
         if (token != TK_DOTDOTDOT)
@@ -4398,18 +4398,18 @@ void Initializer(Parser* ctx,
 
         *ppInitializer = (TInitializer*)pTInitializerList;
 
-        Parser_Match(ctx, &pTInitializerList->ClueList00);
+        Parser_Match(ctx, &pTInitializerList->ClueList0);
         token = Parser_CurrentToken(ctx);
 
 
         if (token == TK_LEFT_CURLY_BRACKET)
         {
-            Parser_Match(ctx, &pTInitializerList->ClueList0);
+            Parser_Match(ctx, &pTInitializerList->ClueList1);
 
             Initializer_List(ctx, &pTInitializerList->InitializerList);
 
             Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET,
-                &pTInitializerList->ClueList1);
+                &pTInitializerList->ClueList2);
         }
     }
     else
@@ -4422,12 +4422,12 @@ void Initializer(Parser* ctx,
 
             *ppInitializer = (TInitializer*)pTInitializerList;
 
-            Parser_Match(ctx, &pTInitializerList->ClueList0);
+            Parser_Match(ctx, &pTInitializerList->ClueList1);
 
             Initializer_List(ctx, &pTInitializerList->InitializerList);
 
             Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET,
-                &pTInitializerList->ClueList1);
+                &pTInitializerList->ClueList2);
         }
 
         else
@@ -4589,7 +4589,7 @@ void Init_Declarator(Parser* ctx,
     {
         ASSERT(*ppDeclarator2 != NULL);
 
-        Parser_Match(ctx, &pInitDeclarator->ClueList00);
+        Parser_Match(ctx, &pInitDeclarator->ClueList0);
 
         Initializer(ctx, &pInitDeclarator->pInitializer, TK_SEMICOLON, TK_SEMICOLON);
         ////TNodeClueList_MoveToEnd(&pInitDeclarator->ClueList, &ctx->Scanner.ClueList);
@@ -4613,7 +4613,7 @@ void Init_Declarator_List(Parser* ctx,
     Tokens token = Parser_CurrentToken(ctx);
     if (token == TK_COMMA)
     {
-        Parser_Match(ctx, &pInitDeclarator->ClueList00);
+        Parser_Match(ctx, &pInitDeclarator->ClueList0);
 
         Init_Declarator_List(ctx, pInitDeclaratorList);
     }
@@ -4732,7 +4732,7 @@ bool  Declaration(Parser* ctx,
                     */
 
                     pFuncVarDeclaration->bDefault = true;
-                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList00);
+                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList0);
                     token = Parser_CurrentToken(ctx);
                 }
 

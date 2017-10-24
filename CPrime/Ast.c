@@ -565,7 +565,7 @@ TBinaryExpression* TBinaryExpression_Create(void) _default
         p->pExpressionRight = NULL;
         p->Position.FileIndex = 0;
         p->Position.Line = 0;
-        TScannerItemList_Init(&p->ClueList00);
+        TScannerItemList_Init(&p->ClueList0);
     }
     return p;
 }
@@ -576,7 +576,7 @@ void TBinaryExpression_Delete(TBinaryExpression* p) _default
     {
         TExpression_Delete(p->pExpressionLeft);
         TExpression_Delete(p->pExpressionRight);
-        TScannerItemList_Destroy(&p->ClueList00);
+        TScannerItemList_Destroy(&p->ClueList0);
         free((void*)p);
     }
 }
@@ -588,7 +588,7 @@ void TUnaryExpressionOperator_Delete(TUnaryExpressionOperator* p) _default
     {
         TExpression_Delete(p->pExpressionRight);
         TTypeName_Destroy(&p->TypeName);
-        TScannerItemList_Destroy(&p->ClueList00);
+        TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
         TScannerItemList_Destroy(&p->ClueList2);
         free((void*)p);
@@ -1032,7 +1032,7 @@ TInitDeclarator* TInitDeclarator_Create() _default
         p->pDeclarator = NULL;
         p->pInitializer = NULL;
         p->pNext = NULL;
-        TScannerItemList_Init(&p->ClueList00);
+        TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
     }
     return p;
@@ -1043,7 +1043,7 @@ void TInitDeclarator_Destroy(TInitDeclarator* p) _default
     TDeclarator_Delete(p->pDeclarator);
     TInitializer_Delete(p->pInitializer);
     TInitDeclarator_Delete(p->pNext);
-    TScannerItemList_Destroy(&p->ClueList00);
+    TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
 }
 
@@ -2108,7 +2108,7 @@ void TDeclaration_Delete(TDeclaration* p) _default
         TDeclarationSpecifiers_Destroy(&p->Specifiers);
         TInitDeclaratorList_Destroy(&p->InitDeclaratorList);
         TCompoundStatement_Delete(p->pCompoundStatementOpt);
-        TScannerItemList_Destroy(&p->ClueList00);
+        TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
         free((void*)p);
     }
@@ -2124,7 +2124,7 @@ TDeclaration* TDeclaration_Create() _default
         p->pCompoundStatementOpt = NULL;
         p->FileIndex = 0;
         p->Line = 0;
-        TScannerItemList_Init(&p->ClueList00);
+        TScannerItemList_Init(&p->ClueList0);
         p->bDefault = false;
         TScannerItemList_Init(&p->ClueList1);
     }
@@ -2196,7 +2196,7 @@ TParameter* TParameter_Create() _default
         p->pNext = NULL;
         TDeclarationSpecifiers_Init(&p->Specifiers);
         TDeclarator_Init(&p->Declarator);
-        TScannerItemList_Init(&p->ClueList00);
+        TScannerItemList_Init(&p->ClueList0);
         p->bHasComma = false;
     }
     return p;
@@ -2209,7 +2209,7 @@ void TParameter_Delete(TParameter* p) _default
         TParameter_Delete(p->pNext);
         TDeclarationSpecifiers_Destroy(&p->Specifiers);
         TDeclarator_Destroy(&p->Declarator);
-        TScannerItemList_Destroy(&p->ClueList00);
+        TScannerItemList_Destroy(&p->ClueList0);
         free((void*)p);
     }
 }
@@ -2368,9 +2368,9 @@ TInitializerListType* TInitializerListType_Create(void) _default
     {
         p->Type = TInitializerListType_ID;
         TInitializerList_Init(&p->InitializerList);
-        TScannerItemList_Init(&p->ClueList00);
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
+        TScannerItemList_Init(&p->ClueList2);
         p->bDefault = false;
     }
     return p;
@@ -2378,9 +2378,9 @@ TInitializerListType* TInitializerListType_Create(void) _default
 void TInitializerListType_Destroy(TInitializerListType* p) _default
 {
     TInitializerList_Destroy(&p->InitializerList);
-    TScannerItemList_Destroy(&p->ClueList00);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
+    TScannerItemList_Destroy(&p->ClueList2);
 }
 void TInitializerListType_Delete(TInitializerListType* p) _default
 {
@@ -3140,7 +3140,7 @@ TUnaryExpressionOperator* TUnaryExpressionOperator_Create() _default
         p->token = TK_NONE;
         p->pExpressionRight = NULL;
         TTypeName_Init(&p->TypeName);
-        TScannerItemList_Init(&p->ClueList00);
+        TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
         TScannerItemList_Init(&p->ClueList2);
     }

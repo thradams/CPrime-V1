@@ -733,7 +733,7 @@ static void TExpression_CodePrint(TProgram* program, Options * options, TExpress
 
             TExpression_CodePrint(program, options, pBinaryExpression->pExpressionLeft, "l-expr", fp);
 
-            TNodeClueList_CodePrint(options, &pBinaryExpression->ClueList00, fp);
+            TNodeClueList_CodePrint(options, &pBinaryExpression->ClueList0, fp);
             Output_Append(fp, options, TokenToString(pBinaryExpression->token));
 
             TExpression_CodePrint(program, options, ((TBinaryExpression*)p)->pExpressionRight, "r-expr", fp);
@@ -810,7 +810,7 @@ static void TExpression_CodePrint(TProgram* program, Options * options, TExpress
             TUnaryExpressionOperator* pTUnaryExpressionOperator =
                 (TUnaryExpressionOperator*)p;
 
-            TNodeClueList_CodePrint(options, &pTUnaryExpressionOperator->ClueList00, fp);
+            TNodeClueList_CodePrint(options, &pTUnaryExpressionOperator->ClueList0, fp);
 
             if (pTUnaryExpressionOperator->token == TK_SIZEOF)
             {
@@ -1134,7 +1134,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
 
     if (p->bDefault)
     {
-        TNodeClueList_CodePrint(options, &p->ClueList00, fp);
+        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
         TInitializer* pInitializer = NULL;
         //p->InitializerList.pHead ?
         //p->InitializerList.pHead->pInitializer : NULL;
@@ -1175,7 +1175,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
     }
     else
     {
-        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         Output_Append(fp, options, "{");
 
         TInitializerList_CodePrint(program,
@@ -1186,7 +1186,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
 
             fp);
 
-        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+        TNodeClueList_CodePrint(options, &p->ClueList2, fp);
         Output_Append(fp, options, "}");
     }
 
@@ -1409,7 +1409,7 @@ static void TStructDeclaratorList_CodePrint(TProgram* program,
     {
         if (!List_IsFirstItem(p, pItem))
         {
-            TNodeClueList_CodePrint(options, &pItem->ClueList00, fp);
+            TNodeClueList_CodePrint(options, &pItem->ClueList0, fp);
             Output_Append(fp, options, ",");
         }
         TStructDeclarator_CodePrint(program, options, pSpecifierQualifierList, pItem, fp);
@@ -1661,7 +1661,7 @@ void TInitDeclarator_CodePrint(TProgram* program,
 
     if (p->pInitializer)
     {
-        TNodeClueList_CodePrint(options, &p->ClueList00, fp);
+        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
         Output_Append(fp, options, "=");
         TInitializer_CodePrint(program,
             options,
@@ -2260,7 +2260,7 @@ static void TDeclaration_CodePrint(TProgram* program,
 
         if (p->bDefault)
         {
-            TNodeClueList_CodePrint(options, &p->ClueList00, fp);
+            TNodeClueList_CodePrint(options, &p->ClueList0, fp);
             StrBuilder_Append(fp, "_default");
 
             if (options->bHideDefaultImplementation)
@@ -2303,7 +2303,7 @@ static void TDeclaration_CodePrint(TProgram* program,
 
             if (!options->bHideDefaultImplementation)
             {
-                TNodeClueList_CodePrint(options, &p->ClueList00, fp);
+                TNodeClueList_CodePrint(options, &p->ClueList0, fp);
                 StrBuilder_Append(fp, "_default");
                 //Output_Append(fp, options,  " /*default*/\n");
                 TNodeClueList_CodePrint(options, &p->ClueList1, fp);
@@ -2359,7 +2359,7 @@ static void TParameter_CodePrint(TProgram* program,
 
     if (p->bHasComma)
     {
-        TNodeClueList_CodePrint(options, &p->ClueList00, fp);
+        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
         Output_Append(fp, options, ",");
     }
 
