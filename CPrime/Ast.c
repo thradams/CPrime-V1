@@ -452,93 +452,86 @@ void TIfStatement_Delete(TIfStatement* p) _default
     }
 }
 
-
-void TStatement_Destroy(TStatement* p)
+void TStatement_Delete(TStatement* p) _default
 {
     switch (TYPEOF(p))
     {
-    case TExpressionStatement_ID:
-        TExpressionStatement_Destroy((TExpressionStatement*)p);
+        case TForStatement_ID:
+            TForStatement_Delete((TForStatement*)p);
         break;
-    case TSwitchStatement_ID:
-        TSwitchStatement_Destroy((TSwitchStatement*)p);
+        case TJumpStatement_ID:
+            TJumpStatement_Delete((TJumpStatement*)p);
         break;
-    case TLabeledStatement_ID:
-        TLabeledStatement_Destroy((TLabeledStatement*)p);
+        case TExpressionStatement_ID:
+            TExpressionStatement_Delete((TExpressionStatement*)p);
         break;
-    case TForStatement_ID:
-        TForStatement_Destroy((TForStatement*)p);
+        case TIfStatement_ID:
+            TIfStatement_Delete((TIfStatement*)p);
         break;
-    case TJumpStatement_ID:
-        TJumpStatement_Destroy((TJumpStatement*)p);
+        case TWhileStatement_ID:
+            TWhileStatement_Delete((TWhileStatement*)p);
         break;
-    case TAsmStatement_ID:
-        TAsmStatement_Destroy((TAsmStatement*)p);
+        case TSwitchStatement_ID:
+            TSwitchStatement_Delete((TSwitchStatement*)p);
         break;
-    case TCompoundStatement_ID:
-        TCompoundStatement_Destroy((TCompoundStatement*)p);
+        case TAsmStatement_ID:
+            TAsmStatement_Delete((TAsmStatement*)p);
         break;
-    case TIfStatement_ID:
-        TIfStatement_Destroy((TIfStatement*)p);
+        case TDoStatement_ID:
+            TDoStatement_Delete((TDoStatement*)p);
         break;
-    case TDoStatement_ID:
-        TDoStatement_Destroy((TDoStatement*)p);
+        case TLabeledStatement_ID:
+            TLabeledStatement_Delete((TLabeledStatement*)p);
         break;
-
-    case TWhileStatement_ID:
-        TWhileStatement_Destroy((TWhileStatement*)p);
+        case TCompoundStatement_ID:
+            TCompoundStatement_Delete((TCompoundStatement*)p);
         break;
     default:
-        ASSERT(false);
-        break;
+       break;
     }
 }
 
-void TBlockItem_Destroy(TBlockItem* p)
-{
 
+
+void TBlockItem_Delete(TBlockItem* p) _default
+{
     switch (TYPEOF(p))
     {
-    case TDeclaration_ID:
-        TDeclaration_Destroy((TDeclaration*)p);
+        case TForStatement_ID:
+            TForStatement_Delete((TForStatement*)p);
         break;
-    case TJumpStatement_ID:
-        TJumpStatement_Destroy((TJumpStatement*)p);
+        case TJumpStatement_ID:
+            TJumpStatement_Delete((TJumpStatement*)p);
         break;
-    case TAsmStatement_ID:
-        TAsmStatement_Destroy((TAsmStatement*)p);
+        case TExpressionStatement_ID:
+            TExpressionStatement_Delete((TExpressionStatement*)p);
         break;
-    case TSwitchStatement_ID:
-        TSwitchStatement_Destroy((TSwitchStatement*)p);
+        case TIfStatement_ID:
+            TIfStatement_Delete((TIfStatement*)p);
         break;
-    case TExpressionStatement_ID:
-        TExpressionStatement_Destroy((TExpressionStatement*)p);
+        case TWhileStatement_ID:
+            TWhileStatement_Delete((TWhileStatement*)p);
         break;
-    case TCompoundStatement_ID:
-        TCompoundStatement_Destroy((TCompoundStatement*)p);
+        case TSwitchStatement_ID:
+            TSwitchStatement_Delete((TSwitchStatement*)p);
         break;
-    case TLabeledStatement_ID:
-        TLabeledStatement_Destroy((TLabeledStatement*)p);
+        case TAsmStatement_ID:
+            TAsmStatement_Delete((TAsmStatement*)p);
         break;
-    case TForStatement_ID:
-        TForStatement_Destroy((TForStatement*)p);
+        case TDoStatement_ID:
+            TDoStatement_Delete((TDoStatement*)p);
         break;
-    case TWhileStatement_ID:
-        TWhileStatement_Destroy((TWhileStatement*)p);
+        case TLabeledStatement_ID:
+            TLabeledStatement_Delete((TLabeledStatement*)p);
         break;
-    case TIfStatement_ID:
-        TIfStatement_Destroy((TIfStatement*)p);
+        case TCompoundStatement_ID:
+            TCompoundStatement_Delete((TCompoundStatement*)p);
         break;
-    case TDoStatement_ID:
-        TDoStatement_Destroy((TDoStatement*)p);
-        break;
-        //Statement
     default:
-        ASSERT(false);
-        break;
+       break;
     }
-
 }
+
 
 TPrimaryExpressionValue* TPrimaryExpressionValue_Create() _default
 {
@@ -589,6 +582,15 @@ void TPostfixExpressionCore_Destroy(TPostfixExpressionCore* p) _default
     TScannerItemList_Destroy(&p->ClueList4);
 }
 
+void TPostfixExpressionCore_Delete(TPostfixExpressionCore* p) _default
+{
+    if (p != NULL)
+    {
+        TPostfixExpressionCore_Destroy(p);
+        free((void*)p);
+    }
+}
+
 TBinaryExpression* TBinaryExpression_Create(void) _default
 {
     TBinaryExpression *p = (TBinaryExpression*) malloc(sizeof * p);
@@ -629,12 +631,31 @@ void TUnaryExpressionOperator_Destroy(TUnaryExpressionOperator* p) _default
     TScannerItemList_Destroy(&p->ClueList2);
 }
 
+void TUnaryExpressionOperator_Delete(TUnaryExpressionOperator* p) _default
+{
+    if (p != NULL)
+    {
+        TUnaryExpressionOperator_Destroy(p);
+        free((void*)p);
+    }
+}
+
+
 void TCastExpressionType_Destroy(TCastExpressionType* p) _default
 {
     TExpression_Delete(p->pExpression);
     TTypeName_Destroy(&p->TypeName);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
+}
+
+void TCastExpressionType_Delete(TCastExpressionType* p) _default
+{
+    if (p != NULL)
+    {
+        TCastExpressionType_Destroy(p);
+        free((void*)p);
+    }
 }
 
 TTernaryExpression* TTernaryExpression_Create(void) _default
@@ -721,40 +742,33 @@ void TPrimaryExpressionLiteral_Delete(TPrimaryExpressionLiteral* p) _default
     }
 }
 
-
-void TExpression_Destroy(TExpression* p)
+void TExpression_Delete(TExpression* p) _default
 {
     switch (TYPEOF(p))
     {
-        CASE(TPrimaryExpressionLiteral) :
-            TPrimaryExpressionLiteral_Destroy((TPrimaryExpressionLiteral*)p);
+        case TBinaryExpression_ID:
+            TBinaryExpression_Delete((TBinaryExpression*)p);
         break;
-        CASE(TPrimaryExpressionValue) :
-            TPrimaryExpressionValue_Destroy((TPrimaryExpressionValue*)p);
+        case TUnaryExpressionOperator_ID:
+            TUnaryExpressionOperator_Delete((TUnaryExpressionOperator*)p);
         break;
-        CASE(TPostfixExpressionCore) :
-            TPostfixExpressionCore_Destroy((TPostfixExpressionCore*)p);
+        case TCastExpressionType_ID:
+            TCastExpressionType_Delete((TCastExpressionType*)p);
         break;
-        CASE(TBinaryExpression) :
-            TBinaryExpression_Destroy((TBinaryExpression*)p);
+        case TPrimaryExpressionValue_ID:
+            TPrimaryExpressionValue_Delete((TPrimaryExpressionValue*)p);
         break;
-        CASE(TUnaryExpressionOperator) :
-            TUnaryExpressionOperator_Destroy((TUnaryExpressionOperator*)p);
+        case TPostfixExpressionCore_ID:
+            TPostfixExpressionCore_Delete((TPostfixExpressionCore*)p);
         break;
-        CASE(TCastExpressionType) :
-            TCastExpressionType_Destroy((TCastExpressionType*)p);
+        case TPrimaryExpressionLiteral_ID:
+            TPrimaryExpressionLiteral_Delete((TPrimaryExpressionLiteral*)p);
         break;
-
-        CASE(TTernaryExpression) :
-            TTernaryExpression_Destroy((TTernaryExpression*)p);
-        break;
-
     default:
-        ASSERT(false);
-        break;
+       break;
     }
-
 }
+
 
 TEofDeclaration* TEofDeclaration_Create() _default
 {
@@ -901,11 +915,70 @@ void TEnumSpecifier_Delete(TEnumSpecifier* p) _default
 
 
 
+TUnionSetItem* TUnionSetItem_Create() _default
+{
+    TUnionSetItem *p = (TUnionSetItem*) malloc(sizeof * p);
+    if (p != NULL)
+    {
+        p->pNext = NULL;
+        p->Token = TK_NONE;
+        p->TokenFollow = TK_NONE;
+        String_Init(&p->Name);
+        TScannerItemList_Init(&p->ClueList0);
+        TScannerItemList_Init(&p->ClueList1);
+        TScannerItemList_Init(&p->ClueList2);
+    }
+    return p;
+}
+void TUnionSetItem_Delete(TUnionSetItem* p) _default
+{
+    if (p != NULL)
+    {
+        TUnionSetItem_Delete(p->pNext);
+        String_Destroy(&p->Name);
+        TScannerItemList_Destroy(&p->ClueList0);
+        TScannerItemList_Destroy(&p->ClueList1);
+        TScannerItemList_Destroy(&p->ClueList2);
+        free((void*)p);
+    }
+}
+
+void TUnionSet_Init(TUnionSet* p) _default
+{
+    p->pHead = NULL;
+    p->pTail = NULL;
+    TScannerItemList_Init(&p->ClueList0);
+    TScannerItemList_Init(&p->ClueList1);
+    TScannerItemList_Init(&p->ClueList2);
+}
+void TUnionSet_Destroy(TUnionSet* p) _default
+{
+    TUnionSetItem_Delete(p->pHead);
+    TScannerItemList_Destroy(&p->ClueList0);
+    TScannerItemList_Destroy(&p->ClueList1);
+    TScannerItemList_Destroy(&p->ClueList2);
+}
+
+
+void TUnionSet_PushBack(TUnionSet* pList, TUnionSetItem* pItem)
+{
+    if (pList->pHead == NULL) 
+    {        
+            pList->pHead = (pItem); 
+    }
+    else 
+    {            
+                pList->pTail->pNext = pItem;                 
+    }
+    pList->pTail = pItem;
+}
+
+
 void TStructUnionSpecifier_Destroy(TStructUnionSpecifier* p) _default
 {
     TStructDeclarationList_Destroy(&p->StructDeclarationList);
     String_Destroy(&p->Name);
-    String_Destroy(&p->StereotypeStr);
+    TUnionSet_Destroy(&p->UnionSet);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
     TScannerItemList_Destroy(&p->ClueList2);
@@ -920,8 +993,9 @@ TStructUnionSpecifier* TStructUnionSpecifier_Create() _default
         p->Type = TStructUnionSpecifier_ID;
         TStructDeclarationList_Init(&p->StructDeclarationList);
         String_Init(&p->Name);
-        String_Init(&p->StereotypeStr);
-        p->Stereotype = StructUnionStereotypeStruct;
+        p->Token = TK_NONE;
+        p->Token2 = TK_NONE;
+        TUnionSet_Init(&p->UnionSet);
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
         TScannerItemList_Init(&p->ClueList2);
@@ -977,24 +1051,24 @@ const char* TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier* p)
     return result;
 }
 
-void TTypeSpecifier_Destroy(TTypeSpecifier* p)
+void TTypeSpecifier_Delete(TTypeSpecifier* p) _default
 {
     switch (TYPEOF(p))
     {
-    case TSingleTypeSpecifier_ID:
-        TSingleTypeSpecifier_Destroy((TSingleTypeSpecifier*)p);
+        case TStructUnionSpecifier_ID:
+            TStructUnionSpecifier_Delete((TStructUnionSpecifier*)p);
         break;
-    case TEnumSpecifier_ID:
-        TEnumSpecifier_Destroy((TEnumSpecifier*)p);
+        case TSingleTypeSpecifier_ID:
+            TSingleTypeSpecifier_Delete((TSingleTypeSpecifier*)p);
         break;
-    case TStructUnionSpecifier_ID:
-        TStructUnionSpecifier_Destroy((TStructUnionSpecifier*)p);
+        case TEnumSpecifier_ID:
+            TEnumSpecifier_Delete((TEnumSpecifier*)p);
         break;
     default:
-        ASSERT(false);
-        break;
+       break;
     }
 }
+
 
 void TDeclarator_Init(TDeclarator* p) _default
 {
@@ -1291,6 +1365,7 @@ void TAlignmentSpecifier_Destroy(TAlignmentSpecifier* p) _default
 {
     String_Destroy(&p->TypeName);
 }
+
 void TAlignmentSpecifier_Delete(TAlignmentSpecifier* p) _default
 {
     if (p != NULL)
@@ -1326,22 +1401,28 @@ void TStructDeclaration_Destroy(TStructDeclaration* p)
     TScannerItemList_Destroy(&p->ClueList1);
 }
 
-void TAnyStructDeclaration_Destroy(TAnyStructDeclaration* p)
+void TStructDeclaration_Delete(TStructDeclaration* p) _default
+{
+    if (p != NULL)
+    {
+        TStructDeclaration_Destroy(p);
+        free((void*)p);
+    }
+}
+
+
+void TAnyStructDeclaration_Delete(TAnyStructDeclaration* p) _default
 {
     switch (TYPEOF(p))
     {
-    case TStructDeclaration_ID:
-        TStructDeclaration_Destroy((TStructDeclaration*)p);
+        case TStaticAssertDeclaration_ID:
+            TStaticAssertDeclaration_Delete((TStaticAssertDeclaration*)p);
         break;
-    case TEofDeclaration_ID:
-        TEofDeclaration_Destroy((TEofDeclaration*)p);
-        break;
-    case TStaticAssertDeclaration_ID:
-        TStaticAssertDeclaration_Destroy((TStaticAssertDeclaration*)p);
+        case TStructDeclaration_ID:
+            TStructDeclaration_Delete((TStructDeclaration*)p);
         break;
     default:
-        ASSERT(false);
-        break;
+       break;
     }
 }
 
@@ -1919,83 +2000,55 @@ const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDecla
     return typeName;
 }
 
-void TSpecifierQualifier_Destroy(TSpecifierQualifier* pItem)
+void TSpecifierQualifier_Delete(TSpecifierQualifier* pItem) _default
 {
     switch (TYPEOF(pItem))
     {
-        CASE(TSingleTypeSpecifier) :
-            TSingleTypeSpecifier_Destroy((TSingleTypeSpecifier*)pItem);
+        case TTypeQualifier_ID:
+            TTypeQualifier_Delete((TTypeQualifier*)pItem);
         break;
-
-        CASE(TStructUnionSpecifier) :
-            TStructUnionSpecifier_Destroy((TStructUnionSpecifier*)pItem);
+        case TStorageSpecifier_ID:
+            TStorageSpecifier_Delete((TStorageSpecifier*)pItem);
         break;
-
-        CASE(TEnumSpecifier) :
-            TEnumSpecifier_Destroy((TEnumSpecifier*)pItem);
+        case TSingleTypeSpecifier_ID:
+            TSingleTypeSpecifier_Delete((TSingleTypeSpecifier*)pItem);
         break;
-
-        CASE(TStorageSpecifier) :
-            TStorageSpecifier_Destroy((TStorageSpecifier*)pItem);
+        case TAlignmentSpecifier_ID:
+            TAlignmentSpecifier_Delete((TAlignmentSpecifier*)pItem);
         break;
-        CASE(TTypeQualifier) :
-            TTypeQualifier_Destroy((TTypeQualifier*)pItem);
+        case TFunctionSpecifier_ID:
+            TFunctionSpecifier_Delete((TFunctionSpecifier*)pItem);
         break;
-        CASE(TFunctionSpecifier) :
-            TFunctionSpecifier_Destroy((TFunctionSpecifier*)pItem);
+        case TEnumSpecifier_ID:
+            TEnumSpecifier_Delete((TEnumSpecifier*)pItem);
         break;
-
-        CASE(TAlignmentSpecifier) :
-            TAlignmentSpecifier_Destroy((TAlignmentSpecifier*)pItem);
-        break;
-
-
     default:
-        ASSERT(false);
-        break;
+       break;
     }
 }
 
-
-void TSpecifier_Destroy(TSpecifier* pItem)
+void TSpecifier_Delete(TSpecifier* pItem) _default
 {
-
-  
-        switch (TYPEOF(pItem))
-        {
-            CASE(TSingleTypeSpecifier) :
-                TSingleTypeSpecifier_Destroy((TSingleTypeSpecifier*)pItem);
-            break;
-
-            CASE(TStructUnionSpecifier) :
-                TStructUnionSpecifier_Destroy((TStructUnionSpecifier*)pItem);
-            break;
-
-            CASE(TEnumSpecifier) :
-                TEnumSpecifier_Destroy((TEnumSpecifier*)pItem);
-            break;
-
-            CASE(TStorageSpecifier) :
-                TStorageSpecifier_Destroy((TStorageSpecifier*)pItem);
-            break;
-            CASE(TTypeQualifier) :
-                TTypeQualifier_Destroy((TTypeQualifier*)pItem);
-            break;
-            CASE(TFunctionSpecifier) :
-                TFunctionSpecifier_Destroy((TFunctionSpecifier*)pItem);
-            break;
-
-            CASE(TAlignmentSpecifier) :
-                TAlignmentSpecifier_Destroy((TAlignmentSpecifier*)pItem);
-            break;
-
-
-        default:
-            ASSERT(false);
-            break;
-        }
-    
-
+    switch (TYPEOF(pItem))
+    {
+        case TStorageSpecifier_ID:
+            TStorageSpecifier_Delete((TStorageSpecifier*)pItem);
+        break;
+        case TSingleTypeSpecifier_ID:
+            TSingleTypeSpecifier_Delete((TSingleTypeSpecifier*)pItem);
+        break;
+        case TAlignmentSpecifier_ID:
+            TAlignmentSpecifier_Delete((TAlignmentSpecifier*)pItem);
+        break;
+        case TFunctionSpecifier_ID:
+            TFunctionSpecifier_Delete((TFunctionSpecifier*)pItem);
+        break;
+        case TEnumSpecifier_ID:
+            TEnumSpecifier_Delete((TEnumSpecifier*)pItem);
+        break;
+    default:
+       break;
+    }
 }
 
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers) _default
@@ -2333,20 +2386,22 @@ int TAnyDeclaration_GetFileIndex(TAnyDeclaration* pDeclaration)
     }
     return result;
 }
-void TAnyDeclaration_Destroy(TAnyDeclaration* pDeclaration)
+
+void TAnyDeclaration_Delete(TAnyDeclaration* pDeclaration) _default
 {
     switch (TYPEOF(pDeclaration))
     {
-    case TEofDeclaration_ID:
-        TEofDeclaration_Destroy((TEofDeclaration*)pDeclaration);
+        case TStaticAssertDeclaration_ID:
+            TStaticAssertDeclaration_Delete((TStaticAssertDeclaration*)pDeclaration);
         break;
-
-    case TDeclaration_ID:
-        TDeclaration_Destroy((TDeclaration*)pDeclaration);
+        case TDeclaration_ID:
+            TDeclaration_Delete((TDeclaration*)pDeclaration);
+        break;
+        case TEofDeclaration_ID:
+            TEofDeclaration_Delete((TEofDeclaration*)pDeclaration);
         break;
     default:
-        ASSERT(false);
-        break;
+       break;
     }
 }
 
@@ -2423,19 +2478,36 @@ void TInitializerList_Destroy(TInitializerList* p)
     List_Destroy(TInitializerListItem, p)
 }
 
-void TInitializer_Destroy(TInitializer* p)
+void TInitializer_Delete(TInitializer* p) _default
 {
-    if (IS_TYPE(p, TInitializerListType_ID))
+    switch (TYPEOF(p))
     {
-        TInitializerListType_Destroy((TInitializerListType*)p);
-
+        case TBinaryExpression_ID:
+            TBinaryExpression_Delete((TBinaryExpression*)p);
+        break;
+        case TUnaryExpressionOperator_ID:
+            TUnaryExpressionOperator_Delete((TUnaryExpressionOperator*)p);
+        break;
+        case TCastExpressionType_ID:
+            TCastExpressionType_Delete((TCastExpressionType*)p);
+        break;
+        case TInitializerListType_ID:
+            TInitializerListType_Delete((TInitializerListType*)p);
+        break;
+        case TPrimaryExpressionValue_ID:
+            TPrimaryExpressionValue_Delete((TPrimaryExpressionValue*)p);
+        break;
+        case TPostfixExpressionCore_ID:
+            TPostfixExpressionCore_Delete((TPostfixExpressionCore*)p);
+        break;
+        case TPrimaryExpressionLiteral_ID:
+            TPrimaryExpressionLiteral_Delete((TPrimaryExpressionLiteral*)p);
+        break;
+    default:
+       break;
     }
-    else
-    {
-        TExpression_Destroy((TExpression*)p);
-    }
-
 }
+
 
 void TDesignatorList_Init(TDesignatorList* p) _default
 {

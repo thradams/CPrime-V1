@@ -11,8 +11,6 @@
 #include "SymbolMap.h"
 
 
-#define TYPEOF(x) (((struct TypeStruct*)(x))->type)
-#define IS_TYPE(x, ID) (TYPEOF(x) == (ID))
 
 
 
@@ -87,25 +85,15 @@ struct TypeStruct
     EType type;
 };
 
+inline EType TypeOf(void* p) { return p ? ((struct TypeStruct*)(p))->type : TypeNull;  }
+#define TYPEOF(p) TypeOf((void*) (p))
+#define IS_TYPE(x, ID) (TYPEOF(x) == (ID))
+
+
+
+
 
 #define CASE(T) case T##_ID
-
-
-#define CREATETYPEOR(TYPE)\
-  struct TYPE ;\
-  typedef struct TYPE TYPE ;\
-  void TYPE##_Destroy(TYPE* p);\
-static inline void TYPE##_Delete(TYPE*  p)\
-{\
-  if (p)\
-  {\
-    TYPE##_Destroy(p);\
-    free(p);\
-  }\
-}
-
-
-
 
 
 typedef struct
@@ -115,8 +103,16 @@ typedef struct
 } TPosition;
 #define TPOSITION_INIT {0,0}
 
-struct TExpression;
+struct _union(TPrimaryExpressionLiteral |
+              TPrimaryExpressionValue | 
+              TBinaryExpression |
+              TUnaryExpressionOperator |
+              TPostfixExpressionCore |
+              TPostfixExpressionCore |
+              TCastExpressionType) TExpression;
+
 typedef struct TExpression TExpression;
+void TExpression_Delete(TExpression* p);
 
 typedef struct 
 {
@@ -150,17 +146,31 @@ struct TStatement;
 struct TBlockItem;
 
 typedef struct TStatement TStatement;
+
+void TStatement_Delete(TStatement* p);
+
+
+typedef struct TBlockItem TBlockItem;
+void TBlockItem_Delete(TBlockItem* p);
+
+
+
+struct _union(TStatement) TBlockItem;
 typedef struct TBlockItem TBlockItem;
 
-
-CREATETYPEOR(TBlockItem)
 CASTSAME(TBlockItem, TStatement)
 
-struct TAnyDeclaration;
+
+struct _union(TStaticAssertDeclaration |
+              TDeclaration |
+              TEofDeclaration) TAnyDeclaration;
+
 typedef struct TAnyDeclaration TAnyDeclaration;
+void TAnyDeclaration_Delete(TAnyDeclaration* p);
+
+
 
 CASTSAME(TBlockItem, TAnyDeclaration)
-CREATETYPEOR(TAnyDeclaration)
 
 typedef struct {
     TBlockItem * _auto * _auto _size(Size) pItems;
@@ -265,7 +275,8 @@ void TTernaryExpression_Delete(TTernaryExpression* p);
 
 
 
-CREATETYPEOR(TExpression)
+struct TExpression;
+typedef struct TExpression TExpression;
 
 typedef struct TTypeQualifier
 {
@@ -437,7 +448,20 @@ void TIfStatement_Delete(TIfStatement* p);
 
 
 
-CREATETYPEOR(TStatement)
+
+struct _union(TCompoundStatement |
+              TExpressionStatement |
+              TLabeledStatement |
+              TJumpStatement |
+              TIfStatement |
+              TDoStatement |
+              TForStatement |
+              TAsmStatement |
+              TWhileStatement |
+              TSwitchStatement) TStatement;
+
+typedef struct TStatement TStatement;
+
 CAST(TStatement, TCompoundStatement)
 CAST(TStatement, TExpressionStatement)
 CAST(TStatement, TLabeledStatement)
@@ -559,7 +583,7 @@ TEnumSpecifier* TEnumSpecifier_Create(void);
 void TEnumSpecifier_Destroy(TEnumSpecifier* p);
 void TEnumSpecifier_Delete(TEnumSpecifier* p);
 
-typedef struct
+typedef struct TSingleTypeSpecifier
 {
     EType Type  _defval(TSingleTypeSpecifier_ID);
     void *pNext;
@@ -578,7 +602,15 @@ struct TTypeSpecifier;
 typedef struct TTypeSpecifier TTypeSpecifier;
 
 
-CREATETYPEOR(TSpecifier)
+
+struct _union(TStorageSpecifier |
+    TFunctionSpecifier | 
+    TAlignmentSpecifier | 
+    TSingleTypeSpecifier | 
+    TEnumSpecifier) TSpecifier;
+
+typedef struct TSpecifier TSpecifier;
+
 CAST(TSpecifier, TStorageSpecifier)
 //CAST(TSpecifier, TTypeQualifier)
 CAST(TSpecifier, TFunctionSpecifier)
@@ -587,7 +619,13 @@ CAST(TSpecifier, TSingleTypeSpecifier)
 CAST(TSpecifier, TEnumSpecifier)
 
 
-CREATETYPEOR(TSpecifierQualifier)
+
+struct _union(TSpecifier |
+              TTypeQualifier) TSpecifierQualifier;
+
+typedef struct TSpecifierQualifier TSpecifierQualifier;
+void TSpecifierQualifier_Delete(TSpecifierQualifier* p);
+
 CAST(TSpecifierQualifier, TStorageSpecifier)
 CAST(TSpecifierQualifier, TAlignmentSpecifier)
 CAST(TSpecifierQualifier, TSingleTypeSpecifier)
@@ -690,6 +728,7 @@ void TDesignation_Delete(TDesignation* p);
 
 struct TInitializer;
 typedef struct TInitializer TInitializer;
+void TInitializer_Delete(TInitializer* p);
 
 typedef struct TInitializerListItem
 {
@@ -722,7 +761,10 @@ void TInitializerListType_Destroy(TInitializerListType* p);
 void TInitializerListType_Delete(TInitializerListType* p);
 
 
-CREATETYPEOR(TInitializer)
+
+struct _union(TInitializerListType | TExpression) TInitializer;
+typedef struct TInitializer TInitializer;
+
 CAST(TInitializer, TInitializerListType)
 CASTSAME(TInitializer, TExpression)
 
@@ -808,10 +850,16 @@ typedef struct TStructDeclaration
 
 TStructDeclaration* TStructDeclaration_Create();
 void TStructDeclaration_Destroy(TStructDeclaration* p);
+void TStructDeclaration_Delete(TStructDeclaration* p);
 
 
 //Mudar o nome p TAnyStructDeclaration
-CREATETYPEOR(TAnyStructDeclaration)
+
+struct _union(TStructDeclaration |
+              TStaticAssertDeclaration) TAnyStructDeclaration;
+
+typedef struct TAnyStructDeclaration TAnyStructDeclaration;
+void TAnyStructDeclaration_Delete(TAnyStructDeclaration* p);
 
 CAST(TAnyStructDeclaration, TStructDeclaration)
 CAST(TAnyStructDeclaration, TStaticAssertDeclaration)
@@ -829,20 +877,45 @@ void TStructDeclarationList_Destroy(TStructDeclarationList* p);
 void TStructDeclarationList_Init(TStructDeclarationList* p);
 void TStructDeclarationList_PushBack(TStructDeclarationList* p, TAnyStructDeclaration* pItem);
 
-typedef enum StructUnionStereotype
+
+typedef struct TUnionSetItem
 {
-    StructUnionStereotypeStruct,
-    StructUnionStereotypeUnion,
-    StructUnionStereotypeUnionSet
-} StructUnionStereotype;
+    struct TUnionSetItem* _auto  pNext;
+    Tokens Token;
+    Tokens TokenFollow;
+    String Name;
+    TScannerItemList ClueList0;
+    TScannerItemList ClueList1;
+    TScannerItemList ClueList2;
+} TUnionSetItem;
+
+TUnionSetItem* TUnionSetItem_Create();
+void TUnionSetItem_Delete(TUnionSetItem*);
+
+typedef struct TUnionSet
+{
+
+    TUnionSetItem * _auto pHead, *pTail;
+
+    TScannerItemList ClueList0; // _union
+    TScannerItemList ClueList1; //(
+    TScannerItemList ClueList2; //)
+
+} TUnionSet;
+void TUnionSet_Init(TUnionSet* p);
+void TUnionSet_Destroy(TUnionSet* p);
+void TUnionSet_PushBack(TUnionSet* p, TUnionSetItem* pItem);
 
 typedef struct TStructUnionSpecifier
 {
     EType Type  _defval(TStructUnionSpecifier_ID);
     TStructDeclarationList StructDeclarationList;
     String Name;
-    String StereotypeStr;
-    StructUnionStereotype Stereotype;
+    
+    Tokens Token;
+    Tokens Token2;
+
+    TUnionSet UnionSet;
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
     TScannerItemList ClueList2;
@@ -856,7 +929,14 @@ void TStructUnionSpecifier_Delete(TStructUnionSpecifier* p);
 
 
 
-CREATETYPEOR(TTypeSpecifier)
+
+
+struct _union(TSingleTypeSpecifier |
+              TEnumSpecifier |
+              TStructUnionSpecifier) TTypeSpecifier;
+
+typedef struct TTypeSpecifier TTypeSpecifier;
+
 CAST(TTypeSpecifier, TSingleTypeSpecifier)
 CAST(TTypeSpecifier, TEnumSpecifier)
 CAST(TTypeSpecifier, TStructUnionSpecifier)
@@ -1053,6 +1133,7 @@ typedef struct TPostfixExpressionCoreTag
 
 TPostfixExpressionCore* TPostfixExpressionCore_Create();
 void TPostfixExpressionCore_Destroy(TPostfixExpressionCore* p);
+void TPostfixExpressionCore_Delete(TPostfixExpressionCore* p);
 
 
 
@@ -1067,6 +1148,7 @@ typedef struct
 
 TCastExpressionType* TCastExpressionType_Create();
 void TCastExpressionType_Destroy(TCastExpressionType* p);
+void TCastExpressionType_Delete(TCastExpressionType* p);
 
 
 typedef struct
@@ -1083,6 +1165,7 @@ typedef struct
 
 TUnaryExpressionOperator* TUnaryExpressionOperator_Create();
 void TUnaryExpressionOperator_Destroy(TUnaryExpressionOperator* p);
+void TUnaryExpressionOperator_Delete(TUnaryExpressionOperator* p);
 
 
 bool EvaluateConstantExpression(TExpression * p, int *pResult);

@@ -508,7 +508,7 @@ TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* st
                     pStructUnionSpecifier =
                         (TStructUnionSpecifier*)pKeyValue->pValue;
                     if (pStructUnionSpecifier->StructDeclarationList.Size > 0 ||
-                        pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
+                        pStructUnionSpecifier->Token2 == TK__UNION)
                     {
                         //Se achou definicao completa pode sair
                         //se achou um _union pode sair tb

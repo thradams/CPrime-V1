@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 
 
     Options options = OPTIONS_INIT;
-    //options.bShrink = true;
+    options.bHideDefaultImplementation = false;
 
     bool bPrintPreprocessedToFile = false;
     bool bPrintPreprocessedToConsole = false;
@@ -147,6 +147,10 @@ int main(int argc, char* argv[])
         {
             PrintHelp();
         }
+        else if (strcmp(option, "-s") == 0)
+        {
+            options.bHideDefaultImplementation = true;
+        }        
         else if (strcmp(option, "-config") == 0)
         {
             if (i + 1 < argc)

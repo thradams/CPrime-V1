@@ -925,6 +925,48 @@ static void TEnumSpecifier_CodePrint(TProgram* program, Options * options, TEnum
 
 }
 
+static void TUnionSetItem_CodePrint(TProgram* program, Options * options, TUnionSetItem* p, StrBuilder* fp)
+{    
+    if (p->Token == TK_STRUCT)
+    {
+        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+        Output_Append(fp, options, "struct");    
+    }
+    else if (p->Token == TK_UNION)
+    {
+        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+        Output_Append(fp, options, "union");
+    }
+    
+    TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+    Output_Append(fp, options, p->Name);
+
+    if (p->TokenFollow == TK_VERTICAL_LINE)
+    {
+        TNodeClueList_CodePrint(options, &p->ClueList2, fp);
+        Output_Append(fp, options, "|");
+    }
+}
+
+static void TUnionSet_CodePrint(TProgram* program, Options * options, TUnionSet* p, StrBuilder* fp)
+{
+    TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+    Output_Append(fp, options, "_union");
+
+    TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+    Output_Append(fp, options, "(");
+    TUnionSetItem* pCurrent = p->pHead;
+    while (pCurrent)
+    {
+        TUnionSetItem_CodePrint(program, options, pCurrent, fp);        
+        pCurrent = pCurrent->pNext;
+    }
+    
+    TNodeClueList_CodePrint(options, &p->ClueList2, fp);
+    Output_Append(fp, options, ")");
+
+    
+}
 
 static void TStructUnionSpecifier_CodePrint(TProgram* program, Options * options, TStructUnionSpecifier* p, StrBuilder* fp)
 {
@@ -932,24 +974,20 @@ static void TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
 
     //true;
 
-    if (p->Stereotype == StructUnionStereotypeStruct)
+    if (p->Token == TK_STRUCT)
     {
         Output_Append(fp, options, "struct");
     }
-    else if (p->Stereotype == StructUnionStereotypeUnion)
+    else if (p->Token == TK_UNION)
     {
         Output_Append(fp, options, "union");
     }
-    else if (p->Stereotype == StructUnionStereotypeUnionSet)
-    {
-        Output_Append(fp, options, "struct ");
-        Output_Append(fp, options, "_union(");
-        Output_Append(fp, options, p->StereotypeStr);
-        Output_Append(fp, options, ")");
+    
+    if (p->Token2 == TK__UNION)
+    {        
+        TUnionSet_CodePrint(program, options, &p->UnionSet, fp);        
     }
     TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-
-
 
     if (options->bPrintRepresentation)
     {
@@ -1884,43 +1922,16 @@ void FindUnionSetOf(TProgram* program,
             SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);
     }
 
-    if (pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
+    if (pStructUnionSpecifier && 
+        pStructUnionSpecifier->Token2 == TK__UNION)
     {
-        char tname[200] = { 0 };
-        char* tn = tname;
-        const char* pch = pStructUnionSpecifier->StereotypeStr;
-        pch++; //sai do "
-        while (*pch && *pch != '"')
+        TUnionSetItem * pCurrent =
+            pStructUnionSpecifier->UnionSet.pHead;
+        while (pCurrent)
         {
-            //sai de outros caracteres
-            while (*pch && !(
-                (*pch >= 'a' && *pch <= 'z') ||
-                (*pch >= 'A' && *pch <= 'Z')
-                )
-                )
-            {
-                pch++;
-            }
-
-            *tn = 0;
-
-            while ((*pch >= 'a' && *pch <= 'z') ||
-                (*pch >= 'A' && *pch <= 'Z'))
-            {
-                *tn = *pch;
-                pch++;
-                tn++;
-            }
-            *tn = 0;
-
-            FindUnionSetOf(program, tname, map);
-
-            //reseta tname
-            tname[0] = 0;
-            tn = tname;
-
-            pch++;
-        }
+            FindUnionSetOf(program, pCurrent->Name, map);
+            pCurrent = pCurrent->pNext;
+        }        
     }
     else
     {
@@ -1973,7 +1984,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
         TStructUnionSpecifier* pStructUnionSpecifier =
             GetStructSpecifier(program, &parameters[0]->Specifiers);
         if (pStructUnionSpecifier &&
-            pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
+            pStructUnionSpecifier->Token2 == TK__UNION)
         {
             bIsPolimorphicStruct = true;
         }
@@ -2159,7 +2170,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                 TStructUnionSpecifier* pStructUnionSpecifier =
                     GetStructSpecifier(program, &parameters[0]->Specifiers);
                 if (pStructUnionSpecifier &&
-                    pStructUnionSpecifier->Stereotype == StructUnionStereotypeUnionSet)
+                    pStructUnionSpecifier->Token2 == TK__UNION)
                 {
                     Map2 map = MAPSTRINGTOPTR_INIT;
                     FindUnionSetOf(program, pStructUnionSpecifier->Name, &map);
@@ -2169,7 +2180,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                     };
 
                     StrBuilder_Template(fp,
-                        "    switch (*((int*)$p))\n"
+                        "    switch (TYPEOF($p))\n"
                         "    {\n",
                         vars0,
                         sizeof(vars0) / sizeof(vars0[0]));
@@ -2188,7 +2199,9 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                             {
                                 //2 is struct
                                 StrBuilder_Template(fp,
-                                    "        case $type\b_ID: $type\b_$suffix((struct $type*)$p); break; \n",
+                                    "        case $type\b_ID:\n"
+                                    "            $type\b_$suffix((struct $type*)$p);\n"
+                                    "        break;\n",
                                     vars,
                                     sizeof(vars) / sizeof(vars[0]));
                             }
@@ -2196,7 +2209,9 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                             {
                                 //1 is typedef
                                 StrBuilder_Template(fp,
-                                    "        case $type\b_ID: $type\b_$suffix(($type*)$p); break; \n",
+                                    "        case $type\b_ID:\n"
+                                    "            $type\b_$suffix(($type*)$p);\n"
+                                    "        break;\n",
                                     vars,
                                     sizeof(vars) / sizeof(vars[0]));
                             }
@@ -2205,6 +2220,8 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                     }
 
                     StrBuilder_Template(fp,
+                        "    default:\n"
+                        "       break;\n"
                         "    }\n",
                         NULL,
                         0);

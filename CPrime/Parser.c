@@ -2873,12 +2873,12 @@ void Struct_Or_Union(Parser* ctx,
     switch (token)
     {
     case TK_STRUCT:
-        pStructUnionSpecifier->Stereotype = StructUnionStereotypeStruct;
+        pStructUnionSpecifier->Token = token;        
         Parser_Match(ctx, &pStructUnionSpecifier->ClueList0);
         break;
 
     case TK_UNION:
-        pStructUnionSpecifier->Stereotype = StructUnionStereotypeUnion;
+        pStructUnionSpecifier->Token = token;
         Parser_Match(ctx, &pStructUnionSpecifier->ClueList0);
         break;
 
@@ -3147,6 +3147,84 @@ void Struct_Declaration_List(Parser* ctx,
     }
 }
 
+void UnionSetItem(Parser* ctx, TUnionSet* p)
+{
+    /*
+    _union-set-item:
+    struct Identifier
+    union Identifier
+    Identifier
+    */
+    Tokens token = Parser_CurrentToken(ctx);
+    const char* lexeme = Lexeme(ctx);
+
+    TUnionSetItem *pItem = TUnionSetItem_Create();
+
+    if (token == TK_IDENTIFIER)
+    {
+        String_Set(&pItem->Name, lexeme);
+        Parser_Match(ctx, &pItem->ClueList1);
+        TUnionSet_PushBack(p, pItem);
+    }
+    else if (token == TK_STRUCT || 
+             token == TK_UNION)
+    {
+        Parser_Match(ctx, &pItem->ClueList0);
+        
+        String_Set(&pItem->Name, lexeme);
+        Parser_MatchToken(ctx, TK_IDENTIFIER, &pItem->ClueList1);
+        TUnionSet_PushBack(p, pItem);
+    }
+    else
+    {
+        SetError(ctx, "invalid token for union set");
+    }    
+}
+
+void UnionSetList(Parser* ctx, TUnionSet* p)
+{
+    /*
+    _union-set-list:
+    _union-set-item
+    _union-set-item | _union-set-list
+    */
+    Tokens token = Parser_CurrentToken(ctx);    
+    UnionSetItem(ctx, p);
+
+    token = Parser_CurrentToken(ctx);
+    if (token == TK_VERTICAL_LINE)
+    {
+        p->pTail->TokenFollow = token;
+        Parser_Match(ctx, &p->pTail->ClueList2);
+        UnionSetList(ctx, p);
+    }
+}
+
+void UnionSet(Parser* ctx, TUnionSet* pUnionSet)
+{
+    /*
+    _union-set:
+    _union ( _union-set-list )
+    */
+
+    Tokens token = Parser_CurrentToken(ctx);
+    const char* lexeme = Lexeme(ctx);
+
+    if (token == TK__UNION)
+    {
+        Parser_Match(ctx, &pUnionSet->ClueList0);
+        
+
+        Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS,
+            &pUnionSet->ClueList1);
+        
+        UnionSetList(ctx, pUnionSet);
+
+        Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS,
+            &pUnionSet->ClueList2);
+    }
+}
+
 void Struct_Or_Union_Specifier(Parser* ctx,
     TStructUnionSpecifier* pStructUnionSpecifier)
 {
@@ -3169,42 +3247,11 @@ void Struct_Or_Union_Specifier(Parser* ctx,
     Tokens token = Parser_CurrentToken(ctx);
     const char* lexeme = Lexeme(ctx);
 
+    pStructUnionSpecifier->Token2 = token;
+
     if (token == TK__UNION)
-    {
-        
-        pStructUnionSpecifier->Stereotype = StructUnionStereotypeUnionSet;
-
-        TScannerItemList list = TSCANNERITEMLIST_INIT;
-        Parser_Match(ctx, &list);
-        TScannerItemList_Destroy(&list);
-
-        Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS,
-            NULL);
-#if TODO
-        StrBuilder lit = STRBUILDER_INIT;
-        TExpression* pPrimaryExpression = NULL;
-        PrimaryExpressionLiteral(ctx, &pPrimaryExpression);
-        TPrimaryExpressionLiteral* pl = (TPrimaryExpressionLiteral*)pPrimaryExpression;
-        if (pl)
-        {
-            ForEachListItem(TPrimaryExpressionLiteralItem, pItem, &pl->List)
-            {                
-                StrBuilder_Append(&lit, pItem->lexeme);
-            }
-        }
-        String_Set(&pStructUnionSpecifier->StereotypeStr, lit.c_str);
-
-        StrBuilder_Destroy(&lit);
-        TExpression_Delete(pPrimaryExpression);
-#else
-         lexeme = Lexeme(ctx);
-         String_Set(&pStructUnionSpecifier->StereotypeStr, lexeme);
-         Parser_MatchToken(ctx, TK_STRING_LITERAL,
-          NULL);
-#endif
-        
-        Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS,
-            NULL);        
+    {        
+        UnionSet(ctx, &pStructUnionSpecifier->UnionSet);
     }
 
     token = Parser_CurrentToken(ctx);
