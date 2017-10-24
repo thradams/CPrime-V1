@@ -217,9 +217,8 @@ typedef struct TPrimaryExpressionLiteralItem
     TScannerItemList ClueList0;
 } TPrimaryExpressionLiteralItem;
 
-void TPrimaryExpressionLiteralItem_Delete(TPrimaryExpressionLiteralItem *p);
 TPrimaryExpressionLiteralItem* TPrimaryExpressionLiteralItem_Create();
-
+void TPrimaryExpressionLiteralItem_Delete(TPrimaryExpressionLiteralItem *p);
 
 typedef struct
 {
@@ -236,8 +235,9 @@ typedef struct
     TPrimaryExpressionLiteralItemList List;
 } TPrimaryExpressionLiteral;
 
-void TPrimaryExpressionLiteral_Delete(TPrimaryExpressionLiteral* p);
+
 TPrimaryExpressionLiteral* TPrimaryExpressionLiteral_Create();
+void TPrimaryExpressionLiteral_Delete(TPrimaryExpressionLiteral* p);
 
 struct TInitializerListItem;
 typedef struct TInitializerListItem TInitializerListItem;
@@ -265,7 +265,6 @@ typedef struct
 } TBinaryExpression;
 
 TBinaryExpression* TBinaryExpression_Create(void);
-void TBinaryExpression_Destroy(TBinaryExpression* p);
 void TBinaryExpression_Delete(TBinaryExpression* p);
 
 typedef struct
@@ -280,7 +279,6 @@ typedef struct
 } TTernaryExpression;
 
 TTernaryExpression* TTernaryExpression_Create(void);
-void TTernaryExpression_Destroy(TTernaryExpression* p); 
 void TTernaryExpression_Delete(TTernaryExpression* p);
 
 
@@ -314,7 +312,6 @@ void TTypeQualifierList_Destroy(TTypeQualifierList* p);
 void TTypeQualifierList_PushBack(TTypeQualifierList* p, TTypeQualifier* pItem);
 
 TTypeQualifier* TTypeQualifier_Create(void);
-void TTypeQualifier_Destroy(TTypeQualifier* p);
 void TTypeQualifier_Delete(TTypeQualifier* p);
 
 
@@ -328,7 +325,6 @@ typedef struct
 } TExpressionStatement;
 
 TExpressionStatement* TExpressionStatement_Create(void); 
-void TExpressionStatement_Destroy(TExpressionStatement* p); 
 void TExpressionStatement_Delete(TExpressionStatement* p);
 
 typedef struct
@@ -343,7 +339,6 @@ typedef struct
 } TJumpStatement;
 
 TJumpStatement* TJumpStatement_Create(void);
-void TJumpStatement_Destroy(TJumpStatement* p);
 void TJumpStatement_Delete(TJumpStatement* p);
 
 
@@ -354,7 +349,6 @@ typedef struct
 } TAsmStatement;
 
 TAsmStatement* TAsmStatement_Create(void); 
-void TAsmStatement_Destroy(TAsmStatement* p); 
 void TAsmStatement_Delete(TAsmStatement* p);
 
 typedef struct
@@ -373,7 +367,6 @@ typedef struct
 } TForStatement;
 
 TForStatement* TForStatement_Create(void);
-void TForStatement_Destroy(TForStatement* p); 
 void TForStatement_Delete(TForStatement* p);
 
 typedef struct
@@ -387,7 +380,6 @@ typedef struct
 } TWhileStatement;
 
 TWhileStatement* TWhileStatement_Create(void); 
-void TWhileStatement_Destroy(TWhileStatement* p);
 void TWhileStatement_Delete(TWhileStatement* p);
 
 typedef struct
@@ -404,7 +396,6 @@ typedef struct
 } TDoStatement;
 
 TDoStatement* TDoStatement_Create(void);
-void TDoStatement_Destroy(TDoStatement* p);
 void TDoStatement_Delete(TDoStatement* p);
 
 typedef struct
@@ -420,7 +411,6 @@ typedef struct
 } TLabeledStatement;
 
 TLabeledStatement* TLabeledStatement_Create(void);
-void TLabeledStatement_Destroy(TLabeledStatement* p);
 void TLabeledStatement_Delete(TLabeledStatement* p);
 
 
@@ -435,7 +425,6 @@ typedef struct
 } TSwitchStatement;
 
 TSwitchStatement* TSwitchStatement_Create(void);
-void TSwitchStatement_Destroy(TSwitchStatement* p);
 void TSwitchStatement_Delete(TSwitchStatement* p);
 
 
@@ -452,7 +441,6 @@ typedef struct
 } TIfStatement;
 
 TIfStatement* TIfStatement_Create(void);
-void TIfStatement_Destroy(TIfStatement* p);
 void TIfStatement_Delete(TIfStatement* p);
 
 
@@ -494,7 +482,6 @@ typedef struct TPointer
 } TPointer;
 
 TPointer* TPointer_Create(void);
-void TPointer_Destroy(TPointer* p);
 void TPointer_Delete(TPointer* p);
 
 
@@ -527,7 +514,6 @@ typedef struct
 
 
 TFunctionSpecifier* TFunctionSpecifier_Create(void);
-void TFunctionSpecifier_Destroy(TFunctionSpecifier* p);
 void TFunctionSpecifier_Delete(TFunctionSpecifier* p);
 
 typedef struct
@@ -543,7 +529,6 @@ typedef struct
 } TStorageSpecifier;
 
 TStorageSpecifier* TStorageSpecifier_Create(void);
-void TStorageSpecifier_Destroy(TStorageSpecifier* p);
 void TStorageSpecifier_Delete(TStorageSpecifier* p);
 
 
@@ -557,7 +542,6 @@ typedef struct
 } TAlignmentSpecifier;
 
 TAlignmentSpecifier* TAlignmentSpecifier_Create(void);
-void TAlignmentSpecifier_Destroy(TAlignmentSpecifier* p);
 void TAlignmentSpecifier_Delete(TAlignmentSpecifier* p);
 
 
@@ -573,7 +557,6 @@ typedef struct TEnumerator
 } TEnumerator;
 
 TEnumerator* TEnumerator_Create(void);
-void TEnumerator_Destroy(TEnumerator* p);
 void TEnumerator_Delete(TEnumerator* p);
 
 
@@ -596,7 +579,6 @@ typedef struct TEnumSpecifier
 } TEnumSpecifier;
 
 TEnumSpecifier* TEnumSpecifier_Create(void);
-void TEnumSpecifier_Destroy(TEnumSpecifier* p);
 void TEnumSpecifier_Delete(TEnumSpecifier* p);
 
 typedef struct TSingleTypeSpecifier
@@ -608,7 +590,6 @@ typedef struct TSingleTypeSpecifier
 } TSingleTypeSpecifier;
 
 TSingleTypeSpecifier* TSingleTypeSpecifier_Create(void);
-void TSingleTypeSpecifier_Destroy(TSingleTypeSpecifier* p);
 void TSingleTypeSpecifier_Delete(TSingleTypeSpecifier* p);
 
 const char* TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier* p);
@@ -727,7 +708,6 @@ typedef struct TDesignator
 
 
 TDesignator* TDesignator_Create(void);
-void TDesignator_Destroy(TDesignator* p);
 void TDesignator_Delete(TDesignator* p);
 
 
@@ -746,7 +726,6 @@ typedef struct TDesignation
 } TDesignation;
 
 TDesignation* TDesignation_Create(void);
-void TDesignation_Destroy(TDesignation* p);
 void TDesignation_Delete(TDesignation* p);
 
 struct TInitializer;
@@ -763,7 +742,6 @@ typedef struct TInitializerListItem
 } TInitializerListItem;
 
 TInitializerListItem* TInitializerListItem_Create() ;
-void TInitializerListItem_Destroy(TInitializerListItem* p) ;
 void TInitializerListItem_Delete(TInitializerListItem* p);
 
 
@@ -780,7 +758,6 @@ typedef struct
 } TInitializerListType;
 
 TInitializerListType* TInitializerListType_Create(void);
-void TInitializerListType_Destroy(TInitializerListType* p);
 void TInitializerListType_Delete(TInitializerListType* p);
 
 
@@ -834,7 +811,6 @@ typedef struct TDirectDeclarator
 
 
 TDirectDeclarator* TDirectDeclarator_Create();
-void TDirectDeclarator_Destroy(TDirectDeclarator* p);
 void TDirectDeclarator_Delete(TDirectDeclarator* p);
 
 typedef struct TInitDeclarator
@@ -849,7 +825,6 @@ typedef struct TInitDeclarator
 
 TInitDeclarator* TInitDeclarator_Create();
 void TInitDeclarator_Delete(TInitDeclarator* p);
-void TInitDeclarator_Destroy(TInitDeclarator* p);
 
 typedef TInitDeclarator TStructDeclarator;
 
@@ -879,7 +854,6 @@ typedef struct TStructDeclaration
 
 
 TStructDeclaration* TStructDeclaration_Create();
-void TStructDeclaration_Destroy(TStructDeclaration* p);
 void TStructDeclaration_Delete(TStructDeclaration* p);
 
 
@@ -954,7 +928,6 @@ typedef struct TStructUnionSpecifier
 } TStructUnionSpecifier;
 
 TStructUnionSpecifier* TStructUnionSpecifier_Create();
-void TStructUnionSpecifier_Destroy(TStructUnionSpecifier* p);
 void TStructUnionSpecifier_Delete(TStructUnionSpecifier* p);
 
 
@@ -998,10 +971,9 @@ typedef struct TDeclaration
 
 
 TDeclaration* TDeclaration_Create();
-void TDeclaration_Destroy(TDeclaration* p);
 
 TDeclarationSpecifiers* TDeclaration_GetArgTypeSpecifier(TDeclaration* p, int index);
-void TDeclaration_Destroy(TDeclaration* p);
+void TDeclaration_Delete(TDeclaration* p);
 
 const char* TDeclaration_GetArgName(TDeclaration* p, int index);
 int TDeclaration_GetNumberFuncArgs(TDeclaration* p);
@@ -1131,7 +1103,7 @@ typedef struct TAtomicTypeSpecifier
 
 
 TAtomicTypeSpecifier* TAtomicTypeSpecifier_Create();
-void TAtomicTypeSpecifier_Destroy(TAtomicTypeSpecifier* p);
+void TAtomicTypeSpecifier_Delete(TAtomicTypeSpecifier* p);
 
 
 CAST(TTypeSpecifier, TAtomicTypeSpecifier)
@@ -1162,7 +1134,6 @@ typedef struct TPostfixExpressionCore
 } TPostfixExpressionCore;
 
 TPostfixExpressionCore* TPostfixExpressionCore_Create();
-void TPostfixExpressionCore_Destroy(TPostfixExpressionCore* p);
 void TPostfixExpressionCore_Delete(TPostfixExpressionCore* p);
 
 
@@ -1177,7 +1148,6 @@ typedef struct
 } TCastExpressionType;
 
 TCastExpressionType* TCastExpressionType_Create();
-void TCastExpressionType_Destroy(TCastExpressionType* p);
 void TCastExpressionType_Delete(TCastExpressionType* p);
 
 
@@ -1194,7 +1164,6 @@ typedef struct
 
 
 TUnaryExpressionOperator* TUnaryExpressionOperator_Create();
-void TUnaryExpressionOperator_Destroy(TUnaryExpressionOperator* p);
 void TUnaryExpressionOperator_Delete(TUnaryExpressionOperator* p);
 
 
