@@ -1974,6 +1974,14 @@ void TSpecifier_Delete(TSpecifier* pItem) _default
     }
 }
 
+void TDeclarationSpecifiers_Init(TDeclarationSpecifiers* pDeclarationSpecifiers) _default
+{
+    pDeclarationSpecifiers->pData = NULL;
+    pDeclarationSpecifiers->Size = 0;
+    pDeclarationSpecifiers->Capacity = 0;
+
+}
+
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers) _default
 {
     for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
@@ -2112,9 +2120,7 @@ TDeclaration* TDeclaration_Create() _default
     if (p != NULL)
     {
         p->Type = TDeclaration_ID;
-        p->Specifiers.pData = NULL;
-        p->Specifiers.Size = 0;
-        p->Specifiers.Capacity = 0;
+        TDeclarationSpecifiers_Init(&p->Specifiers);
         TInitDeclaratorList_Init(&p->InitDeclaratorList);
         p->pCompoundStatementOpt = NULL;
         p->FileIndex = 0;
@@ -2189,9 +2195,7 @@ TParameter* TParameter_Create() _default
     if (p != NULL)
     {
         p->pNext = NULL;
-        p->Specifiers.pData = NULL;
-        p->Specifiers.Size = 0;
-        p->Specifiers.Capacity = 0;
+        TDeclarationSpecifiers_Init(&p->Specifiers);
         TDeclarator_Init(&p->Declarator);
         TScannerItemList_Init(&p->ClueList00);
         p->bHasComma = false;

@@ -11,9 +11,6 @@
 #include "SymbolMap.h"
 
 
-
-
-
 #define CAST(FROM, TO) \
 static inline TO *  FROM##_As_##TO( FROM*  p)\
 {\
@@ -90,9 +87,6 @@ inline EType TypeOf(void* p) { return p ? ((struct TypeStruct*)(p))->type : Type
 #define IS_TYPE(x, ID) (TYPEOF(x) == (ID))
 
 
-
-
-
 #define CASE(T) case T##_ID
 
 
@@ -103,16 +97,9 @@ typedef struct
 } TPosition;
 #define TPOSITION_INIT {0,0}
 
-struct _union(TPrimaryExpressionLiteral |
-              TPrimaryExpressionValue | 
-              TBinaryExpression |
-              TUnaryExpressionOperator |
-              TPostfixExpressionCore |
-              TPostfixExpressionCore |
-              TCastExpressionType) TExpression;
-
+struct TExpression;
 typedef struct TExpression TExpression;
-void TExpression_Delete(TExpression* p);
+
 
 typedef struct 
 {
@@ -143,22 +130,7 @@ TEofDeclaration* TEofDeclaration_Create();
 void TEofDeclaration_Delete(TEofDeclaration* p);
 
 struct TStatement;
-struct TBlockItem;
-
 typedef struct TStatement TStatement;
-
-void TStatement_Delete(TStatement* p);
-
-
-typedef struct TBlockItem TBlockItem;
-void TBlockItem_Delete(TBlockItem* p);
-
-
-
-struct _union(TStatement) TBlockItem;
-typedef struct TBlockItem TBlockItem;
-
-CASTSAME(TBlockItem, TStatement)
 
 
 struct _union(TStaticAssertDeclaration |
@@ -169,8 +141,8 @@ typedef struct TAnyDeclaration TAnyDeclaration;
 void TAnyDeclaration_Delete(TAnyDeclaration* p);
 
 
-
-CASTSAME(TBlockItem, TAnyDeclaration)
+struct TBlockItem;
+typedef struct TBlockItem TBlockItem;
 
 typedef struct {
     TBlockItem * _auto * _auto _size(Size) pItems;
@@ -195,96 +167,6 @@ typedef struct
 TCompoundStatement* TCompoundStatement_Create();
 void TCompoundStatement_Delete(TCompoundStatement* p);
 
-
-
-typedef struct
-{
-    EType Type _defval(TPrimaryExpressionValue_ID);
-    Tokens token;
-    String lexeme;
-    TExpression*_auto   pExpressionOpt;
-    TScannerItemList ClueList0;
-    TScannerItemList ClueList1;
-} TPrimaryExpressionValue;
-
-TPrimaryExpressionValue* TPrimaryExpressionValue_Create();
-void TPrimaryExpressionValue_Delete(TPrimaryExpressionValue* p);
-
-typedef struct TPrimaryExpressionLiteralItem
-{
-    struct TPrimaryExpressionLiteralItem* _auto pNext;
-    String lexeme;
-    TScannerItemList ClueList0;
-} TPrimaryExpressionLiteralItem;
-
-TPrimaryExpressionLiteralItem* TPrimaryExpressionLiteralItem_Create();
-void TPrimaryExpressionLiteralItem_Delete(TPrimaryExpressionLiteralItem *p);
-
-typedef struct
-{
-    TPrimaryExpressionLiteralItem * _auto pHead, *pTail;
-} TPrimaryExpressionLiteralItemList; //OK
-
-void TPrimaryExpressionLiteralItemList_Init(TPrimaryExpressionLiteralItemList* p);
-void TPrimaryExpressionLiteralItemList_Destroy(TPrimaryExpressionLiteralItemList* p);
-
-#define TPRIMARYEXPRESSIONLITERALITEMLIST_INIT LIST_INIT
-typedef struct
-{
-    EType Type _defval(TPrimaryExpressionLiteral_ID);
-    TPrimaryExpressionLiteralItemList List;
-} TPrimaryExpressionLiteral;
-
-
-TPrimaryExpressionLiteral* TPrimaryExpressionLiteral_Create();
-void TPrimaryExpressionLiteral_Delete(TPrimaryExpressionLiteral* p);
-
-struct TInitializerListItem;
-typedef struct TInitializerListItem TInitializerListItem;
-
-typedef struct TInitializerList
-{
-    TInitializerListItem * _auto pHead, *pTail;
-} TInitializerList; //OK
-
-void TInitializerList_Init(TInitializerList* p);
-void TInitializerList_Destroy(TInitializerList* p);
-void TInitializerList_Delete(TInitializerList* p);
-
-
-typedef struct
-{
-    EType Type _defval(TBinaryExpression_ID);
-    Tokens token;
-    TExpression*_auto   pExpressionLeft;
-    TExpression*_auto    pExpressionRight;
-    TPosition Position;
-
-    TScannerItemList ClueList00;
-
-} TBinaryExpression;
-
-TBinaryExpression* TBinaryExpression_Create(void);
-void TBinaryExpression_Delete(TBinaryExpression* p);
-
-typedef struct
-{
-    EType Type _defval(TTernaryExpression_ID);
-    Tokens token;
-    TExpression*_auto   pExpressionLeft;
-    TExpression*_auto    pExpressionMiddle;
-    TExpression*_auto    pExpressionRight;
-    TScannerItemList ClueList0;
-    TScannerItemList ClueList1;
-} TTernaryExpression;
-
-TTernaryExpression* TTernaryExpression_Create(void);
-void TTernaryExpression_Delete(TTernaryExpression* p);
-
-
-
-struct TExpression;
-typedef struct TExpression TExpression;
 
 typedef struct TTypeQualifier
 {
@@ -314,8 +196,6 @@ void TTypeQualifierList_PushBack(TTypeQualifierList* p, TTypeQualifier* pItem);
 TTypeQualifier* TTypeQualifier_Create(void);
 void TTypeQualifier_Delete(TTypeQualifier* p);
 
-
-////////////////////////////
 
 typedef struct
 {
@@ -444,8 +324,6 @@ TIfStatement* TIfStatement_Create(void);
 void TIfStatement_Delete(TIfStatement* p);
 
 
-
-
 struct _union(TCompoundStatement |
               TExpressionStatement |
               TLabeledStatement |
@@ -458,6 +336,7 @@ struct _union(TCompoundStatement |
               TSwitchStatement) TStatement;
 
 typedef struct TStatement TStatement;
+void TStatement_Delete(TStatement* p);
 
 CAST(TStatement, TCompoundStatement)
 CAST(TStatement, TExpressionStatement)
@@ -467,11 +346,33 @@ CAST(TStatement, TIfStatement)
 CAST(TStatement, TDoStatement)
 CAST(TStatement, TForStatement)
 CAST(TStatement, TAsmStatement)
-
 CAST(TStatement, TWhileStatement)
 CAST(TStatement, TSwitchStatement)
 
 
+struct TDeclaration;
+typedef struct TDeclaration TDeclaration;
+
+struct _union(TStatement) TBlockItem;
+typedef struct TBlockItem TBlockItem;
+void TBlockItem_Delete(TBlockItem* p);
+
+CASTSAME(TBlockItem, TStatement)
+CAST(TBlockItem, TCompoundStatement)
+CAST(TBlockItem, TExpressionStatement)
+CAST(TBlockItem, TLabeledStatement)
+CAST(TBlockItem, TJumpStatement)
+CAST(TBlockItem, TIfStatement)
+CAST(TBlockItem, TDoStatement)
+CAST(TBlockItem, TForStatement)
+CAST(TBlockItem, TAsmStatement)
+
+CAST(TBlockItem, TWhileStatement)
+CAST(TBlockItem, TSwitchStatement)
+
+CAST(TBlockItem, TDeclaration)
+CAST(TBlockItem, TStaticAssertDeclaration)
+CASTSAME(TBlockItem, TAnyDeclaration)
 
 typedef struct TPointer
 {
@@ -608,12 +509,10 @@ struct _union(TStorageSpecifier |
 typedef struct TSpecifier TSpecifier;
 
 CAST(TSpecifier, TStorageSpecifier)
-//CAST(TSpecifier, TTypeQualifier)
 CAST(TSpecifier, TFunctionSpecifier)
 CAST(TSpecifier, TAlignmentSpecifier)
 CAST(TSpecifier, TSingleTypeSpecifier)
 CAST(TSpecifier, TEnumSpecifier)
-
 
 
 struct _union(TSpecifier |
@@ -628,9 +527,6 @@ CAST(TSpecifierQualifier, TSingleTypeSpecifier)
 
 CAST(TSpecifierQualifier, TTypeQualifier)
 CAST(TSpecifierQualifier, TEnumSpecifier)
-
-
-//CAST(TSpecifierQualifier, TTypeQualifier)
 
 
 typedef struct {
@@ -656,21 +552,18 @@ bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList* p);
 
 
-
-
 typedef struct TDeclarationSpecifiers {
     TSpecifier *_auto *_auto _size(Size) pData;
     int Size;
     int Capacity;
 } TDeclarationSpecifiers;
 
-#define TDECLARATION_SPECIFIERS_INIT LIST_INIT
+void TDeclarationSpecifiers_Init(TDeclarationSpecifiers* pDeclarationSpecifiers);
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers);
 void TDeclarationSpecifiers_PushBack(TDeclarationSpecifiers* p, TSpecifier* pItem);
 
 const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDeclarationSpecifiers);
 bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers* pDeclarationSpecifiers, Tokens token, const char* lexeme);
-
 
 
 struct TParameter;
@@ -746,6 +639,14 @@ void TInitializerListItem_Delete(TInitializerListItem* p);
 
 
 
+typedef struct TInitializerList
+{
+    TInitializerListItem * _auto pHead, *pTail;
+} TInitializerList; 
+
+void TInitializerList_Init(TInitializerList* p);
+void TInitializerList_Destroy(TInitializerList* p);
+void TInitializerList_Delete(TInitializerList* p);
 
 typedef struct
 {
@@ -845,7 +746,7 @@ typedef TInitDeclaratorList TStructDeclaratorList;
 
 typedef struct TStructDeclaration
 {
-    EType Type  _defval(TStructDeclaration_ID);//= {TStructDeclaration_ID
+    EType Type  _defval(TStructDeclaration_ID);
 
     TSpecifierQualifierList SpecifierQualifierList;
     TStructDeclaratorList DeclaratorList;
@@ -857,8 +758,6 @@ TStructDeclaration* TStructDeclaration_Create();
 void TStructDeclaration_Delete(TStructDeclaration* p);
 
 
-//Mudar o nome p TAnyStructDeclaration
-
 struct _union(TStructDeclaration |
               TStaticAssertDeclaration) TAnyStructDeclaration;
 
@@ -869,7 +768,6 @@ CAST(TAnyStructDeclaration, TStructDeclaration)
 CAST(TAnyStructDeclaration, TStaticAssertDeclaration)
 CAST(TAnyStructDeclaration, TEofDeclaration)
 
-//typedef ArrayT(TAnyStructDeclaration) TStructDeclarationList;
 typedef struct
 {
     TAnyStructDeclaration* _auto * _auto _size(Size) pItems;
@@ -898,7 +796,6 @@ void TUnionSetItem_Delete(TUnionSetItem*);
 
 typedef struct TUnionSet
 {
-
     TUnionSetItem * _auto pHead, *pTail;
 
     TScannerItemList ClueList0; // _union
@@ -932,8 +829,6 @@ void TStructUnionSpecifier_Delete(TStructUnionSpecifier* p);
 
 
 
-
-
 struct _union(TSingleTypeSpecifier |
               TEnumSpecifier |
               TStructUnionSpecifier) TTypeSpecifier;
@@ -961,7 +856,6 @@ typedef struct TDeclaration
     int Line;
 
 	TScannerItemList ClueList00; //default
-    //TScannerItemList ClueList0;
 
     bool bDefault;
     TScannerItemList ClueList1;
@@ -971,15 +865,15 @@ typedef struct TDeclaration
 
 
 TDeclaration* TDeclaration_Create();
+void TDeclaration_Delete(TDeclaration* p);
 
 TDeclarationSpecifiers* TDeclaration_GetArgTypeSpecifier(TDeclaration* p, int index);
-void TDeclaration_Delete(TDeclaration* p);
 
 const char* TDeclaration_GetArgName(TDeclaration* p, int index);
 int TDeclaration_GetNumberFuncArgs(TDeclaration* p);
 
 bool TDeclaration_Is_StructOrUnionDeclaration(TDeclaration* p);
-//bool TDeclaration_Is_FunctionDeclaration(TDeclaration* p);
+
 TCompoundStatement* TDeclaration_Is_FunctionDefinition(TDeclaration* p);
 const char* TDeclaration_GetFunctionThis(TDeclaration* p);
 bool TDeclaration_Is_EnumDeclaration(TDeclaration* p);
@@ -1015,8 +909,6 @@ void TParameter_Delete(TParameter* p);
 void TParameter_Swap(TParameter* a, TParameter* b);
 const char* TParameter_GetTypedefName(TParameter* p);
 
-
-//typedef ArrayT(TAnyDeclaration) TDeclarations;
 
 typedef struct
 {
@@ -1059,20 +951,6 @@ TDeclaration* TProgram_GetFinalTypeDeclaration(TProgram* p, const char* typeName
 TDeclaration* TProgram_FindDeclaration(TProgram* p, const char* name);
 
 
-CAST(TBlockItem, TCompoundStatement)
-CAST(TBlockItem, TExpressionStatement)
-CAST(TBlockItem, TLabeledStatement)
-CAST(TBlockItem, TJumpStatement)
-CAST(TBlockItem, TIfStatement)
-CAST(TBlockItem, TDoStatement)
-CAST(TBlockItem, TForStatement)
-CAST(TBlockItem, TAsmStatement)
-
-CAST(TBlockItem, TWhileStatement)
-CAST(TBlockItem, TSwitchStatement)
-
-CAST(TBlockItem, TDeclaration)
-CAST(TBlockItem, TStaticAssertDeclaration)
 
 
 
@@ -1083,18 +961,14 @@ typedef struct TTypeName
     TDeclarator Declarator;
 } TTypeName;
 
-
 TTypeName* TTypeName_Create();
 void TTypeName_Destroy(TTypeName* p);
 void TTypeName_Delete(TTypeName* p) ;
 void TTypeName_Init(TTypeName* p);
 
-
-
 typedef struct TAtomicTypeSpecifier
 {
     EType Type  _defval(TAtomicTypeSpecifier_ID);
-    //TTypeSpecifier* _auto pNext;
     TTypeName TypeName;
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
@@ -1108,6 +982,96 @@ void TAtomicTypeSpecifier_Delete(TAtomicTypeSpecifier* p);
 
 CAST(TTypeSpecifier, TAtomicTypeSpecifier)
 
+
+
+bool EvaluateConstantExpression(TExpression * p, int *pResult);
+
+TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration * p);
+
+
+TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name);
+
+bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecifiers);
+
+
+
+typedef struct
+{
+    EType Type _defval(TPrimaryExpressionValue_ID);
+    Tokens token;
+    String lexeme;
+    TExpression*_auto   pExpressionOpt;
+    TScannerItemList ClueList0;
+    TScannerItemList ClueList1;
+} TPrimaryExpressionValue;
+
+TPrimaryExpressionValue* TPrimaryExpressionValue_Create();
+void TPrimaryExpressionValue_Delete(TPrimaryExpressionValue* p);
+
+typedef struct TPrimaryExpressionLiteralItem
+{
+    struct TPrimaryExpressionLiteralItem* _auto pNext;
+    String lexeme;
+    TScannerItemList ClueList0;
+} TPrimaryExpressionLiteralItem;
+
+TPrimaryExpressionLiteralItem* TPrimaryExpressionLiteralItem_Create();
+void TPrimaryExpressionLiteralItem_Delete(TPrimaryExpressionLiteralItem *p);
+
+typedef struct
+{
+    TPrimaryExpressionLiteralItem * _auto pHead, *pTail;
+} TPrimaryExpressionLiteralItemList; 
+
+void TPrimaryExpressionLiteralItemList_Init(TPrimaryExpressionLiteralItemList* p);
+void TPrimaryExpressionLiteralItemList_Destroy(TPrimaryExpressionLiteralItemList* p);
+
+#define TPRIMARYEXPRESSIONLITERALITEMLIST_INIT LIST_INIT
+typedef struct
+{
+    EType Type _defval(TPrimaryExpressionLiteral_ID);
+    TPrimaryExpressionLiteralItemList List;
+} TPrimaryExpressionLiteral;
+
+
+TPrimaryExpressionLiteral* TPrimaryExpressionLiteral_Create();
+void TPrimaryExpressionLiteral_Delete(TPrimaryExpressionLiteral* p);
+
+
+
+
+typedef struct
+{
+    EType Type _defval(TBinaryExpression_ID);
+    Tokens token;
+    TExpression*_auto   pExpressionLeft;
+    TExpression*_auto    pExpressionRight;
+    TPosition Position;
+
+    TScannerItemList ClueList00;
+
+} TBinaryExpression;
+
+TBinaryExpression* TBinaryExpression_Create(void);
+void TBinaryExpression_Delete(TBinaryExpression* p);
+
+typedef struct
+{
+    EType Type _defval(TTernaryExpression_ID);
+    Tokens token;
+    TExpression*_auto   pExpressionLeft;
+    TExpression*_auto    pExpressionMiddle;
+    TExpression*_auto    pExpressionRight;
+    TScannerItemList ClueList0;
+    TScannerItemList ClueList1;
+} TTernaryExpression;
+
+TTernaryExpression* TTernaryExpression_Create(void);
+void TTernaryExpression_Delete(TTernaryExpression* p);
+
+
+struct TTypeName;
+typedef struct TTypeName TTypeName;
 
 typedef struct TPostfixExpressionCore
 {
@@ -1124,7 +1088,7 @@ typedef struct TPostfixExpressionCore
     TInitializerList InitializerList;
     String Identifier;
     TTypeName*_auto  pTypeName; /*typename*/
-    
+
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
     TScannerItemList ClueList2;
@@ -1158,18 +1122,25 @@ typedef struct
     TExpression*_auto   pExpressionRight;
     TTypeName TypeName;
     TScannerItemList ClueList00;
-	TScannerItemList ClueList1; //sizeof (
-	TScannerItemList ClueList2; //sizeof ( )
+    TScannerItemList ClueList1; //sizeof (
+    TScannerItemList ClueList2; //sizeof ( )
 } TUnaryExpressionOperator;
 
 
 TUnaryExpressionOperator* TUnaryExpressionOperator_Create();
 void TUnaryExpressionOperator_Delete(TUnaryExpressionOperator* p);
 
+struct _union(TPrimaryExpressionLiteral |
+    TPrimaryExpressionValue |
+    TBinaryExpression |
+    TUnaryExpressionOperator |
+    TPostfixExpressionCore |
+    TPostfixExpressionCore |
+    TCastExpressionType) TExpression;
 
-bool EvaluateConstantExpression(TExpression * p, int *pResult);
+typedef struct TExpression TExpression;
+void TExpression_Delete(TExpression* p);
 
-TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration * p);
 
 CAST(TExpression, TPrimaryExpressionLiteral)
 CAST(TExpression, TPrimaryExpressionValue)
@@ -1178,6 +1149,3 @@ CAST(TExpression, TUnaryExpressionOperator)
 CAST(TExpression, TPostfixExpressionCore)
 CAST(TExpression, TCastExpressionType)
 
-TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name);
-
-bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecifiers);
