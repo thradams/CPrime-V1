@@ -330,15 +330,17 @@ void Scanner_GetError(Scanner* pScanner, StrBuilder* str)
 
 void Scanner_GetFilePositionString(Scanner* pScanner, StrBuilder* sb)
 {
-    if (Scanner_Top(pScanner) != NULL)
+    BasicScanner* pScannerTop = Scanner_Top(pScanner);
+
+    if (pScannerTop != NULL)
     {
         StrBuilder_Set(sb,
-            Scanner_Top(pScanner)->stream.NameOrFullPath);
+            pScannerTop->stream.NameOrFullPath);
     }
     
-    if (Scanner_Top(pScanner))
+    if (pScannerTop)
     {
-        StrBuilder_AppendFmt(sb, "(%d): ", Scanner_Top(pScanner)->stream.currentLine);
+        StrBuilder_AppendFmt(sb, "(%d): ", pScannerTop->stream.currentLine);
     }
     else
     {
@@ -401,7 +403,7 @@ static void Scanner_PushToken(Scanner* pScanner, Tokens token,
 
 static Result Scanner_InitCore(Scanner* pScanner)
 {
-  List_Init(&pScanner->AcumulatedTokens);
+   TScannerItemList_Init(&pScanner->AcumulatedTokens);
 
   // TFileMap_init
   // pScanner->IncludeDir
@@ -1277,7 +1279,7 @@ static void Scanner_PushToken(Scanner* pScanner, Tokens token,
   StrBuilder_Set(&pNew->lexeme, lexeme);
   pNew->token = token;
   pNew->bActive = bActive; //;
-  List_Add(&pScanner->AcumulatedTokens, pNew);
+  TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
 }
 
 // Atencao
@@ -1303,7 +1305,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
     StrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
     pNew->token = pBasicScanner->currentItem.token;
     pNew->bActive = false;
-    List_Add(&pScanner->AcumulatedTokens, pNew);
+    TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
 
     // Match do identificador
     BasicScanner_Match(pBasicScanner);
@@ -1318,7 +1320,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
     StrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
     pNew->token = pBasicScanner->currentItem.token;
     pNew->bActive = true;
-    List_Add(&pScanner->AcumulatedTokens, pNew);
+    TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
 
     // Match do identificador
     BasicScanner_Match(pBasicScanner);
@@ -1334,7 +1336,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
     StrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
     pNew->token = pBasicScanner->currentItem.token;
     pNew->bActive = true;
-    List_Add(&pScanner->AcumulatedTokens, pNew);
+    TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
 
     // Match do identificador
     BasicScanner_Match(pBasicScanner);
@@ -1409,7 +1411,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
 
       // Procurar pelo (
 
-      TScannerItemList LocalAcumulatedTokens = LIST_INIT;
+      TScannerItemList LocalAcumulatedTokens = {0};
       token = pBasicScanner->currentItem.token;
       lexeme = pBasicScanner->currentItem.lexeme.c_str;
       while (token == TK_SPACES || token == TK_COMMENT)
@@ -1421,7 +1423,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
         StrBuilder_Set(&pNew->lexeme, lexeme);
         pNew->token = token;
         pNew->bActive = true;
-        List_Add(&LocalAcumulatedTokens, pNew);
+        TScannerItemList_PushBack(&LocalAcumulatedTokens, pNew);
         ////////////
 
         BasicScanner_Match(pBasicScanner);
@@ -1504,26 +1506,26 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
           StrBuilder_Append(&pNew->lexeme, pFirstMacro->Name);
           pNew->token = TK_MACRO_CALL;
           pNew->bActive = true;
-          List_Add(&pScanner->AcumulatedTokens, pNew);
+          TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
         }
 
         ScannerItem* pNew0 = ScannerItem_Create();
         StrBuilder_Append(&pNew0->lexeme, pMacro2->Name);
         pNew0->token = TK_IDENTIFIER;
         pNew0->bActive = true;
-        List_Add(&pScanner->AcumulatedTokens, pNew0);
+        TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew0);
 
         if (pFirstMacro != pMacro2)
         {
           ScannerItem* pNew2 = ScannerItem_Create();
           pNew2->token = TK_MACRO_EOF;
           pNew2->bActive = true;
-          List_Add(&pScanner->AcumulatedTokens, pNew2);
+          TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew2);
         }
 
         if (LocalAcumulatedTokens.pHead != NULL)
         {
-          List_Add(&pScanner->AcumulatedTokens, LocalAcumulatedTokens.pHead);
+            TScannerItemList_PushBack(&pScanner->AcumulatedTokens, LocalAcumulatedTokens.pHead);
           LocalAcumulatedTokens.pHead = NULL;
           LocalAcumulatedTokens.pTail = NULL;
         }
@@ -1608,7 +1610,7 @@ void Scanner_BuyTokens(Scanner* pScanner)
     ScannerItem* pNew = ScannerItem_Create();
     pNew->token = TK_EOF;
     pNew->bActive = true;
-    List_Add(&pScanner->AcumulatedTokens, pNew);
+    TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
 
     return;
   }
@@ -2037,7 +2039,7 @@ void Scanner_BuyTokens(Scanner* pScanner)
     StrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
     pNew->token = pBasicScanner->currentItem.token;
     pNew->bActive = bActive0;
-    List_Add(&pScanner->AcumulatedTokens, pNew);
+    TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
 
     BasicScanner_Match(pBasicScanner);
   }
@@ -2355,13 +2357,41 @@ bool Scanner_MatchToken(Scanner* pScanner, Tokens token, bool bActive)
   return b;
 }
 
-void TScannerItemList_Destroy(TScannerItemList* p)
+
+void TScannerItemList_Destroy(TScannerItemList* p) _default
 {
-    List_Destroy(ScannerItem, (p));
+    ScannerItem_Delete(p->pHead);
+}
+
+void TScannerItemList_Clear(TScannerItemList* p)
+{
+    TScannerItemList_Destroy(p);
+    TScannerItemList_Init(p);
 }
 
 void TScannerItemList_Init(TScannerItemList* p) _default
 {
     p->pHead = NULL;
     p->pTail = NULL;
+}
+
+
+void TScannerItemList_Swap(TScannerItemList* a, TScannerItemList* b)
+{
+    TScannerItemList t = *a;
+    *a = *b;
+    *b = t;
+}
+
+void TScannerItemList_PushBack(TScannerItemList* pList, ScannerItem* pItem)
+{
+    if ((pList)->pHead == NULL) {
+        (pList)->pHead = (pItem);
+        (pList)->pTail = (pItem);
+    }
+    else {
+        (pList)->pTail->pNext = (pItem);
+        (pList)->pTail = (pItem);
+    }
+
 }

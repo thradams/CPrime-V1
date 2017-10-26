@@ -406,13 +406,13 @@ bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 
                 for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
                 {
-                    TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
+                    TDeclarationSpecifier* pItem = pDeclaration->Specifiers.pData[i];
 
                     if (IS_TYPE(pItem, TStorageSpecifier_ID))
                     {
                         TStorageSpecifier* pStorageSpecifier =
                             (TStorageSpecifier*)pItem;
-                        if (pStorageSpecifier->bIsTypedef)
+                        if (pStorageSpecifier->Token == TK_TYPEDEF)
                         {
                             bIsTypeName = 1;
                             break;
@@ -590,7 +590,7 @@ TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
                 const char* indirectTypedef = NULL;
                 for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
                 {
-                    TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
+                    TDeclarationSpecifier* pItem = pDeclaration->Specifiers.pData[i];
 
                 
                     switch (TYPEOF(pItem))
@@ -599,7 +599,7 @@ TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
                     {
                         TStorageSpecifier* pStorageSpecifier =
                             (TStorageSpecifier*)pItem;
-                        if (pStorageSpecifier->bIsTypedef)
+                        if (pStorageSpecifier->Token == TK_TYPEDEF)
                         {
                             bIsTypedef = true;
                         }
@@ -684,7 +684,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
                 const char* indirectTypedef = NULL;
                 for (int i =0 ; i <pDeclaration->Specifiers.Size; i++)
                 {
-                    TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
+                    TDeclarationSpecifier* pItem = pDeclaration->Specifiers.pData[i];
 
                     switch (TYPEOF(pItem))
                     {
@@ -692,7 +692,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
                     {
                         TStorageSpecifier* pStorageSpecifier =
                             (TStorageSpecifier*)pItem;
-                        if (pStorageSpecifier->bIsTypedef)
+                        if (pStorageSpecifier->Token == TK_TYPEDEF)
                         {
                             bIsTypedef = true;
                         }
@@ -732,9 +732,8 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
                             ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
                             {
                                 TPointer * pNew = TPointer_Create();
-                                pNew->Token = pItem->Token;
-                                pNew->Qualifier = pItem->Qualifier;
-                                List_Add(&declarator->PointerList, pNew);
+                                TPointer_Copy(pNew, pItem);                                
+                                TPointerList_PushBack(&declarator->PointerList, pNew);
                             }
 
                             //eh um typedef indireto
@@ -797,7 +796,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                 
                     for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
                     {
-                        TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
+                        TDeclarationSpecifier* pItem = pDeclaration->Specifiers.pData[i];
 
                 
                     switch (TYPEOF(pItem))
@@ -806,7 +805,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                     {
                         TStorageSpecifier* pStorageSpecifier =
                             (TStorageSpecifier*)pItem;
-                        if (pStorageSpecifier->bIsTypedef)
+                        if (pStorageSpecifier->Token == TK_TYPEDEF)
                         {
                             bIsTypedef = true;
                         }
@@ -845,9 +844,8 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                             ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
                             {
                                 TPointer * pNew = TPointer_Create();
-                                pNew->Token = pItem->Token;
-                                pNew->Qualifier = pItem->Qualifier;
-                                List_Add(&declarator->PointerList, pNew);
+                                TPointer_Copy(pNew, pItem);                                
+                                TPointerList_PushBack(&declarator->PointerList, pNew);
                             }
 
                             //eh um typedef indireto
@@ -870,9 +868,8 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                         ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
                         {
                             TPointer * pNew = TPointer_Create();
-                            pNew->Token = pItem->Token;
-                            pNew->Qualifier = pItem->Qualifier;
-                            List_Add(&declarator->PointerList, pNew);
+                            TPointer_Copy(pNew, pItem);
+                            TPointerList_PushBack(&declarator->PointerList, pNew);
                         }
 
                         pSpecifiersResult = &pDeclaration->Specifiers;
@@ -905,7 +902,7 @@ TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
     {
         for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
         {
-            TSpecifier* pItem = pDeclaration->Specifiers.pData[i];
+            TDeclarationSpecifier* pItem = pDeclaration->Specifiers.pData[i];
 
         
             switch (TYPEOF(pItem))

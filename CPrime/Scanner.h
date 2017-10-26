@@ -42,13 +42,17 @@ void TFileArray_PushBack(TFileArray* p);
 void TFileArray_Reserve(TFileArray* p, int n);
 
 
-typedef List(ScannerItem) TScannerItemList;
-#define TSCANNERITEMLIST_INIT LIST_INIT
+typedef struct
+{
+    ScannerItem* _auto pHead, *pTail;
+}TScannerItemList;
+
 
 void TScannerItemList_Destroy(TScannerItemList* p);
 void TScannerItemList_Init(TScannerItemList* p);
-
-#define TScannerItemList_Swap(a, b) List_Swap(ScannerItem, (a), (b))
+void TScannerItemList_PushBack(TScannerItemList* p, ScannerItem* pItem);
+void TScannerItemList_Swap(TScannerItemList* a, TScannerItemList* b);
+void TScannerItemList_Clear(TScannerItemList* p);
 
 
 typedef struct

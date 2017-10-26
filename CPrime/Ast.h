@@ -103,6 +103,10 @@ typedef struct TExpression TExpression;
 
 typedef struct 
 {
+    /*
+    static_assert-declaration:
+      _Static_assert ( constant-expression , string-literal ) ;
+    */
     EType Type _defval(TStaticAssertDeclaration_ID);
 
     TExpression*_auto  pConstantExpression;
@@ -122,6 +126,9 @@ void TStaticAssertDeclaration_Delete(TStaticAssertDeclaration* p);
 
 typedef struct
 {
+    /*
+     Marca fim de um arquivo
+    */
 	EType Type _defval(TEofDeclaration_ID);
 	TScannerItemList ClueList0;
 } TEofDeclaration;
@@ -145,6 +152,11 @@ struct TBlockItem;
 typedef struct TBlockItem TBlockItem;
 
 typedef struct {
+    /*
+    block-item-list:
+      block-item
+      block-item-list block-item
+    */
     TBlockItem * _auto * _auto _size(Size) pItems;
     int Size; 
     int Capacity; 
@@ -170,26 +182,44 @@ void TCompoundStatement_Delete(TCompoundStatement* p);
 
 typedef struct TTypeQualifier
 {
+    /*
+    type-qualifier:
+      const
+      restrict
+      volatile
+       _Atomic
+    */
+    
+    /*
+      auto
+      _size ( SizeIdentifier )
+    */
+
     EType Type _defval(TTypeQualifier_ID);
-
-//#ifdef LANGUAGE_EXTENSIONS
     String SizeIdentifier;
-//#endif
-
     Tokens Token;
     TScannerItemList ClueList0;
 
-
 } TTypeQualifier;
 
+void TTypeQualifier_Copy(TTypeQualifier* dest, TTypeQualifier* src);
+
 typedef struct {
-    TTypeQualifier * _auto * _auto _size(Size) pData;
+    /*
+    type-qualifier-list:
+      type-qualifier
+      type-qualifier-list type-qualifier
+    */
+
+    TTypeQualifier * _auto Data[4];
     int Size;
-    int Capacity;
+    
 } TTypeQualifierList;
 
+void TTypeQualifierList_Init(TTypeQualifierList* p);
 void TTypeQualifierList_Destroy(TTypeQualifierList* p);
 void TTypeQualifierList_PushBack(TTypeQualifierList* p, TTypeQualifier* pItem);
+void TTypeQualifierList_Copy(TTypeQualifierList* dest, TTypeQualifierList* src);
 
 TTypeQualifier* TTypeQualifier_Create(void);
 void TTypeQualifier_Delete(TTypeQualifier* p);
@@ -351,7 +381,11 @@ CAST(TStatement, TSwitchStatement)
 struct TDeclaration;
 typedef struct TDeclaration TDeclaration;
 
-struct _union(TStatement) TBlockItem;
+/*block-item:
+  declaration
+  statement
+*/
+struct _union(TDeclaration | TStatement) TBlockItem;
 typedef struct TBlockItem TBlockItem;
 void TBlockItem_Delete(TBlockItem* p);
 
@@ -374,20 +408,32 @@ CASTSAME(TBlockItem, TAnyDeclaration)
 
 typedef struct TPointer
 {
+    /*
+    pointer:
+       * type-qualifier-listopt
+       * type-qualifier-listopt pointer
+    */
     TTypeQualifierList Qualifier;
-    Tokens Token;
     struct TPointer* _auto pNext;
     TScannerItemList ClueList0;
 } TPointer;
 
 TPointer* TPointer_Create(void);
 void TPointer_Delete(TPointer* p);
+void TPointer_Copy(TPointer* dest, TPointer* src);
 
 
 typedef struct TPointerList
 {
+    /*
+    pointer:
+      * type-qualifier-listopt
+      * type-qualifier-listopt pointer
+    */
     TPointer* _auto pHead, *pTail;
 } TPointerList;
+
+void TPointerList_PushBack(TPointerList* pList, TPointer* pItem);
 
 void TPointerList_Destroy(TPointerList* p);
 bool TPointerList_IsPointer(TPointerList* pPointerlist);
@@ -403,9 +449,13 @@ const char * TPointerList_GetSize(TPointerList* pPointerlist);
 
 typedef struct
 {
+    /*
+    function-specifier:
+       inline
+       _Noreturn
+    */
     EType Type  _defval(TFunctionSpecifier_ID);
-    bool bIsInline;
-    bool bIsNoReturn;
+    Tokens Token;
     TScannerItemList ClueList0;
 } TFunctionSpecifier;
 
@@ -415,13 +465,17 @@ void TFunctionSpecifier_Delete(TFunctionSpecifier* p);
 
 typedef struct
 {
+    /*
+    storage-class-specifier:
+       typedef
+       extern
+       static
+       _Thread_local
+       auto
+       register
+    */
     EType Type  _defval(TStorageSpecifier_ID);    
-    bool bIsTypedef;
-    bool bIsExtern;
-    bool bIsStatic;
-    bool bIsThread_local;
-    bool bIsAuto;
-    bool bIsRegister;
+    Tokens Token;
     TScannerItemList ClueList0;
 } TStorageSpecifier;
 
@@ -431,6 +485,11 @@ void TStorageSpecifier_Delete(TStorageSpecifier* p);
 
 typedef struct
 {
+    /*
+    alignment-specifier:
+      _Alignas ( type-name )
+      _Alignas ( constant-expression )
+    */
     EType Type  _defval(TAlignmentSpecifier_ID);    
     String TypeName;
 } TAlignmentSpecifier;
@@ -441,6 +500,11 @@ void TAlignmentSpecifier_Delete(TAlignmentSpecifier* p);
 
 typedef struct TEnumerator
 {
+    /*
+    enumerator:
+      enumeration-constant
+      enumeration-constant = constant-expression
+    */
     struct TEnumerator* _auto pNext;
     String Name;
     TExpression*_auto   pExpression;    
@@ -456,6 +520,11 @@ void TEnumerator_Delete(TEnumerator* p);
 
 typedef struct
 {
+    /*
+     enumerator-list:
+        enumerator
+        enumerator-list, enumerator
+    */
     TEnumerator * _auto pHead, *pTail;
 } TEnumeratorList;
 void TEnumeratorList_Destroy(TEnumeratorList* p);
@@ -463,6 +532,13 @@ void TEnumeratorList_Init(TEnumeratorList* p);
 
 typedef struct TEnumSpecifier
 {
+    /*
+    enum-specifier:
+      enum identifieropt { enumerator-list }
+      enum identifieropt { enumerator-list , }
+      enum identifier
+    */
+
     EType Type  _defval(TEnumSpecifier_ID);
     String Name;
     TEnumeratorList EnumeratorList;
@@ -477,6 +553,20 @@ void TEnumSpecifier_Delete(TEnumSpecifier* p);
 
 typedef struct TSingleTypeSpecifier
 {
+    /*
+    void
+    char
+    short
+    int
+    long
+    float
+    double
+    signed
+    unsigned
+    _Bool
+    _Complex
+    typedef-name
+    */
     EType Type  _defval(TSingleTypeSpecifier_ID);
     Tokens Token;
     String TypedefName;  
@@ -492,25 +582,43 @@ struct TTypeSpecifier;
 typedef struct TTypeSpecifier TTypeSpecifier;
 
 
+/*
+declaration-specifiers:
+  storage-class-specifier declaration-specifiersopt
+  type-specifier declaration-specifiersopt
+  type-qualifier declaration-specifiersopt
+  function-specifier declaration-specifiersopt
+  alignment-specifier declaration-specifiersopt
+*/
 
 struct _union(TStorageSpecifier |
+    TTypeSpecifier | 
+    TTypeQualifier |
     TFunctionSpecifier | 
-    TAlignmentSpecifier | 
-    TSingleTypeSpecifier | 
-    TEnumSpecifier) TSpecifier;
+    TAlignmentSpecifier) TDeclarationSpecifier;
 
-typedef struct TSpecifier TSpecifier;
+typedef struct TDeclarationSpecifier TDeclarationSpecifier;
 
-CAST(TSpecifier, TStorageSpecifier)
-CAST(TSpecifier, TFunctionSpecifier)
-CAST(TSpecifier, TAlignmentSpecifier)
-CAST(TSpecifier, TSingleTypeSpecifier)
-CAST(TSpecifier, TEnumSpecifier)
+CAST(TDeclarationSpecifier, TStorageSpecifier)
+CAST(TDeclarationSpecifier, TFunctionSpecifier)
+CAST(TDeclarationSpecifier, TAlignmentSpecifier)
+CAST(TDeclarationSpecifier, TSingleTypeSpecifier)
+CAST(TDeclarationSpecifier, TEnumSpecifier)
 
-
-struct _union(TSpecifier |
+/*
+specifier-qualifier-list:
+  type-specifier specifier-qualifier-listopt
+  type-qualifier specifier-qualifier-listopt
+*/
+struct _union(TTypeSpecifier |
               TTypeQualifier) TSpecifierQualifier;
 
+
+/*
+  specifier-qualifier-list:
+    type-specifier specifier-qualifier-listopt
+    type-qualifier specifier-qualifier-listopt
+*/
 typedef struct TSpecifierQualifier TSpecifierQualifier;
 void TSpecifierQualifier_Delete(TSpecifierQualifier* p);
 
@@ -523,6 +631,11 @@ CAST(TSpecifierQualifier, TEnumSpecifier)
 
 
 typedef struct {
+    /*
+    specifier-qualifier-list:
+      type-specifier specifier-qualifier-listopt
+      type-qualifier specifier-qualifier-listopt
+    */
     TSpecifierQualifier *_auto *_auto _size(Size) pData;
     int Size;
     int Capacity;
@@ -532,7 +645,7 @@ void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecif
 void TSpecifierQualifierList_PushBack(TSpecifierQualifierList* p, TSpecifierQualifier* pItem);
 bool TSpecifierQualifierList_IsTypedef(TSpecifierQualifierList* p);
 const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p);
-TSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p);
+TDeclarationSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsTypedefQualifier(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsAutoPointer(TSpecifierQualifierList *pSpecifierQualifierList);
 
@@ -544,14 +657,22 @@ bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList* p);
 
 
 typedef struct TDeclarationSpecifiers {
-    TSpecifier *_auto *_auto _size(Size) pData;
+    /*
+    declaration-specifiers:
+      storage-class-specifier declaration-specifiersopt
+      type-specifier declaration-specifiersopt
+      type-qualifier declaration-specifiersopt
+      function-specifier declaration-specifiersopt
+      alignment-specifier declaration-specifiersopt
+    */
+    TDeclarationSpecifier *_auto *_auto _size(Size) pData;
     int Size;
     int Capacity;
 } TDeclarationSpecifiers;
 
 void TDeclarationSpecifiers_Init(TDeclarationSpecifiers* pDeclarationSpecifiers);
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers* pDeclarationSpecifiers);
-void TDeclarationSpecifiers_PushBack(TDeclarationSpecifiers* p, TSpecifier* pItem);
+void TDeclarationSpecifiers_PushBack(TDeclarationSpecifiers* p, TDeclarationSpecifier* pItem);
 
 const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDeclarationSpecifiers);
 bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers* pDeclarationSpecifiers, Tokens token, const char* lexeme);
@@ -562,6 +683,12 @@ typedef struct TParameter TParameter;
 
 typedef struct
 {
+    /*
+    parameter-list:
+      parameter-declaration
+      parameter-list , parameter-declaration
+    */
+
     TParameter* _auto pHead, *pTail;
 } TParameterList;
 
@@ -572,6 +699,11 @@ bool TParameter_IsDirectPointer(TParameter* p);
 
 typedef struct TParameterTypeList
 {
+    /*
+    parameter-type-list:
+      parameter-list
+      parameter-list , ...
+    */
     TParameterList ParameterList;
     TScannerItemList ClueList0; //,
     TScannerItemList ClueList1; //...
@@ -583,6 +715,11 @@ void TParameterTypeList_Destroy(TParameterTypeList* p);
 
 typedef struct TDesignator
 {
+    /*
+    designator:
+       [ constant-expression ]
+       . identifier
+    */
     String Name;
     TExpression *_auto  pExpression;
     struct TDesignator * _auto pNext;
@@ -597,6 +734,11 @@ void TDesignator_Delete(TDesignator* p);
 
 typedef struct
 {
+    /*
+    designator-list:
+      designator
+      designator-list designator
+    */
     TDesignator* _auto pHead, *pTail;
 } TDesignatorList;
 void TDesignatorList_Destroy(TDesignatorList* p);
@@ -605,6 +747,10 @@ void TDesignatorList_Init(TDesignatorList* p) ;
 
 typedef struct TDesignation
 {
+    /*
+    designation:
+      designator-list =
+    */
     TDesignatorList DesignatorList;
     TScannerItemList ClueList0;
 } TDesignation;
@@ -618,6 +764,11 @@ void TInitializer_Delete(TInitializer* p);
 
 typedef struct TInitializerListItem
 {
+    /*
+    initializer-list:
+      designationopt initializer
+      initializer-list , designationopt initializer
+    */
     TDesignatorList  DesignatorList;
     TInitializer*_auto  pInitializer;
     struct TInitializerListItem* _auto pNext;
@@ -632,6 +783,12 @@ void TInitializerListItem_Delete(TInitializerListItem* p);
 
 typedef struct TInitializerList
 {
+    /*
+    initializer-list:
+      designationopt initializer
+      initializer-list , designationopt initializer
+    */
+
     TInitializerListItem * _auto pHead, *pTail;
 } TInitializerList; 
 
@@ -665,6 +822,17 @@ typedef struct TDirectDeclarator TDirectDeclarator;
 
 typedef struct TDeclarator
 {
+    /*
+      declarator:
+      pointeropt direct-declarator
+    */
+
+    /*
+    abstract-declarator:
+      pointer
+      pointeropt direct-abstract-declarator
+    */
+
     TPointerList PointerList;
     TDirectDeclarator* _auto  pDirectDeclarator;
     TScannerItemList ClueList;
@@ -688,6 +856,18 @@ typedef enum TDirectDeclaratorType
 
 typedef struct TDirectDeclarator
 {
+    /*
+    direct-declarator:
+        identifier
+        ( declarator )
+        direct-declarator [ type-qualifier-listopt assignment-expressionopt ]
+        direct-declarator [ static type-qualifier-listopt assignment-expression ]
+        direct-declarator [ type-qualifier-list static assignment-expression ]
+        direct-declarator [ type-qualifier-listopt * ]
+        direct-declarator ( parameter-type-list )
+        direct-declarator ( identifier-listopt )
+    */
+
     String Identifier;
     TDeclarator* _auto pDeclarator;
     struct TDirectDeclarator* _auto  pDirectDeclarator;
@@ -707,6 +887,11 @@ void TDirectDeclarator_Delete(TDirectDeclarator* p);
 
 typedef struct TInitDeclarator
 {
+    /*
+    init-declarator:
+      declarator
+      declarator = initializer
+    */
     TDeclarator*_auto  pDeclarator;
     TInitializer*_auto   pInitializer;
     struct TInitDeclarator * _auto pNext;
@@ -723,6 +908,11 @@ typedef TInitDeclarator TStructDeclarator;
 
 typedef struct TInitDeclaratorList
 {
+    /*
+    init-declarator-list:
+      init-declarator
+      init-declarator-list , init-declarator
+    */
     TInitDeclarator* _auto pHead, *pTail;
 } TInitDeclaratorList;
 
@@ -732,11 +922,29 @@ const char* TDeclarator_GetName(TDeclarator* p);
 const char* TInitDeclarator_FindName(TInitDeclarator* p);
 
 
-typedef TInitDeclaratorList TStructDeclaratorList;
+typedef struct TStructDeclaratorList
+{
+    /*
+    init-declarator-list:
+    init-declarator
+    init-declarator-list , init-declarator
+    */
+    TInitDeclarator* _auto pHead, *pTail;
+} TStructDeclaratorList;
+
+
+void TStructDeclaratorList_Destroy(TStructDeclaratorList* p);
+void TStructDeclaratorList_Init(TStructDeclaratorList* p);
 
 
 typedef struct TStructDeclaration
 {
+    /*
+    struct-declaration:
+    specifier-qualifier-list struct-declarator-listopt ;
+    static_assert-declaration
+    */
+
     EType Type  _defval(TStructDeclaration_ID);
 
     TSpecifierQualifierList SpecifierQualifierList;
@@ -749,6 +957,11 @@ TStructDeclaration* TStructDeclaration_Create();
 void TStructDeclaration_Delete(TStructDeclaration* p);
 
 
+/*
+struct-declaration:
+  specifier-qualifier-list struct-declarator-listopt ;
+  static_assert-declaration
+*/
 struct _union(TStructDeclaration |
               TStaticAssertDeclaration) TAnyStructDeclaration;
 
@@ -800,6 +1013,18 @@ void TUnionSet_PushBack(TUnionSet* p, TUnionSetItem* pItem);
 
 typedef struct TStructUnionSpecifier
 {
+    /*
+    struct-or-union-specifier:
+       struct-or-union identifieropt { struct-declaration-list }
+       struct-or-union identifier
+    */
+    
+    /*
+    struct-or-union-specifier:
+       struct-or-union identifieropt { struct-declaration-list }
+       struct-or-union union-set-opt identifier
+    */
+
     EType Type  _defval(TStructUnionSpecifier_ID);
     TStructDeclarationList StructDeclarationList;
     String Name;
@@ -822,7 +1047,9 @@ void TStructUnionSpecifier_Delete(TStructUnionSpecifier* p);
 struct TAtomicTypeSpecifier;
 typedef struct TAtomicTypeSpecifier TAtomicTypeSpecifier;
 
+
 struct _union(TSingleTypeSpecifier |
+              TAtomicTypeSpecifier |
               TEnumSpecifier |
               TStructUnionSpecifier) TTypeSpecifier;
 
@@ -831,12 +1058,18 @@ typedef struct TTypeSpecifier TTypeSpecifier;
 CAST(TTypeSpecifier, TSingleTypeSpecifier)
 CAST(TTypeSpecifier, TEnumSpecifier)
 CAST(TTypeSpecifier, TStructUnionSpecifier)
-CAST(TSpecifier, TStructUnionSpecifier)
+CAST(TDeclarationSpecifier, TStructUnionSpecifier)
 CAST(TSpecifierQualifier, TStructUnionSpecifier)
 CAST(TTypeSpecifier, TAtomicTypeSpecifier)
 
 typedef struct TDeclaration
 {
+    /*
+    declaration:
+      declaration-specifiers init-declarator-listopt ;
+      static_assert-declaration
+    */
+
     EType Type  _defval(TDeclaration_ID);
     TDeclarationSpecifiers Specifiers;
     TInitDeclaratorList InitDeclaratorList;
@@ -884,6 +1117,12 @@ int TAnyDeclaration_GetFileIndex(TAnyDeclaration* pDeclaration);
 
 typedef struct TParameter
 {
+    /*
+    parameter-declaration:
+      declaration-specifiers declarator
+      declaration-specifiers abstract-declaratoropt
+    */
+
     struct TParameter* _auto pNext;
     TDeclarationSpecifiers Specifiers;
     TDeclarator Declarator;
@@ -940,10 +1179,12 @@ TDeclaration* TProgram_FindDeclaration(TProgram* p, const char* name);
 
 
 
-
-
 typedef struct TTypeName
 {
+    /*
+    type-name:
+      specifier-qualifier-list abstract-declaratoropt
+    */
     EType Type  _defval(TypeName_ID);
     TSpecifierQualifierList SpecifierQualifierList;
     TDeclarator Declarator;
@@ -956,6 +1197,10 @@ void TTypeName_Init(TTypeName* p);
 
 typedef struct TAtomicTypeSpecifier
 {
+    /*
+    atomic-type-specifier:
+       _Atomic ( type-name )
+    */
     EType Type  _defval(TAtomicTypeSpecifier_ID);
     TTypeName TypeName;
     TScannerItemList ClueList0;

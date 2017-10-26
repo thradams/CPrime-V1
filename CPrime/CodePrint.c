@@ -1062,6 +1062,11 @@ static void TDesignator_CodePrint(TProgram* program, Options * options, TDesigna
 
 }
 
+#define List_HasOneItem(pList) \
+ ((pList)->pHead != NULL && (pList)->pHead == (pList)->pTail)
+
+#define List_Back(pList) \
+  ((pList)->pTail)
 
 static void TInitializerList_CodePrint(TProgram* program,
     Options * options,
@@ -1455,66 +1460,14 @@ static void TAnyStructDeclaration_CodePrint(TProgram* program, Options * options
 
 static void StorageSpecifier_CodePrint(TProgram* program, Options * options, TStorageSpecifier* p, StrBuilder* fp)
 {
-
-    TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-
-    if (p->bIsAuto)
-    {
-        Output_Append(fp, options, "auto");
-
-    }
-
-    if (p->bIsExtern)
-    {
-        Output_Append(fp, options, "extern");
-
-    }
-
-    if (p->bIsRegister)
-    {
-        Output_Append(fp, options, "register");
-
-    }
-
-    if (p->bIsStatic)
-    {
-        Output_Append(fp, options, "static");
-
-    }
-
-
-
-
-    if (p->bIsThread_local)
-    {
-        Output_Append(fp, options, "[Thread_local]");
-
-    }
-
-    if (p->bIsTypedef)
-    {
-        Output_Append(fp, options, "typedef");
-
-    }
-
-
+    TNodeClueList_CodePrint(options, &p->ClueList0, fp); 
+    Output_Append(fp, options, TokenToString(p->Token));
 }
 
 static void TFunctionSpecifier_CodePrint(TProgram* program, Options * options, TFunctionSpecifier* p, StrBuilder* fp)
 {
-    if (p->bIsInline)
-    {
-        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-        Output_Append(fp, options, "inline");
-
-    }
-    if (p->bIsNoReturn)
-    {
-        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-        Output_Append(fp, options, "[noreturn]");
-
-    }
-
+    TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+    Output_Append(fp, options, TokenToString(p->Token));
 }
 
 
@@ -1537,22 +1490,19 @@ static void TTypeQualifierList_CodePrint(TProgram* program, Options * options, T
 {
     for (int i =0; i < p->Size; i++)
     {
-        TTypeQualifier* pItem = p->pData[i];
+        TTypeQualifier* pItem = p->Data[i];
         TTypeQualifier_CodePrint(program, options, pItem, fp);
     }
 
 }
 static void TPointer_CodePrint(TProgram* program, Options * options, TPointer* pPointer, StrBuilder* fp)
 {
-    if (pPointer->Token == TK_ASTERISK)
-    {
+   
         TNodeClueList_CodePrint(options, &pPointer->ClueList0, fp);
         Output_Append(fp, options, "*");
-    }
-    else
-    {
+   
         TTypeQualifierList_CodePrint(program, options, &pPointer->Qualifier, fp);
-    }
+    
 
 
 }
@@ -1607,7 +1557,7 @@ void TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDec
 
     for (int i = 0 ; i < pDeclarationSpecifiers->Size; i++)
     {
-        TSpecifier* pItem = pDeclarationSpecifiers->pData[i];
+        TDeclarationSpecifier* pItem = pDeclarationSpecifiers->pData[i];
 
         switch (TYPEOF(pItem))
         {
@@ -1906,7 +1856,7 @@ void FindUnionSetOf(TProgram* program,
         if (pFinalDecl->Specifiers.Size > 1)
         {
             pStructUnionSpecifier =
-                TSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
+                TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
             if (pStructUnionSpecifier->Name)
             {
                 //procura a mais completa
@@ -2452,7 +2402,7 @@ static void TInitializerListItem_CodePrint(TProgram* program,
 
     StrBuilder* fp)
 {
-    if (!List_IsEmpty(&p->DesignatorList))
+    if (p->DesignatorList.pHead != NULL)
     {
         TDesignatorList_CodePrint(program, options, &p->DesignatorList, fp);
     }
@@ -3059,7 +3009,7 @@ void InstanciateDestroy2(TProgram* program,
     bool bIsAutoPointerToPointer = TPointerList_IsAutoPointerToPointer(&pDeclatator->PointerList);
     bool bIsPointer = TPointerList_IsPointer(&pDeclatator->PointerList);
 
-    TSpecifier* pMainSpecifier =
+    TDeclarationSpecifier* pMainSpecifier =
         TSpecifierQualifierList_GetMainSpecifier(pSpecifierQualifierList);
 
     if (pMainSpecifier == NULL)
@@ -3094,13 +3044,8 @@ void InstanciateDestroy2(TProgram* program,
                 ForEachListItem(TPointer, pItem, &pDeclatator->PointerList)
                 {
                     TPointer * pNew = TPointer_Create();
-                    pNew->Token = pItem->Token;
-                    /////////////////////////////
-                    pNew->Qualifier = pItem->Qualifier; //ELE NAO EH DONO !
-                    //nao pode destruir essa parte 
-                    //////////////////////////////
-
-                    List_Add(&declarator.PointerList, pNew);
+                    TPointer_Copy(pNew, pItem);
+                    TPointerList_PushBack(&declarator.PointerList, pNew);
                 }
 
 
@@ -3203,16 +3148,7 @@ void InstanciateDestroy2(TProgram* program,
                             fp);
                     }
                 }
-
-                
-                ForEachListItem(TPointer, pItem, &declarator.PointerList)
-                {                                        
-                    //ELE NAO EH DONO !
-                    pItem->Qualifier.Capacity = 0;
-                    pItem->Qualifier.Size = 0;
-                    pItem->Qualifier.pData = NULL;
-                }
-
+                                        
                 TDeclarator_Destroy(&declarator);
             }
             else
@@ -3430,8 +3366,6 @@ void InstanciateDestroy2(TProgram* program,
                         TStructDeclarator* pStructDeclarator =
                             pStructDeclaration->DeclaratorList.pHead;
 
-
-
                         StrBuilder strVariableName = STRBUILDER_INIT;
                         StrBuilder strPonterSizeExpr = STRBUILDER_INIT;
 
@@ -3635,7 +3569,7 @@ void InstanciateDestroy2(TProgram* program,
     else if (IS_TYPE(pMainSpecifier, TEnumSpecifier_ID))
     {
         TEnumSpecifier *pEnumSpecifier =
-            TSpecifier_As_TEnumSpecifier(pMainSpecifier);
+            TDeclarationSpecifier_As_TEnumSpecifier(pMainSpecifier);
 
 
         //nao eh typedef, deve ser int, double etc..
@@ -3767,12 +3701,12 @@ TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifi
         return NULL;
 
     TStructUnionSpecifier* pTStructUnionSpecifier =
-        TSpecifier_As_TStructUnionSpecifier(specifiers->pData[0]);
+        TDeclarationSpecifier_As_TStructUnionSpecifier(specifiers->pData[0]);
 
     if (pTStructUnionSpecifier == NULL)
     {
         TSingleTypeSpecifier *pSingleTypeSpecifier =
-            TSpecifier_As_TSingleTypeSpecifier(specifiers->pData[0]);
+            TDeclarationSpecifier_As_TSingleTypeSpecifier(specifiers->pData[0]);
 
         if (pSingleTypeSpecifier != NULL &&
             pSingleTypeSpecifier->Token == TK_IDENTIFIER)
@@ -3785,7 +3719,7 @@ TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifi
                 if (pDeclaration->Specifiers.Size > 1)
                 {
                     pTStructUnionSpecifier =
-                        TSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pData[1]);
+                        TDeclarationSpecifier_As_TStructUnionSpecifier(pDeclaration->Specifiers.pData[1]);
                 }
             }
         }

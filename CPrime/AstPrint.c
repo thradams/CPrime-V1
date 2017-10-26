@@ -1102,35 +1102,8 @@ bool StorageSpecifier_Print(TStorageSpecifier* p, bool b, FILE* fp)
     fprintf(fp, "{");
     fprintf(fp, "\"type\":\"storage-specifer\",");
     fprintf(fp, "\"lexeme\":\"");
-    if (p->bIsAuto)
-    {
-        fprintf(fp, "auto");
-    }
-
-    if (p->bIsExtern)
-    {
-        fprintf(fp, "extern");
-    }
-
-    if (p->bIsRegister)
-    {
-        fprintf(fp, "register");
-    }
-
-    if (p->bIsStatic)
-    {
-        fprintf(fp, "static");
-    }
-
-    if (p->bIsThread_local)
-    {
-        fprintf(fp, "threadlocal");
-    }
-
-    if (p->bIsTypedef)
-    {
-        fprintf(fp, "typedef");
-    }
+    
+    fprintf(fp, TokenToString(p->Token));
 
     fprintf(fp, "\"}");
 
@@ -1141,9 +1114,7 @@ bool TFunctionSpecifier_Print(TFunctionSpecifier* p, bool b, FILE* fp)
 {
     int i = 0;
 
-    if (p->bIsInline ||
-      p->bIsNoReturn)
-    {
+   
         if (b)
         {
             fprintf(fp, ",");
@@ -1152,7 +1123,7 @@ bool TFunctionSpecifier_Print(TFunctionSpecifier* p, bool b, FILE* fp)
         b = true;
         fprintf(fp, "\"function-specifers\" : {");
 
-        if (p->bIsInline)
+        if (p->Token == TK_INLINE)
         {
             if (i > 0)
                 fprintf(fp, ",");
@@ -1161,7 +1132,7 @@ bool TFunctionSpecifier_Print(TFunctionSpecifier* p, bool b, FILE* fp)
             i++;
         }
 
-        if (p->bIsNoReturn)
+        if (p->Token == TK__NORETURN)
         {
             if (i > 0)
                 fprintf(fp, ",");
@@ -1171,7 +1142,7 @@ bool TFunctionSpecifier_Print(TFunctionSpecifier* p, bool b, FILE* fp)
         }
 
         
-    }
+    
     
     fprintf(fp, "\"}");
     return b;
@@ -1200,7 +1171,7 @@ bool TTypeQualifierList_Print(TTypeQualifierList* p, bool b, FILE* fp)
     b = false;
     for (int i = 0; i < p->Size; i++)
     {
-        TTypeQualifier* pItem = p->pData[i];
+        TTypeQualifier* pItem = p->Data[i];
     
         if (b)
         {
@@ -1222,7 +1193,7 @@ bool TPointer_Print(TPointer* pPointer, bool b, FILE* fp)
     return true;
 }
 
-bool TSpecifier_Print(TSpecifier* pItem, bool b, FILE* fp)
+bool TDeclarationSpecifier_Print(TDeclarationSpecifier* pItem, bool b, FILE* fp)
 {
     switch (TYPEOF(pItem))
     {
@@ -1266,14 +1237,14 @@ bool TDeclarationSpecifiers_Print(TDeclarationSpecifiers* pDeclarationSpecifiers
     
         for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
         {
-            TSpecifier* pItem = pDeclarationSpecifiers->pData[i];
+            TDeclarationSpecifier* pItem = pDeclarationSpecifiers->pData[i];
 
     
         if (b)
         {
             fprintf(fp, ",");
         }
-        b = TSpecifier_Print(pItem, b, fp);
+        b = TDeclarationSpecifier_Print(pItem, b, fp);
     }
     fprintf(fp, "]");
     //b = TFunctionSpecifier_Print(&pDeclarationSpecifiers->FunctionSpecifiers, b, fp);
@@ -1361,7 +1332,7 @@ bool TInitializerListItem_Print(TInitializerListItem* p, bool b, FILE* fp)
     fprintf(fp, "{");
     b = false;
 
-    if (!List_IsEmpty(&p->DesignatorList))
+    if (p->DesignatorList.pHead)
     {
         fprintf(fp, "\"designation\":");
         b = TDesignatorList_Print(&p->DesignatorList, b, fp);
