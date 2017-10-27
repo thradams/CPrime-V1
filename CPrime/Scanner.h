@@ -54,6 +54,24 @@ void TScannerItemList_PushBack(TScannerItemList* p, ScannerItem* pItem);
 void TScannerItemList_Swap(TScannerItemList* a, TScannerItemList* b);
 void TScannerItemList_Clear(TScannerItemList* p);
 
+typedef enum
+{
+    NONE, // inclui
+    I1,   // inclui
+    I0,
+    E0,
+    E1, // inclui
+} State;
+
+typedef struct
+{
+    State* _auto _size(Size) pItems;
+    int Size;
+    int Capacity;
+} StackInts;
+
+void StackInts_Init(StackInts* p);
+void StackInts_Destroy(StackInts* p);
 
 typedef struct
 {
@@ -64,7 +82,7 @@ typedef struct
   MacroMap  Defines2;
 
   //Stack usado para #if #else etc
-  ArrayInt StackIfDef;
+  StackInts StackIfDef;
 
   //lista de arquivos marcados com pragma once
   TFileMap FilesIncluded;

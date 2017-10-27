@@ -1,3 +1,4 @@
+
 #define _M_IX86 400
 #define WIN32
 #define __STDC__ 0
@@ -18,12 +19,7 @@
 //#define _MSC_VER  1300
 #define __ptr64
 
-
-
-
 #pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\shared"
 #pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\um"
 #pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\ucrt" 
-#pragma dir "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include"
-
-
+#pragma dir "c:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Tools\MSVC\14.10.25017\include"

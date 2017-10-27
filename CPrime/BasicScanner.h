@@ -211,9 +211,9 @@ typedef struct ScannerItem
 {
     StrBuilder lexeme;
     Tokens token;
-    int Line;
-    int FileIndex;
-    bool bActive;
+    int Line _defval(-1);
+    int FileIndex _defval(-1);
+    bool bActive _defval(true);
     struct ScannerItem* pNext;
 } ScannerItem;
 
