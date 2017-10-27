@@ -1,83 +1,61 @@
 #include "config.h"
+//typedef char * _auto String;
+//
+//void String_Destroy(String* p) 
+//{
+  //  free(*p);
+//}
 
-enum Enum
+typedef struct
 {
-    EnumA, EnumB, EnumC
-};
-
-typedef enum 
-{
-    EnumTypedefA, EnumTypedefB, EnumTypedefC
-} EnumTypedef;
-
-
-
-struct X
-{
-    enum E e1 _defval(EnumB);
-    EnumTypedef  e2 _defval(EnumC);
-};
-
-void X_Init(struct X* p) _default
-{
-    p->e1 = EnumB;    p->e2 = EnumTypedefA;
-}
-
-struct Items
-{
-    int * _auto  pData;
+    char* _auto *_auto _size(Size) pData;
     int Size;
     int Capacity;
-};
+} StrArray;
 
-void Items_Reserve(struct Items* pItems, int n) _default
+void StrArray_Init(StrArray* p, int n) _default
 {
-    if (n > pItems->Capacity)
+    p->pData = 0;
+    p->Size = 0;
+    p->Capacity = 0;
+
+}
+
+void StrArray_Reserve(StrArray* p, int n) _default
+{
+    if (n > p->Capacity)
     {
-        int* pnew = pItems->pData;
-        pnew = (int*)realloc(pnew, n * sizeof(int));
+        char** pnew = p->pData;
+        pnew = (char**)realloc(pnew, n * sizeof(char*));
         if (pnew)
         {
-            pItems->pData = pnew;
-            pItems->Capacity = n;
+            p->pData = pnew;
+            p->Capacity = n;
         }
     }
 }
 
-void Items_PushBack(struct Items* pItems, int v) _default
+void StrArray_PushBack(StrArray* p, const char* psz) 
 {
-    if (pItems->Size + 1 > pItems->Capacity)
+    if (p->Size + 1 > p->Capacity)
     {
-        int n = pItems->Capacity * 2;
+        int n = p->Capacity * 2;
         if (n == 0)
         {
           n = 1;
         }
-        Items_Reserve(pItems, n);
+        StrArray_Reserve(p, n);
     }
-    pItems->pData[pItems->Size] = v;
-    pItems->Size++;
-}
-
-void Items_Destroy(struct Items* pItems) _default
-{
-    free((void*)pItems->pData);
+    String_Set(&p->pData[p->Size], psz);
+    p->Size++;
 }
 
 
-int main(int argc, char **argv)
+void StrArray_Destroy(StrArray* p) _default
 {
-    struct Items items = { 0 };
-
-    Items_PushBack(&items, 1);
-    Items_PushBack(&items, 2);
-    Items_PushBack(&items, 3);
-
-    for (int i = 0; i < items.Size; i++)
+    for (int i = 0; i < p->Size; i++)
     {
-        printf("%d\n", items.pData[i]);
+        free((void*)p->pData[i]);
     }
-
-    Items_Destroy(&items);
-    return 0;
+    free((void*)p->pData);
 }

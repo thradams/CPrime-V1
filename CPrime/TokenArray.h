@@ -7,21 +7,21 @@ typedef struct PPToken PPToken;
 
 typedef struct
 {
-    PPToken** pItems;
+    PPToken* _auto * _auto _size(Size) pItems;
     int Size;
     int Capacity;
 } TokenArray;
 
 #define TOKENARRAY_INIT {0, 0, 0}
 
-int      TokenArray_Reserve(TokenArray* p, int nelements);
+void      TokenArray_Reserve(TokenArray* p, int nelements);
 int      TokenArray_Grow(TokenArray* p, int nelements);
 void     TokenArray_Pop(TokenArray* p);
 
 PPToken* TokenArray_PopFront(TokenArray* p);
 
 PPToken*      TokenArray_Top(TokenArray* p);
-int      TokenArray_Push(TokenArray* p, PPToken* pItem);
+void      TokenArray_PushBack(TokenArray* p, PPToken* pItem);
 void     TokenArray_Clear(TokenArray* p);
 void     TokenArray_Init(TokenArray* p);
 TokenArray* TokenArray_Create();
@@ -87,13 +87,13 @@ void TokenArrayMap_Swap(TokenArrayMap * pA, TokenArrayMap * pB);
 
 typedef struct
 {
-    PPToken** pItems;
+    PPToken* _auto * _auto _size(Size) pItems;
     int Size;
     int Capacity;
 } TokenSet;
 #define TOKENSET_INIT { NULL, 0, 0 }
 
-int TokenSet_Add(TokenSet* p, PPToken* pItem);
+void TokenSet_PushBack(TokenSet* p, PPToken* pItem);
 void TokenSetAppendCopy(TokenSet *pArrayTo, const TokenSet *pArrayFrom);
 PPToken* TokenSet_Find(const TokenSet *pArray, const char * lexeme);
 void TokenSet_Destroy(TokenSet *pArray);

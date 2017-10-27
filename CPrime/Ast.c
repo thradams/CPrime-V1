@@ -1438,6 +1438,35 @@ void TPointer_Delete(TPointer* p) _default
     }
 }
 
+void TPointerList_Printf(TPointerList* p)
+{
+    ForEachListItem(TPointer, pItem, p)
+    {
+        printf("*");
+
+        for (int i = 0; i < pItem->Qualifier.Size; i++)
+        {
+            if (i > 0)
+                printf(" ");
+            TTypeQualifier* pQualifier = pItem->Qualifier.Data[i];
+            printf("%s", TokenToString(pQualifier->Token));
+
+            if (pQualifier->Token == TK__SIZE)
+            {
+                printf("(%s)", pQualifier->SizeIdentifier);
+            }
+        }
+    }
+    printf("\n");
+}
+
+void TPointerList_Swap(TPointerList* a, TPointerList* b)
+{
+    TPointerList t = *a;
+    *a = *b;
+    *b = t;
+}
+
 void TPointer_Copy(TPointer* dest, TPointer* src)
 {
     TTypeQualifierList_Copy(&dest->Qualifier, &src->Qualifier);
@@ -1532,6 +1561,25 @@ bool TPointerList_IsAutoPointerToObject(TPointerList* pPointerlist)
 }
 
 
+bool TPointerList_IsAutoPointerSizeToObject(TPointerList* pPointerlist)
+{
+    bool bResult = false;
+    TPointer* pPointer = pPointerlist->pHead;
+    if (pPointer != NULL)
+    {
+        if (pPointer->Qualifier.Size == 2 && 
+            pPointer->pNext == NULL)
+        {
+            bResult = (pPointer->Qualifier.Data[0]->Token == TK__AUTO &&
+                      pPointer->Qualifier.Data[1]->Token == TK__SIZE) || 
+                      (pPointer->Qualifier.Data[0]->Token == TK__SIZE&&
+                      pPointer->Qualifier.Data[0]->Token == TK__AUTO);
+        }
+    }
+
+
+    return bResult;
+}
 
 bool TPointerList_IsAutoPointerToPointer(TPointerList* pPointerlist)
 {
@@ -1663,7 +1711,7 @@ void TTypeQualifier_Delete(TTypeQualifier* p) _default
 
 void TTypeQualifier_Copy(TTypeQualifier* dest, TTypeQualifier* src)
 {
-    String_Set(&dest->SizeIdentifier, &src->SizeIdentifier);
+    String_Set(&dest->SizeIdentifier, src->SizeIdentifier);
     dest->Token = src->Token;
     //dest->ClueList0 nao vamos copiar
     //dest->Type nao precisa copiar

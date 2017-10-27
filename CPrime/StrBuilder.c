@@ -19,19 +19,11 @@
 
 
 
-Result StrBuilder_Init(StrBuilder* p, int capacity)
+void StrBuilder_Init(StrBuilder* p) _default
 {
-  Result result = RESULT_OK;
-  p->c_str = NULL;
-  p->size = 0;
-  p->capacity = 0;
-
-  if (capacity > 0)
-  {
-    result = StrBuilder_Reserve(p, capacity);
-  }
-
-  return result;
+    p->c_str = NULL;
+    p->size = 0;
+    p->capacity = 0;
 }
 
 void StrBuilder_Swap(StrBuilder* str1,
@@ -120,13 +112,21 @@ Result StrBuilder_SetN(StrBuilder* p,
 Result StrBuilder_Set(StrBuilder* p,
                       const char* source)
 {
-  int n = strlen(source);
-  StrBuilder_Clear(p);
-  Result r = RESULT_OK;
-  if (n > 0)
-  {
-      r = StrBuilder_SetN(p, source, strlen(source));
-  }
+    Result r = RESULT_OK;
+    if (source == NULL)
+    {
+        StrBuilder_Clear(p);
+    }
+    else
+    {
+        int n = strlen(source);
+        StrBuilder_Clear(p);
+        
+        if (n > 0)
+        {
+            r = StrBuilder_SetN(p, source, strlen(source));
+        }
+    }
   return r;
 }
 
@@ -256,7 +256,10 @@ Result StrBuilder_AppendW(StrBuilder* p, const wchar_t* psz)
 void StrBuilder_Trim(StrBuilder* p)
 {
   StrBuilder temp;
-  StrBuilder_Init(&temp, p->size);
+  StrBuilder_Init(&temp);
+
+  StrBuilder_Reserve(&temp, p->size);
+
   bool bCopy = false;
 
   for (int i = 0; i < p->size; i++)

@@ -19,7 +19,7 @@ typedef struct
 #define STRBUILDER_INIT { 0, 0, 0 }
 #define STRBUILDER_DEFAULT_SIZE 17
 
-Result StrBuilder_Init(StrBuilder* p, int capacity);
+void StrBuilder_Init(StrBuilder* p);
 
 Result StrBuilder_Reserve(StrBuilder* p, int nelements);
 

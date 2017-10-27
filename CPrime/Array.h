@@ -48,27 +48,3 @@ void StrArray_Clear(StrArray* p);
 void StrArray_Init(StrArray* p);
 void StrArray_Destroy(StrArray* st);
 void StrArray_Swap(StrArray* p1, StrArray* p2);
-
-typedef struct
-{
-    int* pItems;
-    int size;
-    int capacity;
-
-} ArrayInt;
-
-Result ArrayInt_Reserve(ArrayInt* p, int nelements);
-
-bool ArrayInt_IsEmpty(ArrayInt* p);
-
-int ArrayInt_Pop(ArrayInt* p);
-
-int ArrayInt_Top(ArrayInt* p);
-
-Result ArrayInt_Push(ArrayInt* p, int pItem);
-
-void ArrayInt_Clear(ArrayInt* p);
-
-void ArrayInt_Init(ArrayInt* p);
-
-void ArrayInt_Destroy(ArrayInt* st);
