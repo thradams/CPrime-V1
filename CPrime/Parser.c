@@ -81,7 +81,7 @@ Result Parser_InitString(Parser* parser,
     //Map_Init(&parser->TypeDefNames, SYMBOL_BUCKETS_SIZE);
     parser->bError = false;
 
-    StrBuilder_Init(&parser->ErrorMessage);
+    StrBuilder_Init(&parser->ErrorMessage, 100);
 
 
     /////////
@@ -112,7 +112,7 @@ Result Parser_InitFile(Parser* parser, const char* fileName)
     parser->bError = false;
 
 
-    StrBuilder_Init(&parser->ErrorMessage);
+    StrBuilder_Init(&parser->ErrorMessage, 100);
     Scanner_Init(&parser->Scanner);
 
 

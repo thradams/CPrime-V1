@@ -282,77 +282,36 @@ Result TFileMap_DeleteItem(TFileMap* map, const char* key)
   return Map_DeleteItem(map, key, TFile_DeleteVoid);
 }
 
-
+typedef enum
+{
+  NONE, // inclui
+  I1,   // inclui
+  I0,
+  E0,
+  E1, // inclui
+} State;
 
 bool IsIncludeState(State e)
 {
   return e == NONE || e == I1 || e == E1;
 }
 
-void StackInts_Init(StackInts* p) _default
-{
-    p->pItems = NULL;
-    p->Size = 0;
-    p->Capacity = 0;
-}
-void StackInts_Destroy(StackInts* p) /*_default*/
-{
-    free(p->pItems);
-}
-
-void StackInts_Pop(StackInts* p) /*_default*/
-{
-    if (p->Size > 0)
-    {
-        p->Size--;
-    }
-}
-
-void StackInts_Reserve(StackInts* p, int n) _default
-{
-    if (n > p->Capacity)
-    {
-        State* pnew = p->pItems;
-        pnew = (State*)realloc(pnew, n * sizeof(State));
-        if (pnew)
-        {
-            p->pItems = pnew;
-            p->Capacity = n;
-        }
-    }
-}
-
-void StackInts_PushBack(StackInts* p, State e) _default
-{
-    if (p->Size + 1 > p->Capacity)
-    {
-        int n = p->Capacity * 2;
-        if (n == 0)
-        {
-          n = 1;
-        }
-        StackInts_Reserve(p, n);
-    }
-    p->pItems[p->Size] = e;
-    p->Size++;
-}
-
 State StateTop(Scanner* pScanner)
 {
-  if (pScanner->StackIfDef.Size == 0)
+  if (pScanner->StackIfDef.size == 0)
     return NONE;
 
-  return pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size-1];
+  return (State)ArrayInt_Top(&pScanner->StackIfDef);
 }
 
 void StatePush(Scanner* pScanner, State s)
 {
-    StackInts_PushBack(&pScanner->StackIfDef , s);
+  ArrayInt_Push(&pScanner->StackIfDef, s);
 }
 
 void StatePop(Scanner* pScanner)
 {
-  StackInts_Pop(&pScanner->StackIfDef);  
+  ArrayInt_Pop(&pScanner->StackIfDef);
 }
 
 void Scanner_GetError(Scanner* pScanner, StrBuilder* str)
@@ -433,7 +392,7 @@ static Result AddStandardMacro(Scanner* pScanner, const char* name,
   Macro* pDefine1 = Macro_Create();
   String_Set(&pDefine1->Name, name);
   // TODO tipo do token
-  TokenArray_PushBack(&pDefine1->TokenSequence,
+  TokenArray_Push(&pDefine1->TokenSequence,
                   PPToken_Create(value, PPTokenType_Other));
   pDefine1->FileIndex = 0;
   MacroMap_SetAt(&pScanner->Defines2, name, pDefine1);
@@ -450,12 +409,12 @@ static Result Scanner_InitCore(Scanner* pScanner)
   // pScanner->IncludeDir
   Map_Init(&pScanner->FilesIncluded, 100);
   MacroMap_Init(&pScanner->Defines2);
-  StrBuilder_Init(&pScanner->DebugString);
-  
-  StrBuilder_Init(&pScanner->ErrorString);
+  StrBuilder_Init(&pScanner->DebugString, 100);
+  // StrBuilder_Init(&pScanner->PreprocessorAndCommentsString, 100);
+  StrBuilder_Init(&pScanner->ErrorString, 100);
 
   pScanner->bError = false;
-  StackInts_Init(&pScanner->StackIfDef);
+  ArrayInt_Init(&pScanner->StackIfDef);
 
   BasicScannerStack_Init(&pScanner->stack);
 
@@ -609,7 +568,7 @@ bool Scanner_GetFullPath(Scanner* pScanner, const char* fileName,
   {
     StrBuilder path = STRBUILDER_INIT;
 
-    
+    // StrBuilder_Init(&path, 200);
     for (int i = 0; i < pScanner->IncludeDir.size; i++)
     {
       const char* pItem = pScanner->IncludeDir.pItems[i];
@@ -744,7 +703,7 @@ void Scanner_Destroy(Scanner* pScanner) _default
 {
     BasicScannerStack_Destroy(&pScanner->stack);
     MacroMap_Destroy(&pScanner->Defines2);
-    StackInts_Destroy(&pScanner->StackIfDef);
+    ArrayInt_Destroy(&pScanner->StackIfDef);
     TFileMap_Destroy(&pScanner->FilesIncluded);
     StrArray_Destroy(&pScanner->IncludeDir);
     StrBuilder_Destroy(&pScanner->DebugString);
@@ -973,11 +932,11 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
   {
     // Adiciona o nome da macro
     PPToken* ppTokenName = PPToken_Create(pMacro->Name, PPTokenType_Identifier);
-    TokenArray_PushBack(ppTokenArray, ppTokenName);
+    TokenArray_Push(ppTokenArray, ppTokenName);
 
     // Match do (
     PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
-    TokenArray_PushBack(ppTokenArray, ppToken);
+    TokenArray_Push(ppTokenArray, ppToken);
 
     StrBuilder_Append(strBuilder, lexeme);
     BasicScanner_Match(pBasicScanner);
@@ -996,7 +955,7 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
 
         PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
 
-        TokenArray_PushBack(ppTokenArray, ppToken);
+        TokenArray_Push(ppTokenArray, ppToken);
 
         StrBuilder_Append(strBuilder, lexeme);
         BasicScanner_Match(pBasicScanner);
@@ -1011,7 +970,7 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
         if (iInsideParentesis == 1)
         {
           PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
-          TokenArray_PushBack(ppTokenArray, ppToken);
+          TokenArray_Push(ppTokenArray, ppToken);
 
           StrBuilder_Append(strBuilder, lexeme);
           BasicScanner_Match(pBasicScanner);
@@ -1025,7 +984,7 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
         iInsideParentesis--;
 
         PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
-        TokenArray_PushBack(ppTokenArray, ppToken);
+        TokenArray_Push(ppTokenArray, ppToken);
 
         StrBuilder_Append(strBuilder, lexeme);
         BasicScanner_Match(pBasicScanner);
@@ -1046,7 +1005,7 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
 
         // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
         PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
-        TokenArray_PushBack(ppTokenArray, ppToken);
+        TokenArray_Push(ppTokenArray, ppToken);
 
         StrBuilder_Append(strBuilder, lexeme);
         BasicScanner_Match(pBasicScanner);
@@ -1057,7 +1016,7 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
       {
         // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
         PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
-        TokenArray_PushBack(ppTokenArray, ppToken);
+        TokenArray_Push(ppTokenArray, ppToken);
 
         StrBuilder_Append(strBuilder, lexeme);
         BasicScanner_Match(pBasicScanner);
@@ -1167,7 +1126,7 @@ void GetPPTokens(BasicScanner* pBasicScanner, TokenArray* pptokens,
     {
       // TODO comentarios entram como espaco
       PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
-      TokenArray_PushBack(pptokens, ppToken);
+      TokenArray_Push(pptokens, ppToken);
     }
     BasicScanner_Match(pBasicScanner);
     token = pBasicScanner->currentItem.token;
@@ -1250,7 +1209,7 @@ void ParsePreDefinev2(Scanner* pScanner, StrBuilder* strBuilder)
       lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
       PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
-      TokenArray_PushBack(&pNewMacro->FormalArguments, ppToken);
+      TokenArray_Push(&pNewMacro->FormalArguments, ppToken);
 
       StrBuilder_Append(strBuilder, lexeme);
       BasicScanner_Match(pBasicScanner);
@@ -1399,7 +1358,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
       // o nome eh a propria expansao
       PPToken* ppTokenName =
         PPToken_Create(pMacro2->Name, TokenToPPToken(TK_IDENTIFIER));
-      TokenArray_PushBack(&ppTokenArray, ppTokenName);
+      TokenArray_Push(&ppTokenArray, ppTokenName);
 
       StrBuilder strExpanded = STRBUILDER_INIT;
 
@@ -1719,7 +1678,7 @@ void Scanner_BuyTokens(Scanner* pScanner)
           token = pBasicScanner->currentItem.token;
           StrBuilder path = STRBUILDER_INIT;
 
-          
+          // StrBuilder_Init(&path, 200);
           for (;;)
           {
             StrBuilder_Append(&strBuilder, lexeme);
@@ -1882,23 +1841,23 @@ void Scanner_BuyTokens(Scanner* pScanner)
       {
         case NONE:
         case I1:
-          pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = E0;
+          pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 1] = E0;
           break;
 
         case I0:
         {
           int iRes = EvalPre(pScanner, &strBuilder);
 
-          if (pScanner->StackIfDef.Size >= 2)
+          if (pScanner->StackIfDef.size >= 2)
           {
-            if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
+            if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 2] ==
                  I1 ||
-                 pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
+                 pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 2] ==
                  E1))
             {
               if (iRes)
               {
-                pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = I1;
+                pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 1] = I1;
               }
             }
           }
@@ -1906,7 +1865,7 @@ void Scanner_BuyTokens(Scanner* pScanner)
           {
             if (iRes)
             {
-              pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = I1;
+              pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 1] = I1;
             }
           }
         }
@@ -1956,23 +1915,23 @@ void Scanner_BuyTokens(Scanner* pScanner)
           break;
 
         case I1:
-          pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = E0;
+          pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 1] = E0;
           break;
 
         case I0:
-          if (pScanner->StackIfDef.Size >= 2)
+          if (pScanner->StackIfDef.size >= 2)
           {
-            if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
+            if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 2] ==
                  I1 ||
-                 pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
+                 pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 2] ==
                  E1))
             {
-              pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = E1;
+              pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 1] = E1;
             }
           }
           else
           {
-            pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = E1;
+            pScanner->StackIfDef.pItems[pScanner->StackIfDef.size - 1] = E1;
           }
 
           break;

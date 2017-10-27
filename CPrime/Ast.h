@@ -435,7 +435,6 @@ typedef struct TPointerList
 
 void TPointerList_PushBack(TPointerList* pList, TPointer* pItem);
 
-void TPointerList_Printf(TPointerList* p);
 void TPointerList_Destroy(TPointerList* p);
 bool TPointerList_IsPointer(TPointerList* pPointerlist);
 bool TPointerList_IsPointerN(TPointerList* pPointerlist, int n);
@@ -445,8 +444,6 @@ bool TPointerList_IsPointerToObject(TPointerList* pPointerlist);
 bool TPointerList_IsAutoPointerToObject(TPointerList* pPointerlist);
 bool TPointerList_IsAutoPointerToPointer(TPointerList* pPointerlist);
 bool TPointerList_IsPointer(TPointerList* pPointerlist);
-void TPointerList_Swap(TPointerList* a, TPointerList* b);
-bool TPointerList_IsAutoPointerSizeToObject(TPointerList* pPointerlist);
 
 const char * TPointerList_GetSize(TPointerList* pPointerlist);
 

@@ -5,10 +5,9 @@
 
 
 
-void PPToken_Destroy(PPToken * p) _default
+void PPToken_Destroy(PPToken * p)
 {
-    String_Destroy(&p->Lexeme);
-    TokenSet_Destroy(&p->HiddenSet);
+	String_Destroy(&p->Lexeme);
 }
 
 void PPToken_Swap(PPToken * pA, PPToken * pB)

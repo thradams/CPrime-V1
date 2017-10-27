@@ -293,8 +293,7 @@ ScannerItem* ScannerItem_Create(void) _default
         ScannerItem_Init(p);
     }
     return p;
-} 
-
+}
 void ScannerItem_Delete(ScannerItem* pScannerItem) _default
 {
     if (pScannerItem != NULL)
@@ -304,14 +303,15 @@ void ScannerItem_Delete(ScannerItem* pScannerItem) _default
     }
 }
 
-void ScannerItem_Init(ScannerItem* scannerItem) _default
+void ScannerItem_Init(ScannerItem* scannerItem) 
 {
-    StrBuilder_Init(&scannerItem->lexeme);
+    //scannerItem->lexeme = STRBUILDER_INIT;
+    StrBuilder_Init(&scannerItem->lexeme, 100);
+    scannerItem->bActive = true;
     scannerItem->token = TK_NONE;
+    scannerItem->pNext = NULL;
     scannerItem->Line = -1;
     scannerItem->FileIndex = -1;
-    scannerItem->bActive = true;
-    scannerItem->pNext = NULL;
 }
 
 void ScannerItem_Reset(ScannerItem* scannerItem)

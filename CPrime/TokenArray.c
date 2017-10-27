@@ -6,18 +6,9 @@
 #include "Map2.h"
 #include  <stdio.h>
 
-void TokenArray_Reserve(TokenArray* p, int nelements) _default
+int TokenArray_Reserve(TokenArray* p, int nelements)
 {
-    if (nelements > p->Capacity)
-    {
-        PPToken** pnew = p->pItems;
-        pnew = (PPToken**)realloc(pnew, nelements * sizeof(PPToken*));
-        if (pnew)
-        {
-            p->pItems = pnew;
-            p->Capacity = nelements;
-        }
-    }
+  return Array_Reserve((Array*)p, nelements);
 }
 
 int TokenArray_Grow(TokenArray* p, int nelements)
@@ -41,19 +32,16 @@ PPToken* TokenArray_Top(TokenArray* p)
   return (PPToken*)Array_Top((Array*)p);
 }
 
-void TokenArray_PushBack(TokenArray* p, PPToken* pItem) _default
+int TokenArray_Push(TokenArray* p, PPToken* pItem)
 {
-    if (p->Size + 1 > p->Capacity)
-    {
-        int n = p->Capacity * 2;
-        if (n == 0)
-        {
-          n = 1;
-        }
-        TokenArray_Reserve(p, n);
-    }
-    p->pItems[p->Size] = pItem;
-    p->Size++;
+  int r = Array_Push((Array*)p, pItem);
+
+  if (r == -1)
+  {
+    PPToken_Delete(pItem);
+  }
+
+  return r;
 }
 
 void TokenArray_Clear(TokenArray* p)
@@ -79,13 +67,9 @@ TokenArray* TokenArray_Create() _default
     return p;
 }
 
-void TokenArray_Destroy(TokenArray* st) _default
+void TokenArray_Destroy(TokenArray* st)
 {
-    for (int i = 0; i < st->Size; i++)
-    {
-        PPToken_Delete(st->pItems[i]);
-    }
-    free((void*)st->pItems);
+  TokenArray_Clear(st);
 }
 
 void TokenArray_Swap(TokenArray* p1, TokenArray* p2)
@@ -118,14 +102,14 @@ void TokenArray_AppendTokensCopy(TokenArray *pArray, PPToken** pToken, int len)
 {
   for (int i = 0; i < len; i++)
   {
-    TokenArray_PushBack(pArray, PPToken_Clone(pToken[i]));
+    TokenArray_Push(pArray, PPToken_Clone(pToken[i]));
   }
 }
 void TokenArray_AppendTokensMove(TokenArray *pArray, PPToken** pToken, int len)
 {
   for (int i = 0; i < len; i++)
   {
-    TokenArray_PushBack(pArray, pToken[i]);
+    TokenArray_Push(pArray, pToken[i]);
     pToken[i] = NULL;
   }
 }
@@ -134,7 +118,7 @@ void TokenArray_AppendCopy(TokenArray *pArrayTo, const TokenArray *pArrayFrom)
 {
   for (int i = 0; i < pArrayFrom->Size; i++)
   {
-    TokenArray_PushBack(pArrayTo, PPToken_Clone(pArrayFrom->pItems[i]));
+    TokenArray_Push(pArrayTo, PPToken_Clone(pArrayFrom->pItems[i]));
   }
 }
 
@@ -142,7 +126,7 @@ void TokenArray_AppendMove(TokenArray *pArrayTo, TokenArray *pArrayFrom)
 {
   for (int i = 0; i < pArrayFrom->Size; i++)
   {
-    TokenArray_PushBack(pArrayTo, pArrayFrom->pItems[i]);
+    TokenArray_Push(pArrayTo, pArrayFrom->pItems[i]);
     pArrayFrom->pItems[i] = NULL;
   }
 }
@@ -253,7 +237,7 @@ void TokenArrayMap_Init(TokenArrayMap* p)
   *p = t;
 }
 
-void TokenArrayMap_Destroy(TokenArrayMap* p) 
+void TokenArrayMap_Destroy(TokenArrayMap* p)
 {
   Map2_Destroy((Map2*)p);
 }
@@ -267,7 +251,7 @@ void TokenArrayMap_Swap(TokenArrayMap * pA, TokenArrayMap * pB)
   *pB = t;
 }
 
-void TokenSet_PushBack(TokenSet* p, PPToken* pItem) /*custom*/
+int TokenSet_Add(TokenSet* p, PPToken* pItem)
 {
   int r = 0;
   PPToken* pTk = TokenSet_Find(p, pItem->Lexeme);
@@ -288,7 +272,7 @@ void TokenSet_PushBack(TokenSet* p, PPToken* pItem) /*custom*/
     PPToken_Delete(pItem);
   }
 
-
+  return r;
 }
 
 
@@ -296,7 +280,7 @@ void TokenSetAppendCopy(TokenSet *pArrayTo, const TokenSet *pArrayFrom)
 {
   for (int i = 0; i < pArrayFrom->Size; i++)
   {
-    TokenSet_PushBack(pArrayTo, PPToken_Clone(pArrayFrom->pItems[i]));
+    TokenSet_Add(pArrayTo, PPToken_Clone(pArrayFrom->pItems[i]));
   }
 }
 
@@ -323,13 +307,9 @@ void TokenSet_Clear(TokenSet* p)
 }
 
 
-void TokenSet_Destroy(TokenSet *pArray) _default
+void TokenSet_Destroy(TokenSet *pArray)
 {
-    for (int i = 0; i < pArray->Size; i++)
-    {
-        PPToken_Delete(pArray->pItems[i]);
-    }
-    free((void*)pArray->pItems);
+  TokenSet_Clear(pArray);
 }
 
 void SetIntersection(const TokenSet *p1,
@@ -358,7 +338,7 @@ void SetIntersection(const TokenSet *p1,
         if (strcmp(first2->Lexeme, first1->Lexeme) != 0)
         {
           //*d_first++ = *first1++;
-          TokenSet_PushBack(pResult, PPToken_Clone(first1));
+          TokenSet_Add(pResult, PPToken_Clone(first1));
           first1++;
           //*d_first++ = *first1++;
           //d_first

@@ -26,7 +26,7 @@ void Compile(const char* configFileName,
     printf("Parsing...\n");
     if (GetAST(inputFileName, configFileName, &program))
     {
-
+        
         AstPlayground(&program);
 
         char drive[CPRIME_MAX_DRIVE];
@@ -50,7 +50,7 @@ void Compile(const char* configFileName,
         }
         else
         {
-            char outc[CPRIME_MAX_DRIVE + CPRIME_MAX_DIR + CPRIME_MAX_FNAME + CPRIME_MAX_EXT + 1];
+            char outc[CPRIME_MAX_DRIVE + CPRIME_MAX_DIR + CPRIME_MAX_FNAME +CPRIME_MAX_EXT + 1];
 
             if (bPrintASTFile)
             {
@@ -66,8 +66,9 @@ void Compile(const char* configFileName,
             }
         }
 
+        printf("Done!\n");
         clock_t tend = clock();
-        printf("Completed in %d second(s)\n", (int)((tend - tstart) / CLOCKS_PER_SEC));
+        printf("%d seconds", (int)((tend - tstart) / CLOCKS_PER_SEC));
 
     }
     TProgram_Destroy(&program);
@@ -115,6 +116,7 @@ int main(int argc, char* argv[])
     String outputFullPath = NULL;
     String inputFullPath = NULL;
 
+
     Options options = OPTIONS_INIT;
     options.bHideDefaultImplementation = false;
 
@@ -122,103 +124,82 @@ int main(int argc, char* argv[])
     bool bPrintPreprocessedToConsole = false;
     bool bPrintASTFile = false;
 
-    clock_t tstart = clock();
-
-    int numberOfFiles = 0;
-    //a primeira fase é para recolher opcoes
-    //a segunda eh para processar arquivos
-    for (int fase = 0; fase < 2; fase++)
+    for (int i = 1; i < argc; i++)
     {
-        for (int i = 1; i < argc; i++)
+        const char * option = argv[i];
+        if (strcmp(option, "-P") == 0)
         {
-            const char * option = argv[i];
-            if (strcmp(option, "-P") == 0)
+            bPrintPreprocessedToFile = true;
+        }
+        else if (strcmp(option, "-E") == 0)
+        {
+            bPrintPreprocessedToConsole = true;
+        }
+        else if (strcmp(option, "-r") == 0)
+        {
+            bPrintPreprocessedToConsole = true;
+        }
+        else if (strcmp(option, "-A") == 0)
+        {
+            bPrintASTFile = true;
+        }
+        else if (strcmp(option, "-help") == 0)
+        {
+            PrintHelp();
+        }
+        else if (strcmp(option, "-s") == 0)
+        {
+            options.bHideDefaultImplementation = true;
+        }        
+        else if (strcmp(option, "-config") == 0)
+        {
+            if (i + 1 < argc)
             {
-                bPrintPreprocessedToFile = true;
-            }
-            else if (strcmp(option, "-E") == 0)
-            {
-                bPrintPreprocessedToConsole = true;
-            }
-            else if (strcmp(option, "-r") == 0)
-            {
-                bPrintPreprocessedToConsole = true;
-            }
-            else if (strcmp(option, "-A") == 0)
-            {
-                bPrintASTFile = true;
-            }
-            else if (strcmp(option, "-help") == 0)
-            {
-                if (fase == 1)
-                {
-                    PrintHelp();
-                }
-            }
-            else if (strcmp(option, "-s") == 0)
-            {
-                options.bHideDefaultImplementation = true;
-            }
-            else if (strcmp(option, "-config") == 0)
-            {
-                if (fase == 0)
-                {
-                    if (i + 1 < argc)
-                    {
-                        configFileName = argv[i + 1];
-                    }                
-                    else
-                    {
-                        printf("missing file\n");
-                        break;
-                    }
-                }                
-                i++;                
-            }
-            else if (strcmp(option, "-o") == 0)
-            {
-                if (i + 1 < argc)
-                {
-                    GetFullPath(argv[i + 1], &outputFullPath);
-                    i++;
-                }
-                else
-                {
-                    printf("missing file\n");
-                }
+                configFileName = argv[i + 1];
+                i++;
             }
             else
             {
-                if (fase == 1)
-                {
-                    //const char* inputFileName = option;
-                    //String inputFullPath = NULL;
-                    GetFullPath(option, &inputFullPath);
-
-                    if (bPrintPreprocessedToFile)
-                    {
-                        PrintPreprocessedToFile(inputFullPath, configFileName);
-                    }
-                    else if (bPrintPreprocessedToConsole)
-                    {
-                        PrintPreprocessedToConsole(inputFullPath, configFileName);
-                    }
-                    else
-                    {
-                        Compile(configFileName, inputFullPath, outputFullPath, &options, bPrintASTFile);
-                    }
-                }
-                else
-                {
-                    numberOfFiles++;
-                }
+                printf("missing file\n");
             }
+        }
+        else if (strcmp(option, "-o") == 0)
+        {
+            if (i + 1 < argc)
+            {
+                GetFullPath(argv[i + 1], &outputFullPath);
+                i++;
+            }
+            else
+            {
+                printf("missing file\n");
+            }
+        }
+        else
+        {
+            //const char* inputFileName = option;
+            //String inputFullPath = NULL;
+            GetFullPath(option, &inputFullPath);
+
+
+            //String_Destroy(&inputFullPath);
 
         }
+
     }
 
-    clock_t tend = clock();
-    printf("Total %d files in = %d seconds\n", numberOfFiles, (int)((tend - tstart) / CLOCKS_PER_SEC));
+    if (bPrintPreprocessedToFile)
+    {
+        PrintPreprocessedToFile(inputFullPath, configFileName);
+    }
+    else if (bPrintPreprocessedToConsole)
+    {
+        PrintPreprocessedToConsole(inputFullPath, configFileName);
+    }
+    else
+    {
+        Compile(configFileName, inputFullPath, outputFullPath, &options, bPrintASTFile);
+    }
 
     String_Destroy(&outputFullPath);
     String_Destroy(&inputFullPath);
