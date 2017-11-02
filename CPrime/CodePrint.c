@@ -2521,7 +2521,7 @@ static bool FindHighLevelFunction(TProgram* program,
 
     bool bComplete = false;
 
-    //TPointerList_Printf(&pDeclatator->PointerList);
+    TPointerList_Printf(&pDeclatator->PointerList);
 
     //TODO FAZER FLAGS e OLHAR P TIPO E DECLARATOR AMBOS
     bool bIsPointerToObject = TPointerList_IsPointerToObject(&pDeclatator->PointerList);
@@ -3086,7 +3086,7 @@ void InstanciateDestroy2(TProgram* program,
                     TPointerList_PushBack(&declarator.PointerList, pNew);
                 }
              
-                //TPointerList_Printf(&declarator.PointerList);
+                TPointerList_Printf(&declarator.PointerList);
          
                 if (action == ActionCreate)
                 {

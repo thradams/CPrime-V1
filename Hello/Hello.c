@@ -1,14 +1,19 @@
 #include "config.h"
-//typedef char * _auto String;
-//
-//void String_Destroy(String* p) 
+typedef char * _auto String;
+
+void String_Destroy(String* p) 
+{
+    free(*p);
+}
+
+//void String_Copy(String* p)
 //{
   //  free(*p);
 //}
-
 typedef struct
+
 {
-    char* _auto *_auto _size(Size) pData;
+    String*_auto _size(Size) pData;
     int Size;
     int Capacity;
 } StrArray;
@@ -18,15 +23,14 @@ void StrArray_Init(StrArray* p, int n) _default
     p->pData = 0;
     p->Size = 0;
     p->Capacity = 0;
-
 }
 
 void StrArray_Reserve(StrArray* p, int n) _default
 {
     if (n > p->Capacity)
     {
-        char** pnew = p->pData;
-        pnew = (char**)realloc(pnew, n * sizeof(char*));
+        String* pnew = p->pData;
+        pnew = (String*)realloc(pnew, n * sizeof(String));
         if (pnew)
         {
             p->pData = pnew;
@@ -55,7 +59,7 @@ void StrArray_Destroy(StrArray* p) _default
 {
     for (int i = 0; i < p->Size; i++)
     {
-        free((void*)p->pData[i]);
+        String_Destroy(p->pData[i]);
     }
     free((void*)p->pData);
 }

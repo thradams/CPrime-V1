@@ -53,6 +53,7 @@ void TScannerItemList_Init(TScannerItemList* p);
 void TScannerItemList_PushBack(TScannerItemList* p, ScannerItem* pItem);
 void TScannerItemList_Swap(TScannerItemList* a, TScannerItemList* b);
 void TScannerItemList_Clear(TScannerItemList* p);
+void TScannerItemList_PopFront(TScannerItemList* p);
 
 typedef enum
 {

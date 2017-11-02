@@ -2334,15 +2334,7 @@ const char* Scanner_LexemeAt(Scanner* pScanner, int index)
   return "";
 }
 
-#define List_PopFront(ITEM, pList)                                             \
-  \
-do {                                                                           \
-    ITEM *p = (pList)->pHead;                                                  \
-    (pList)->pHead = (pList)->pHead->pNext;                                    \
-    ITEM##_Destroy(p);                                                         \
-  \
-}                                                                         \
-  while (0)
+
 
 void Scanner_MatchDontExpand(Scanner* pScanner)
 {
@@ -2350,7 +2342,7 @@ void Scanner_MatchDontExpand(Scanner* pScanner)
   {
     if (pScanner->AcumulatedTokens.pHead != NULL)
     {
-      List_PopFront(ScannerItem, &pScanner->AcumulatedTokens);
+        TScannerItemList_PopFront(&pScanner->AcumulatedTokens);
     }
     else
     {
@@ -2378,7 +2370,7 @@ void Scanner_Match(Scanner* pScanner)
 {
   if (pScanner->AcumulatedTokens.pHead != NULL)
   {
-    List_PopFront(ScannerItem, &pScanner->AcumulatedTokens);
+    TScannerItemList_PopFront(&pScanner->AcumulatedTokens);
     if (pScanner->AcumulatedTokens.pHead == NULL)
     {
       Scanner_BuyTokens(pScanner);
@@ -2422,6 +2414,13 @@ void TScannerItemList_Swap(TScannerItemList* a, TScannerItemList* b)
     TScannerItemList t = *a;
     *a = *b;
     *b = t;
+}
+
+void TScannerItemList_PopFront(TScannerItemList* pList)
+{
+    ScannerItem *p = pList->pHead;
+    pList->pHead = pList->pHead->pNext;                                    
+    ScannerItem_Delete(p);                                                            
 }
 
 void TScannerItemList_PushBack(TScannerItemList* pList, ScannerItem* pItem)
