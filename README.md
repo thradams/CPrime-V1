@@ -33,30 +33,9 @@ void X_Init(struct X* pX) _default
 }
 ```
 
-I the struct X is changed then the C' will update the implementation for you.
+If the struct X is changed then the C' will update the implementation for you.
 The robot uses the name of the function return, arguments and all AST to decide what to do.
 
-## Table Functions x Types
-
-
-|         | Any Type  | Vector | List  | enum  |   |
-|---------|-----------|--------|-------|-------|---|
-|Init     |      x    | x      | x     |       |   |
-|Destroy  |      x    | x      | x     |       |   |
-|Create   |      x    | x      | x     |       |   |
-|Delete   |      x    | x      | x     |       |   |
-|Swap     |      -    | -      | -     |       |   |
-|Clear    |           |        | -     |       |   |
-|Reserve  |           | x      |       |       |   |
-|PushBack |           | x      | -     |       |   |
-|PopBack  |           | -      | -     |       |   |
-|PopFront |           | -      | -     |       |   |
-|Top      |           | -      | -     |       |   |
-|Back     |           | -      | -     |       |   |
-|ToString |           | -      | -     |   -   |   |
-
- Legend: 'x' = implemented  '-' = missing but considered
- 
 ## Using the compiler
 
 Download binaries here:
@@ -65,7 +44,7 @@ https://github.com/thradams/CPrime/releases
 Open the command line and try some samples:
 
 ```c
-cp hello.c -o hello2.c
+cprime hello.c -o hello2.c
 ```
 This will compile hello.c to hello2.c
 
@@ -76,7 +55,7 @@ See [config files](config.md) for some configuration files.
 
 Command line:
 ```c
-cp -config config.h hello.c -o hello2.c
+cprime -config config.h hello.c -o hello2.c
 ```
 
 
@@ -96,15 +75,15 @@ cp -config config.h hello.c -o hello2.c
 C' Version Oct  6 2017
 https://github.com/thradams/CPrime
 
-Syntax: cp [options] [file ...]
+Syntax: cprime [options] [file ...]
 
-Examples: cp hello.c
-          cp -config config.h hello.c
-          cp -config config.h hello.c -o hello.c
-          cp -config config.h -P hello.c
-          cp -E hello.c
-          cp -P hello.c
-          cp -A hello.c
+Examples: cprime hello.c
+          cprime -config config.h hello.c
+          cprime -config config.h hello.c -o hello.c
+          cprime -config config.h -P hello.c
+          cprime -E hello.c
+          cprime -P hello.c
+          cprime -A hello.c
 
 Options:
 -config FILE                          Configuration file.
