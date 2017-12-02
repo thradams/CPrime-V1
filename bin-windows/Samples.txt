@@ -1,16 +1,16 @@
 
->cp hello.c -o hello2.c
+>cprime hello.c -o hello2.c
 
 This will generate the hello2.c from hello.c
 
 
 
->cp hello.c -E
+>cprime  hello.c -E
 
 This will print the preprocessed file to console
 
 
->cp -config config.h hello.c
+>cprime -config config.h hello.c
 
 This will compile hello.c using the configuration file config.h and it
 will ouput at hello.c
