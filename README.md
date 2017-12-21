@@ -38,6 +38,9 @@ void X_Init(struct X* pX) _default
 If the struct X is changed then the C' will update the implementation for you.
 The robot uses the name of the function return, arguments and all AST to decide what to do.
 
+Basic features:
+https://www.youtube.com/watch?v=cFHL6cf1n_k&feature=youtu.be
+
 ## Using the compiler
 
 Download binaries here:
