@@ -6,7 +6,9 @@ Let´s do pair programming!
 (Picture courtesy of my nephew Bethina)
 
 ## What is C' ?
-C'(pronounced c prime) is a robot that can help you generate and maintain C source code.
+C' (pronounced c prime) is a tool to help C programmers to write and maintain C code.
+The tool edit the file in place like a refactoring tool. You can think on it as a pair programming with a robot.
+Some implementation and maintenance, like destructor for data structures, is delegated for the robot and you are free to think in the program's logic instead of code something that can be automatically generated.
 
 ## How it works?
 
