@@ -52,27 +52,16 @@ This will compile hello.c to hello2.c
 
 ## Include directories (Configuration file)
 
-Use #pragma dir and configuration files.
+Because C' is a full parser it requires the include dir.
 See [config files](config.md) for some configuration files.
 
-Command line:
+### Command line to use the config file:
+
 ```c
 cprime -config config.h hello.c -o hello2.c
 ```
 
-
-# Keywords
-
- * __auto
- * __default
- * __defval(X)
- * __size(X)
-
-# Things to try:
-
-
-## type cp to see the documentation
-
+### Command line help Help
 ```
 C' Version Oct  6 2017
 https://github.com/thradams/CPrime
@@ -97,6 +86,8 @@ Options:
 -r                                    Reverts generation.
 
 ```
+
+## Features
 
 ### Static initialization
 
