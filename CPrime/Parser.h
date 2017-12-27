@@ -23,7 +23,7 @@ typedef struct {
   SymbolMap GlobalScope;
   SymbolMap* pCurrentScope;
   
-
+  int IncludeLevel;
   bool bPreprocessorEvalFlag;
 } Parser;
 

@@ -71,7 +71,7 @@ Result Parser_InitString(Parser* parser,
     const char* text)
 {
     TScannerItemList_Init(&parser->ClueList);
-
+	parser->IncludeLevel = 0;
     ///////
     SymbolMap_Init(&parser->GlobalScope);
     parser->pCurrentScope = &parser->GlobalScope;
@@ -99,7 +99,7 @@ Result Parser_InitFile(Parser* parser, const char* fileName)
 {
 
 
-
+	parser->IncludeLevel = 0;
     parser->bPreprocessorEvalFlag = false;
     TScannerItemList_Init(&parser->ClueList);
 
@@ -300,40 +300,68 @@ Tokens Parser_CurrentToken(Parser* parser)
     return token;
 }
 
-
 Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt)
 {
-    //ASSERT(listOpt != NULL);
-    Tokens token = TK_EOF;
-    if (!Parser_HasError(parser))
-    {
+	//ASSERT(listOpt != NULL);
+	Tokens token = TK_EOF;
+	if (!Parser_HasError(parser))
+	{
 
-        if (listOpt)
-        {
-            TScannerItemList_Swap( listOpt, &parser->ClueList);
-        }
+		if (listOpt)
+		{
+			TScannerItemList_Swap(listOpt, &parser->ClueList);
+		}
 
-        Scanner_Match(&parser->Scanner);
+		Scanner_Match(&parser->Scanner);
 
-        token = Scanner_TokenAt(&parser->Scanner, 0);
-        while (token != TK_EOF &&
-            token != TK_NONE &&
-            (!Scanner_IsActiveAt(&parser->Scanner, 0) ||
-                IsPreprocessorTokenPhase(token)))
-        {
-            ScannerItem* pNew = ScannerItem_Create();
-            StrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
-            pNew->token = Scanner_TokenAt(&parser->Scanner, 0);
-            TScannerItemList_PushBack(&parser->ClueList, pNew);
+		token = Scanner_TokenAt(&parser->Scanner, 0);
+		while (token != TK_EOF &&
+			token != TK_NONE &&
+			(!Scanner_IsActiveAt(&parser->Scanner, 0) ||
+				IsPreprocessorTokenPhase(token)))
+		{
+			if (token == TK_PRE_INCLUDE)
+			{
+				//otimizacao para nao ficar
+				//acumulando tokens nos niveis
+				//internos do include
+				//pois eles nao serao usados
+				//gerar o fonte de qualquer forma.
+				parser->IncludeLevel++;
+				if (parser->IncludeLevel == 1)
+				{
+					ScannerItem* pNew = ScannerItem_Create();
+					StrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
+					pNew->token = Scanner_TokenAt(&parser->Scanner, 0);
+					TScannerItemList_PushBack(&parser->ClueList, pNew);
+				}
+			}
+			else if (token == TK_FILE_EOF)
+			{
+				parser->IncludeLevel--;
+				if (parser->IncludeLevel == 0)
+				{
+					ScannerItem* pNew = ScannerItem_Create();
+					StrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
+					pNew->token = Scanner_TokenAt(&parser->Scanner, 0);
+					TScannerItemList_PushBack(&parser->ClueList, pNew);
+				}
+			}
+			else if (parser->IncludeLevel == 0)
+			{
+				ScannerItem* pNew = ScannerItem_Create();
+				StrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
+				pNew->token = Scanner_TokenAt(&parser->Scanner, 0);
+				TScannerItemList_PushBack(&parser->ClueList, pNew);
+			}
 
-            Scanner_Match(&parser->Scanner);
-            token = Scanner_TokenAt(&parser->Scanner, 0);
-        }
-    }
+			Scanner_Match(&parser->Scanner);
+			token = Scanner_TokenAt(&parser->Scanner, 0);
+		}
+	}
 
-    return token;
+	return token;
 }
-
 Tokens Parser_MatchToken(Parser* parser,
     Tokens tk,
     TScannerItemList* listOpt)
