@@ -31,7 +31,7 @@ SolidCompression=yes
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "C:\Users\thiago\source\repos\CPrime\bin-windows\cprime.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Release\CPrime.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\thiago\source\repos\CPrime\bin-windows\config.h"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\thiago\source\repos\CPrime\bin-windows\hello.c"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\thiago\source\repos\CPrime\bin-windows\Samples.txt"; DestDir: "{app}"; Flags: ignoreversion
