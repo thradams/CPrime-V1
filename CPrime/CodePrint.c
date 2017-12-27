@@ -2249,7 +2249,7 @@ static void TDeclaration_CodePrint(TProgram* program,
             {
                 TNodeClueList_CodePrint(options, &p->ClueList0, fp);
                 StrBuilder_Append(fp, "_default");
-                //Output_Append(fp, options,  " /*default*/\n");
+                
                 TNodeClueList_CodePrint(options, &p->ClueList1, fp);
                 Output_Append(fp, options, "\n{\n");
 
@@ -2259,7 +2259,6 @@ static void TDeclaration_CodePrint(TProgram* program,
 
                     fp);
 
-                Output_Append(fp, options, "\n");
                 Output_Append(fp, options, "}");
             }
             else
@@ -2521,7 +2520,7 @@ static bool FindHighLevelFunction(TProgram* program,
 
     bool bComplete = false;
 
-    TPointerList_Printf(&pDeclatator->PointerList);
+    //TPointerList_Printf(&pDeclatator->PointerList);
 
     //TODO FAZER FLAGS e OLHAR P TIPO E DECLARATOR AMBOS
     bool bIsPointerToObject = TPointerList_IsPointerToObject(&pDeclatator->PointerList);
@@ -3086,7 +3085,7 @@ void InstanciateDestroy2(TProgram* program,
                     TPointerList_PushBack(&declarator.PointerList, pNew);
                 }
              
-                TPointerList_Printf(&declarator.PointerList);
+                //TPointerList_Printf(&declarator.PointerList);
          
                 if (action == ActionCreate)
                 {
