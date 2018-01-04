@@ -8,7 +8,7 @@ Let´s do pair programming!
 ## What is C' ?
 C' (pronounced c prime) is a tool to help C programmers to write and maintain C code.
 The tool edit the file in place like a refactoring tool. You can think on it as a pair programming with a robot.
-Some implementation and maintenance, like destructor for data structures, is delegated for the robot and you are free to think in the program's logic instead of code something that can be automatically generated.
+Some implementation and maintenance, like destructor for data structures, are delegated for the robot and you are free to think in the program's logic instead of code something that can be automatically generated.
 
 ## How it works?
 
@@ -36,10 +36,12 @@ void X_Init(struct X* pX) _default
 ```
 
 If the struct X is changed then the C' will update the implementation for you.
-The robot uses the name of the function return, arguments and all AST to decide what to do.
+
+Other functions like init, delete and destroy also can be generated.
 
 Basic features:
 https://www.youtube.com/watch?v=cFHL6cf1n_k&feature=youtu.be
+
 
 ## Using the compiler
 
@@ -56,6 +58,7 @@ This will compile hello.c to hello2.c
 ## Include directories (Configuration file)
 
 Because C' is a full parser it requires the include dir.
+
 See [config files](config.md) for some configuration files.
 
 ### Command line to use the config file:
