@@ -3485,7 +3485,8 @@ void InstanciateDestroy2(TProgram* program,
 							"Delete",
 							fp);
 					}
-					else if (action == ActionDestroyContent)
+					else if (action == ActionDestroyContent ||
+						     action == ActionDestroy)
 					{
 						UnionTypeDefault(program,
 							options,
@@ -3493,6 +3494,10 @@ void InstanciateDestroy2(TProgram* program,
 							pInitExpressionText,
 							"Destroy",
 							fp);
+					}
+					else
+					{
+
 					}
 				}
 				else
