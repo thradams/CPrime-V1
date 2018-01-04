@@ -424,6 +424,8 @@ void TIfStatement_Delete(TIfStatement* p) _default
 
 void TStatement_Delete(TStatement* p) _default
 {
+    if (p != NULL)
+    {
     switch (TYPEOF(p))
     {
         case TForStatement_ID:
@@ -459,12 +461,15 @@ void TStatement_Delete(TStatement* p) _default
     default:
        break;
     }
+    }
 }
 
 
 
 void TBlockItem_Delete(TBlockItem* p) _default
 {
+    if (p != NULL)
+    {
     switch (TYPEOF(p))
     {
         case TForStatement_ID:
@@ -502,6 +507,7 @@ void TBlockItem_Delete(TBlockItem* p) _default
         break;
     default:
        break;
+    }
     }
 }
 
@@ -685,6 +691,8 @@ void TPrimaryExpressionLiteral_Delete(TPrimaryExpressionLiteral* p) _default
 
 void TExpression_Delete(TExpression* p) _default
 {
+    if (p != NULL)
+    {
     switch (TYPEOF(p))
     {
         case TBinaryExpression_ID:
@@ -707,6 +715,7 @@ void TExpression_Delete(TExpression* p) _default
         break;
     default:
        break;
+    }
     }
 }
 
@@ -976,6 +985,8 @@ const char* TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier* p)
 
 void TTypeSpecifier_Delete(TTypeSpecifier* p) _default
 {
+    if (p != NULL)
+    {
     switch (TYPEOF(p))
     {
         case TStructUnionSpecifier_ID:
@@ -992,6 +1003,7 @@ void TTypeSpecifier_Delete(TTypeSpecifier* p) _default
         break;
     default:
        break;
+    }
     }
 }
 
@@ -1349,6 +1361,8 @@ void TStructDeclaration_Delete(TStructDeclaration* p) _default
 
 void TAnyStructDeclaration_Delete(TAnyStructDeclaration* p) _default
 {
+    if (p != NULL)
+    {
     switch (TYPEOF(p))
     {
         case TStaticAssertDeclaration_ID:
@@ -1359,6 +1373,7 @@ void TAnyStructDeclaration_Delete(TAnyStructDeclaration* p) _default
         break;
     default:
        break;
+    }
     }
 }
 
@@ -1992,6 +2007,8 @@ const char* TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers* pDecla
 
 void TSpecifierQualifier_Delete(TSpecifierQualifier* pItem) _default
 {
+    if (pItem != NULL)
+    {
     switch (TYPEOF(pItem))
     {
         case TTypeQualifier_ID:
@@ -2012,10 +2029,13 @@ void TSpecifierQualifier_Delete(TSpecifierQualifier* pItem) _default
     default:
        break;
     }
+    }
 }
 
 void TDeclarationSpecifier_Delete(TDeclarationSpecifier* pItem) _default
 {
+    if (pItem != NULL)
+    {
     switch (TYPEOF(pItem))
     {
         case TTypeQualifier_ID:
@@ -2044,6 +2064,7 @@ void TDeclarationSpecifier_Delete(TDeclarationSpecifier* pItem) _default
         break;
     default:
        break;
+    }
     }
 }
 
@@ -2377,6 +2398,8 @@ int TAnyDeclaration_GetFileIndex(TAnyDeclaration* pDeclaration)
 
 void TAnyDeclaration_Delete(TAnyDeclaration* pDeclaration) _default
 {
+    if (pDeclaration != NULL)
+    {
     switch (TYPEOF(pDeclaration))
     {
         case TStaticAssertDeclaration_ID:
@@ -2390,6 +2413,7 @@ void TAnyDeclaration_Delete(TAnyDeclaration* pDeclaration) _default
         break;
     default:
        break;
+    }
     }
 }
 
@@ -2473,6 +2497,8 @@ void TInitializerList_Destroy(TInitializerList* p) _default
 
 void TInitializer_Delete(TInitializer* p) _default
 {
+    if (p != NULL)
+    {
     switch (TYPEOF(p))
     {
         case TBinaryExpression_ID:
@@ -2498,6 +2524,7 @@ void TInitializer_Delete(TInitializer* p) _default
         break;
     default:
        break;
+    }
     }
 }
 

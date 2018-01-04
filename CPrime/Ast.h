@@ -141,8 +141,11 @@ typedef struct TStatement TStatement;
 
 
 struct _union(TStaticAssertDeclaration |
-              TDeclaration |
-              TEofDeclaration) TAnyDeclaration;
+	TDeclaration |
+	TEofDeclaration) TAnyDeclaration
+{
+	EType Type;
+};
 
 typedef struct TAnyDeclaration TAnyDeclaration;
 void TAnyDeclaration_Delete(TAnyDeclaration* p);
@@ -353,15 +356,18 @@ void TIfStatement_Delete(TIfStatement* p);
 
 
 struct _union(TCompoundStatement |
-              TExpressionStatement |
-              TLabeledStatement |
-              TJumpStatement |
-              TIfStatement |
-              TDoStatement |
-              TForStatement |
-              TAsmStatement |
-              TWhileStatement |
-              TSwitchStatement) TStatement;
+	TExpressionStatement |
+	TLabeledStatement |
+	TJumpStatement |
+	TIfStatement |
+	TDoStatement |
+	TForStatement |
+	TAsmStatement |
+	TWhileStatement |
+	TSwitchStatement) TStatement
+{
+	EType Type;
+};
 
 typedef struct TStatement TStatement;
 void TStatement_Delete(TStatement* p);
@@ -385,7 +391,11 @@ typedef struct TDeclaration TDeclaration;
   declaration
   statement
 */
-struct _union(TDeclaration | TStatement) TBlockItem;
+struct _union(TDeclaration | TStatement) TBlockItem
+{
+	EType Type;
+};
+
 typedef struct TBlockItem TBlockItem;
 void TBlockItem_Delete(TBlockItem* p);
 
@@ -598,7 +608,10 @@ struct _union(TStorageSpecifier |
     TTypeSpecifier | 
     TTypeQualifier |
     TFunctionSpecifier | 
-    TAlignmentSpecifier) TDeclarationSpecifier;
+    TAlignmentSpecifier) TDeclarationSpecifier
+{
+	EType Type;
+};
 
 typedef struct TDeclarationSpecifier TDeclarationSpecifier;
 
@@ -614,7 +627,10 @@ specifier-qualifier-list:
   type-qualifier specifier-qualifier-listopt
 */
 struct _union(TTypeSpecifier |
-              TTypeQualifier) TSpecifierQualifier;
+              TTypeQualifier) TSpecifierQualifier
+{
+	EType Type;
+};
 
 
 /*
@@ -814,7 +830,10 @@ void TInitializerListType_Delete(TInitializerListType* p);
 
 
 
-struct _union(TInitializerListType | TExpression) TInitializer;
+struct _union(TInitializerListType | TExpression) TInitializer
+{
+	EType Type;
+};
 typedef struct TInitializer TInitializer;
 
 CAST(TInitializer, TInitializerListType)
@@ -966,7 +985,10 @@ struct-declaration:
   static_assert-declaration
 */
 struct _union(TStructDeclaration |
-              TStaticAssertDeclaration) TAnyStructDeclaration;
+              TStaticAssertDeclaration) TAnyStructDeclaration
+{
+	EType Type;
+};
 
 typedef struct TAnyStructDeclaration TAnyStructDeclaration;
 void TAnyStructDeclaration_Delete(TAnyStructDeclaration* p);
@@ -1054,7 +1076,10 @@ typedef struct TAtomicTypeSpecifier TAtomicTypeSpecifier;
 struct _union(TSingleTypeSpecifier |
               TAtomicTypeSpecifier |
               TEnumSpecifier |
-              TStructUnionSpecifier) TTypeSpecifier;
+              TStructUnionSpecifier) TTypeSpecifier
+{
+	EType Type;
+};
 
 typedef struct TTypeSpecifier TTypeSpecifier;
 
@@ -1359,7 +1384,10 @@ struct _union(TPrimaryExpressionLiteral |
     TUnaryExpressionOperator |
     TPostfixExpressionCore |
     TPostfixExpressionCore |
-    TCastExpressionType) TExpression;
+    TCastExpressionType) TExpression
+{
+	EType Type;
+};
 
 typedef struct TExpression TExpression;
 void TExpression_Delete(TExpression* p);

@@ -310,7 +310,7 @@ void ScannerItem_Init(ScannerItem* scannerItem) _default
     scannerItem->token = TK_NONE;
     scannerItem->Line = -1;
     scannerItem->FileIndex = -1;
-    scannerItem->bActive = true;
+    scannerItem->bActive = 1;
     scannerItem->pNext = NULL;
 }
 
