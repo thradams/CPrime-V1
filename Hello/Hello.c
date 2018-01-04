@@ -11,9 +11,33 @@ struct Circle
 };
 
 struct _union(Box | Circle) Shape
-;
+{
+	int id;
+};
 
-void Shape_Destroy(struct Shape* p) _default;
+struct X
+{
+	struct Shape * _auto pShape;
+};
+
+void X_Destroy(struct X* pX) _default
+{
+	if (pX->pShape != NULL)
+	{
+		switch (pX->pShape->id)
+		{
+		case Circle_ID:
+			Circle_Destroy((struct Circle*)pX->pShape);
+			break;
+		case Box_ID:
+			Box_Destroy((struct Box*)pX->pShape);
+			break;
+		default:
+			break;
+		}
+		free((void*)pX->pShape);
+	}
+}
 
 int main()
 {
