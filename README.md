@@ -3,7 +3,7 @@
 Let´s do pair programming!
 
 ![robot](/robots.jpg)
-(Picture courtesy of my nephew Bethina)
+(Picture courtesy of my niece Bethina)
 
 ## What is C' ?
 C' (pronounced c prime) is a tool to help C programmers to write and maintain C code.
