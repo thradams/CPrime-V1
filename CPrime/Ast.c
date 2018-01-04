@@ -426,7 +426,7 @@ void TStatement_Delete(TStatement* p) _default
 {
     if (p != NULL)
     {
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         case TForStatement_ID:
             TForStatement_Delete((TForStatement*)p);
@@ -470,7 +470,7 @@ void TBlockItem_Delete(TBlockItem* p) _default
 {
     if (p != NULL)
     {
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         case TForStatement_ID:
             TForStatement_Delete((TForStatement*)p);
@@ -693,7 +693,7 @@ void TExpression_Delete(TExpression* p) _default
 {
     if (p != NULL)
     {
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         case TBinaryExpression_ID:
             TBinaryExpression_Delete((TBinaryExpression*)p);
@@ -987,7 +987,7 @@ void TTypeSpecifier_Delete(TTypeSpecifier* p) _default
 {
     if (p != NULL)
     {
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         case TStructUnionSpecifier_ID:
             TStructUnionSpecifier_Delete((TStructUnionSpecifier*)p);
@@ -1363,7 +1363,7 @@ void TAnyStructDeclaration_Delete(TAnyStructDeclaration* p) _default
 {
     if (p != NULL)
     {
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         case TStaticAssertDeclaration_ID:
             TStaticAssertDeclaration_Delete((TStaticAssertDeclaration*)p);
@@ -2009,7 +2009,7 @@ void TSpecifierQualifier_Delete(TSpecifierQualifier* pItem) _default
 {
     if (pItem != NULL)
     {
-    switch (TYPEOF(pItem))
+    switch (pItem->Type)
     {
         case TTypeQualifier_ID:
             TTypeQualifier_Delete((TTypeQualifier*)pItem);
@@ -2036,7 +2036,7 @@ void TDeclarationSpecifier_Delete(TDeclarationSpecifier* pItem) _default
 {
     if (pItem != NULL)
     {
-    switch (TYPEOF(pItem))
+    switch (pItem->Type)
     {
         case TTypeQualifier_ID:
             TTypeQualifier_Delete((TTypeQualifier*)pItem);
@@ -2400,7 +2400,7 @@ void TAnyDeclaration_Delete(TAnyDeclaration* pDeclaration) _default
 {
     if (pDeclaration != NULL)
     {
-    switch (TYPEOF(pDeclaration))
+    switch (pDeclaration->Type)
     {
         case TStaticAssertDeclaration_ID:
             TStaticAssertDeclaration_Delete((TStaticAssertDeclaration*)pDeclaration);
@@ -2499,7 +2499,7 @@ void TInitializer_Delete(TInitializer* p) _default
 {
     if (p != NULL)
     {
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         case TBinaryExpression_ID:
             TBinaryExpression_Delete((TBinaryExpression*)p);

@@ -3049,15 +3049,22 @@ void UnionTypeDefault(TProgram* program,
 	Map2 map = MAPSTRINGTOPTR_INIT;
 	FindUnionSetOf(program, structName, &map);
 
+	StrBuilder strid = STRBUILDER_INIT;
+	FindRuntimeID(program, structName, &strid);
+
+
 	struct TemplateVar vars0[] = {
-		{ "p", parameterName }
+		{ "p", parameterName },
+	{ "id", strid.c_str }
 	};
 
 	StrBuilder_Template(fp,
-		"    switch (TYPEOF($p))\n"
+		"    switch ($p->$id)\n"
 		"    {\n",
 		vars0,
 		sizeof(vars0) / sizeof(vars0[0]));
+
+	StrBuilder_Destroy(&strid);
 
 	for (int i = 0; i < map.nHashTableSize; i++)
 	{
