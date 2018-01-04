@@ -1115,9 +1115,9 @@ TDeclarationSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualif
     for (int i = 0; i < p->Size; i++)
     {
         TSpecifierQualifier* pSpecifierQualifier = p->pData[i];
-        if (IS_TYPE(pSpecifierQualifier, TSingleTypeSpecifier_ID) ||
-            IS_TYPE(pSpecifierQualifier, TStructUnionSpecifier_ID) ||
-            IS_TYPE(pSpecifierQualifier, TEnumSpecifier_ID))
+        if (pSpecifierQualifier->Type == TSingleTypeSpecifier_ID ||
+            pSpecifierQualifier->Type == TStructUnionSpecifier_ID ||
+            pSpecifierQualifier->Type == TEnumSpecifier_ID)
         {
             pSpecifier = pSpecifierQualifier;
             break;
@@ -1824,7 +1824,7 @@ bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList* p, Tokens token, co
     for (int i = 0; i < p->Size; i++)
     {
         TSpecifierQualifier* pSpecifier = p->pData[i];
-        switch (TYPEOF(pSpecifier))
+        switch (pSpecifier->Type)
         {
             CASE(TSingleTypeSpecifier) :
             {     TSingleTypeSpecifier* pTSingleTypeSpecifier =
@@ -1910,7 +1910,7 @@ bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers* pDeclaration
     {
         TDeclarationSpecifier* pSpecifier = pDeclarationSpecifiers->pData[i];
 
-        switch (TYPEOF(pSpecifier))
+        switch (pSpecifier->Type)
         {
             CASE(TSingleTypeSpecifier) :
             {     TSingleTypeSpecifier* pTSingleTypeSpecifier =
@@ -2334,7 +2334,7 @@ bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecif
     for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
     {
         TDeclarationSpecifier* pItem = pDeclarationSpecifiers->pData[i];
-        switch (TYPEOF(pItem))
+        switch (pItem->Type)
         {
             CASE(TStorageSpecifier) :
             {
@@ -2364,7 +2364,7 @@ bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecif
 bool TAnyDeclaration_IsTypedef(TAnyDeclaration* pDeclaration)
 {
     bool bResult = false;
-    switch (TYPEOF(pDeclaration))
+    switch (pDeclaration->Type)
     {
     case TDeclaration_ID:
     {
@@ -2382,7 +2382,7 @@ bool TAnyDeclaration_IsTypedef(TAnyDeclaration* pDeclaration)
 int TAnyDeclaration_GetFileIndex(TAnyDeclaration* pDeclaration)
 {
     int result = -1;
-    switch (TYPEOF(pDeclaration))
+    switch (pDeclaration->Type)
     {
     case TDeclaration_ID:
         result = ((TDeclaration*)pDeclaration)->FileIndex;
@@ -2577,7 +2577,7 @@ TDeclaration* TProgram_FindDeclaration(TProgram* p, const char* name)
 {
     TTypePointer* pt = SymbolMap_Find(&p->GlobalScope, name);
     if (pt != NULL &&
-        IS_TYPE(pt, TDeclaration_ID))
+        pt->Type == TDeclaration_ID)
     {
         return (TDeclaration*)pt;
     }
@@ -2589,7 +2589,7 @@ TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name)
 {
     TTypePointer* pt = SymbolMap_Find(&p->GlobalScope, name);
     if (pt != NULL &&
-        IS_TYPE(pt, TDeclaration_ID))
+        pt->Type == TDeclaration_ID)
     {
         return (TDeclaration*)pt;
     }
@@ -2708,7 +2708,7 @@ bool EvaluateConstantExpression(TExpression *  p, int *pResult)
     }
     bool b = false;
 
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         CASE(TBinaryExpression) :
         {

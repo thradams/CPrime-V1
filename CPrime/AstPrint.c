@@ -230,7 +230,7 @@ bool TStatement_Print(TStatement *  p, bool b, FILE* fp)
         return false;
     }
 
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         case TExpressionStatement_ID:
         b = TExpressionStatement_Print((TExpressionStatement*)p, b, fp);
@@ -289,7 +289,7 @@ bool TBlockItem_Print(TBlockItem *  p, bool b, FILE* fp)
         fprintf(fp, ",");
     }
 
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         case TStaticAssertDeclaration_ID:
         break;
@@ -467,7 +467,7 @@ bool TExpression_Print(TExpression *  p, const char* name, bool b, FILE* fp)
     fprintf(fp, "\"%s\":{", name);
     b = false;
 
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         CASE(TBinaryExpression) :
             b = TExpression_Print(((TBinaryExpression*)p)->pExpressionLeft, "l-expr", b, fp);
@@ -708,7 +708,7 @@ bool TTypeSpecifier_Print(TTypeSpecifier*  p, bool b, FILE* fp)
         return true;
     }
 
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         case TStructUnionSpecifier_ID:
         //TStructDeclaration_Print();
@@ -779,7 +779,7 @@ bool TInitializer_Print(TInitializer* p, bool b, FILE* fp)
         return false;
     }
 
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         case TPrimaryExpression_ID:
         case TUnaryExpressionOperator_ID:
@@ -1015,7 +1015,7 @@ bool TInitDeclaratorList_Print(TInitDeclaratorList *p, bool b, FILE* fp)
 
 bool SpecifierQualifier_Print(TSpecifierQualifier* pItem, bool b, FILE* fp)
 {
-    switch (TYPEOF(pItem))
+    switch (pItem->Type)
     {
         CASE(TStorageSpecifier) :
             b = StorageSpecifier_Print((TStorageSpecifier*)pItem, b, fp);
@@ -1082,7 +1082,7 @@ bool TStructDeclarationBase_Print(TStructDeclaration* p, bool b, FILE* fp)
 
 bool TStructDeclaration_Print(TAnyStructDeclaration* p, bool b, FILE* fp)
 {
-    switch (TYPEOF(p))
+    switch (p->Type)
     {
         case TStructDeclaration_ID:
         b = TStructDeclarationBase_Print((TStructDeclaration*)p, b, fp);
@@ -1195,7 +1195,7 @@ bool TPointer_Print(TPointer* pPointer, bool b, FILE* fp)
 
 bool TDeclarationSpecifier_Print(TDeclarationSpecifier* pItem, bool b, FILE* fp)
 {
-    switch (TYPEOF(pItem))
+    switch (pItem->Type)
     {
         CASE(TStorageSpecifier) :
             b = StorageSpecifier_Print((TStorageSpecifier*)pItem, b, fp);
@@ -1288,7 +1288,7 @@ bool TParameter_Print(TParameter* p, bool b, FILE* fp)
 
 bool TAnyDeclaration_Print(TAnyDeclaration *pDeclaration, bool b, FILE* fp)
 {
-    switch (TYPEOF(pDeclaration))
+    switch (pDeclaration->Type)
     {
 	case TEofDeclaration_ID:
 		break;

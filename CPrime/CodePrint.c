@@ -407,7 +407,7 @@ static void TIfStatement_CodePrint(TProgram* program, Options * options, TIfStat
 	TNodeClueList_CodePrint(options, &p->ClueList2, fp);
 	Output_Append(fp, options, ")");
 
-	if (!IS_TYPE(p->pStatement, TCompoundStatement_ID))
+	if (p->pStatement->Type != TCompoundStatement_ID)
 		Output_Append(fp, options, "");
 
 	if (p->pStatement)
@@ -432,7 +432,7 @@ static void TStatement_CodePrint(TProgram* program, Options * options, TStatemen
 		return;
 	}
 
-	switch (TYPEOF(p))
+	switch (p->Type)
 	{
 	case TExpressionStatement_ID:
 		TExpressionStatement_CodePrint(program, options, (TExpressionStatement*)p, fp);
@@ -487,7 +487,7 @@ static void TBlockItem_CodePrint(TProgram* program, Options * options, TBlockIte
 	}
 
 
-	switch (TYPEOF(p))
+	switch (p->Type)
 	{
 	case TEofDeclaration_ID:
 		break;
@@ -725,7 +725,7 @@ static void TExpression_CodePrint(TProgram* program, Options * options, TExpress
 
 
 
-	switch (TYPEOF(p))
+	switch (p->Type)
 	{
 		CASE(TBinaryExpression) :
 		{
@@ -1211,7 +1211,7 @@ static void TInitializer_CodePrint(TProgram* program,
 	{
 		return;
 	}
-	if (IS_TYPE(pTInitializer, TInitializerListType_ID))
+	if (pTInitializer->Type == TInitializerListType_ID)
 	{
 		TInitializerListType_CodePrint(program,
 			options,
@@ -1438,7 +1438,7 @@ static void TStructDeclaration_CodePrint(TProgram* program,
 
 static void TAnyStructDeclaration_CodePrint(TProgram* program, Options * options, TAnyStructDeclaration* p, StrBuilder* fp)
 {
-	switch (TYPEOF(p))
+	switch (p->Type)
 	{
 	case TStructDeclaration_ID:
 		TStructDeclaration_CodePrint(program, options, (TStructDeclaration*)p, fp);
@@ -1509,7 +1509,7 @@ void TSpecifierQualifierList_CodePrint(TProgram* program,
 	for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
 	{
 		TSpecifierQualifier* pItem = pDeclarationSpecifiers->pData[i];
-		switch (TYPEOF(pItem))
+		switch (pItem->Type)
 		{
 
 			CASE(TSingleTypeSpecifier) :
@@ -1553,7 +1553,7 @@ void TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDec
 	{
 		TDeclarationSpecifier* pItem = pDeclarationSpecifiers->pData[i];
 
-		switch (TYPEOF(pItem))
+		switch (pItem->Type)
 		{
 
 			CASE(TSingleTypeSpecifier) :
@@ -2362,7 +2362,7 @@ static void TStaticAssertDeclaration_CodePrint(TProgram* program,
 
 static void TAnyDeclaration_CodePrint(TProgram* program, Options * options, TAnyDeclaration *pDeclaration, StrBuilder* fp)
 {
-	switch (TYPEOF(pDeclaration))
+	switch (pDeclaration->Type)
 	{
 	case TEofDeclaration_ID:
 		TEofDeclaration_CodePrint(program, options, (TEofDeclaration*)pDeclaration, fp);
@@ -3143,7 +3143,7 @@ void InstanciateDestroy2(TProgram* program,
 		return;
 	}
 
-	if (IS_TYPE(pMainSpecifier, TSingleTypeSpecifier_ID))
+	if (pMainSpecifier->Type == TSingleTypeSpecifier_ID)
 	{
 		TSingleTypeSpecifier* pSingleTypeSpecifier =
 			(TSingleTypeSpecifier*)pMainSpecifier;
@@ -3370,7 +3370,7 @@ void InstanciateDestroy2(TProgram* program,
 			}
 		}
 	}
-	else if (IS_TYPE(pMainSpecifier, TStructUnionSpecifier_ID))
+	else if (pMainSpecifier->Type == TStructUnionSpecifier_ID)
 	{
 		TStructUnionSpecifier* pStructUnionSpecifier =
 			(TStructUnionSpecifier*)pMainSpecifier;
@@ -3721,7 +3721,7 @@ void InstanciateDestroy2(TProgram* program,
 		}//complete
 
 	}
-	else if (IS_TYPE(pMainSpecifier, TEnumSpecifier_ID))
+	else if (pMainSpecifier->Type == TEnumSpecifier_ID)
 	{
 		TEnumSpecifier *pEnumSpecifier =
 			TDeclarationSpecifier_As_TEnumSpecifier(pMainSpecifier);

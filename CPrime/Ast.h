@@ -14,7 +14,7 @@
 #define CAST(FROM, TO) \
 static inline TO *  FROM##_As_##TO( FROM*  p)\
 {\
-if (p != NULL && IS_TYPE( (p), TO##_ID))\
+if (p != NULL &&  p->Type == TO##_ID)\
     return (  TO * )p;\
   return NULL;\
 }\
@@ -77,14 +77,10 @@ typedef enum EType
     TParameter_ID
 } EType;
 
-struct TypeStruct
+struct TTypePointer
 {
-    EType type;
+	EType Type;
 };
-
-inline EType TypeOf(void* p) { return p ? ((struct TypeStruct*)(p))->type : TypeNull;  }
-#define TYPEOF(p) TypeOf((void*) (p))
-#define IS_TYPE(x, ID) (TYPEOF(x) == (ID))
 
 
 #define CASE(T) case T##_ID
