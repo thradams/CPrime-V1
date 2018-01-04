@@ -1836,6 +1836,65 @@ void GetPrefixSuffix(const char* psz, StrBuilder* prefix, StrBuilder* suffix)
     }
 }
 
+static void FindRuntimeID(TProgram* program,
+	const char* structOrTypeName,
+	StrBuilder* idname)
+{
+	////////////
+	TDeclaration * pFinalDecl =
+		TProgram_GetFinalTypeDeclaration(program, structOrTypeName);
+	int typeInt = 0;
+	TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+	if (pFinalDecl)
+	{
+		typeInt = 1; //typefef
+		if (pFinalDecl->Specifiers.Size > 1)
+		{
+			pStructUnionSpecifier =
+				TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
+			if (pStructUnionSpecifier->Name)
+			{
+				//procura a mais completa
+				pStructUnionSpecifier =
+					SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Name);
+			}
+		}
+	}
+	else
+	{
+		typeInt = 2; //struct
+		pStructUnionSpecifier =
+			SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);
+	}
+	//////////////
+
+	if (pStructUnionSpecifier &&
+		pStructUnionSpecifier->Token2 == TK__UNION)
+	{
+		if (pStructUnionSpecifier->StructDeclarationList.Size > 0)
+		{
+			TStructDeclaration* pStructDeclaration =
+				TAnyStructDeclaration_As_TStructDeclaration(pStructUnionSpecifier->StructDeclarationList.pItems[0]);
+			if (pStructDeclaration)
+			{
+				TStructDeclarator* pStructDeclarator =
+					pStructDeclaration->DeclaratorList.pHead;
+
+				//o primeiro item tem que ser o ID
+				if (pStructDeclarator)
+				{
+					const char* structDeclaratorName =
+						TDeclarator_GetName(pStructDeclarator->pDeclarator);
+					//if (TSpecifierQualifierList_IsAnyInteger(&pStructDeclaration->SpecifierQualifierList))
+					{
+						StrBuilder_Set(idname, structDeclaratorName);
+					}
+				}
+			}
+		}
+	}
+}
+
 void FindUnionSetOf(TProgram* program,
     const char* structOrTypeName,
     Map2* map)
@@ -2116,18 +2175,18 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
                 if (pStructUnionSpecifier &&
                     pStructUnionSpecifier->Token2 == TK__UNION)
                 {
-                    Map2 map = MAPSTRINGTOPTR_INIT;
-                    FindUnionSetOf(program, pStructUnionSpecifier->Name, &map);
+					Map2 map = MAPSTRINGTOPTR_INIT;
+					FindUnionSetOf(program, pStructUnionSpecifier->Name, &map);
 
-                    struct TemplateVar vars0[] = {
-                        { "p", parameterName[0] }
-                    };
+					struct TemplateVar vars0[] = {
+						{ "p", parameterName[0] }
+					};
 
-                    StrBuilder_Template(fp,
-                        "    switch (TYPEOF($p))\n"
-                        "    {\n",
-                        vars0,
-                        sizeof(vars0) / sizeof(vars0[0]));
+					StrBuilder_Template(fp,
+						"    switch (TYPEOF($p))\n"
+						"    {\n",
+						vars0,
+						sizeof(vars0) / sizeof(vars0[0]));
 
                     for (int i = 0; i < map.nHashTableSize; i++)
                     {

@@ -21,9 +21,8 @@
 
 
 
-#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\shared"
-#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\um"
-#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\ucrt" 
-#pragma dir "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include"
-
+#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\shared"
+#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\um"
+#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\ucrt" 
+#pragma dir "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\include"
 
