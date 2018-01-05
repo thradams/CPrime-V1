@@ -1887,6 +1887,8 @@ static void FindRuntimeID(TProgram* program,
 						TDeclarator_GetName(pStructDeclarator->pDeclarator);
 					//if (TSpecifierQualifierList_IsAnyInteger(&pStructDeclaration->SpecifierQualifierList))
 					{
+
+
 						StrBuilder_Set(idname, structDeclaratorName);
 					}
 				}
@@ -1894,6 +1896,71 @@ static void FindRuntimeID(TProgram* program,
 		}
 	}
 }
+
+
+static void FindIDValue(TProgram* program,
+	const char* structOrTypeName,
+	StrBuilder* idname)
+{
+	////////////
+	TDeclaration * pFinalDecl =
+		TProgram_GetFinalTypeDeclaration(program, structOrTypeName);
+	int typeInt = 0;
+	TStructUnionSpecifier* pStructUnionSpecifier = NULL;
+	if (pFinalDecl)
+	{
+		typeInt = 1; //typefef
+		if (pFinalDecl->Specifiers.Size > 1)
+		{
+			pStructUnionSpecifier =
+				TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
+			if (pStructUnionSpecifier->Name)
+			{
+				//procura a mais completa
+				pStructUnionSpecifier =
+					SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Name);
+			}
+		}
+	}
+	else
+	{
+		typeInt = 2; //struct
+		pStructUnionSpecifier =
+			SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);
+	}
+	//////////////
+
+	if (pStructUnionSpecifier)
+	{
+		if (pStructUnionSpecifier->StructDeclarationList.Size > 0)
+		{
+			TStructDeclaration* pStructDeclaration =
+				TAnyStructDeclaration_As_TStructDeclaration(pStructUnionSpecifier->StructDeclarationList.pItems[0]);
+			if (pStructDeclaration)
+			{
+				TStructDeclarator* pStructDeclarator =
+					pStructDeclaration->DeclaratorList.pHead;
+
+				//o primeiro item tem que ser o ID
+				if (pStructDeclarator)
+				{
+					const char* structDeclaratorName =
+						TDeclarator_GetName(pStructDeclarator->pDeclarator);
+					//if (TSpecifierQualifierList_IsAnyInteger(&pStructDeclaration->SpecifierQualifierList))
+					{
+						Options options2 = OPTIONS_INIT;
+						TInitializer_CodePrint(program, &options2, pStructDeclarator->pDeclarator,
+							(TDeclarationSpecifiers*)&pStructDeclaration->SpecifierQualifierList,
+							pStructDeclarator->pInitializer, idname);
+
+						//StrBuilder_Set(idname, structDeclaratorName);
+					}
+				}
+			}
+		}
+	}
+}
+
 
 void FindUnionSetOf(TProgram* program,
 	const char* structOrTypeName,
@@ -3070,16 +3137,23 @@ void UnionTypeDefault(TProgram* program,
 	{
 		if (map.pHashTable[i])
 		{
+			StrBuilder idvalue = STRBUILDER_INIT;
+
+			FindIDValue(program,
+				(const char*)map.pHashTable[i]->Key,
+				&idvalue);
+
 			struct TemplateVar vars[] = {
 				{ "p", parameterName },
 			{ "type", (const char*)map.pHashTable[i]->Key },
-			{ "suffix", functionSuffix }
+			{ "suffix", functionSuffix },
+	  {"value", idvalue.c_str}
 			};
 			if ((int)map.pHashTable[i]->pValue == 2)
 			{
 				//2 is struct
 				StrBuilder_Template(fp,
-					"        case $type\b_ID:\n"
+					"        case $value:\n"
 					"            $type\b_$suffix((struct $type*)$p);\n"
 					"        break;\n",
 					vars,
@@ -3089,13 +3163,13 @@ void UnionTypeDefault(TProgram* program,
 			{
 				//1 is typedef
 				StrBuilder_Template(fp,
-					"        case $type\b_ID:\n"
+					"        case $value:\n"
 					"            $type\b_$suffix(($type*)$p);\n"
 					"        break;\n",
 					vars,
 					sizeof(vars) / sizeof(vars[0]));
 			}
-
+			StrBuilder_Destroy(&idvalue);
 		}
 	}
 
@@ -3486,7 +3560,7 @@ void InstanciateDestroy2(TProgram* program,
 							fp);
 					}
 					else if (action == ActionDestroyContent ||
-						     action == ActionDestroy)
+						action == ActionDestroy)
 					{
 						UnionTypeDefault(program,
 							options,
