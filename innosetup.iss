@@ -22,7 +22,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
-OutputDir=d:\InnoSetup
+OutputDir=bin-windows
 OutputBaseFilename=setup
 Compression=lzma
 SolidCompression=yes
@@ -39,3 +39,4 @@ Source: "C:\Users\thiago\source\repos\CPrime\bin-windows\Samples.txt"; DestDir: 
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+
