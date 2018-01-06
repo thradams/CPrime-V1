@@ -1037,10 +1037,10 @@ static void TSingleTypeSpecifier_CodePrint(TProgram* program, Options * options,
 static void TDesignator_CodePrint(TProgram* program, Options * options, TDesignator* p, StrBuilder* fp)
 {
 	//    if (b)
-	  //      Output_Append(fp, options,  ",");
+	//      Output_Append(fp, options,  ",");
 
 
-		//
+	//
 	if (p->Name)
 	{
 		//.identifier
@@ -1356,9 +1356,9 @@ static void TDeclarator_CodePrint(TProgram* program, Options * options, TDeclara
 }
 
 //void TInitDeclarator_CodePrint(TProgram* program, 
-	//Options * options, 
-	//TI/nitDeclarator* p,    
-	//StrBuilder* fp);
+//Options * options, 
+//TI/nitDeclarator* p,    
+//StrBuilder* fp);
 
 
 
@@ -1717,7 +1717,7 @@ static bool FindVectorStructPattern(TProgram* program,
 						//este eh array
 						//vamos ver o tipo do item e se ele eh auto
 						//pStructDeclaration->SpecifierQualifierList
-					   // StrBuilder itemTypeStr = STRBUILDER_INIT;
+						// StrBuilder itemTypeStr = STRBUILDER_INIT;
 						TTypeName* pTypeName = NULL;
 						Options  options = OPTIONS_INIT;
 						options.bPrintRepresentation = true;
@@ -1768,9 +1768,30 @@ const char* FindValue(const char* name, int namesize, struct TemplateVar* args, 
 void StrBuilder_Template(StrBuilder * p,
 	const char* tmpt,
 	struct TemplateVar* vars,
-	int size)
+	int size,
+	int identationLevel)
 {
+
+
 	const char* pch = tmpt;
+
+	//Move tudo para o lado de acordo com a identacao
+	for (int i = 0; i < identationLevel * 4; i++)
+	{
+		StrBuilder_AppendChar(p, ' ');
+	}
+
+	//agora nove de acordo com os espacos
+	while (*pch == ' ')
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			StrBuilder_AppendChar(p, ' ');
+		}
+
+		pch++;
+	}
+
 	while (*pch)
 	{
 		if (*pch == '$')
@@ -1808,12 +1829,39 @@ void StrBuilder_Template(StrBuilder * p,
 			//$part1_part2
 			//$part1\b_part2
 			//
-			if (*pch != '\b')
+
+			if (*pch == '\n')
 			{
 				StrBuilder_AppendChar(p, *pch);
-			}
+				pch++;
 
-			pch++;
+
+				if (*pch != '\0') //se for o ultimo nao move
+				{//Move tudo para o lado de acordo com a identacao
+					for (int i = 0; i < identationLevel * 4; i++)
+					{
+						StrBuilder_AppendChar(p, ' ');
+					}
+
+					//agora nove de acordo com os espacos
+					while (*pch == ' ')
+					{
+						for (int j = 0; j < 4; j++)
+						{
+							StrBuilder_AppendChar(p, ' ');
+						}
+						pch++;
+					}
+				}
+			}
+			else
+			{
+				if (*pch != '\b')
+				{
+					StrBuilder_AppendChar(p, *pch);
+				}
+				pch++;
+			}
 		}
 	}
 }
@@ -2057,12 +2105,12 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 
 	//if (parameters[0])
 	//{
-		//TStructUnionSpecifier* pStructUnionSpecifier =
-		//	GetStructSpecifier(program, &parameters[0]->Specifiers);
-		//if (pStructUnionSpecifier &&
-			//pStructUnionSpecifier->Token2 == TK__UNION)
+	//TStructUnionSpecifier* pStructUnionSpecifier =
+	//	GetStructSpecifier(program, &parameters[0]->Specifiers);
+	//if (pStructUnionSpecifier &&
+	//pStructUnionSpecifier->Token2 == TK__UNION)
 	//	{
-		//	bIsPolimorphicStruct = true;
+	//	bIsPolimorphicStruct = true;
 	//	}
 	//}
 
@@ -2152,43 +2200,44 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 				&arrayName))
 			{
 				const char* pszTemplatePointer =
-					"    if ($nelements > $p->Capacity)\n"
-					"    {\n"
-					"        $type** pnew = $p->$data;\n"
-					"        pnew = ($type**)realloc(pnew, $nelements * sizeof($type*));\n"
-					"        if (pnew)\n"
-					"        {\n"
-					"            $p->$data = pnew;\n"
-					"            $p->Capacity = $nelements;\n"
-					"        }\n"
-					"    }\n";
+					"if ($nelements > $p->Capacity)\n"
+					"{\n"
+					" $type** pnew = $p->$data;\n"
+					" pnew = ($type**)realloc(pnew, $nelements * sizeof($type*));\n"
+					" if (pnew)\n"
+					" {\n"
+					"  $p->$data = pnew;\n"
+					"  $p->Capacity = $nelements;\n"
+					" }\n"
+					"}\n";
 
 				const char* pszTemplateNotPointer =
-					"    if ($nelements > $p->Capacity)\n"
-					"    {\n"
-					"        $type* pnew = $p->$data;\n"
-					"        pnew = ($type*)realloc(pnew, $nelements * sizeof($type));\n"
-					"        if (pnew)\n"
-					"        {\n"
-					"            $p->$data = pnew;\n"
-					"            $p->Capacity = $nelements;\n"
-					"        }\n"
-					"    }\n";
+					"if ($nelements > $p->Capacity)\n"
+					"{\n"
+					" $type* pnew = $p->$data;\n"
+					" pnew = ($type*)realloc(pnew, $nelements * sizeof($type));\n"
+					" if (pnew)\n"
+					" {\n"
+					"  $p->$data = pnew;\n"
+					"  $p->Capacity = $nelements;\n"
+					" }\n"
+					"}\n";
 
 				const char* pszTemplate =
 					bItemIsPointer ? pszTemplatePointer : pszTemplateNotPointer;
 
 				struct TemplateVar vars[] = {
-					{"p", parameterName[0]},
-					{"nelements", parameterName[1] },
-					{"type", itemType.c_str},
-					{"data", arrayName.c_str}
+					{ "p", parameterName[0] },
+				{ "nelements", parameterName[1] },
+				{ "type", itemType.c_str },
+				{ "data", arrayName.c_str }
 				};
 
 				StrBuilder_Template(fp,
 					pszTemplate,
 					vars,
-					sizeof(vars) / sizeof(vars[0]));
+					sizeof(vars) / sizeof(vars[0]),
+					1 /*options->IdentationLevel*/);
 			}
 
 			StrBuilder_Destroy(&itemType);
@@ -2210,30 +2259,31 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 				&arrayName))
 			{
 				const char* pszTemplate =
-					"    if ($p->Size + 1 > $p->Capacity)\n"
-					"    {\n"
-					"        int n = $p->Capacity * 2;\n"
-					"        if (n == 0)\n"
-					"        {\n"
-					"          n = 1;\n"
-					"        }\n"
-					"        $prefix\b_Reserve($p, n);\n"
-					"    }\n"
-					"    $p->$data[$p->Size] = $nelements;\n"
-					"    $p->Size++;\n";
+					"if ($p->Size + 1 > $p->Capacity)\n"
+					"{\n"
+					" int n = $p->Capacity * 2;\n"
+					" if (n == 0)\n"
+					" {\n"
+					"  n = 1;\n"
+					" }\n"
+					" $prefix\b_Reserve($p, n);\n"
+					"}\n"
+					"$p->$data[$p->Size] = $nelements;\n"
+					"$p->Size++;\n";
 
 				struct TemplateVar vars[] = {
 					{ "p", parameterName[0] },
-					{ "nelements", parameterName[1] },
-					{ "type", itemType.c_str },
-					{ "data", arrayName.c_str },
-					{ "prefix", functionPrefix.c_str }
+				{ "nelements", parameterName[1] },
+				{ "type", itemType.c_str },
+				{ "data", arrayName.c_str },
+				{ "prefix", functionPrefix.c_str }
 				};
 
 				StrBuilder_Template(fp,
 					pszTemplate,
 					vars,
-					sizeof(vars) / sizeof(vars[0]));
+					sizeof(vars) / sizeof(vars[0]),
+					1/*options->IdentationLevel*/);
 			}
 
 			StrBuilder_Destroy(&itemType);
@@ -2248,12 +2298,14 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 				if (pStructUnionSpecifier &&
 					pStructUnionSpecifier->Token2 == TK__UNION)
 				{
+					options->IdentationLevel++;
 					UnionTypeDefault(program,
 						options,
 						pStructUnionSpecifier->Name,
 						parameterName[0],
 						functionSuffix.c_str,
 						fp);
+					options->IdentationLevel--;
 				}
 			}
 		}
@@ -2760,8 +2812,8 @@ static bool FindHighLevelFunction(TProgram* program,
 											pInitExpressionText);
 
 										// StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-										  //   "free((void*)%s[i]);",
-											// pInitExpressionText);
+										//   "free((void*)%s[i]);",
+										// pInitExpressionText);
 
 										options->IdentationLevel--;
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
@@ -2780,8 +2832,8 @@ static bool FindHighLevelFunction(TProgram* program,
 											pInitExpressionText);
 
 										// StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-										  //   "free((void*)%s[0]);",
-										  //   pInitExpressionText);
+										//   "free((void*)%s[0]);",
+										//   pInitExpressionText);
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 											"free((void*)%s);",
@@ -3126,10 +3178,11 @@ void UnionTypeDefault(TProgram* program,
 	};
 
 	StrBuilder_Template(fp,
-		"    switch ($p->$id)\n"
-		"    {\n",
+		"switch ($p->$id)\n"
+		"{\n",
 		vars0,
-		sizeof(vars0) / sizeof(vars0[0]));
+		sizeof(vars0) / sizeof(vars0[0]),
+		options->IdentationLevel);
 
 	StrBuilder_Destroy(&strid);
 
@@ -3147,38 +3200,41 @@ void UnionTypeDefault(TProgram* program,
 				{ "p", parameterName },
 			{ "type", (const char*)map.pHashTable[i]->Key },
 			{ "suffix", functionSuffix },
-	  {"value", idvalue.c_str}
+			{ "value", idvalue.c_str }
 			};
 			if ((int)map.pHashTable[i]->pValue == 2)
 			{
 				//2 is struct
 				StrBuilder_Template(fp,
-					"        case $value:\n"
-					"            $type\b_$suffix((struct $type*)$p);\n"
-					"        break;\n",
+					" case $value:\n"
+					"  $type\b_$suffix((struct $type*)$p);\n"
+					" break;\n",
 					vars,
-					sizeof(vars) / sizeof(vars[0]));
+					sizeof(vars) / sizeof(vars[0]),
+					options->IdentationLevel);
 			}
 			else
 			{
 				//1 is typedef
 				StrBuilder_Template(fp,
-					"        case $value:\n"
-					"            $type\b_$suffix(($type*)$p);\n"
-					"        break;\n",
+					" case $value:\n"
+					"  $type\b_$suffix(($type*)$p);\n"
+					" break;\n",
 					vars,
-					sizeof(vars) / sizeof(vars[0]));
+					sizeof(vars) / sizeof(vars[0]),
+					options->IdentationLevel);
 			}
 			StrBuilder_Destroy(&idvalue);
 		}
 	}
 
 	StrBuilder_Template(fp,
-		"    default:\n"
-		"       break;\n"
-		"    }\n",
+		" default:\n"
+		" break;\n"
+		"}\n",
 		NULL,
-		0);
+		0,
+		options->IdentationLevel);
 
 	Map2_Destroy(&map);
 }
@@ -3542,9 +3598,9 @@ void InstanciateDestroy2(TProgram* program,
 				{
 					//if (bCanApplyFunction)
 					//{
-						//o primeiro nao precisa do {
+					//o primeiro nao precisa do {
 
-					  //  StrBuilder_AppendFmt(fp, "/*%s=*/{", pInitExpressionText);
+					//  StrBuilder_AppendFmt(fp, "/*%s=*/{", pInitExpressionText);
 					//}
 				}
 
@@ -3552,22 +3608,26 @@ void InstanciateDestroy2(TProgram* program,
 				{
 					if (action == ActionDelete)
 					{
+						options->IdentationLevel++;
 						UnionTypeDefault(program,
 							options,
 							pStructUnionSpecifier->Name,
 							pInitExpressionText,
 							"Delete",
 							fp);
+						options->IdentationLevel--;
 					}
 					else if (action == ActionDestroyContent ||
 						action == ActionDestroy)
 					{
+						options->IdentationLevel++;
 						UnionTypeDefault(program,
 							options,
 							pStructUnionSpecifier->Name,
 							pInitExpressionText,
 							"Destroy",
 							fp);
+						options->IdentationLevel--;
 					}
 					else
 					{
@@ -3750,9 +3810,9 @@ void InstanciateDestroy2(TProgram* program,
 					if (bIsAutoPointerToAutoPointer)
 					{
 						//    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
-						  //  options->IdentationLevel--;
-							//StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
-							//StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+						//  options->IdentationLevel--;
+						//StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+						//StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
 					}
 				}
 				else if (action == ActionDelete)
@@ -3782,8 +3842,8 @@ void InstanciateDestroy2(TProgram* program,
 				{
 					//if (bCanApplyFunction)
 					//{
-					  //  //o primeiro nao tem 
-						//StrBuilder_Append(fp, "}");
+					//  //o primeiro nao tem 
+					//StrBuilder_Append(fp, "}");
 					//}
 				}
 			}
