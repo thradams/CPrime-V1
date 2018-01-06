@@ -251,7 +251,7 @@ void TFileArray_PushBack(TFileArray* p, TFile* pItem) _default
         int n = p->Capacity * 2;
         if (n == 0)
         {
-          n = 1;
+            n = 1;
         }
         TFileArray_Reserve(p, n);
     }
@@ -329,7 +329,7 @@ void StackInts_PushBack(StackInts* p, State e) _default
         int n = p->Capacity * 2;
         if (n == 0)
         {
-          n = 1;
+            n = 1;
         }
         StackInts_Reserve(p, n);
     }

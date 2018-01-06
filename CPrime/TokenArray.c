@@ -48,7 +48,7 @@ void TokenArray_PushBack(TokenArray* p, PPToken* pItem) _default
         int n = p->Capacity * 2;
         if (n == 0)
         {
-          n = 1;
+            n = 1;
         }
         TokenArray_Reserve(p, n);
     }
