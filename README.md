@@ -341,224 +341,162 @@ void Items_Destroy(struct Items* pItems) _default
 
 ## Polimorphism
 
+https://www.youtube.com/watch?v=vzouZGBV8YQ&feature=youtu.be
+
 Use the \_union(Type1 | Type2) to define a abstract type that
 can point to Type1 Type2 etc...
 
 ```c
-#include "config.h"
-#include <stdlib.h>
-#include <stdio.h>
 
-#define TYPEOF(X) (((struct { int i; } *)(X))->i)
-
-enum
+struct Box
 {
-    Other_ID,
-    Circle_ID,
-    Car_ID,
-    Triangle_ID,
-    Box_ID,
+	int id _defval(1);
 };
 
-
-typedef struct Box {
-    int i _defval( Box_ID);
-} Box;
-
-struct Circle {
-    int i _defval( Circle_ID);
-};
-
-struct Car {
-    int i;
-};
-
-typedef struct {
-    int i _defval(Triangle_ID);
-} Triangle;
-
-void Car_Draw(struct Car* p) {
-}
-
-void Car_Delete(struct Car* p) _default
-{
-    if (p != NULL)
-    {
-        free((void*)p);
-    }
-
-}
-
-void Box_Draw(struct Box* p)
-{
-}
-
-struct Box* Box_Create(void) _default
+struct Box* Box_Create() _default
 {
     struct Box* p = (struct Box*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->i =  Box_ID;
+        p->id = 1;
     }
     return p;
-
 }
-
-void Box_Delete(struct Box* p) _default
+void Box_Delete(struct Box* pBox) _default
 {
-    if (p != NULL)
+    if (pBox != NULL)
     {
-        free((void*)p);
+        free((void*)pBox);
     }
+}
+void Box_Draw(struct Box* pBox)
+{
+	printf("Box\n");
+}
 
-}
-void Circle_Draw(struct Circle* p)
+struct Circle
 {
-}
-void Circle_Delete(struct Circle* p) _default
+	int id _defval(2);
+};
+struct Circle* Circle_Create() _default
 {
+    struct Circle* p = (struct Circle*) malloc(sizeof * p);
     if (p != NULL)
     {
-        free((void*)p);
-    }
-
-}
-void Triangle_Draw(Triangle* p)
-{
-}
-void Triangle_Delete(Triangle* p) _default
-{
-    if (p != NULL)
-    {
-        free((void*)p);
-    }
-
-}
-
-
-Triangle* Triangle_Create() _default
-{
-    Triangle *p = (Triangle*) malloc(sizeof * p);
-    if (p != NULL)
-    {
-        p->i = Triangle_ID;
+        p->id = 2;
     }
     return p;
-
 }
-
-typedef struct _union(Car | Circle) Other Other;
-
-typedef struct _union(Box | Circle | Triangle | Other) Shape Shape;
-
-void Shape_Delete(Shape* p) _default
+void Circle_Delete(struct Circle* pCircle) _default
 {
-    switch (TYPEOF(p))
+    if (pCircle != NULL)
     {
-        case Circle_ID:
-            Circle_Delete((struct Circle*)p);
-        break;
-        case Car_ID:
-            Car_Delete((struct Car*)p);
-        break;
-        case Triangle_ID:
-            Triangle_Delete((Triangle*)p);
-        break;
-        case Box_ID:
-            Box_Delete((Box*)p);
-        break;
-    default:
-       break;
+        free((void*)pCircle);
     }
-
+}
+void Circle_Draw(struct Circle* pCircle)
+{
+	printf("Circle\n");
 }
 
-void Shape_Draw(Shape* p) _default
+struct _union(Box | Circle) Shape
 {
-    switch (TYPEOF(p))
+	int id;
+};
+
+void  Shape_Delete(struct Shape* pShape) _default
+{
+    if (pShape != NULL)
     {
-        case Circle_ID:
-            Circle_Draw((struct Circle*)p);
-        break;
-        case Car_ID:
-            Car_Draw((struct Car*)p);
-        break;
-        case Triangle_ID:
-            Triangle_Draw((Triangle*)p);
-        break;
-        case Box_ID:
-            Box_Draw((Box*)p);
-        break;
-    default:
-       break;
+            switch (pShape->id)
+            {
+                case 2:
+                    Circle_Delete((struct Circle*)pShape);
+                break;
+                case 1:
+                    Box_Delete((struct Box*)pShape);
+                break;
+                default:
+                break;
+            }
     }
-
 }
-
-typedef struct
+void Shape_Draw(struct Shape* pShape) _default
 {
-    Shape* _auto * _auto _size(Size) pItems;
-    int Size;
-    int Capacity;
-} Shapes;
-
-void Shapes_Destroy(Shapes* shapes) _default
-{
-    for (int i = 0; i < shapes->Size; i++)
+    switch (pShape->id)
     {
-        Shape_Delete(shapes->pItems[i]);
+        case 2:
+            Circle_Draw((struct Circle*)pShape);
+        break;
+        case 1:
+            Box_Draw((struct Box*)pShape);
+        break;
+        default:
+        break;
     }
-    free((void*)shapes->pItems);
-
 }
 
-void Shapes_Reserve(Shapes* shapes, int n) _default
+struct Items
 {
-    if (n > shapes->Capacity)
+	struct Shape * _auto * _auto _size(Size) data;
+	int Size;
+	int Capacity;
+};
+
+void Items_Reserve(struct Items* pItems, int n) _default
+{
+    if (n > pItems->Capacity)
     {
-        Shape** pnew = shapes->pItems;
-        pnew = (Shape**)realloc(pnew, n * sizeof(Shape*));
+        struct Shape** pnew = pItems->data;
+        pnew = (struct Shape**)realloc(pnew, n * sizeof(struct Shape*));
         if (pnew)
         {
-            shapes->pItems = pnew;
-            shapes->Capacity = n;
+            pItems->data = pnew;
+            pItems->Capacity = n;
         }
     }
-
 }
-
-void Shapes_PushBack(Shapes* shapes, Shape* pShape) _default
+void Items_PushBack(struct Items* pItems, struct Shape* p) _default
 {
-    if (shapes->Size + 1 > shapes->Capacity)
+    if (pItems->Size + 1 > pItems->Capacity)
     {
-        int n = shapes->Capacity * 2;
+        int n = pItems->Capacity * 2;
         if (n == 0)
         {
-          n = 1;
+            n = 1;
         }
-        Shapes_Reserve(shapes, n);
+        Items_Reserve(pItems, n);
     }
-    shapes->pItems[shapes->Size] = pShape;
-    shapes->Size++;
-
+    pItems->data[pItems->Size] = p;
+    pItems->Size++;
 }
-
-
-int main(int argc, char **argv)
+void Items_Destroy(struct Items* pItems) _default
 {
-    Shape* p = (struct Shape*)Triangle_Create();
-    
-    Shapes shapes = { 0 };
-    Shapes_PushBack(&shapes, (Shape*)Triangle_Create());
-    Shapes_PushBack(&shapes, (Shape*)Box_Create());
-    
-    for (int i = 0; i < shapes.Size; i++)
+    for (int i = 0; i < pItems->Size; i++)
     {
-        Shape_Draw(shapes.pItems[i]);
+        Shape_Delete(pItems->data[i]);
     }
-    Shapes_Destroy(&shapes);
-    return 0;
+    free((void*)pItems->data);
 }
+
+int main()
+{
+	struct Shape* pShape = Box_Create();
+	struct Items items = { 0 };
+	Items_PushBack(&items, pShape);
+	Items_PushBack(&items, Circle_Create());
+
+	for (int i = 0; i < items.Size; i++)
+	{
+		Shape_Draw(items.data[i]);
+	}
+	
+	Items_Destroy(&items);
+
+
+}
+
+
 ```
 
 ## More details
