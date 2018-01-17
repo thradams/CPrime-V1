@@ -1092,6 +1092,7 @@ static void TInitializerList_CodePrint(TProgram* program,
 			(TSpecifierQualifierList*)(pDeclarationSpecifiers),
 			pDeclatator,                        //<-dupla para entender o tipo
 			NULL,
+			NULL,/*args*/
 			"",
 			NULL /*not used*/,
 			ActionStaticInit,
@@ -1158,6 +1159,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
 				(TSpecifierQualifierList*)(pDeclarationSpecifiers),
 				pDeclarator,                        //<-dupla para entender o tipo
 				pInitializer,
+				NULL,/*args*/
 				"",
 				NULL /*not used*/,
 				ActionStaticInit,
@@ -2123,6 +2125,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 			(TSpecifierQualifierList*)(pSpecifiers),
 			p->InitDeclaratorList.pHead->pDeclarator,
 			NULL,
+			pArgs,/*args*/
 			"p",
 			NULL /*not used*/,
 			ActionCreate,
@@ -2140,6 +2143,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 			(TSpecifierQualifierList*)(&parameters[0]->Specifiers),
 			&parameters[0]->Declarator,
 			NULL,
+			pArgs,/*args fazer inicializacao conforme parametro*/
 			parameterName[0],
 			NULL /*not used*/,
 			ActionInitContent,
@@ -2157,6 +2161,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 			(TSpecifierQualifierList*)(&parameters[0]->Specifiers),
 			&parameters[0]->Declarator,
 			NULL,
+			NULL,/*args*/
 			parameterName[0],
 			NULL /*not used*/,
 			ActionDestroyContent,
@@ -2174,6 +2179,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 			(TSpecifierQualifierList*)(&parameters[0]->Specifiers),
 			&parameters[0]->Declarator,
 			NULL,
+			NULL,/*args*/
 			parameterName[0],
 			NULL /*not used*/,
 			ActionDelete,
@@ -3243,7 +3249,8 @@ void InstanciateDestroy2(TProgram* program,
 	Options* options,
 	TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
 	TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
-	TInitializer* pInitializerOpt,
+	TInitializer* pInitializerOpt, //usado para inicializacao estatica
+	TParameterTypeList * pArgsOpt, //parametros do create /init
 	const char* pInitExpressionText, //(x->p->i = 0)    
 	const char* pszAutoPointerLenExpressionOpt, //expressao usada para definir o tamanho de um spaw de auto pointers
 												//se passar null eh pq nao interessa
@@ -3353,6 +3360,7 @@ void InstanciateDestroy2(TProgram* program,
 							(TSpecifierQualifierList*)pDeclarationSpecifiers,
 							&declarator,
 							NULL,
+							NULL,/*args*/
 							"p",
 							NULL /*not used*/,
 							ActionInitContent,
@@ -3394,6 +3402,7 @@ void InstanciateDestroy2(TProgram* program,
 							(TSpecifierQualifierList*)pDeclarationSpecifiers,
 							&declarator,
 							pInitializerOpt,
+							NULL,/*args*/
 							pInitExpressionText,
 							pszAutoPointerLenExpressionOpt,
 							action2,
@@ -3700,7 +3709,7 @@ void InstanciateDestroy2(TProgram* program,
 
 								StrBuilder_Append(&strVariableName, structDeclaratorName);
 
-
+								
 								Action action2 = action;
 								if (action == ActionDestroyContent ||
 									action == ActionDelete)
@@ -3710,10 +3719,16 @@ void InstanciateDestroy2(TProgram* program,
 								}
 								else if (action == ActionInitContent)
 								{
+									//se structDeclaratorName for igual 
+									//ao nome de um parametro entao
+									//eh so igualar.
 									action2 = ActionInit;
 								}
 								else if (action == ActionCreate)
 								{
+									//acho que tem que criar um initializer
+									//que pode ser o parametro
+									//ou  valor default da struct
 									action2 = ActionInit;
 								}
 
@@ -3756,6 +3771,7 @@ void InstanciateDestroy2(TProgram* program,
 									&pStructDeclaration->SpecifierQualifierList,
 									pStructDeclarator->pDeclarator,
 									pStructDeclarator->pInitializer,
+									NULL,/*args*/
 									strVariableName.c_str,
 									strPonterSizeExpr.c_str,
 									action2,
