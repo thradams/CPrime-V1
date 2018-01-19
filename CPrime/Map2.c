@@ -8,13 +8,13 @@
 
 
 
-void KeyValue_Delete(MapItem2* p)
+void KeyValue_Delete(MapItem2* p) _default
 {
-  if (p)
-  {
-    String_Destroy(&p->Key);
-    free(p);
-  }
+    if (p != NULL)
+    {
+        String_Destroy(&p->Key);
+        free((void*)p);
+    }
 }
 
 static MapItem2* Map2_GetAssocAt(
@@ -243,10 +243,11 @@ int Map2_SetAt(Map2* pMap,
   return result;
 }
 
-void Map2_Init(Map2 * p)
+void Map2_Init(Map2 * p) _default
 {
-  Map2 temp = MAPSTRINGTOPTR_INIT;
-  *p = temp;
+    p->pHashTable = NULL;
+    p->nHashTableSize = 0;
+    p->nCount = 0;
 }
 
 void Map2_Swap(Map2 * pA, Map2 * pB)
@@ -256,24 +257,21 @@ void Map2_Swap(Map2 * pA, Map2 * pB)
   *pB = temp;
 }
 
-Map2* Map2_Create(void)
+Map2* Map2_Create(void) _default
 {
-  Map2* p = (Map2*)malloc(sizeof(Map2));
-
-  if (p != 0)
-  {
-    Map2 t = MAPSTRINGTOPTR_INIT;
-    *p = t;
-  }
-
-  return p;
+    Map2 *p = (Map2*) malloc(sizeof * p);
+    if (p != NULL)
+    {
+        Map2_Init(p);
+    }
+    return p;
 }
 
-void Map2_Delete(Map2 * p)
+void Map2_Delete(Map2 * p) _default
 {
-  if (p != 0)
-  {
-    Map2_Destroy(p);
-    free(p);
-  }
+    if (p != NULL)
+    {
+        Map2_Destroy(p);
+        free((void*)p);
+    }
 }

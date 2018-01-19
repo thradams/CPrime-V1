@@ -77,7 +77,7 @@ void InstanciateDestroy2(TProgram* program,
     TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
     TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
     TInitializer* pInitializer,
-	TParameterList* pArgsOpt,
+	  TParameterTypeList* pArgsOpt,
     const char* pInitExpressionText, //(x->p->i = 0)    
     const char* pszAutoPointerLenExpressionOpt, //expressao usada para definir o tamanho de um spaw de auto pointers
                                                 //se passar null eh pq nao interessa

@@ -511,32 +511,39 @@ void TBlockItem_Delete(TBlockItem* p) _default
     }
 }
 
+void TPrimaryExpressionValue_Init(TPrimaryExpressionValue* p) _default
+{
+    p->Type = TPrimaryExpressionValue_ID;
+    p->token = TK_NONE;
+    String_Init(&p->lexeme);
+    p->pExpressionOpt = NULL;
+    TScannerItemList_Init(&p->ClueList0);
+    TScannerItemList_Init(&p->ClueList1);
+}
+
+void TPrimaryExpressionValue_Destroy(TPrimaryExpressionValue* p) _default
+{
+    String_Destroy(&p->lexeme);
+    TExpression_Delete(p->pExpressionOpt);
+    TScannerItemList_Destroy(&p->ClueList0);
+    TScannerItemList_Destroy(&p->ClueList1);
+}
 
 TPrimaryExpressionValue* TPrimaryExpressionValue_Create() _default
 {
     TPrimaryExpressionValue *p = (TPrimaryExpressionValue*) malloc(sizeof * p);
     if (p != NULL)
     {
-        p->Type = TPrimaryExpressionValue_ID;
-        p->token = TK_NONE;
-        String_Init(&p->lexeme);
-        p->pExpressionOpt = NULL;
-        TScannerItemList_Init(&p->ClueList0);
-        TScannerItemList_Init(&p->ClueList1);
+        TPrimaryExpressionValue_Init(p);
     }
     return p;
 }
-
-
 
 void TPrimaryExpressionValue_Delete(TPrimaryExpressionValue* p) _default
 {
     if (p != NULL)
     {
-        String_Destroy(&p->lexeme);
-        TExpression_Delete(p->pExpressionOpt);
-        TScannerItemList_Destroy(&p->ClueList0);
-        TScannerItemList_Destroy(&p->ClueList1);
+        TPrimaryExpressionValue_Destroy(p);
         free((void*)p);
     }
 }
@@ -1086,6 +1093,108 @@ void TParameterTypeList_Destroy(TParameterTypeList* p) _default
     TParameterList_Destroy(&p->ParameterList);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
+}
+
+const char* TParameterTypeList_GetFirstParameterName(TParameterTypeList* p)
+{
+  const char* name = "";
+  if (p->ParameterList.pHead)
+  {    
+    name = TDeclarator_GetName(&p->ParameterList.pHead->Declarator);    
+  }
+  return name;
+}
+
+bool TParameterTypeList_HasNamedArgs(TParameterTypeList* p)
+{
+  bool result = false;
+  if (p != NULL)
+  {
+    ForEachListItem(TParameter, pParameter, &p->ParameterList)
+    {
+      const char* parameterName = TParameter_GetName(pParameter);
+      if (parameterName != NULL)
+      {
+        result = true;
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+
+
+void TParameterTypeList_GetArgsString(TParameterTypeList* p, StrBuilder* sb)
+{
+  if (p != NULL)
+  {
+    int index = 0;
+    ForEachListItem(TParameter, pParameter, &p->ParameterList)
+    {
+      const char* parameterName = TParameter_GetName(pParameter);
+      if (parameterName)
+      {
+        if (index > 0)
+        {
+          StrBuilder_Append(sb, ", ");
+        }
+
+        StrBuilder_Append(sb, parameterName);
+      }
+
+      index++;
+    }
+  }  
+}
+
+TParameter* TParameterTypeList_GetParameterByIndex(TParameterTypeList* p, int index)
+{
+  TParameter* pParameterResult = NULL;
+  int indexLocal = 0;
+  
+    ForEachListItem(TParameter, pParameter, &p->ParameterList)
+    {
+      if (indexLocal == index)
+      {
+        pParameterResult = pParameter;
+        break;
+      }
+      indexLocal++;      
+    }
+  
+  return pParameterResult;
+}
+
+TParameter* TParameterTypeList_FindParameterByName(TParameterTypeList* p, const char* name)
+{
+  TParameter* pParameterResult = NULL;
+  bool bFound = false;
+  if (name)
+  {
+    ForEachListItem(TParameter, pParameter, &p->ParameterList)
+    {
+      //F(void) neste caso nao tem nome
+      const char* parameterName = TParameter_GetName(pParameter);
+      if (parameterName && strcmp(parameterName, name) == 0)
+      {
+        pParameterResult = pParameter;
+        break;
+      }
+    }
+  }
+  return pParameterResult;
+}
+
+const char* TParameterTypeList_GetSecondParameterName(TParameterTypeList* p)
+{
+  const char* name = "";
+  if (p->ParameterList.pHead && 
+      p->ParameterList.pHead->pNext)
+  {
+    name = TDeclarator_GetName(&p->ParameterList.pHead->pNext->Declarator);
+  }
+  return name;
 }
 
 void TDirectDeclarator_Destroy(TDirectDeclarator* p) _default
@@ -2249,6 +2358,12 @@ const char* TDeclarationSpecifier_GetTypedefName(TDeclarationSpecifiers* p)
     return typedefName;
 }
 
+const char* TParameter_GetName(TParameter* p)
+{
+  //F(void) neste caso nao tem nome
+  return TDeclarator_GetName(&p->Declarator);
+}
+
 const char* TParameter_GetTypedefName(TParameter* p)
 {
     return TDeclarationSpecifier_GetTypedefName(&p->Specifiers);
@@ -2273,10 +2388,6 @@ bool TParameter_IsDirectPointer(TParameter* p)
     return TDeclarator_IsDirectPointer(&p->Declarator);
 }
 
-const char* TParameter_GetName(TParameter* p)
-{
-    return TDeclarator_GetName(&p->Declarator);
-}
 
 TParameter* TParameter_Create() _default
 {

@@ -727,6 +727,12 @@ typedef struct TParameterTypeList
 
 void TParameterTypeList_Init(TParameterTypeList* p);
 void TParameterTypeList_Destroy(TParameterTypeList* p);
+const char* TParameterTypeList_GetFirstParameterName(TParameterTypeList* p);
+const char* TParameterTypeList_GetSecondParameterName(TParameterTypeList* p);
+TParameter* TParameterTypeList_FindParameterByName(TParameterTypeList* p, const char* name);
+TParameter* TParameterTypeList_GetParameterByIndex(TParameterTypeList* p, int index);
+void TParameterTypeList_GetArgsString(TParameterTypeList* p, StrBuilder* sb);
+bool TParameterTypeList_HasNamedArgs(TParameterTypeList* p);
 
 typedef struct TDesignator
 {
@@ -1158,6 +1164,7 @@ TParameter* TParameter_Create();
 void TParameter_Delete(TParameter* p);
 
 void TParameter_Swap(TParameter* a, TParameter* b);
+const char* TParameter_GetName(TParameter* p);
 const char* TParameter_GetTypedefName(TParameter* p);
 
 
@@ -1247,14 +1254,25 @@ bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecif
 
 typedef struct
 {
+  /*
+  (6.5.1) primary-expression:
+  identifier
+  constant
+  string-literal
+  ( expression )
+  generic-selection
+  */
+
     EType Type _defval(TPrimaryExpressionValue_ID);
     Tokens token;
     String lexeme;
-    TExpression*_auto   pExpressionOpt;
+    TExpression*_auto   pExpressionOpt; //( expression )
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
 } TPrimaryExpressionValue;
 
+void TPrimaryExpressionValue_Init(TPrimaryExpressionValue* p);
+void TPrimaryExpressionValue_Destroy(TPrimaryExpressionValue* p);
 TPrimaryExpressionValue* TPrimaryExpressionValue_Create();
 void TPrimaryExpressionValue_Delete(TPrimaryExpressionValue* p);
 
