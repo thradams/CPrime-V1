@@ -331,7 +331,7 @@ Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt)
 				if (parser->IncludeLevel == 1)
 				{
 					ScannerItem* pNew = ScannerItem_Create();
-					StrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
+          LocalStrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
 					pNew->token = Scanner_TokenAt(&parser->Scanner, 0);
 					TScannerItemList_PushBack(&parser->ClueList, pNew);
 				}
@@ -342,7 +342,7 @@ Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt)
 				if (parser->IncludeLevel == 0)
 				{
 					ScannerItem* pNew = ScannerItem_Create();
-					StrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
+          LocalStrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
 					pNew->token = Scanner_TokenAt(&parser->Scanner, 0);
 					TScannerItemList_PushBack(&parser->ClueList, pNew);
 				}
@@ -350,7 +350,7 @@ Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt)
 			else if (parser->IncludeLevel == 0)
 			{
 				ScannerItem* pNew = ScannerItem_Create();
-				StrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
+        LocalStrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
 				pNew->token = Scanner_TokenAt(&parser->Scanner, 0);
 				TScannerItemList_PushBack(&parser->ClueList, pNew);
 			}
@@ -4636,6 +4636,7 @@ void Init_Declarator_List(Parser* ctx,
 
 }
 
+void Parse_Declarations(Parser* ctx, TDeclarations* declarations);
 
 bool  Declaration(Parser* ctx,
     TAnyDeclaration** ppDeclaration)
@@ -4658,8 +4659,20 @@ bool  Declaration(Parser* ctx,
         *ppDeclaration = (TAnyDeclaration*)pStaticAssertDeclaration;
         Static_Assert_Declaration(ctx, pStaticAssertDeclaration);
         bHasDeclaration = true;
+        
     }
+    else if (token == TK_LEFT_CURLY_BRACKET)
+    {
+      TGroupDeclaration* p = TGroupDeclaration_Create();
+      Parser_MatchToken(ctx, TK_LEFT_CURLY_BRACKET, &p->ClueList0);
+      
+      Parse_Declarations(ctx, &p->Declarations);
 
+      Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET, &p->ClueList1);
+
+      *ppDeclaration = p;//moved
+      bHasDeclaration = true;
+    }
     else
     {
         TDeclaration* pFuncVarDeclaration = TDeclaration_Create();
@@ -4824,6 +4837,7 @@ void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
 
     while (!ErrorOrEof(ctx))
     {
+      
         TAnyDeclaration* pDeclarationOut = NULL;
         bool bHasDecl = Declaration(ctx, &pDeclarationOut);
         if (bHasDecl)
@@ -4855,7 +4869,7 @@ void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
             else
             {
                 //nao ter mais declaracao nao eh erro
-                SetError(ctx, "declaration expected");
+                //SetError(ctx, "declaration expected");
             }
             break;
         }

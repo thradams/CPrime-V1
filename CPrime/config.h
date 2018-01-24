@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 //#include <crtdbg.h>
 #include <assert.h>
 //#define ASSERT(x) _ASSERTE(x)
@@ -16,4 +17,15 @@
 #define _size(x)
 #define _union(x)
 
+/*
+inline void Free(void *p)
+{
+  free(p);
+}
+
+inline void *Malloc(size_t s)
+{
+  return malloc(s);
+}
+*/
 

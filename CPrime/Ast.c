@@ -46,6 +46,28 @@ void TDeclarations_PushBack(TDeclarations* p, TDeclaration* pItem) _default
     p->Size++;
 }
 
+TGroupDeclaration* TGroupDeclaration_Create() _default
+{
+    TGroupDeclaration *p = (TGroupDeclaration*) malloc(sizeof * p);
+    if (p != NULL)
+    {
+        p->Type = TGroupDeclaration_ID;
+        TDeclarations_Init(&p->Declarations);
+        TScannerItemList_Init(&p->ClueList0);
+        TScannerItemList_Init(&p->ClueList1);
+    }
+    return p;
+}
+void TGroupDeclaration_Delete(TGroupDeclaration* p) _default
+{
+    if (p != NULL)
+    {
+        TDeclarations_Destroy(&p->Declarations);
+        TScannerItemList_Destroy(&p->ClueList0);
+        TScannerItemList_Destroy(&p->ClueList1);
+        free((void*)p);
+    }
+}
 
 void TStructDeclarationList_Destroy(TStructDeclarationList* p) _default
 {
@@ -2513,6 +2535,9 @@ void TAnyDeclaration_Delete(TAnyDeclaration* pDeclaration) _default
     {
             switch (pDeclaration->Type)
             {
+                case TGroupDeclaration_ID:
+                    TGroupDeclaration_Delete((TGroupDeclaration*)pDeclaration);
+                break;
                 case TStaticAssertDeclaration_ID:
                     TStaticAssertDeclaration_Delete((TStaticAssertDeclaration*)pDeclaration);
                 break;

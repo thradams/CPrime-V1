@@ -70,6 +70,9 @@
     <ClCompile Include="TokenArray.c">
       <Filter>Source Files\Parser</Filter>
     </ClCompile>
+    <ClCompile Include="LocalStrBuilder.c">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
@@ -136,5 +139,8 @@
       <Filter>Source Files\Parser</Filter>
     </ClInclude>
     <ClInclude Include="vs2017.h" />
+    <ClInclude Include="LocalStrBuilder.h">
+      <Filter>Source Files\Base</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

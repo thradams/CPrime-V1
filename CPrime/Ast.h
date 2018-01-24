@@ -36,6 +36,7 @@ typedef enum EType
 {
     TypeNull,
     TDeclaration_ID,
+    TGroupDeclaration_ID,
     TStaticAssertDeclaration_ID,
 	TEofDeclaration_ID,
     TInitDeclarator_ID,
@@ -135,9 +136,12 @@ void TEofDeclaration_Delete(TEofDeclaration* p);
 struct TStatement;
 typedef struct TStatement TStatement;
 
+struct TGroupDeclaration;
+typedef struct TGroupDeclaration TGroupDeclaration;
 
 struct _union(TStaticAssertDeclaration |
 	TDeclaration |
+  TGroupDeclaration |
 	TEofDeclaration) TAnyDeclaration
 {
 	EType Type;
@@ -1179,7 +1183,16 @@ void TDeclarations_Destroy(TDeclarations* p);
 void TDeclarations_Init(TDeclarations* p);
 void TDeclarations_PushBack(TDeclarations* p, TDeclaration* pItem);
 
+typedef struct TGroupDeclaration
+{
+  EType Type  _defval(TGroupDeclaration_ID);
+  TDeclarations Declarations;
+  TScannerItemList ClueList0;
+  TScannerItemList ClueList1;
+} TGroupDeclaration;
 
+TGroupDeclaration* TGroupDeclaration_Create();
+void TGroupDeclaration_Delete(TGroupDeclaration* p);
 
 //Coleta o resultado do parser
 typedef struct

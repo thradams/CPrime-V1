@@ -2470,10 +2470,26 @@ static void TStaticAssertDeclaration_CodePrint(TProgram* program,
 
 }
 
+static void TGroupDeclaration_CodePrint(TProgram* program, Options * options, TGroupDeclaration *p, StrBuilder* fp)
+{
+  TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+  Output_Append(fp, options, "{");
+  for (int i = 0; i < p->Declarations.Size; i++)
+  {
+    TAnyDeclaration_CodePrint(program, options, p->Declarations.pItems[i], fp);
+  }
+  TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+  Output_Append(fp, options, "}");    
+}
+
 static void TAnyDeclaration_CodePrint(TProgram* program, Options * options, TAnyDeclaration *pDeclaration, StrBuilder* fp)
 {
 	switch (pDeclaration->Type)
 	{
+  case TGroupDeclaration_ID:
+    TGroupDeclaration_CodePrint(program, options, (TGroupDeclaration*)pDeclaration, fp);
+    break;
+
 	case TEofDeclaration_ID:
 		TEofDeclaration_CodePrint(program, options, (TEofDeclaration*)pDeclaration, fp);
 		break;
@@ -2560,6 +2576,7 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 	//}
 
 	StrBuilder sb = STRBUILDER_INIT;
+  StrBuilder_Reserve(&sb, 80 * 5000);
 
 	for (int i = 0; i < pProgram->Declarations.Size; i++)
 	{
@@ -2579,6 +2596,25 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 	}
 	StrBuilder_Destroy(&sb);
 	fclose(fp);
+}
+
+
+static const char* GetFreeStr(TProgram* program)
+{
+  TDeclaration* pDeclarationDestroy =
+    SymbolMap_FindFunction(&program->GlobalScope,
+      "Free");
+
+  return pDeclarationDestroy ? "Free" : "free";
+}
+
+static const char* GetMallocStr(TProgram* program)
+{
+  TDeclaration* pDeclarationDestroy =
+    SymbolMap_FindFunction(&program->GlobalScope,
+      "Malloc");
+
+  return pDeclarationDestroy ? "Malloc" : "malloc";
 }
 
 
@@ -2702,7 +2738,8 @@ static bool FindHighLevelFunction(TProgram* program,
 								StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
 								StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-									"free((void*)%s);",
+									"%s((void*)%s);",
+                  GetFreeStr(program),
 									pInitExpressionText);
 							}
 							else
@@ -2714,7 +2751,8 @@ static bool FindHighLevelFunction(TProgram* program,
 									pInitExpressionText);
 
 								StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-									"free((void*)%s);",
+									"%s((void*)%s);",
+                  GetFreeStr(program),
 									pInitExpressionText);
 							}
 
@@ -2742,7 +2780,8 @@ static bool FindHighLevelFunction(TProgram* program,
 										pInitExpressionText);
 
 									StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-										"free((void*)%s);",
+										"%s((void*)%s);",
+                    GetFreeStr(program),
 										pInitExpressionText);
 								}
 								else if (bIsAutoPointerToAutoPointer)
@@ -2760,14 +2799,16 @@ static bool FindHighLevelFunction(TProgram* program,
 											pInitExpressionText);
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-											"free((void*)%s[i]);",
+											"%s((void*)%s[i]);",
+                      GetFreeStr(program),
 											pInitExpressionText);
 
 										options->IdentationLevel--;
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-											"free((void*)%s);",
+											"%s((void*)%s);",
+                      GetFreeStr(program),
 											pInitExpressionText);
 									}
 									else
@@ -2780,11 +2821,13 @@ static bool FindHighLevelFunction(TProgram* program,
 											pInitExpressionText);
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-											"free((void*)%s[0]);",
+											"%s((void*)%s[0]);",
+                      GetFreeStr(program),
 											pInitExpressionText);
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-											"free((void*)%s);",
+											"%s((void*)%s);",
+                      GetFreeStr(program),
 											pInitExpressionText);
 									}
 
@@ -2811,7 +2854,8 @@ static bool FindHighLevelFunction(TProgram* program,
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-											"free((void*)%s);",
+											"%s((void*)%s);",
+                      GetFreeStr(program),
 											pInitExpressionText);
 									}
 									else
@@ -2828,7 +2872,8 @@ static bool FindHighLevelFunction(TProgram* program,
 										//   pInitExpressionText);
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-											"free((void*)%s);",
+											"%s((void*)%s);",
+                      GetFreeStr(program),
 											pInitExpressionText);
 									}
 								}
@@ -2842,7 +2887,8 @@ static bool FindHighLevelFunction(TProgram* program,
 			else if (bIsAutoPointerToPointer)
 			{
 				StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-					"free((void*)%s);",
+					"%s((void*)%s);",
+          GetFreeStr(program),
 					pInitExpressionText);
 
 				//nada
@@ -2922,7 +2968,8 @@ static bool FindHighLevelFunction(TProgram* program,
 							pInitExpressionText);
 
 						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-							"free((void*)%s);",
+							"%s((void*)%s);",
+              GetFreeStr(program),
 							pInitExpressionText);
 						bComplete = true;
 					}
@@ -2958,7 +3005,8 @@ static bool FindHighLevelFunction(TProgram* program,
 						nameToFind,
 						pInitExpressionText);
 					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-						"free((void*)%s);",
+						"%s((void*)%s);",
+            GetFreeStr(program),
 						pInitExpressionText);
 					options->IdentationLevel--;
 					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
@@ -3050,9 +3098,10 @@ static bool FindHighLevelFunction(TProgram* program,
 			if (pDeclarationInit)
 			{
 				StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-					"struct %s *p = (struct %s *) malloc(sizeof * p);",
+					"struct %s *p = (struct %s *) %s(sizeof * p);",
 					nameToFind,
-					nameToFind);
+					nameToFind,
+          GetMallocStr(program));
 
 
 				PrintIfNotNullLn(program, options, "p", fp);
@@ -3336,9 +3385,10 @@ void InstanciateDestroy2(TProgram* program,
 					//typedef struct { int i; } X; X* X_Create();
 					//para poder fazer 
 					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-						"%s *p = (%s*) malloc(sizeof * p);",
+						"%s *p = (%s*) %s(sizeof * p);",
 						pSingleTypeSpecifier->TypedefName,
-						pSingleTypeSpecifier->TypedefName);
+						pSingleTypeSpecifier->TypedefName,
+            GetMallocStr(program));
 
 					PrintIfNotNullLn(program, options, "p", fp);
 
@@ -3452,7 +3502,7 @@ void InstanciateDestroy2(TProgram* program,
 			{
 				if (bIsAutoPointerToObject)
 				{
-					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
 				}
 				else if (bIsAutoPointerToAutoPointer)
 				{
@@ -3462,15 +3512,15 @@ void InstanciateDestroy2(TProgram* program,
 						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
 
 						options->IdentationLevel++;
-						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s[i]);", pInitExpressionText);
+						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s[i]);", GetFreeStr(program), pInitExpressionText);
 						options->IdentationLevel--;
 						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
-						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
 					}
 					else
 					{
-						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s[0]);", pInitExpressionText);
-						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s[0]);", GetFreeStr(program), pInitExpressionText);
+						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
 					}
 
 					//StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
@@ -3619,9 +3669,10 @@ void InstanciateDestroy2(TProgram* program,
 					ASSERT(pStructUnionSpecifier->Name != NULL);
 
 					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-						"struct %s* p = (struct %s*) malloc(sizeof * p);",
+						"struct %s* p = (struct %s*) %s(sizeof * p);",
 						pStructUnionSpecifier->Name,
-						pStructUnionSpecifier->Name);
+						pStructUnionSpecifier->Name,
+            GetMallocStr(program));
 
 					PrintIfNotNullLn(program, options, pInitExpressionText, fp);
 					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
@@ -3856,7 +3907,7 @@ void InstanciateDestroy2(TProgram* program,
 				{
 					if (bIsAutoPointerToObject)
 					{
-						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
 						options->IdentationLevel--;
 						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
@@ -3867,13 +3918,13 @@ void InstanciateDestroy2(TProgram* program,
 						{
 							options->IdentationLevel--;
 							StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}"); //fecha  for
-							StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+							StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
 							options->IdentationLevel--;
 							StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
 						}
 						else
 						{
-							StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+							StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
 							options->IdentationLevel--;
 							StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
 						}
@@ -3900,7 +3951,7 @@ void InstanciateDestroy2(TProgram* program,
 					}
 					else
 					{
-						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
 					}
 					options->IdentationLevel--;
 					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
@@ -3943,12 +3994,12 @@ void InstanciateDestroy2(TProgram* program,
 		{
 			if (bIsAutoPointerToObject)
 			{
-				StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+				StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
 			}
 			else if (bIsAutoPointerToAutoPointer)
 			{
 				ASSERT(false);
-				StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+				StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
 			}
 			else
 			{

@@ -306,7 +306,7 @@ void ScannerItem_Delete(ScannerItem* pScannerItem) _default
 
 void ScannerItem_Init(ScannerItem* scannerItem) _default
 {
-    StrBuilder_Init(&scannerItem->lexeme);
+    LocalStrBuilder_Init(&scannerItem->lexeme);
     scannerItem->token = TK_NONE;
     scannerItem->Line = -1;
     scannerItem->FileIndex = -1;
@@ -316,7 +316,7 @@ void ScannerItem_Init(ScannerItem* scannerItem) _default
 
 void ScannerItem_Reset(ScannerItem* scannerItem)
 {
-    StrBuilder_Clear(&scannerItem->lexeme);
+    LocalStrBuilder_Clear(&scannerItem->lexeme);
     scannerItem->token = TK_EOF;
 }
 
@@ -324,7 +324,7 @@ void ScannerItem_Copy(ScannerItem* scannerItem,
     ScannerItem* other)
 {
     scannerItem->token = other->token;
-    StrBuilder_Set(&scannerItem->lexeme, other->lexeme.c_str);
+    LocalStrBuilder_Set(&scannerItem->lexeme, other->lexeme.c_str);
 }
 
 void ScannerItem_Swap(ScannerItem* scannerItem,
@@ -333,12 +333,12 @@ void ScannerItem_Swap(ScannerItem* scannerItem,
     Tokens tk = other->token;
     other->token = scannerItem->token;
     scannerItem->token = tk;
-    StrBuilder_Swap(&scannerItem->lexeme, &other->lexeme);
+    LocalStrBuilder_Swap(&scannerItem->lexeme, &other->lexeme);
 }
 
 void ScannerItem_Destroy(ScannerItem* scannerItem) _default
 {
-    StrBuilder_Destroy(&scannerItem->lexeme);
+    LocalStrBuilder_Destroy(&scannerItem->lexeme);
 }
 
 void BasicScanner_InitCore(BasicScanner* pBasicScanner,
@@ -595,7 +595,7 @@ void BasicScanner_Next(BasicScanner* scanner)
         {
             ScannerItem_Reset(&scanner->currentItem);
             scanner->currentItem.token = scanner->m_Token;
-            StrBuilder_Set(&scanner->currentItem.lexeme,
+            LocalStrBuilder_Set(&scanner->currentItem.lexeme,
                 scanner->stream.text);
             scanner->bLineStart = false;
         }
@@ -841,9 +841,9 @@ void BasicScanner_Next(BasicScanner* scanner)
         else
         {
             ch = BasicScanner_MatchChar(scanner);
-            StrBuilder_Clear(&scanner->currentItem.lexeme);
+            LocalStrBuilder_Clear(&scanner->currentItem.lexeme);
             //normaliza para windows?
-            StrBuilder_Append(&scanner->currentItem.lexeme, "\r\n");
+            LocalStrBuilder_Append(&scanner->currentItem.lexeme, "\r\n");
         }
         scanner->bLineStart = true;
         return;
@@ -992,7 +992,7 @@ void BasicScanner_Next(BasicScanner* scanner)
         }
 
         //homogeiniza \r\n para \n
-        StrBuilder_Set(&scanner->currentItem.lexeme, "\\\n");
+        LocalStrBuilder_Set(&scanner->currentItem.lexeme, "\\\n");
 
         scanner->currentItem.token = TK_BACKSLASHBREAKLINE;
         scanner->bLineStart = false;
@@ -1034,8 +1034,8 @@ bool BasicScanner_IsLexeme(BasicScanner* scanner, const char* psz)
 
 wchar_t BasicScanner_MatchChar(BasicScanner* scanner)
 {
-    StrBuilder_AppendWChar(&scanner->currentItem.lexeme,
-        scanner->stream.currentChar);
+    LocalStrBuilder_AppendChar(&scanner->currentItem.lexeme,
+        (char)scanner->stream.currentChar);
     SStream_Match(&scanner->stream);
     return scanner->stream.currentChar;
 }

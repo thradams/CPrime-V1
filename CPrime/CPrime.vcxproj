@@ -146,6 +146,7 @@
     <ClCompile Include="BasicScanner.c" />
     <ClCompile Include="CodePrint.c" />
     <ClCompile Include="CPrime.c" />
+    <ClCompile Include="LocalStrBuilder.c" />
     <ClCompile Include="Macro.c" />
     <ClCompile Include="Map.c" />
     <ClCompile Include="Map2.c" />
@@ -168,6 +169,7 @@
     <ClInclude Include="CodePrint.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="List.h" />
+    <ClInclude Include="LocalStrBuilder.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Map2.h" />

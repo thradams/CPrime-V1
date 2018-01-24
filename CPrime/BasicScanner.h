@@ -4,7 +4,7 @@
 #include "Stream.h"
 #include "Result.h"
 #include "Array.h"
-
+#include "LocalStrBuilder.h"
 #define LANGUAGE_EXTENSIONS
 //
 
@@ -209,7 +209,7 @@ typedef enum
 
 typedef struct ScannerItem
 {
-    StrBuilder lexeme;
+    LocalStrBuilder lexeme;
     Tokens token;
     int Line _defval(-1);
     int FileIndex _defval(-1);

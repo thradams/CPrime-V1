@@ -1317,7 +1317,7 @@ static void Scanner_PushToken(Scanner* pScanner, Tokens token,
   }
 
   ScannerItem* pNew = ScannerItem_Create();
-  StrBuilder_Set(&pNew->lexeme, lexeme);
+  LocalStrBuilder_Set(&pNew->lexeme, lexeme);
   pNew->token = token;
   pNew->bActive = bActive; //;
   TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
@@ -1343,7 +1343,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
   if (!IsIncludeState(state))
   {
     ScannerItem* pNew = ScannerItem_Create();
-    StrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
+    LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
     pNew->token = pBasicScanner->currentItem.token;
     pNew->bActive = false;
     TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
@@ -1358,7 +1358,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
   {
     // nao eh macro
     ScannerItem* pNew = ScannerItem_Create();
-    StrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
+    LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
     pNew->token = pBasicScanner->currentItem.token;
     pNew->bActive = true;
     TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
@@ -1374,7 +1374,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
     // ja estou expandindo esta mesma macro
     // nao eh macro
     ScannerItem* pNew = ScannerItem_Create();
-    StrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
+    LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
     pNew->token = pBasicScanner->currentItem.token;
     pNew->bActive = true;
     TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
@@ -1461,7 +1461,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
 
         /////////////
         ScannerItem* pNew = ScannerItem_Create();
-        StrBuilder_Set(&pNew->lexeme, lexeme);
+        LocalStrBuilder_Set(&pNew->lexeme, lexeme);
         pNew->token = token;
         pNew->bActive = true;
         TScannerItemList_PushBack(&LocalAcumulatedTokens, pNew);
@@ -1544,14 +1544,14 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
         {
           // nao era uma chamada da macro funcao
           ScannerItem* pNew = ScannerItem_Create();
-          StrBuilder_Append(&pNew->lexeme, pFirstMacro->Name);
+          LocalStrBuilder_Append(&pNew->lexeme, pFirstMacro->Name);
           pNew->token = TK_MACRO_CALL;
           pNew->bActive = true;
           TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
         }
 
         ScannerItem* pNew0 = ScannerItem_Create();
-        StrBuilder_Append(&pNew0->lexeme, pMacro2->Name);
+        LocalStrBuilder_Append(&pNew0->lexeme, pMacro2->Name);
         pNew0->token = TK_IDENTIFIER;
         pNew0->bActive = true;
         TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew0);
@@ -2077,7 +2077,7 @@ void Scanner_BuyTokens(Scanner* pScanner)
   else
   {
     ScannerItem* pNew = ScannerItem_Create();
-    StrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
+    LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
     pNew->token = pBasicScanner->currentItem.token;
     pNew->bActive = bActive0;
     TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
