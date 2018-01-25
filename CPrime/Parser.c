@@ -4521,7 +4521,7 @@ void Designator_List(Parser* ctx, TDesignatorList* pDesignatorList)
     */
     TDesignator* pDesignator = TDesignator_Create();
     Designator(ctx, pDesignator);
-    List_Add(pDesignatorList, pDesignator);
+	TDesignatorList_PushBack(pDesignatorList, pDesignator);
 
     for (; ;)
     {

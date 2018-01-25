@@ -768,7 +768,7 @@ typedef struct
 } TDesignatorList;
 void TDesignatorList_Destroy(TDesignatorList* p);
 void TDesignatorList_Init(TDesignatorList* p);
-
+void TDesignatorList_PushBack(TDesignatorList* p, TDesignator* pItem);
 
 typedef struct TDesignation
 {
