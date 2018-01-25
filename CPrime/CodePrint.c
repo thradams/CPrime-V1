@@ -1886,7 +1886,7 @@ void GetPrefixSuffix(const char* psz, StrBuilder* prefix, StrBuilder* suffix)
 	}
 }
 
-static void FindRuntimeID(TProgram* program,
+static int FindRuntimeID(TProgram* program,
 	const char* structOrTypeName,
 	StrBuilder* idname)
 {
@@ -1943,10 +1943,11 @@ static void FindRuntimeID(TProgram* program,
 			}
 		}
 	}
+  return typeInt;
 }
 
 
-static void FindIDValue(TProgram* program,
+static int FindIDValue(TProgram* program,
 	const char* structOrTypeName,
 	StrBuilder* idname)
 {
@@ -2007,6 +2008,7 @@ static void FindIDValue(TProgram* program,
 			}
 		}
 	}
+  return typeInt;
 }
 
 
@@ -2473,13 +2475,103 @@ static void TStaticAssertDeclaration_CodePrint(TProgram* program,
 static void TGroupDeclaration_CodePrint(TProgram* program, Options * options, TGroupDeclaration *p, StrBuilder* fp)
 {
   TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-  Output_Append(fp, options, "{");
-  for (int i = 0; i < p->Declarations.Size; i++)
-  {
-    TAnyDeclaration_CodePrint(program, options, p->Declarations.pItems[i], fp);
-  }
+  Output_Append(fp, options, "#pragma region cprime");  
   TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-  Output_Append(fp, options, "}");    
+  Output_Append(fp, options, p->Identifier);
+  TNodeClueList_CodePrint(options, &p->ClueList2, fp);
+  Output_Append(fp, options, "\n");
+
+  Map2 map = MAPSTRINGTOPTR_INIT;
+  FindUnionSetOf(program, p->Identifier, &map);
+
+  StrBuilder idname = STRBUILDER_INIT;
+  
+  int ir = FindRuntimeID(program,
+    p->Identifier,
+    &idname);
+
+   
+
+  for (int i = 0; i < (int)map.nHashTableSize; i++)
+  {
+    if (map.pHashTable[i])
+    {
+      const char* derivedName = (const char*)map.pHashTable[i]->Key;
+      const char* baseName = p->Identifier;
+
+      StrBuilder idnamelocal = STRBUILDER_INIT;
+
+      int ir2 = FindIDValue(program,
+        derivedName,
+        &idnamelocal);
+
+      struct TemplateVar vars0[] = {
+        { "base", baseName},
+        { "derived", derivedName},
+        { "id", idname.c_str},
+        { "idvalue", idnamelocal.c_str}
+      };
+
+      if ((int)map.pHashTable[i]->pValue == 2)
+      {
+      
+        
+
+
+        if (ir == 2)
+        {
+          StrBuilder_Template(fp,
+            "inline struct $derived* $base\b_As_$derived(struct $base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
+            "inline struct $base* $derived\b_As_$base(struct $derived* p) { return (struct $base*) p; }\n",
+            vars0,
+            sizeof(vars0) / sizeof(vars0[0]),
+            options->IdentationLevel);
+        }
+        else
+        {
+          if (ir == 2)
+          {
+            StrBuilder_Template(fp,
+              "inline struct $derived* $base\b_As_$derived(struct $base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
+              "inline struct $base* $derived\b_As_$base(struct $derived* p) { return (struct $base*) p; }\n",
+              vars0,
+              sizeof(vars0) / sizeof(vars0[0]),
+              options->IdentationLevel);
+          }
+          else
+          {
+            StrBuilder_Template(fp,
+              "inline struct $derived* $base\b_As_$derived($base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
+              "inline $base* $derived\b_As_$base(struct $derived* p) { return ($base*) p; }\n",
+              vars0,
+              sizeof(vars0) / sizeof(vars0[0]),
+              options->IdentationLevel);
+          }          
+        }
+        
+      }      
+      else
+      {
+        StrBuilder_Template(fp,
+          "inline $derived* $base\b_As_$derived($base* p) { return p->$id == $idvalue ? ($derived*) p : 0;}\n"
+          "inline $base* $derived\b_As_$base($derived* p) { return ($base*) p; }\n",
+          vars0,
+          sizeof(vars0) / sizeof(vars0[0]),
+          options->IdentationLevel);
+      }
+
+      StrBuilder_Destroy(&idnamelocal);
+    }
+  }
+  Map2_Destroy(&map);
+  StrBuilder_Destroy(&idname);
+
+  //for (int i = 0; i < p->Declarations.Size; i++)
+  //{
+    //TAnyDeclaration_CodePrint(program, options, p->Declarations.pItems[i], fp);
+  //}
+  //TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+  Output_Append(fp, options, "#pragma endregion cprime\n");    
 }
 
 static void TAnyDeclaration_CodePrint(TProgram* program, Options * options, TAnyDeclaration *pDeclaration, StrBuilder* fp)

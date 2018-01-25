@@ -119,7 +119,7 @@ const char* TokenToString(Tokens tk)
         return "break";
     case TK_CASE:
         return "case";
-    case TK_char:
+    case TK_CHAR:
         return "char";
     case TK_CONST:
         return "const";
@@ -510,7 +510,7 @@ static struct TkPair keywords[] =
     { "_size", TK__SIZE },
     { "break", TK_BREAK },
     { "case", TK_CASE },
-    { "char", TK_char },
+    { "char", TK_CHAR },
     { "const", TK_CONST },
     { "continue", TK_CONTINUE },
     { "default", TK_DEFAULT },

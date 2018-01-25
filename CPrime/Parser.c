@@ -1075,7 +1075,7 @@ bool IsTypeName(Parser* ctx, Tokens token, const char * lexeme)
 
         //type-specifier
     case TK_VOID:
-    case TK_char:
+    case TK_CHAR:
     case TK_SHORT:
     case TK_INT:
     case TK_LONG:
@@ -2795,7 +2795,7 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
     case TK_AUTO:
     case TK_REGISTER:
     case TK_VOID:
-    case TK_char:
+    case TK_CHAR:
     case TK_SHORT:
     case TK_INT:
     case TK_LONG:
@@ -2842,7 +2842,7 @@ void Block_Item(Parser* ctx, TBlockItem** ppBlockItem)
     TStatement* pStatement = NULL;
 
     if (Statement(ctx, &pStatement))
-    {
+    {      
         *ppBlockItem = (TAnyDeclaration*)pStatement;
         ASSERT(*ppBlockItem != NULL);
     }
@@ -4101,7 +4101,7 @@ bool TTypeSpecifier_IsFirst(Parser* ctx, Tokens token, const char* lexeme)
     switch (token)
     {
     case TK_VOID:
-    case TK_char:
+    case TK_CHAR:
     case TK_SHORT:
     case TK_INT:
     case TK_LONG:
@@ -4191,7 +4191,7 @@ void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier)
     {
         //type - specifier
     case TK_VOID:
-    case TK_char:
+    case TK_CHAR:
     case TK_SHORT:
     case TK_INT:
     case TK_LONG:
@@ -4638,6 +4638,39 @@ void Init_Declarator_List(Parser* ctx,
 
 void Parse_Declarations(Parser* ctx, TDeclarations* declarations);
 
+void GroupDeclaration(Parser* ctx,
+  TGroupDeclaration** ppGroupDeclaration)
+{
+  /*
+    CPRIME
+    group-declaration:
+     default identifier { declarations opt }
+  */
+
+  TGroupDeclaration* p = TGroupDeclaration_Create();
+  *ppGroupDeclaration = p;
+
+  Parser_Match(ctx, &p->ClueList0);//default
+
+  
+  String_Set(&p->Identifier, Lexeme(ctx));
+  Parser_MatchToken(ctx, TK_IDENTIFIER, &p->ClueList1);//identifier
+
+  Parser_MatchToken(ctx, TK_LEFT_CURLY_BRACKET, &p->ClueList2);
+
+  Tokens token = Parser_CurrentToken(ctx);
+  if (token != TK_RIGHT_CURLY_BRACKET)
+  {
+    Parse_Declarations(ctx, &p->Declarations);
+  }
+  else
+  {
+    //vazio
+  }
+  Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET, NULL);  
+}
+
+
 bool  Declaration(Parser* ctx,
     TAnyDeclaration** ppDeclaration)
 {
@@ -4661,15 +4694,10 @@ bool  Declaration(Parser* ctx,
         bHasDeclaration = true;
         
     }
-    else if (token == TK_LEFT_CURLY_BRACKET)
-    {
-      TGroupDeclaration* p = TGroupDeclaration_Create();
-      Parser_MatchToken(ctx, TK_LEFT_CURLY_BRACKET, &p->ClueList0);
-      
-      Parse_Declarations(ctx, &p->Declarations);
-
-      Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET, &p->ClueList1);
-
+    else if (token == TK_DEFAULT)
+    {      
+      TGroupDeclaration* p = NULL;
+      GroupDeclaration(ctx, &p);      
       *ppDeclaration = p;//moved
       bHasDeclaration = true;
     }

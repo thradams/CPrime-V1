@@ -53,8 +53,10 @@ TGroupDeclaration* TGroupDeclaration_Create() _default
     {
         p->Type = TGroupDeclaration_ID;
         TDeclarations_Init(&p->Declarations);
+        String_Init(&p->Identifier);
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
+        TScannerItemList_Init(&p->ClueList2);
     }
     return p;
 }
@@ -63,8 +65,10 @@ void TGroupDeclaration_Delete(TGroupDeclaration* p) _default
     if (p != NULL)
     {
         TDeclarations_Destroy(&p->Declarations);
+        String_Destroy(&p->Identifier);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
+        TScannerItemList_Destroy(&p->ClueList2);
         free((void*)p);
     }
 }
@@ -1306,7 +1310,7 @@ bool TSpecifierQualifierList_IsChar(TSpecifierQualifierList* p)
         TSingleTypeSpecifier* pSingleTypeSpecifier =
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
         if (pSingleTypeSpecifier &&
-            pSingleTypeSpecifier->Token == TK_char)
+            pSingleTypeSpecifier->Token == TK_CHAR)
         {
             bResult = true;
             break;

@@ -172,17 +172,6 @@ void StrArray_Swap(StrArray* p1, StrArray* p2)
 }
 
 
-void* Array_RemoveAt(Array* p, int index)
-{
-	if (index != p->size - 1)
-	{
-		void* t = p->pItems[index];
-		p->pItems[index] = p->pItems[p->size - 1];
-		p->pItems[p->size - 1] = t;
-	}
-
-	return Array_PopGet(p);
-}
 
 void* Array_PopFront(Array* p)
 {

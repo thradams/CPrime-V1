@@ -19,7 +19,7 @@ PPTokenType TokenToPPToken(Tokens token)
       case TK__SIZE:
       case TK_BREAK:
       case TK_CASE:
-      case     TK_char:
+      case TK_CHAR:
       case TK_CONST:
       case TK_CONTINUE:
       case TK_DEFAULT:
@@ -1784,6 +1784,9 @@ void Scanner_BuyTokens(Scanner* pScanner)
           {
             pFile->PragmaOnce = true;
           }
+          //
+          IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+          Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
         }
         else if (BasicScanner_IsLexeme(Scanner_Top(pScanner), "dir"))
         {
@@ -1798,10 +1801,64 @@ void Scanner_BuyTokens(Scanner* pScanner)
           fileName[strlen(fileName) - 1] = 0;
           StrArray_Push(&pScanner->IncludeDir, fileName);
           String_Destroy(&fileName);
+          //
+          IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+          Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
         }
-        IgnorePreProcessorv2(pBasicScanner, &strBuilder);
-        Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
-      }
+        else if (BasicScanner_IsLexeme(pBasicScanner, "region"))
+        {
+          StrBuilder_Append(&strBuilder, "region");
+          BasicScanner_Match(pBasicScanner);
+          Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
+          if (BasicScanner_IsLexeme(pBasicScanner, "cprime"))
+          {
+            BasicScanner_Match(pBasicScanner);
+            Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
+
+            Scanner_PushToken(pScanner, TK_DEFAULT, "default", true);
+            Scanner_PushToken(pScanner, TK_SPACES, " ", true);
+
+            lexeme = pBasicScanner->currentItem.lexeme.c_str;
+            Scanner_PushToken(pScanner, TK_IDENTIFIER, lexeme, true);
+
+            BasicScanner_Match(pBasicScanner);
+            IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+
+            Scanner_PushToken(pScanner, TK_LEFT_CURLY_BRACKET, "{", true);
+          }
+          else
+          {
+            //
+            IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+            Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
+          }
+        }
+        else if (BasicScanner_IsLexeme(pBasicScanner, "endregion"))
+        {
+          StrBuilder_Append(&strBuilder, "endregion");
+          BasicScanner_Match(pBasicScanner);
+          Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
+
+          if (BasicScanner_IsLexeme(pBasicScanner, "cprime"))
+          {
+            IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+            Scanner_PushToken(pScanner, TK_RIGHT_CURLY_BRACKET, "}", true);
+          }
+          else
+          {
+            //
+            IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+            Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
+          }
+        }
+        else
+        {
+          //
+          IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+          Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
+        }
+        
+      }      
       else
       {
         IgnorePreProcessorv2(pBasicScanner, &strBuilder);

@@ -105,13 +105,6 @@ void TokenArray_Delete(TokenArray* st) _default
 }
 
 
-void TokenArray_RemoveAt(TokenArray* p, int index)
-{
-  void *pItem =
-    Array_RemoveAt((Array*)p, index);
-  PPToken_Delete((PPToken*)pItem);
-}
-
 
 
 void TokenArray_AppendTokensCopy(TokenArray *pArray, PPToken** pToken, int len)

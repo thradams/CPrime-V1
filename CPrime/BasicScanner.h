@@ -114,7 +114,7 @@ typedef enum
 
     TK_BREAK,
     TK_CASE,
-    TK_char,
+    TK_CHAR,
     TK_CONST,
     TK_CONTINUE,
     TK_DEFAULT,	
@@ -213,7 +213,7 @@ typedef struct ScannerItem
     Tokens token;
     int Line _defval(-1);
     int FileIndex _defval(-1);
-    bool bActive _defval(true);
+    bool bActive _defval(1);
     struct ScannerItem* pNext;
 } ScannerItem;
 

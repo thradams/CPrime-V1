@@ -38,7 +38,7 @@ typedef struct
 
 void TFileArray_Init(TFileArray* p);
 void TFileArray_Destroy(TFileArray* p);
-void TFileArray_PushBack(TFileArray* p);
+void TFileArray_PushBack(TFileArray* p, TFile* pItem);
 void TFileArray_Reserve(TFileArray* p, int n);
 
 
