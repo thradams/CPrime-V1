@@ -3,7 +3,10 @@
 ## Using the compiler
 
 Download binaries here: **JUST 390K**
+
 https://github.com/thradams/CPrime/releases
+
+For windows there is a setup.
 
 Open the command line and try some samples:
 
