@@ -63,9 +63,10 @@ During the development of this parser and static analysis, I had some difficulti
 At some point I decided that I should address the problem to work better with C before to do the static analysis and then I renamed the project to C’ cprime.  Because I want a tool to be useful now (not something experimental) I spent some time to solve the problem of generating C code from C code including the preprocessed parts. This allowed me to use existing C compilers and IDEs.
 C’ can generate destructors for structs and can have owner pointers in the type system. The motivation for static analysis still there and it is also related with code generation. More motivations like containers and polymorphism are included in the C’ as well.
 
-## Two models considered
+## Two generatarion models
 
-The first one is the model described here, were the source is changed "in place" like a refactoring tool. The cprime code itself is compiled using cprime. Of course at the begging the source was pure C. I think a had a very good experience adding cprime features for the code that was orinaly using C. This "in place" mode made the change very simple and secure.
+The first one is the model described here, were the source is changed "in place" like a refactoring tool. The cprime code itself is compiled using cprime. Of course at the begging the source was pure C. I  a had a very good experience adding cprime features for the code that was orinally using only C. This "in place" mode made the change very simple and secure. After some time, I felt the beneficts
+of the cprime when I had to modify some ast structs. The "robot" just fixed my code.
 
 The second model is to generate a new file, and keep the source code smaller without the generated code.
 I don´t want to use the second model before to have a complete solution for debug and edit the code. The second model also can be used to convert from C2x to C89 for instance. Many new features could be used and translated for old compilers.
