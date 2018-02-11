@@ -65,7 +65,7 @@ C’ can generate destructors for structs and can have owner pointers in the typ
 
 ## Two generatarion models
 
-The first one is the model described here, were the source is changed "in place" like a refactoring tool. The cprime code itself is compiled using cprime. Of course at the begging the source was pure C. I  a had a very good experience adding cprime features for the code that was orinally using only C. This "in place" mode made the change very simple and secure. After some time, I felt the beneficts
+The first one is the model described here, were the source is changed "in place" like a refactoring tool. The cprime code itself is compiled using cprime. Of course at the begging the source was pure C. I  a had a very good experience adding cprime features for the code that was orinally using only C. This "in place" mode made the change very simple and secure. After some time, I enjoy the beneficts
 of the cprime when I had to modify some ast structs. The "robot" just fixed my code.
 
 The second model is to generate a new file, and keep the source code smaller without the generated code.
