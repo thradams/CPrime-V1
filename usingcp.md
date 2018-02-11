@@ -2,7 +2,7 @@
 
 ## Using the compiler
 
-Download binaries here:
+Download binaries here: **JUST 390K**
 https://github.com/thradams/CPrime/releases
 
 Open the command line and try some samples:
