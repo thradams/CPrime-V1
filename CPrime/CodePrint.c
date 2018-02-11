@@ -1655,6 +1655,71 @@ void TInitDeclaratorList_CodePrint(TProgram* program,
 TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifiers* specifiers);
 
 
+static bool FindListStructPattern(TProgram* program,
+	TParameter* pParameter,
+	bool* pbItemIsPointer,
+	bool* pbItemIsAutoPointer,
+	StrBuilder* itemTypeName,
+	StrBuilder* arrayName)
+{
+	//Esta funcao analisa a struct e ve se ela eh compativel com o tipo vector.
+	//ter size, capacity e um vector de items
+	
+	bool bHasHead = false;
+	bool bHasTail = false;
+
+	//O primeiro parametro tem que ser struct or typedef para struct
+	TStructUnionSpecifier* pStructUnionSpecifier =
+		GetStructSpecifier(program, &pParameter->Specifiers);
+	if (pStructUnionSpecifier)
+	{
+		//Vou analisar a "digital" da struct
+		//ok tem a definicao completa da struct
+		for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
+		{
+			TAnyStructDeclaration* pAnyStructDeclaration =
+				pStructUnionSpecifier->StructDeclarationList.pItems[i];
+
+			TStructDeclaration* pStructDeclaration =
+				TAnyStructDeclaration_As_TStructDeclaration(pAnyStructDeclaration);
+			if (pStructDeclaration)
+			{
+				TStructDeclarator* pStructDeclarator =
+					pStructDeclaration->DeclaratorList.pHead;
+
+				while (pStructDeclarator)
+				{
+					const char* structDeclaratorName =
+						TDeclarator_GetName(pStructDeclarator->pDeclarator);
+
+
+					bool bIsPointer1 =
+						TPointerList_IsPointerN(&pStructDeclarator->pDeclarator->PointerList, 1);
+
+					bool bIsPointer2 =
+						TPointerList_IsPointerN(&pStructDeclarator->pDeclarator->PointerList, 2);
+					if (bIsPointer1)
+						
+					{
+						if (strcmp(structDeclaratorName, "pHead") == 0)
+						{
+							bHasHead = true;
+						}
+						if (strcmp(structDeclaratorName, "pTail") == 0)
+						{
+							bHasTail = true;
+						}
+					}
+
+					pStructDeclarator = (pStructDeclarator)->pNext;
+				}
+			}
+		}
+	}
+
+	return bHasHead && bHasTail;
+}
+
 static bool FindVectorStructPattern(TProgram* program,
 	TParameter* pParameter,
 	bool* pbItemIsPointer,
@@ -1943,7 +2008,7 @@ static int FindRuntimeID(TProgram* program,
 			}
 		}
 	}
-  return typeInt;
+	return typeInt;
 }
 
 
@@ -2008,7 +2073,7 @@ static int FindIDValue(TProgram* program,
 			}
 		}
 	}
-  return typeInt;
+	return typeInt;
 }
 
 
@@ -2063,10 +2128,11 @@ void FindUnionSetOf(TProgram* program,
 void UnionTypeDefault(TProgram* program,
 	Options* options,
 	const char* structName,
-  TParameterTypeList * pArgsOpt, //parametros
+	TParameterTypeList * pArgsOpt, //parametros
 	const char* parameterName,
 	const char* functionSuffix,
 	StrBuilder* fp);
+static const char* GetNullStr(TProgram* program);
 
 static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 	Options * options,
@@ -2087,16 +2153,16 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 	GetPrefixSuffix(funcName, &functionPrefix, &functionSuffix);
 
 	//parametros
-	
-	
+
+
 	TParameterTypeList * pArgs =
 		TDeclaration_GetFunctionArguments(p);
 
-  TParameter* pFirstParameter =
-    TParameterTypeList_GetParameterByIndex(pArgs, 0);
+	TParameter* pFirstParameter =
+		TParameterTypeList_GetParameterByIndex(pArgs, 0);
 
-  TParameter* pSecondParameter =
-    TParameterTypeList_GetParameterByIndex(pArgs, 1);
+	TParameter* pSecondParameter =
+		TParameterTypeList_GetParameterByIndex(pArgs, 1);
 
 
 	if (IsSuffix(funcName, "_Create"))
@@ -2118,21 +2184,21 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 		options->IdentationLevel--;
 	}
 	else if (IsSuffix(funcName, "_Init") && pFirstParameter != NULL)
-	{		
-      options->IdentationLevel++;
-      InstanciateDestroy2(program,
-        options,
-        (TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
-        &pFirstParameter->Declarator,
-        NULL,
-        pArgs,/*args fazer inicializacao conforme parametro*/
-        TParameter_GetName(pFirstParameter),
-        NULL /*not used*/,
-        ActionInitContent,
-        SearchNone,
-        NULL,
-        fp);
-      options->IdentationLevel--;    
+	{
+		options->IdentationLevel++;
+		InstanciateDestroy2(program,
+			options,
+			(TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
+			&pFirstParameter->Declarator,
+			NULL,
+			pArgs,/*args fazer inicializacao conforme parametro*/
+			TParameter_GetName(pFirstParameter),
+			NULL /*not used*/,
+			ActionInitContent,
+			SearchNone,
+			NULL,
+			fp);
+		options->IdentationLevel--;
 	}
 	else if (IsSuffix(funcName, "_Destroy") && pFirstParameter != NULL)
 	{
@@ -2144,7 +2210,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 			&pFirstParameter->Declarator,
 			NULL,
 			NULL,/*args*/
-      TParameter_GetName(pFirstParameter),
+			TParameter_GetName(pFirstParameter),
 			NULL /*not used*/,
 			ActionDestroyContent,
 			SearchNone,
@@ -2172,9 +2238,9 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 	}
 	else
 	{
-		if (pFirstParameter != NULL && 
-        pSecondParameter != NULL && 
-        IsSuffix(funcName, "_Reserve"))
+		if (pFirstParameter != NULL &&
+			pSecondParameter != NULL &&
+			IsSuffix(funcName, "_Reserve"))
 		{
 			bool bItemIsPointer;
 			bool bItemIsAutoPointer;
@@ -2183,7 +2249,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 
 			//Implemetancao para vector
 			if (FindVectorStructPattern(program,
-        pFirstParameter,
+				pFirstParameter,
 				&bItemIsPointer,
 				&bItemIsAutoPointer,
 				&itemType,
@@ -2229,13 +2295,13 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 					sizeof(vars) / sizeof(vars[0]),
 					1 /*options->IdentationLevel*/);
 			}
-
+			
 			StrBuilder_Destroy(&itemType);
 			StrBuilder_Destroy(&arrayName);
 		}
 		else if (pFirstParameter != NULL &&
-             pSecondParameter != NULL &&  
-             IsSuffix(funcName, "_PushBack"))
+			pSecondParameter != NULL &&
+			IsSuffix(funcName, "_PushBack"))
 		{
 			bool bItemIsPointer;
 			bool bItemIsAutoPointer;
@@ -2250,8 +2316,6 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 				&itemType,
 				&arrayName))
 			{
-				
-				
 				bool bHasReserve =
 					SymbolMap_FindObjFunction(&program->GlobalScope, functionPrefix.c_str, "Reserve") != 0;
 				const char* pszTemplate = "";
@@ -2281,17 +2345,15 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 						" }\n"
 						" $type** pnew = $p->data;\n"
 						" pnew = ($type**)realloc(pnew, n * sizeof($type*));\n"
-					    " if (pnew)\n"
-					    " {\n"
-					    "  $p->data = pnew;\n"
+						" if (pnew)\n"
+						" {\n"
+						"  $p->data = pnew;\n"
 						"  $p->Capacity = n;\n"
-					    " }\n"						
+						" }\n"
 						"}\n"
 						"$p->$data[$p->Size] = $nelements;\n"
 						"$p->Size++;\n";
 				}
-				
-				
 
 				struct TemplateVar vars[] = {
 					{ "p", TParameter_GetName(pFirstParameter)},
@@ -2300,6 +2362,40 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 				{ "data", arrayName.c_str },
 				{ "prefix", functionPrefix.c_str }
 				};
+
+				StrBuilder_Template(fp,
+					pszTemplate,
+					vars,
+					sizeof(vars) / sizeof(vars[0]),
+					1/*options->IdentationLevel*/);
+			}
+			else if (FindListStructPattern(program,
+				pFirstParameter,
+				&bItemIsPointer,
+				&bItemIsAutoPointer,
+				&itemType,
+				&arrayName))
+			{
+				struct TemplateVar vars[] = {
+					{ "pList", TParameter_GetName(pFirstParameter) },
+				{ "pItem", TParameter_GetName(pSecondParameter) },
+				{ "type", itemType.c_str },
+				{ "data", arrayName.c_str },
+				{ "prefix", functionPrefix.c_str },
+				{ "null", GetNullStr(program)}
+				};
+				//o item apontado tem que ter pNext verificar isso
+				//e colocar erro se nao tiver
+				const char* pszTemplate = 
+			    "if ($pList->pHead == $null)\n"
+				"{\n"
+				" $pList->pHead = $pItem;\n"				
+				"}\n"
+			    "else\n"
+			    "{\n"
+			    " $pList->pTail->pNext = $pItem;\n"
+			    "}\n"
+			    "$pList->pTail = $pItem; \n";
 
 				StrBuilder_Template(fp,
 					pszTemplate,
@@ -2324,7 +2420,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 					UnionTypeDefault(program,
 						options,
 						pStructUnionSpecifier->Name,
-            pArgs,
+						pArgs,
 						TParameter_GetName(pFirstParameter),
 						functionSuffix.c_str,
 						fp);
@@ -2504,113 +2600,113 @@ static void TStaticAssertDeclaration_CodePrint(TProgram* program,
 
 static void TGroupDeclaration_CodePrint(TProgram* program, Options * options, TGroupDeclaration *p, StrBuilder* fp)
 {
-  TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-  Output_Append(fp, options, "#pragma region cprime");  
-  TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-  Output_Append(fp, options, p->Identifier);
-  TNodeClueList_CodePrint(options, &p->ClueList2, fp);
-  Output_Append(fp, options, "\n");
+	TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+	Output_Append(fp, options, "#pragma region cprime");
+	TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+	Output_Append(fp, options, p->Identifier);
+	TNodeClueList_CodePrint(options, &p->ClueList2, fp);
+	Output_Append(fp, options, "\n");
 
-  Map2 map = MAPSTRINGTOPTR_INIT;
-  FindUnionSetOf(program, p->Identifier, &map);
+	Map2 map = MAPSTRINGTOPTR_INIT;
+	FindUnionSetOf(program, p->Identifier, &map);
 
-  StrBuilder idname = STRBUILDER_INIT;
-  
-  int ir = FindRuntimeID(program,
-    p->Identifier,
-    &idname);
+	StrBuilder idname = STRBUILDER_INIT;
 
-   
-
-  for (int i = 0; i < (int)map.nHashTableSize; i++)
-  {
-    if (map.pHashTable[i])
-    {
-      const char* derivedName = (const char*)map.pHashTable[i]->Key;
-      const char* baseName = p->Identifier;
-
-      StrBuilder idnamelocal = STRBUILDER_INIT;
-
-      int ir2 = FindIDValue(program,
-        derivedName,
-        &idnamelocal);
-
-      struct TemplateVar vars0[] = {
-        { "base", baseName},
-        { "derived", derivedName},
-        { "id", idname.c_str},
-        { "idvalue", idnamelocal.c_str}
-      };
-
-      if ((int)map.pHashTable[i]->pValue == 2)
-      {
-      
-        
+	int ir = FindRuntimeID(program,
+		p->Identifier,
+		&idname);
 
 
-        if (ir == 2)
-        {
-          StrBuilder_Template(fp,
-            "inline struct $derived* $base\b_As_$derived(struct $base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
-            "inline struct $base* $derived\b_As_$base(struct $derived* p) { return (struct $base*) p; }\n",
-            vars0,
-            sizeof(vars0) / sizeof(vars0[0]),
-            options->IdentationLevel);
-        }
-        else
-        {
-          if (ir == 2)
-          {
-            StrBuilder_Template(fp,
-              "inline struct $derived* $base\b_As_$derived(struct $base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
-              "inline struct $base* $derived\b_As_$base(struct $derived* p) { return (struct $base*) p; }\n",
-              vars0,
-              sizeof(vars0) / sizeof(vars0[0]),
-              options->IdentationLevel);
-          }
-          else
-          {
-            StrBuilder_Template(fp,
-              "inline struct $derived* $base\b_As_$derived($base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
-              "inline $base* $derived\b_As_$base(struct $derived* p) { return ($base*) p; }\n",
-              vars0,
-              sizeof(vars0) / sizeof(vars0[0]),
-              options->IdentationLevel);
-          }          
-        }
-        
-      }      
-      else
-      {
-        StrBuilder_Template(fp,
-          "inline $derived* $base\b_As_$derived($base* p) { return p->$id == $idvalue ? ($derived*) p : 0;}\n"
-          "inline $base* $derived\b_As_$base($derived* p) { return ($base*) p; }\n",
-          vars0,
-          sizeof(vars0) / sizeof(vars0[0]),
-          options->IdentationLevel);
-      }
 
-      StrBuilder_Destroy(&idnamelocal);
-    }
-  }
-  Map2_Destroy(&map);
-  StrBuilder_Destroy(&idname);
+	for (int i = 0; i < (int)map.nHashTableSize; i++)
+	{
+		if (map.pHashTable[i])
+		{
+			const char* derivedName = (const char*)map.pHashTable[i]->Key;
+			const char* baseName = p->Identifier;
 
-  //for (int i = 0; i < p->Declarations.Size; i++)
-  //{
-    //TAnyDeclaration_CodePrint(program, options, p->Declarations.pItems[i], fp);
-  //}
-  //TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-  Output_Append(fp, options, "#pragma endregion cprime\n");    
+			StrBuilder idnamelocal = STRBUILDER_INIT;
+
+			int ir2 = FindIDValue(program,
+				derivedName,
+				&idnamelocal);
+
+			struct TemplateVar vars0[] = {
+			  { "base", baseName},
+			  { "derived", derivedName},
+			  { "id", idname.c_str},
+			  { "idvalue", idnamelocal.c_str}
+			};
+
+			if ((int)map.pHashTable[i]->pValue == 2)
+			{
+
+
+
+
+				if (ir == 2)
+				{
+					StrBuilder_Template(fp,
+						"inline struct $derived* $base\b_As_$derived(struct $base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
+						"inline struct $base* $derived\b_As_$base(struct $derived* p) { return (struct $base*) p; }\n",
+						vars0,
+						sizeof(vars0) / sizeof(vars0[0]),
+						options->IdentationLevel);
+				}
+				else
+				{
+					if (ir == 2)
+					{
+						StrBuilder_Template(fp,
+							"inline struct $derived* $base\b_As_$derived(struct $base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
+							"inline struct $base* $derived\b_As_$base(struct $derived* p) { return (struct $base*) p; }\n",
+							vars0,
+							sizeof(vars0) / sizeof(vars0[0]),
+							options->IdentationLevel);
+					}
+					else
+					{
+						StrBuilder_Template(fp,
+							"inline struct $derived* $base\b_As_$derived($base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
+							"inline $base* $derived\b_As_$base(struct $derived* p) { return ($base*) p; }\n",
+							vars0,
+							sizeof(vars0) / sizeof(vars0[0]),
+							options->IdentationLevel);
+					}
+				}
+
+			}
+			else
+			{
+				StrBuilder_Template(fp,
+					"inline $derived* $base\b_As_$derived($base* p) { return p->$id == $idvalue ? ($derived*) p : 0;}\n"
+					"inline $base* $derived\b_As_$base($derived* p) { return ($base*) p; }\n",
+					vars0,
+					sizeof(vars0) / sizeof(vars0[0]),
+					options->IdentationLevel);
+			}
+
+			StrBuilder_Destroy(&idnamelocal);
+		}
+	}
+	Map2_Destroy(&map);
+	StrBuilder_Destroy(&idname);
+
+	//for (int i = 0; i < p->Declarations.Size; i++)
+	//{
+	  //TAnyDeclaration_CodePrint(program, options, p->Declarations.pItems[i], fp);
+	//}
+	//TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+	Output_Append(fp, options, "#pragma endregion cprime\n");
 }
 
 static void TAnyDeclaration_CodePrint(TProgram* program, Options * options, TAnyDeclaration *pDeclaration, StrBuilder* fp)
 {
 	switch (pDeclaration->Type)
 	{
-  case TGroupDeclaration_ID:
-    TGroupDeclaration_CodePrint(program, options, (TGroupDeclaration*)pDeclaration, fp);
-    break;
+	case TGroupDeclaration_ID:
+		TGroupDeclaration_CodePrint(program, options, (TGroupDeclaration*)pDeclaration, fp);
+		break;
 
 	case TEofDeclaration_ID:
 		TEofDeclaration_CodePrint(program, options, (TEofDeclaration*)pDeclaration, fp);
@@ -2698,7 +2794,7 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 	//}
 
 	StrBuilder sb = STRBUILDER_INIT;
-  StrBuilder_Reserve(&sb, 80 * 5000);
+	StrBuilder_Reserve(&sb, 80 * 5000);
 
 	for (int i = 0; i < pProgram->Declarations.Size; i++)
 	{
@@ -2723,20 +2819,20 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 
 static const char* GetFreeStr(TProgram* program)
 {
-  TDeclaration* pDeclarationDestroy =
-    SymbolMap_FindFunction(&program->GlobalScope,
-      "Free");
+	TDeclaration* pDeclarationDestroy =
+		SymbolMap_FindFunction(&program->GlobalScope,
+			"Free");
 
-  return pDeclarationDestroy ? "Free" : "free";
+	return pDeclarationDestroy ? "Free" : "free";
 }
 
 static const char* GetMallocStr(TProgram* program)
 {
-  TDeclaration* pDeclarationDestroy =
-    SymbolMap_FindFunction(&program->GlobalScope,
-      "Malloc");
+	TDeclaration* pDeclarationDestroy =
+		SymbolMap_FindFunction(&program->GlobalScope,
+			"Malloc");
 
-  return pDeclarationDestroy ? "Malloc" : "malloc";
+	return pDeclarationDestroy ? "Malloc" : "malloc";
 }
 
 
@@ -2785,7 +2881,7 @@ static bool FindHighLevelFunction(TProgram* program,
 	Options* options,
 	TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
 	TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
-  TParameterTypeList * pArgsOpt, //parametros do create /init
+	TParameterTypeList * pArgsOpt, //parametros do create /init
 	TInitializer* pInitializerOpt,
 	const char* pInitExpressionText, //(x->p->i = 0)    
 	const char* pszAutoPointerLenExpressionOpt,
@@ -2861,7 +2957,7 @@ static bool FindHighLevelFunction(TProgram* program,
 
 								StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 									"%s((void*)%s);",
-                  GetFreeStr(program),
+									GetFreeStr(program),
 									pInitExpressionText);
 							}
 							else
@@ -2874,7 +2970,7 @@ static bool FindHighLevelFunction(TProgram* program,
 
 								StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 									"%s((void*)%s);",
-                  GetFreeStr(program),
+									GetFreeStr(program),
 									pInitExpressionText);
 							}
 
@@ -2903,7 +2999,7 @@ static bool FindHighLevelFunction(TProgram* program,
 
 									StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 										"%s((void*)%s);",
-                    GetFreeStr(program),
+										GetFreeStr(program),
 										pInitExpressionText);
 								}
 								else if (bIsAutoPointerToAutoPointer)
@@ -2922,7 +3018,7 @@ static bool FindHighLevelFunction(TProgram* program,
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 											"%s((void*)%s[i]);",
-                      GetFreeStr(program),
+											GetFreeStr(program),
 											pInitExpressionText);
 
 										options->IdentationLevel--;
@@ -2930,7 +3026,7 @@ static bool FindHighLevelFunction(TProgram* program,
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 											"%s((void*)%s);",
-                      GetFreeStr(program),
+											GetFreeStr(program),
 											pInitExpressionText);
 									}
 									else
@@ -2944,12 +3040,12 @@ static bool FindHighLevelFunction(TProgram* program,
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 											"%s((void*)%s[0]);",
-                      GetFreeStr(program),
+											GetFreeStr(program),
 											pInitExpressionText);
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 											"%s((void*)%s);",
-                      GetFreeStr(program),
+											GetFreeStr(program),
 											pInitExpressionText);
 									}
 
@@ -2977,7 +3073,7 @@ static bool FindHighLevelFunction(TProgram* program,
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 											"%s((void*)%s);",
-                      GetFreeStr(program),
+											GetFreeStr(program),
 											pInitExpressionText);
 									}
 									else
@@ -2995,7 +3091,7 @@ static bool FindHighLevelFunction(TProgram* program,
 
 										StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 											"%s((void*)%s);",
-                      GetFreeStr(program),
+											GetFreeStr(program),
 											pInitExpressionText);
 									}
 								}
@@ -3010,7 +3106,7 @@ static bool FindHighLevelFunction(TProgram* program,
 			{
 				StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 					"%s((void*)%s);",
-          GetFreeStr(program),
+					GetFreeStr(program),
 					pInitExpressionText);
 
 				//nada
@@ -3091,7 +3187,7 @@ static bool FindHighLevelFunction(TProgram* program,
 
 						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 							"%s((void*)%s);",
-              GetFreeStr(program),
+							GetFreeStr(program),
 							pInitExpressionText);
 						bComplete = true;
 					}
@@ -3128,7 +3224,7 @@ static bool FindHighLevelFunction(TProgram* program,
 						pInitExpressionText);
 					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 						"%s((void*)%s);",
-            GetFreeStr(program),
+						GetFreeStr(program),
 						pInitExpressionText);
 					options->IdentationLevel--;
 					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
@@ -3167,9 +3263,9 @@ static bool FindHighLevelFunction(TProgram* program,
 						nameToFind,
 						pInitExpressionText);
 
-          TParameterTypeList_GetArgsString(pArgsOpt, fp);
+					TParameterTypeList_GetArgsString(pArgsOpt, fp);
 
-          StrBuilder_Append(fp, ");\n");
+					StrBuilder_Append(fp, ");\n");
 
 					bComplete = true;
 				}
@@ -3223,7 +3319,7 @@ static bool FindHighLevelFunction(TProgram* program,
 					"struct %s *p = (struct %s *) %s(sizeof * p);",
 					nameToFind,
 					nameToFind,
-          GetMallocStr(program));
+					GetMallocStr(program));
 
 
 				PrintIfNotNullLn(program, options, "p", fp);
@@ -3232,20 +3328,20 @@ static bool FindHighLevelFunction(TProgram* program,
 				StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 					"{");
 				options->IdentationLevel++;
-				
-        StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel,
+
+				StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel,
 					"%s_Init(p",
 					nameToFind);
-        
-        if (TParameterTypeList_HasNamedArgs(pArgsOpt))
-        {
-          StrBuilder_Append(fp, ", ");
-          TParameterTypeList_GetArgsString(pArgsOpt, fp);
-        }
 
-        StrBuilder_Append(fp, ");\n");
+				if (TParameterTypeList_HasNamedArgs(pArgsOpt))
+				{
+					StrBuilder_Append(fp, ", ");
+					TParameterTypeList_GetArgsString(pArgsOpt, fp);
+				}
 
-        
+				StrBuilder_Append(fp, ");\n");
+
+
 				options->IdentationLevel--;
 
 				StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
@@ -3339,7 +3435,7 @@ static bool IsVector(TStructUnionSpecifier* pStructUnionSpecifier)
 void UnionTypeDefault(TProgram* program,
 	Options* options,
 	const char* structName,
-  TParameterTypeList * pArgsOpt, //parametros
+	TParameterTypeList * pArgsOpt, //parametros
 	const char* parameterName0,
 	const char* functionSuffix,
 	StrBuilder* fp)
@@ -3350,17 +3446,17 @@ void UnionTypeDefault(TProgram* program,
 	StrBuilder strid = STRBUILDER_INIT;
 	FindRuntimeID(program, structName, &strid);
 
-  StrBuilder args = STRBUILDER_INIT;
+	StrBuilder args = STRBUILDER_INIT;
 
-  if (pArgsOpt != NULL)
-  {
-    //lista argumentos separados por virgula
-    TParameterTypeList_GetArgsString(pArgsOpt, &args);
-  }
-  else
-  {
-    StrBuilder_Append(&args, parameterName0);
-  }
+	if (pArgsOpt != NULL)
+	{
+		//lista argumentos separados por virgula
+		TParameterTypeList_GetArgsString(pArgsOpt, &args);
+	}
+	else
+	{
+		StrBuilder_Append(&args, parameterName0);
+	}
 
 	struct TemplateVar vars0[] = {
 		{ "p", parameterName0 },
@@ -3386,11 +3482,11 @@ void UnionTypeDefault(TProgram* program,
 				(const char*)map.pHashTable[i]->Key,
 				&idvalue);
 
-			struct TemplateVar vars[] = {				
+			struct TemplateVar vars[] = {
 			{ "type", (const char*)map.pHashTable[i]->Key },
 			{ "suffix", functionSuffix },
 			{ "value", idvalue.c_str },
-      { "args", args.c_str }
+	  { "args", args.c_str }
 			};
 			if ((int)map.pHashTable[i]->pValue == 2)
 			{
@@ -3426,7 +3522,7 @@ void UnionTypeDefault(TProgram* program,
 		0,
 		options->IdentationLevel);
 
-  StrBuilder_Destroy(&args);
+	StrBuilder_Destroy(&args);
 
 	Map2_Destroy(&map);
 }
@@ -3510,7 +3606,7 @@ void InstanciateDestroy2(TProgram* program,
 						"%s *p = (%s*) %s(sizeof * p);",
 						pSingleTypeSpecifier->TypedefName,
 						pSingleTypeSpecifier->TypedefName,
-            GetMallocStr(program));
+						GetMallocStr(program));
 
 					PrintIfNotNullLn(program, options, "p", fp);
 
@@ -3529,17 +3625,17 @@ void InstanciateDestroy2(TProgram* program,
 
 					if (pDeclarationInit)
 					{
-            StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel,
-              "%s_Init(p",
-              pSingleTypeSpecifier->TypedefName);
+						StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel,
+							"%s_Init(p",
+							pSingleTypeSpecifier->TypedefName);
 
-            if (TParameterTypeList_HasNamedArgs(pArgsOpt))
-            {
-              StrBuilder_Append(fp, ", ");
-              TParameterTypeList_GetArgsString(pArgsOpt, fp);
-            }
+						if (TParameterTypeList_HasNamedArgs(pArgsOpt))
+						{
+							StrBuilder_Append(fp, ", ");
+							TParameterTypeList_GetArgsString(pArgsOpt, fp);
+						}
 
-            StrBuilder_Append(fp, ");\n");
+						StrBuilder_Append(fp, ");\n");
 
 						bComplete = true;
 					}
@@ -3578,7 +3674,7 @@ void InstanciateDestroy2(TProgram* program,
 						options,
 						pSpecifierQualifierList,//<-dupla para entender o tipo
 						pDeclatator,                        //<-dupla para entender o tipo
-            pArgsOpt, //parametros do create /init
+						pArgsOpt, //parametros do create /init
 						pInitializerOpt,
 						pInitExpressionText, //(x->p->i = 0)    
 						pszAutoPointerLenExpressionOpt,
@@ -3718,7 +3814,7 @@ void InstanciateDestroy2(TProgram* program,
 			options,
 			pSpecifierQualifierList,//<-dupla para entender o tipo
 			pDeclatator,                        //<-dupla para entender o tipo
-      pArgsOpt,
+			pArgsOpt,
 			pInitializerOpt,
 			pInitExpressionText, //(x->p->i = 0)    
 			pszAutoPointerLenExpressionOpt,
@@ -3743,7 +3839,8 @@ void InstanciateDestroy2(TProgram* program,
 					SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Name);
 			}
 
-			bool bIsUnionTypes = pStructUnionSpecifier->Token2 == TK__UNION;
+			bool bIsUnionTypes = pStructUnionSpecifier && 
+				                 pStructUnionSpecifier->Token2 == TK__UNION;
 
 
 			if (pStructUnionSpecifier &&
@@ -3794,7 +3891,7 @@ void InstanciateDestroy2(TProgram* program,
 						"struct %s* p = (struct %s*) %s(sizeof * p);",
 						pStructUnionSpecifier->Name,
 						pStructUnionSpecifier->Name,
-            GetMallocStr(program));
+						GetMallocStr(program));
 
 					PrintIfNotNullLn(program, options, pInitExpressionText, fp);
 					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
@@ -3819,7 +3916,7 @@ void InstanciateDestroy2(TProgram* program,
 						UnionTypeDefault(program,
 							options,
 							pStructUnionSpecifier->Name,
-              NULL, /*args*/
+							NULL, /*args*/
 							pInitExpressionText,
 							"Delete",
 							fp);
@@ -3832,7 +3929,7 @@ void InstanciateDestroy2(TProgram* program,
 						UnionTypeDefault(program,
 							options,
 							pStructUnionSpecifier->Name,
-              NULL, /*args*/
+							NULL, /*args*/
 							pInitExpressionText,
 							"Destroy",
 							fp);
@@ -3849,7 +3946,7 @@ void InstanciateDestroy2(TProgram* program,
 					for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
 					{
 
-            
+
 
 						if (action == ActionStaticInit && i > 0)
 						{
@@ -3873,13 +3970,13 @@ void InstanciateDestroy2(TProgram* program,
 
 							while (pStructDeclarator)
 							{
-                //O padrao eh ser o inicializador do tipo
-                TInitializer* pStructMemberInitializer =
-                  pStructDeclarator->pInitializer;
+								//O padrao eh ser o inicializador do tipo
+								TInitializer* pStructMemberInitializer =
+									pStructDeclarator->pInitializer;
 
-                TPrimaryExpressionValue initializerExpression;
-                TPrimaryExpressionValue_Init(&initializerExpression);
-                
+								TPrimaryExpressionValue initializerExpression;
+								TPrimaryExpressionValue_Init(&initializerExpression);
+
 
 								StrBuilder_Clear(&strVariableName);
 								StrBuilder_Clear(&strPonterSizeExpr);
@@ -3920,7 +4017,7 @@ void InstanciateDestroy2(TProgram* program,
 
 								StrBuilder_Append(&strVariableName, structDeclaratorName);
 
-								
+
 								Action action2 = action;
 								if (action == ActionDestroyContent ||
 									action == ActionDelete)
@@ -3930,41 +4027,41 @@ void InstanciateDestroy2(TProgram* program,
 								}
 								else if (action == ActionInitContent)
 								{
-									
-                  TParameter* pParameter = NULL;
-                  if (pArgsOpt)
-                  {
-                    pParameter = TParameterTypeList_FindParameterByName(pArgsOpt, structDeclaratorName);
-                    if (pParameter != NULL)
-                    {
-                      pStructMemberInitializer = TExpression_As_TInitializer(TPrimaryExpressionValue_As_TExpression(&initializerExpression));
-                      initializerExpression.token = TK_IDENTIFIER;
-                      String_Set(&initializerExpression.lexeme, structDeclaratorName);
-                    }
-                  }
+
+									TParameter* pParameter = NULL;
+									if (pArgsOpt)
+									{
+										pParameter = TParameterTypeList_FindParameterByName(pArgsOpt, structDeclaratorName);
+										if (pParameter != NULL)
+										{
+											pStructMemberInitializer = TExpression_As_TInitializer(TPrimaryExpressionValue_As_TExpression(&initializerExpression));
+											initializerExpression.token = TK_IDENTIFIER;
+											String_Set(&initializerExpression.lexeme, structDeclaratorName);
+										}
+									}
 
 									action2 = ActionInit;
 								}
 								else if (action == ActionCreate)
 								{
-                  TParameter* pParameter = NULL;
-                  if (pArgsOpt)
-                  {
-                    pParameter = TParameterTypeList_FindParameterByName(pArgsOpt, structDeclaratorName);
-                    if (pParameter != NULL)
-                    {
-                      pStructMemberInitializer = TExpression_As_TInitializer(TPrimaryExpressionValue_As_TExpression(&initializerExpression));
-                      initializerExpression.token = TK_IDENTIFIER;
-                      String_Set(&initializerExpression.lexeme, structDeclaratorName);
-                    }
-                  }
+									TParameter* pParameter = NULL;
+									if (pArgsOpt)
+									{
+										pParameter = TParameterTypeList_FindParameterByName(pArgsOpt, structDeclaratorName);
+										if (pParameter != NULL)
+										{
+											pStructMemberInitializer = TExpression_As_TInitializer(TPrimaryExpressionValue_As_TExpression(&initializerExpression));
+											initializerExpression.token = TK_IDENTIFIER;
+											String_Set(&initializerExpression.lexeme, structDeclaratorName);
+										}
+									}
 
 									action2 = ActionInit;
 								}
 
 								if (action2 == ActionDestroy)
 								{
-                  
+
 									//Tem que detectar isso aqui!
 									// String * _auto pItems;
 									// X * _auto * _auto pItems;
@@ -4001,7 +4098,7 @@ void InstanciateDestroy2(TProgram* program,
 									options,
 									&pStructDeclaration->SpecifierQualifierList,
 									pStructDeclarator->pDeclarator,
-                  pStructMemberInitializer,
+									pStructMemberInitializer,
 									NULL, //nao passa os args
 									strVariableName.c_str,
 									strPonterSizeExpr.c_str,
@@ -4012,8 +4109,8 @@ void InstanciateDestroy2(TProgram* program,
 
 
 
-                //Variavel local
-                TPrimaryExpressionValue_Destroy(&initializerExpression);
+								//Variavel local
+								TPrimaryExpressionValue_Destroy(&initializerExpression);
 
 								pStructDeclarator = (pStructDeclarator)->pNext;
 							}

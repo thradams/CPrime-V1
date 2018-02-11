@@ -1,29 +1,35 @@
 #include "config.h"
+#include <stdio.h>
 
+struct Shape;
 
 struct Box
 {
   int i _defval(1);
+  struct Shape* _auto pNext;
 };
 
 struct Box* Box_Create() _default
 {
     struct Box* p = (struct Box*) malloc(sizeof * p);
-    if (p)
+    if (p != NULL)
     {
         p->i = 1;
+        p->pNext = NULL;
     }
     return p;
 }
-
+void Box_Delete(struct Box* pBox) -_default;
 struct Circle
 {
   int i _defval(2);
+  struct Shape* _auto  pNext;
 };
 
 struct _union(Box | Circle)  Shape
 {
   int id;
+  struct Shape* _auto  pNext;
 } Shape ;
  
 #pragma region cprime Shape
@@ -36,36 +42,51 @@ inline struct Shape* Box_As_Shape(struct Box* p) { return (struct Shape*) p; }
 
 
 
+void Shape_Delete(struct Shape* pShape) _default
+{
+    if (pShape != NULL)
+    {
+            switch (pShape->id)
+            {
+                case 2:
+                    Circle_Delete((struct Circle*)pShape);
+                break;
+                case 1:
+                    Box_Delete((struct Box*)pShape);
+                break;
+                default:
+                break;
+            }
+    }
+}
+
+
+
 
 
 
 struct Items
 {
-	struct Shape ** data;
-	int Size;
-	int Capacity;
+	struct Shape * _auto pHead;	
+	struct Shape * pTail;
 };
 
+void Items_Destroy(struct Items* pItems) _default
+{
+    Shape_Delete(pItems->pHead);
+}
 
 void Items_PushBack(struct Items* pItems, struct Shape* pItem) _default
 {
-    if (pItems->Size + 1 > pItems->Capacity)
+    if (pItems->pHead == NULL)
     {
-        int n = pItems->Capacity * 2;
-        if (n == 0)
-        {
-            n = 1;
-        }
-        struct Shape** pnew = pItems->data;
-        pnew = (struct Shape**)realloc(pnew, n * sizeof(struct Shape*));
-        if (pnew)
-        {
-            pItems->data = pnew;
-            pItems->Capacity = n;
-        }
+        pItems->pHead = pItem;
     }
-    pItems->data[pItems->Size] = pItem;
-    pItems->Size++;
+    else
+    {
+        pItems->pTail->pNext = pItem;
+    }
+    pItems->pTail = pItem; 
 }
 
 
@@ -73,6 +94,8 @@ int main()
 {
 	struct Items items = { 0 };
 	Items_PushBack(&items, (struct Shape*)Box_Create());
+	Items_PushBack(&items, (struct Shape*)Box_Create());
+	Items_Destroy(&items);
 }
 
 
