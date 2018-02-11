@@ -1476,6 +1476,19 @@ void TStructDeclaratorList_Init(TStructDeclaratorList* p) _default
     p->pTail = NULL;
 }
 
+void TStructDeclaratorList_Add(TStructDeclaratorList* pList, TInitDeclarator* pItem)
+{
+	if (pList->pHead == NULL)
+	{
+		pList->pHead = pItem;
+		pList->pTail = pItem;
+	}
+	else
+	{
+		pList->pTail->pNext = pItem;
+		pList->pTail = pItem;
+	}
+}
 
 void TStructDeclaration_Destroy(TStructDeclaration* p) _default
 {
@@ -2690,7 +2703,7 @@ void TDesignatorList_PushBack(TDesignatorList* pList, TDesignator* pItem)
 	}
 	else
 	{
-		pList->pTail->pNext = pItem;		
+		pList->pTail->pNext = pItem;
 	}
 	pList->pTail = pItem;
 }
@@ -3242,6 +3255,21 @@ void TPrimaryExpressionLiteralItemList_Init(TPrimaryExpressionLiteralItemList* p
 void TPrimaryExpressionLiteralItemList_Destroy(TPrimaryExpressionLiteralItemList* p) _default
 {
     TPrimaryExpressionLiteralItem_Delete(p->pHead);
+}
+
+void TPrimaryExpressionLiteralItemList_Add(TPrimaryExpressionLiteralItemList* pList, TPrimaryExpressionLiteralItem *pItem)
+{
+	if (pList->pHead == NULL)
+	{
+		pList->pHead = pItem;
+		pList->pTail = pItem;
+	}
+	else
+	{
+		pList->pTail->pNext = pItem;
+		pList->pTail = pItem;
+	}
+
 }
 
 const char* TDeclaration_GetArgName(TDeclaration* p, int index)

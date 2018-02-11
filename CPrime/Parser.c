@@ -479,7 +479,7 @@ void PrimaryExpressionLiteral(Parser* ctx, TExpression** ppPrimaryExpression)
         token = Parser_Match(ctx,
             &pPrimaryExpressionLiteralItem->ClueList0);
 
-        List_Add(&pPrimaryExpressionLiteral->List, pPrimaryExpressionLiteralItem);
+		TPrimaryExpressionLiteralItemList_Add(&pPrimaryExpressionLiteral->List, pPrimaryExpressionLiteralItem);
     }
 }
 
@@ -3099,7 +3099,7 @@ void Struct_Declarator_List(Parser* ctx,
     TStructDeclarator* pTDeclarator2 = NULL;// TDeclarator_Create();
 
     Struct_Declarator(ctx, &pTDeclarator2);
-    List_Add(pStructDeclarationList, pTDeclarator2);
+	TStructDeclaratorList_Add(pStructDeclarationList, pTDeclarator2);
 
     for (; ;)
     {

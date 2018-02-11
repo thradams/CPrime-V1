@@ -963,6 +963,7 @@ typedef struct TStructDeclaratorList
 
 void TStructDeclaratorList_Destroy(TStructDeclaratorList* p);
 void TStructDeclaratorList_Init(TStructDeclaratorList* p);
+void TStructDeclaratorList_Add(TStructDeclaratorList* p, TInitDeclarator* pItem);
 
 
 typedef struct TStructDeclaration
@@ -1313,6 +1314,7 @@ typedef struct
 
 void TPrimaryExpressionLiteralItemList_Init(TPrimaryExpressionLiteralItemList* p);
 void TPrimaryExpressionLiteralItemList_Destroy(TPrimaryExpressionLiteralItemList* p);
+void TPrimaryExpressionLiteralItemList_Add(TPrimaryExpressionLiteralItemList* p, TPrimaryExpressionLiteralItem *pItem);
 
 
 typedef struct
