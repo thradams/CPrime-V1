@@ -67,7 +67,8 @@ C’ can generate destructors for structs and can have owner pointers in the typ
 
 The first one is the model described here, were the source is changed "in place" like a refactoring tool.
 The second model is to generate a new file, and keep the source code smaller without the generated code.
-I don´t want to use the second model before to have a complete solution for debug and edit the code.
+I don´t want to use the second model before to have a complete solution for debug and edit the code. The second model also can be used to convert from C2x to C89 for instance. Many new features could be used and translated for old compilers.
+If you know babel https://babeljs.io/ then you can imagine the cprime like a babel for C.
 
 ## Current Status & Goals
 
