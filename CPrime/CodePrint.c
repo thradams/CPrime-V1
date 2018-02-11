@@ -2250,18 +2250,48 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 				&itemType,
 				&arrayName))
 			{
-				const char* pszTemplate =
-					"if ($p->Size + 1 > $p->Capacity)\n"
-					"{\n"
-					" int n = $p->Capacity * 2;\n"
-					" if (n == 0)\n"
-					" {\n"
-					"  n = 1;\n"
-					" }\n"
-					" $prefix\b_Reserve($p, n);\n"
-					"}\n"
-					"$p->$data[$p->Size] = $nelements;\n"
-					"$p->Size++;\n";
+				
+				
+				bool bHasReserve =
+					SymbolMap_FindObjFunction(&program->GlobalScope, functionPrefix.c_str, "Reserve") != 0;
+				const char* pszTemplate = "";
+
+				if (bHasReserve)
+				{
+					pszTemplate = "if ($p->Size + 1 > $p->Capacity)\n"
+						"{\n"
+						" int n = $p->Capacity * 2;\n"
+						" if (n == 0)\n"
+						" {\n"
+						"  n = 1;\n"
+						" }\n"
+						" $prefix\b_Reserve($p, n);\n"
+						"}\n"
+						"$p->$data[$p->Size] = $nelements;\n"
+						"$p->Size++;\n";
+				}
+				else
+				{
+					pszTemplate = "if ($p->Size + 1 > $p->Capacity)\n"
+						"{\n"
+						" int n = $p->Capacity * 2;\n"
+						" if (n == 0)\n"
+						" {\n"
+						"  n = 1;\n"
+						" }\n"
+						" $type** pnew = $p->data;\n"
+						" pnew = ($type**)realloc(pnew, n * sizeof($type*));\n"
+					    " if (pnew)\n"
+					    " {\n"
+					    "  $p->data = pnew;\n"
+						"  $p->Capacity = n;\n"
+					    " }\n"						
+						"}\n"
+						"$p->$data[$p->Size] = $nelements;\n"
+						"$p->Size++;\n";
+				}
+				
+				
 
 				struct TemplateVar vars[] = {
 					{ "p", TParameter_GetName(pFirstParameter)},
