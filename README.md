@@ -90,6 +90,10 @@ At some point I want to include static analysis again and check the onwership an
 
 ## Old Videos (experimental features considered)
 
+Polymorphism and Dynamic Array Demo
+
+https://www.youtube.com/watch?v=vzouZGBV8YQ
+
 
 https://www.youtube.com/edit?o=U&video_id=LmUebDRGE1A
 
