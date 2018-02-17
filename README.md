@@ -56,6 +56,7 @@ https://www.youtube.com/watch?v=cFHL6cf1n_k&feature=youtu.be
 I work professionally with C++ since 2000 keeping my knowledge about C++ updated. After 2014 I noticed that my interest for the C language was gradually increasing. 
 
 It is hard to summarize the reasons for that, but I can say that the rise of complexity and fancy libraries and styles of C++ are not adding value in the software I write.  I still like C++ and it is possible to use C++ compilers in way that meet my expectations of simplicity and maintenance. However, I think I can have a more portable, fast and easy to maintaing and teach code with C.
+
 In 2012, I opened a topic in com.lang.C++.moderated about the possibility of to have “smart pointers” inside the C++ type system and later in 2015 I watched the Herb Sutter presentation cppcon “Writing Good C++14 By Default" where he talks about memory ownership checked statically.  After this point I became very motivated to implement the checked ownership analysis in the C language as part of the type system and I started to write my C parser in C. 
 
 During the development of this parser and static analysis, I had some difficulties with the C language that have already begin addressed by C++, like to generate special member functions. I was doing constructors and destructor by hand and wondering how they could be designed and used in C. 
@@ -65,16 +66,17 @@ C’ can generate destructors for structs and can have owner pointers in the typ
 
 ## Two generatarion models
 
-The first one is the model described here, were the source is changed "in place" like a refactoring tool. The cprime code itself is compiled using cprime. Of course at the begging the source was pure C. I  a had a very good experience adding cprime features for the code that was orinally using only C. This "in place" mode made the change very simple and secure. After some time, I enjoy the beneficts
-of the cprime when I had to modify some ast structs. The "robot" just fixed my code.
+The first one is the model described here, were the source is changed "in place" like a refactoring tool. The cprime code itself is compiled using this mode. Of course at the begging the source was pure C. I  a had a very good experience adding cprime features for the code that was orinally using only C. This "in place" mode made the change very simple and secure. After some time, I enjoyed the beneficts of using cprime. When I had to modify some AST structs cprime just wrote my code; 49% of the lines AST.c are generated.
+This first mode has motivated the logo and the idea of pair programming with an robot.
 
 The second model is to generate a new file, and keep the source code smaller without the generated code.
 I don´t want to use the second model before to have a complete solution for debug and edit the code. The second model also can be used to convert from C2x to C89 for instance. Many new features could be used and translated for old compilers.
 If you know babel https://babeljs.io/ then you can imagine the cprime like a babel for C.
 
+
 ## Current Status & Goals
 
-The C’ can be used today as command line tool to generate and maintain code. You can remove the usage of the tool at any time and use the generated code as normal C code. So the evaluation of the tool is totally uncompromised. I am already using the tool to generate itself. One of the current goals is to keep the syntax compatible with C compilers adding macros. This allows the code generation in place. In other words, this is not like to have a modified C language that generates C files. The annotations required are added in a way to keep the C language and IDEs with auto-complete working normally without compromising productivity and avoiding adding more compilation/debugging steps. This goal motivated the logo and the idea of pair-programming with a robot.
+The C’ can be used today as command line tool to generate and maintain code. You can remove the usage of the tool at any time and use the generated code as normal C code. So the evaluation of the tool is totally uncompromised. I am already using the tool to generate itself. 
  
 
 ## Roadmap
@@ -83,25 +85,6 @@ The improvements on C’ will focus in stability of basic features. I am also pl
 
 At some point I want to include static analysis again and check the onwership and null pointers as part of the type system. 
 
-
-
-## More details
-
-The Create function uses the Init function if present.
-
-The Delete function uses the Destroy function if present.
-
-You can override any function removing default. For instance,
-you can create your custom Destroy and the Delete function
-will call your customized Destroy.
-
-If you have typedef X for typedef Y  for typedef Z then the functions will search first X_Init then Y_Init etc.
-
-This tool can be extended in the future with a template language without breaking compatibility with C.
-For instance, template functions , metaclasses can be defined in a separated file. The C' will read these
-files to learn how to generate code. 
-
-More complex tasks like these Init/Destroy etc can be done using "plugins" for the compiler.
 
 
 
