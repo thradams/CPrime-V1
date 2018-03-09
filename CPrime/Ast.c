@@ -574,7 +574,34 @@ void TPrimaryExpressionValue_Delete(TPrimaryExpressionValue* p) _default
     }
 }
 
+TPrimaryExpressionLambda* TPrimaryExpressionLambda_Create() _default
+{
+    TPrimaryExpressionLambda *p = (TPrimaryExpressionLambda*) malloc(sizeof * p);
+    if (p != NULL)
+    {
+        p->Type = TPrimaryExpressionLambda_ID;
+        p->pCompoundStatement = NULL;
+        p->pParameterTypeListOpt = NULL;
+        TScannerItemList_Init(&p->ClueList0);
+        TScannerItemList_Init(&p->ClueList1);
+        TScannerItemList_Init(&p->ClueList2);
+        TScannerItemList_Init(&p->ClueList3);
+    }
+    return p;
+}
 
+void TPrimaryExpressionLambda_Delete(TPrimaryExpressionLambda* p) _default
+{
+    if (p != NULL)
+    {
+        TParameterTypeList_Delete(p->pParameterTypeListOpt);
+        TScannerItemList_Destroy(&p->ClueList0);
+        TScannerItemList_Destroy(&p->ClueList1);
+        TScannerItemList_Destroy(&p->ClueList2);
+        TScannerItemList_Destroy(&p->ClueList3);
+        free((void*)p);
+    }
+}
 
 void TPostfixExpressionCore_Delete(TPostfixExpressionCore* p) _default
 {
@@ -730,6 +757,9 @@ void TExpression_Delete(TExpression* p) _default
             {
                 case TBinaryExpression_ID:
                     TBinaryExpression_Delete((TBinaryExpression*)p);
+                break;
+                case TPrimaryExpressionLambda_ID:
+                    TPrimaryExpressionLambda_Delete((TPrimaryExpressionLambda*)p);
                 break;
                 case TUnaryExpressionOperator_ID:
                     TUnaryExpressionOperator_Delete((TUnaryExpressionOperator*)p);
@@ -1119,6 +1149,24 @@ void TParameterTypeList_Destroy(TParameterTypeList* p) _default
     TParameterList_Destroy(&p->ParameterList);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
+}
+
+TParameterTypeList* TParameterTypeList_Create() _default
+{
+    TParameterTypeList *p = (TParameterTypeList*) malloc(sizeof * p);
+    if (p != NULL)
+    {
+        TParameterTypeList_Init(p);
+    }
+    return p;
+}
+void TParameterTypeList_Delete(TParameterTypeList* p) _default
+{
+    if (p != NULL)
+    {
+        TParameterTypeList_Destroy(p);
+        free((void*)p);
+    }
 }
 
 const char* TParameterTypeList_GetFirstParameterName(TParameterTypeList* p)
@@ -2659,6 +2707,9 @@ void TInitializer_Delete(TInitializer* p) _default
                 case TBinaryExpression_ID:
                     TBinaryExpression_Delete((TBinaryExpression*)p);
                 break;
+                case TPrimaryExpressionLambda_ID:
+                    TPrimaryExpressionLambda_Delete((TPrimaryExpressionLambda*)p);
+                break;
                 case TUnaryExpressionOperator_ID:
                     TUnaryExpressionOperator_Delete((TUnaryExpressionOperator*)p);
                 break;
@@ -2779,6 +2830,7 @@ void TProgram_Init(TProgram* p) _default
     TFileArray_Init(&p->Files2);
     SymbolMap_Init(&p->GlobalScope);
     MacroMap_Init(&p->Defines);
+    StrBuilder_Init(&p->sbPreDeclaration);
 }
 
 
@@ -2788,6 +2840,7 @@ void TProgram_Destroy(TProgram * p) _default
     TFileArray_Destroy(&p->Files2);
     SymbolMap_Destroy(&p->GlobalScope);
     MacroMap_Destroy(&p->Defines);
+    StrBuilder_Destroy(&p->sbPreDeclaration);
 }
 
 

@@ -74,7 +74,7 @@ typedef enum EType
   TPostfixExpressionCore_ID,
   TBinaryExpression_ID,
   TTernaryExpression_ID,
-
+  TPrimaryExpressionLambda_ID,
   TParameter_ID
 } EType;
 
@@ -731,6 +731,9 @@ typedef struct TParameterTypeList
 
 void TParameterTypeList_Init(TParameterTypeList* p);
 void TParameterTypeList_Destroy(TParameterTypeList* p);
+TParameterTypeList* TParameterTypeList_Create();
+void TParameterTypeList_Delete(TParameterTypeList* p);
+
 const char* TParameterTypeList_GetFirstParameterName(TParameterTypeList* p);
 const char* TParameterTypeList_GetSecondParameterName(TParameterTypeList* p);
 TParameter* TParameterTypeList_FindParameterByName(TParameterTypeList* p, const char* name);
@@ -1219,7 +1222,7 @@ typedef struct
   //Defines
   MacroMap Defines;
 
-
+  StrBuilder sbPreDeclaration;
 
 } TProgram;
 
@@ -1272,6 +1275,8 @@ TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration * p);
 TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name);
 
 bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecifiers);
+
+
 
 typedef struct
 {
@@ -1420,7 +1425,8 @@ struct _union(TPrimaryExpressionLiteral |
   TUnaryExpressionOperator |
   TPostfixExpressionCore |
   TPostfixExpressionCore |
-  TCastExpressionType) TExpression
+  TCastExpressionType |
+  TPrimaryExpressionLambda) TExpression
 {
   EType Type;
 };
@@ -1436,4 +1442,19 @@ CAST(TExpression, TUnaryExpressionOperator)
 CAST(TExpression, TPostfixExpressionCore)
 CAST(TExpression, TCastExpressionType)
 
+
+typedef struct TPrimaryExpressionLambda
+{
+  EType Type _defval(TPrimaryExpressionLambda_ID);
+
+  TCompoundStatement* pCompoundStatement;
+  TParameterTypeList * _auto pParameterTypeListOpt;
+  TScannerItemList ClueList0; //[
+  TScannerItemList ClueList1; //]
+  TScannerItemList ClueList2; //(
+  TScannerItemList ClueList3; //)
+} TPrimaryExpressionLambda;
+
+TPrimaryExpressionLambda* TPrimaryExpressionLambda_Create();
+void TPrimaryExpressionLambda_Delete(TPrimaryExpressionLambda* p);
 

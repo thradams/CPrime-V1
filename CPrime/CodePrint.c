@@ -606,8 +606,69 @@ bool GetTypeAndFunction(const char* source,
 	return *source == '_';
 }
 
+static void TParameterTypeList_CodePrint(TProgram* program, Options * options, TParameterTypeList *p, StrBuilder* fp);
 
 
+static void TPrimaryExpressionLambda_CodePrint(TProgram* program,
+	Options * options,
+	TPrimaryExpressionLambda * p,
+	StrBuilder* fp)
+{
+	static int global_lambda_counter = 0;
+	//Output_Append(fp, options, "l1");
+	StrBuilder_AppendFmt(fp, "_lambda_%d", global_lambda_counter);
+
+	StrBuilder sb = STRBUILDER_INIT;
+
+	if (p->pParameterTypeListOpt)
+	{
+		//TNodeClueList_CodePrint(options, &p->ClueList2, &sb);
+
+
+		Output_Append(&sb, options, "\n");
+		StrBuilder_AppendFmt(&sb, "static void _lambda_%d(", global_lambda_counter);
+		//Output_Append(&sb, options, "static void func_l1(");
+
+		TParameterTypeList_CodePrint(program, options, p->pParameterTypeListOpt, &sb);
+
+		//TNodeClueList_CodePrint(options, &p->ClueList3, &sb);
+		Output_Append(&sb, options, ")");
+
+	}
+	global_lambda_counter++;
+	TCompoundStatement_CodePrint(program, options, p->pCompoundStatement, &sb);
+
+	Output_Append(&program->sbPreDeclaration, options, "\n");
+
+	StrBuilder_Append(&program->sbPreDeclaration, sb.c_str);
+
+
+
+
+	StrBuilder_Destroy(&sb);
+
+#if NORMAL 
+	TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+	Output_Append(fp, options, "[");
+	TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+	Output_Append(fp, options, "]");
+
+	if (p->pParameterTypeListOpt)
+	{
+		TNodeClueList_CodePrint(options, &p->ClueList2, fp);
+		Output_Append(fp, options, "(");
+
+		TParameterTypeList_CodePrint(program, options, p->pParameterTypeListOpt, fp);
+
+		TNodeClueList_CodePrint(options, &p->ClueList3, fp);
+		Output_Append(fp, options, ")");
+
+	}
+
+	TCompoundStatement_CodePrint(program, options, p->pCompoundStatement, fp);
+#endif
+
+}
 
 static void TPostfixExpressionCore_CodePrint(TProgram* program,
 	Options * options,
@@ -795,6 +856,14 @@ static void TExpression_CodePrint(TProgram* program, Options * options, TExpress
 		}
 		///true;
 
+		break;
+
+		CASE(TPrimaryExpressionLambda) :
+		{
+			TPrimaryExpressionLambda* pPostfixExpressionCore =
+				(TPrimaryExpressionLambda*)p;
+			TPrimaryExpressionLambda_CodePrint(program, options, pPostfixExpressionCore, fp);
+		}
 		break;
 
 		CASE(TPostfixExpressionCore) :
@@ -1664,7 +1733,7 @@ static bool FindListStructPattern(TProgram* program,
 {
 	//Esta funcao analisa a struct e ve se ela eh compativel com o tipo vector.
 	//ter size, capacity e um vector de items
-	
+
 	bool bHasHead = false;
 	bool bHasTail = false;
 
@@ -1699,7 +1768,7 @@ static bool FindListStructPattern(TProgram* program,
 					bool bIsPointer2 =
 						TPointerList_IsPointerN(&pStructDeclarator->pDeclarator->PointerList, 2);
 					if (bIsPointer1)
-						
+
 					{
 						if (strcmp(structDeclaratorName, "pHead") == 0)
 						{
@@ -2295,7 +2364,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 					sizeof(vars) / sizeof(vars[0]),
 					1 /*options->IdentationLevel*/);
 			}
-			
+
 			StrBuilder_Destroy(&itemType);
 			StrBuilder_Destroy(&arrayName);
 		}
@@ -2386,16 +2455,16 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 				};
 				//o item apontado tem que ter pNext verificar isso
 				//e colocar erro se nao tiver
-				const char* pszTemplate = 
-			    "if ($pList->pHead == $null)\n"
-				"{\n"
-				" $pList->pHead = $pItem;\n"				
-				"}\n"
-			    "else\n"
-			    "{\n"
-			    " $pList->pTail->pNext = $pItem;\n"
-			    "}\n"
-			    "$pList->pTail = $pItem; \n";
+				const char* pszTemplate =
+					"if ($pList->pHead == $null)\n"
+					"{\n"
+					" $pList->pHead = $pItem;\n"
+					"}\n"
+					"else\n"
+					"{\n"
+					" $pList->pTail->pNext = $pItem;\n"
+					"}\n"
+					"$pList->pTail = $pItem; \n";
 
 				StrBuilder_Template(fp,
 					pszTemplate,
@@ -2800,13 +2869,18 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 	{
 		TAnyDeclaration* pItem = pProgram->Declarations.pItems[i];
 
+		StrBuilder_Clear(&pProgram->sbPreDeclaration);
 
-		TAnyDeclaration_CodePrint(pProgram, options, pItem, &sb);
+		StrBuilder sbDeclaration = STRBUILDER_INIT;
+		TAnyDeclaration_CodePrint(pProgram, options, pItem, &sbDeclaration);
+
+		StrBuilder_Append(&sb, pProgram->sbPreDeclaration.c_str);
+		StrBuilder_Append(&sb, sbDeclaration.c_str);
+
+		StrBuilder_Destroy(&sbDeclaration);
 
 
 		fprintf(fp, "%s", sb.c_str);
-
-
 
 
 		StrBuilder_Clear(&sb);
@@ -3839,8 +3913,8 @@ void InstanciateDestroy2(TProgram* program,
 					SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Name);
 			}
 
-			bool bIsUnionTypes = pStructUnionSpecifier && 
-				                 pStructUnionSpecifier->Token2 == TK__UNION;
+			bool bIsUnionTypes = pStructUnionSpecifier &&
+				pStructUnionSpecifier->Token2 == TK__UNION;
 
 
 			if (pStructUnionSpecifier &&

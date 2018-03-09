@@ -447,6 +447,11 @@ bool IsFirstOfPrimaryExpression(Tokens token)
     case TK_FLOAT_NUMBER:
     case TK_LEFT_PARENTHESIS:
 
+      //////////
+      //extensions
+    case TK_LEFT_SQUARE_BRACKET: //lambda-expression
+      /////////
+
         //desde que nao seja cast
     case TK__GENERIC:
         bResult = true;
@@ -483,6 +488,91 @@ void PrimaryExpressionLiteral(Parser* ctx, TExpression** ppPrimaryExpression)
     }
 }
 
+void Compound_Statement(Parser* ctx, TStatement** ppStatement);
+
+void Parameter_Type_List(Parser* ctx, TParameterTypeList* pParameterList);
+
+void LambdaExpression(Parser* ctx, TExpression** ppPrimaryExpression)
+{
+  //c++
+  /*
+  lambda-expression:
+    lambda-introducer lambda-declaratoropt compound-statement
+
+  lambda-introducer:
+    [ lambda-captureopt]
+  
+  lambda-capture:
+    capture-default
+    capture-list
+    capture-default , capture-list
+
+  capture-default:
+    &=
+  
+  capture-list:
+    capture ...opt
+    capture-list , capture ...opt
+
+  capture:
+    simple-capture
+    init-capture
+
+  simple-capture:
+    identifier
+    & identifier
+    this
+
+  init-capture:
+    identifier initializer
+    & identifier initializer
+
+  lambda-declarator:
+    ( parameter-declaration-clause ) mutableopt
+    exception-specificationopt attribute-specifier-seqopt trailing-return-typeopt    
+  */
+  
+  /*
+    lambda-expression:
+      [] ( parameters opt ) compound-statement
+      [] compound-statement
+  */
+  TPrimaryExpressionLambda* pPrimaryExpressionLambda = TPrimaryExpressionLambda_Create();
+
+  *ppPrimaryExpression = pPrimaryExpressionLambda; //out
+
+  Parser_MatchToken(ctx,
+    TK_LEFT_SQUARE_BRACKET,
+    &pPrimaryExpressionLambda->ClueList0);
+
+  Parser_MatchToken(ctx,
+    TK_RIGHT_SQUARE_BRACKET,
+    &pPrimaryExpressionLambda->ClueList1);
+
+  Tokens token = Parser_CurrentToken(ctx);
+  
+  if (token == TK_LEFT_PARENTHESIS)
+  {
+    token = Parser_MatchToken(ctx,
+      TK_LEFT_PARENTHESIS,
+      &pPrimaryExpressionLambda->ClueList2);
+
+    pPrimaryExpressionLambda->pParameterTypeListOpt =
+      TParameterTypeList_Create();
+
+    if (token != TK_RIGHT_PARENTHESIS)
+    {
+      Parameter_Type_List(ctx, pPrimaryExpressionLambda->pParameterTypeListOpt);
+    }
+    
+    Parser_MatchToken(ctx,
+      TK_RIGHT_PARENTHESIS,
+      &pPrimaryExpressionLambda->ClueList3);
+  }
+  
+  Compound_Statement(ctx, &pPrimaryExpressionLambda->pCompoundStatement);
+}
+
 void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 {
     *ppPrimaryExpression = NULL;
@@ -514,6 +604,11 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 
     switch (token)
     {
+    
+    case TK_LEFT_SQUARE_BRACKET:
+      LambdaExpression(ctx, ppPrimaryExpression);
+      break;
+
     case TK_STRING_LITERAL:
         PrimaryExpressionLiteral(ctx, ppPrimaryExpression);
         break;
