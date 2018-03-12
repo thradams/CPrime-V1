@@ -2808,6 +2808,7 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
 
         //lista de first para expressões
         //expression-statement
+	case TK_LEFT_SQUARE_BRACKET://lamda todo isprimeiryfirst
     case TK_LEFT_PARENTHESIS:
     case TK_SEMICOLON:
 
