@@ -5112,6 +5112,37 @@ bool GetAST(const char*  filename,
 
 
 
+bool GetASTFromString(const char*  sourceCode,
+             TProgram* pProgram)
+{
+  bool bResult = false;
+
+  Parser parser;
+
+  Parser_InitString(&parser, "source", sourceCode);    
+  Parser_Main(&parser, &pProgram->Declarations);
+  
+
+  TFileMapToStrArray(&parser.Scanner.FilesIncluded, &pProgram->Files2);
+  printf("%s\n", GetCompletationMessage(&parser));
+  SymbolMap_Swap(&parser.GlobalScope, &pProgram->GlobalScope);
+
+  if (Parser_HasError(&parser))
+  {
+    Scanner_PrintDebug(&parser.Scanner);
+  }
+
+  MacroMap_Swap(&parser.Scanner.Defines2, &pProgram->Defines);
+
+  bResult = !Parser_HasError(&parser);
+
+  Parser_Destroy(&parser);
+
+  return bResult;
+}
+
+
+
 
 #if 0
 

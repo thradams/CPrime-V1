@@ -45,3 +45,6 @@ void ConstantExpression(Parser *ctx, TExpression **ppExpression);
 Tokens Parser_MatchToken(Parser *parser, Tokens tk, TScannerItemList *listOpt);
 
 Tokens Parser_LookAheadToken(Parser *parser);
+
+bool GetASTFromString(const char*  sourceCode,
+  TProgram* pProgram);

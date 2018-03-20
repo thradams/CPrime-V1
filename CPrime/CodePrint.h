@@ -46,6 +46,9 @@ void TProgram_PrintCodeToFile(TProgram * pProgram,
 	const char * fileName,
 	const char* userpath);
 
+void TProgram_PrintCodeToString(TProgram* pProgram,
+  Options* options,
+  StrBuilder* output);
 
 
 void TTypeName_CodePrint(TProgram* program, Options * options, TTypeName* p,  StrBuilder* fp);

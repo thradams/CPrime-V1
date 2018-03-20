@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "Ast.h"
 
-static void KeyValue_Delete(SymbolMapItem* p)
+static void SymbolMap_KeyValue_Delete(SymbolMapItem* p)
 {
     if (p)
     {
@@ -24,7 +24,7 @@ static SymbolMapItem* SymbolMap_GetAssocAt(
     unsigned int* HashValue);
 
 
-static unsigned int String2_HashKey(const char*  Key)
+static unsigned int SymbolMap_String2_HashKey(const char*  Key)
 {
     // hash key to unsigned int value by pseudorandomizing transform
     // (algorithm copied from STL string hash in xfunctional)
@@ -57,7 +57,7 @@ void SymbolMap_RemoveAll(SymbolMap* pMap)
             {
                 SymbolMapItem* pKeyValueCurrent = pKeyValue;
                 pKeyValue = pKeyValue->pNext;
-                KeyValue_Delete(pKeyValueCurrent);
+                SymbolMap_KeyValue_Delete(pKeyValueCurrent);
             }
         }
 
@@ -79,7 +79,7 @@ SymbolMapItem* SymbolMap_FindBucket(SymbolMap* pMap, const char*  Key)
         return NULL;
     }
 
-    unsigned int HashValue = String2_HashKey(Key);
+    unsigned int HashValue = SymbolMap_String2_HashKey(Key);
     unsigned int nHashBucket = HashValue % pMap->nHashTableSize;
 
 
@@ -102,7 +102,7 @@ static SymbolMapItem* SymbolMap_GetAssocAt(
         return NULL;
     }
 
-    *HashValue = String2_HashKey(Key);
+    *HashValue = SymbolMap_String2_HashKey(Key);
     *nHashBucket = *HashValue % pMap->nHashTableSize;
 
     SymbolMapItem* pResult = NULL;
@@ -178,7 +178,7 @@ bool SymbolMap_RemoveKey(SymbolMap* pMap,
     if (pMap->pHashTable != NULL)
     {
         unsigned int HashValue =
-            String2_HashKey(Key);
+          SymbolMap_String2_HashKey(Key);
 
         SymbolMapItem** ppKeyValuePrev =
             &pMap->pHashTable[HashValue % pMap->nHashTableSize];
@@ -193,7 +193,7 @@ bool SymbolMap_RemoveKey(SymbolMap* pMap,
                 // remove from list
                 *ppKeyValuePrev = pKeyValue->pNext;
                 *ppValue = pKeyValue->pValue;
-                KeyValue_Delete(pKeyValue);
+                SymbolMap_KeyValue_Delete(pKeyValue);
                 bResult = true;
                 break;
             }

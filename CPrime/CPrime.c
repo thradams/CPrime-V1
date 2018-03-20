@@ -95,6 +95,25 @@ void PrintHelp()
     printf("-r                                    Reverts generation.\n");
 
 }
+
+void CompileText()
+{
+  TProgram program;
+  TProgram_Init(&program);
+  if (GetASTFromString("struct X {int i;};\n void X_Init(struct X* pX) _default;",
+    &program))
+  {
+    Options options2 = OPTIONS_INIT;
+    options2.bHideDefaultImplementation = false;
+
+
+    StrBuilder output = STRBUILDER_INIT;
+    TProgram_PrintCodeToString(&program,
+      &options2, &output);
+    StrBuilder_Destroy(&output);
+  }
+}
+
 int main(int argc, char* argv[])
 {
     printf("\n");

@@ -2898,6 +2898,41 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 	fclose(fp);
 }
 
+void TProgram_PrintCodeToString(TProgram* pProgram,
+  Options* options,
+  StrBuilder* output)
+{
+  
+  int k = 0;
+
+  
+  StrBuilder sb = STRBUILDER_INIT;
+  StrBuilder_Reserve(&sb, 80 * 5000);
+
+  for (int i = 0; i < pProgram->Declarations.Size; i++)
+  {
+    TAnyDeclaration* pItem = pProgram->Declarations.pItems[i];
+
+    StrBuilder_Clear(&pProgram->sbPreDeclaration);
+
+    StrBuilder sbDeclaration = STRBUILDER_INIT;
+    TAnyDeclaration_CodePrint(pProgram, options, pItem, &sbDeclaration);
+
+    StrBuilder_Append(&sb, pProgram->sbPreDeclaration.c_str);
+    StrBuilder_Append(&sb, sbDeclaration.c_str);
+
+    StrBuilder_Destroy(&sbDeclaration);
+
+    StrBuilder_Append(output, sb.c_str);
+
+
+    StrBuilder_Clear(&sb);
+    k++;
+  }
+  StrBuilder_Destroy(&sb);
+
+}
+
 
 static const char* GetFreeStr(TProgram* program)
 {
