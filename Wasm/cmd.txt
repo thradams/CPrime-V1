@@ -1,0 +1,12 @@
+primeiro chamar env
+emenv
+
+Arquivos
+http://kripken.github.io/emscripten-site/docs/getting_started/Tutorial.html#tutorial-files
+
+COMPILAR
+emcc  hello3.c -o hello3.js -s WASM=1 --shell-file html_template/shell_minimal.html -s NO_EXIT_RUNTIME=1  -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall"]'
+
+
+RODAR
+emrun hello3.html --no_browser --port 8080
