@@ -9,6 +9,9 @@
 #include "Path.h"
 #include "UnitTest.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#endif
 
 void AstPlayground(TProgram* program);
 
@@ -95,6 +98,33 @@ void PrintHelp()
     printf("-r                                    Reverts generation.\n");
 
 }
+
+
+#ifdef __EMSCRIPTEN__
+
+EMSCRIPTEN_KEEPALIVE
+char* myFunction(int argc, char * input)
+{
+	TProgram program;
+	TProgram_Init(&program);
+	if (GetASTFromString(input,
+		&program))
+	{
+		Options options2 = OPTIONS_INIT;
+		options2.bHideDefaultImplementation = false;
+
+
+		StrBuilder output = STRBUILDER_INIT;
+		StrBuilder_Reserve(&output, 500);
+		TProgram_PrintCodeToString(&program,
+			&options2, &output);
+		return output.c_str;
+		//StrBuilder_Destroy(&output);
+	}
+	return 0;
+
+}
+#endif
 
 void CompileText()
 {

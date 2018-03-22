@@ -2405,23 +2405,48 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 				}
 				else
 				{
-					pszTemplate = "if ($p->Size + 1 > $p->Capacity)\n"
-						"{\n"
-						" int n = $p->Capacity * 2;\n"
-						" if (n == 0)\n"
-						" {\n"
-						"  n = 1;\n"
-						" }\n"
-						" $type** pnew = $p->data;\n"
-						" pnew = ($type**)realloc(pnew, n * sizeof($type*));\n"
-						" if (pnew)\n"
-						" {\n"
-						"  $p->data = pnew;\n"
-						"  $p->Capacity = n;\n"
-						" }\n"
-						"}\n"
-						"$p->$data[$p->Size] = $nelements;\n"
-						"$p->Size++;\n";
+					if (bItemIsPointer)
+					{
+						pszTemplate = "if ($p->Size + 1 > $p->Capacity)\n"
+							"{\n"
+							" int n = $p->Capacity * 2;\n"
+							" if (n == 0)\n"
+							" {\n"
+							"  n = 1;\n"
+							" }\n"
+							" $type** pnew = $p->$data;\n"
+							" pnew = ($type**)realloc(pnew, n * sizeof($type*));\n"
+							" if (pnew)\n"
+							" {\n"
+							"  $p->$data = pnew;\n"
+							"  $p->Capacity = n;\n"
+							" }\n"
+							"}\n"
+							"$p->$data[$p->Size] = $nelements;\n"
+							"$p->Size++;\n";
+					}
+					else
+					{
+						pszTemplate = "if ($p->Size + 1 > $p->Capacity)\n"
+							"{\n"
+							" int n = $p->Capacity * 2;\n"
+							" if (n == 0)\n"
+							" {\n"
+							"  n = 1;\n"
+							" }\n"
+							" $type* pnew = $p->$data;\n"
+							" pnew = ($type**)realloc(pnew, n * sizeof($type));\n"
+							" if (pnew)\n"
+							" {\n"
+							"  $p->$data = pnew;\n"
+							"  $p->Capacity = n;\n"
+							" }\n"
+							"}\n"
+							"$p->$data[$p->Size] = $nelements;\n"
+							"$p->Size++;\n";
+					}
+
+					
 				}
 
 				struct TemplateVar vars[] = {

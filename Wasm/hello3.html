@@ -26,7 +26,7 @@
       border: 1px solid black;
     }
 
-  
+
     .spinner {
       height: 50px;
       width: 50px;
@@ -79,16 +79,16 @@
       }
     }
 
-    
+
     #editor {
-        margin: 0;
-        
+      margin: 0;
+
     }
   </style>
 </head>
 
 <body>
-  
+
   <figure style="overflow:visible;" id="spinner">
     <div class="spinner"></div>
     <center style="margin-top:0.5em">
@@ -99,39 +99,43 @@
   <div class="emscripten">
     <progress value="0" max="100" id="progress" hidden=1></progress>
   </div>
-  
 
-  <h2>CPrime online</h2> 
-  <p>github.com/thradams/CPrime</p>
-  <pre id="editor"  style="width:100%; height:300px">       
-typedef char * _auto String;           
-struct X
-{
-   String Name;
-   int i;
-};
-    
-struct X* X_Create() _default;
-    
-void X_Init(struct X* p) _default;
-void X_Destroy(struct X* p) _default;
-void X_Delete(struct X* p) _default;
-      
-int main()
-{      
-  return 1;
-}
 
-</pre>
+  <h2>CPrime Online Playground</h2>
 
-  <br/>
+
+  <span>Sample</span>
+  <select onchange="OnChangeSelection(this.value)">
+
+    <option value="0">Select...</option>
+    <option value="0">Especial Functions</option>
+    <option value="1">Dynamic Array</option>
+    <option value="2">Linked List</option>
+    <option value="3">Initialization</option>
+    <option value="4">Polimorphism</option>
+    <option value="5">Lambdas</option>
+
+
+
+  </select>
+
+
   <button class="mybutton">Compile</button>
 
-  <h2>Output</h2> 
-  <textarea class="emscripten" style="width:100%" id="output" rows="8"></textarea>
+  <p></p>
+  <pre id="editor" style="width:100%; height:500px">       
+   int main()
+   {
+     return 0;
+   }
+</pre>
 
-  
-  
+
+  <span>https://github.com/thradams/CPrime</span>
+
+  <p>Output</p>
+  <textarea class="emscripten" style="width:100%" id="output" rows="5"></textarea>
+
   <script type='text/javascript'>
     var statusElement = document.getElementById('status');
     var progressElement = document.getElementById('progress');
@@ -214,8 +218,8 @@ int main()
 
       document.getElementById('output').value = "";
       var inputText = editor.getValue();
-    
-     
+
+
       var ptr = allocate(intArrayFromString(inputText), 'i8', ALLOC_NORMAL);
 
       // Call the method passing the pointer
@@ -223,9 +227,8 @@ int main()
 
       // Retransform back your pointer to string using 'Glue' method
       var resValue = Pointer_stringify(retPtr);
-      if (resValue != 0)
-      {
-        editor.setValue(resValue);
+      if (resValue != 0) {
+        editor.setValue(resValue, -1);
       }
       // Free the memory allocated by 'allocate' 
       _free(ptr);
@@ -233,19 +236,218 @@ int main()
       //var result =_myFunction(0,0);
     });
 
+
+    function OnChangeSelection(val) {
+
+      var sample = [];
+      var s = "";
+      s += "       \n";
+      s += "typedef char * _auto String;           \n";
+      s += "struct X\n";
+      s += "{\n";
+      s += "   String Name;\n";
+      s += "   int i;\n";
+      s += "};\n";
+      s += "    \n";
+      s += "struct X* X_Create() _default;\n";
+      s += "    \n";
+      s += "void X_Init(struct X* p) _default;\n";
+      s += "void X_Destroy(struct X* p) _default;\n";
+      s += "void X_Delete(struct X* p) _default;\n";
+      s += "      \n";
+      s += "int main()\n";
+      s += "{      \n";
+      s += "  return 1;\n";
+      s += "}\n";
+      s += "\n";
+      s += "\n";
+      sample[0] = s;
+
+      s = "\n";
+      s += "struct Item\n";
+      s += "{\n";
+      s += "    int  i;\n";
+      s += "};\n";
+      s += "\n";
+      s += "\n";
+      s += "struct Item* Item_Create();\n";
+      s += "void Item_Delete(struct Item* p);\n";
+      s += "\n";
+      s += "struct Items\n";
+      s += "{\n";
+      s += "    struct Item * _auto * _auto _size(Size) pData;\n";
+      s += "    int Size;\n";
+      s += "    int Capacity;\n";
+      s += "};\n";
+      s += "\n";
+      s += "\n";
+      s += "void Items_PushBack(struct Items* pItems, struct Item* pItem);\n";
+      s += "void Items_Destroy(struct Items* pItems);\n";
+      s += "\n";
+      s += "\n";
+      s += "int main(int argc, char **argv)\n";
+      s += "{\n";
+      s += "    struct Items items = { 0 };\n";
+      s += "\n";
+      s += "    Items_PushBack(&items, Item_Create());\n";
+      s += "    Items_PushBack(&items, Item_Create());\n";
+      s += "    Items_PushBack(&items, Item_Create());\n";
+      s += "\n";
+      s += "    for (int i = 0; i < items.Size; i++)\n";
+      s += "    {\n";
+      s += "        printf(\"%d\\n\", items.pData[i]->i);\n";
+      s += "    }\n";
+      s += "\n";
+      s += "    Items_Destroy(&items);\n";
+      s += "    return 0;\n";
+      s += "}\n";
+      s += "\n";
+      s += "\n";
+      s += "struct Item* Item_Create() _default;\n";
+      s += "void Item_Delete(struct Item* p) _default;\n";
+      s += "void Items_PushBack(struct Items* pItems, struct Item* pItem) _default;\n";
+      s += "void Items_Destroy(struct Items* pItems) _default;\n";
+
+      sample[1] = s;
+
+      s = "\n";
+      s += "struct Item\n";
+      s += "{\n";
+      s += "    int i;\n";
+      s += "    struct Item* _auto pNext;\n";
+      s += "};\n";
+      s += "\n";
+      s += "void Item_Delete(struct Item* pItem) _default;\n";
+      s += "\n";
+      s += "struct Items\n";
+      s += "{\n";
+      s += "    struct Item* _auto pHead,* pTail;\n";
+      s += "};\n";
+      s += "\n";
+      s += "void Items_Destroy(struct Items* pItems) _default;\n";
+      s += "\n";
+      s += "void Items_PushBack(struct Items* pItems, struct Item* pItem) _default;\n";
+
+      sample[2] = s;
+
+      s = "typedef struct \n";
+      s += "{\n";
+      s += "  int x _defval(1);\n";
+      s += "  int y _defval(2);\n";
+      s += "\n";
+      s += "} Point;\n";
+      s += "\n";
+      s += "\n";
+      s += "typedef struct \n";
+      s += "{\n";
+      s += "  Point start, end;\n";
+      s += "\n";
+      s += "} Line;\n";
+      s += "\n";
+      s += "\n";
+      s += "int main()\n";
+      s += "{\n";
+      s += "  Point pt = _default {};\n";
+      s += "  Line ln = _default {};\n";
+      s += "\n";
+      s += "}\n";
+      s += "\n";
+      sample[3] = s;
+
+      s = "\n";
+      s += "struct Box\n";
+      s += "{\n";
+      s += "\tint id _defval(1);\n";
+      s += "};\n";
+      s += "\n";
+      s += "struct Box* Box_Create();\n";
+      s += "void Box_Delete(struct Box* pBox);\n";
+      s += "\n";
+      s += "void Box_Draw(struct Box* pBox)\n";
+      s += "{\n";
+      s += "\tprintf(\"Box\\n\");\n";
+      s += "}\n";
+      s += "\n";
+      s += "struct Circle\n";
+      s += "{\n";
+      s += "\tint id _defval(2);\n";
+      s += "};\n";
+      s += "struct Circle* Circle_Create();\n";
+      s += "void Circle_Delete(struct Circle* pCircle);\n";
+      s += "\n";
+      s += "void Circle_Draw(struct Circle* pCircle)\n";
+      s += "{\n";
+      s += "\tprintf(\"Circle\\n\");\n";
+      s += "}\n";
+      s += "\n";
+      s += "struct _union(Box | Circle) Shape\n";
+      s += "{\n";
+      s += "\tint id;\n";
+      s += "};\n";
+      s += "\n";
+      s += "void  Shape_Delete(struct Shape* pShape);\n";
+      s += "void Shape_Draw(struct Shape* pShape);\n";
+      s += "\n";
+      s += "\n";
+      s += "\n";
+      s += "struct Box* Box_Create() _default;\n";
+      s += "void Box_Delete(struct Box* pBox) _default;\n";
+      s += "struct Circle* Circle_Create() _default;\n";
+      s += "void Circle_Delete(struct Circle* pCircle) _default;\n";
+      s += "void  Shape_Delete(struct Shape* pShape) _default;\n";
+      s += "void Shape_Draw(struct Shape* pShape) _default;\n";
+
+      sample[4] = s;
+
+      s = "\n";
+      s += "/*\n";
+      s += "  Lambdas without capture.\n";
+      s += "  Currently there is no in-place generation \n";
+      s += "  for lambdas\n";
+      s += "*/\n";
+      s += "\n";
+      s += "void Run(void (*callback)(void*), void* data);\n";
+      s += "\n";
+      s += "\n";
+      s += "int main()\n";
+      s += "{  \n";
+      s += "  Run([](void* data){\n";
+      s += "  \n";
+      s += "    printf(\"first\\n\");\n";
+      s += "    Run([](void* data){\n";
+      s += "      printf(\"second\\n\");\n";
+      s += "    }, 0); \n";
+      s += "    \n";
+      s += "  }, 0);\n";
+      s += "  \n";
+      s += "}";
+
+      sample[5] = s;
+
+      editor.setValue(sample[val], -1);
+
+
+    }
+
   </script>
   <script async type="text/javascript" src="hello3.js">
   </script>
 
-  
 
 
-<script src="src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-<script>
-  var editor = ace.edit("editor");
-  editor.setTheme("ace/theme/twilight");
-  editor.session.setMode("ace/mode/c_cpp");
-</script>
+
+  <script src="src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/twilight");
+    editor.session.setMode("ace/mode/c_cpp");
+
+    editor.setOptions({
+      fontFamily: "Consolas",
+      fontSize: "11pt"
+    });
+
+  </script>
 
 
 </body>
