@@ -2435,7 +2435,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 							"  n = 1;\n"
 							" }\n"
 							" $type* pnew = $p->$data;\n"
-							" pnew = ($type**)realloc(pnew, n * sizeof($type));\n"
+							" pnew = ($type*)realloc(pnew, n * sizeof($type));\n"
 							" if (pnew)\n"
 							" {\n"
 							"  $p->$data = pnew;\n"
