@@ -5,7 +5,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LocalDebuggerCommandArguments>-config vs2017.h  -outDir "Generated" -build "..\Hello\Build.h" -o "out.c"</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-config vs2017.h  -outDir "" -build "..\CPrime\Build.h" -o "out.c"</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>
