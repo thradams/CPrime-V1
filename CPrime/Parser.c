@@ -5000,18 +5000,21 @@ void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
 
         if (Parser_CurrentToken(ctx) == TK_EOF)
         {
-            TEofDeclaration* pEofDeclaration =
-                TEofDeclaration_Create();
-            //ok
-            Parser_Match(ctx, &pEofDeclaration->ClueList0);
-            TDeclarations_PushBack(declarations, pEofDeclaration);
-        }
+			break;
+		}
 
         if (Parser_HasError(ctx))
             break;
-
     }
 
+	if (Parser_CurrentToken(ctx) == TK_EOF)
+	{
+		TEofDeclaration* pEofDeclaration =
+			TEofDeclaration_Create();
+		//ok
+		Parser_Match(ctx, &pEofDeclaration->ClueList0);
+		TDeclarations_PushBack(declarations, pEofDeclaration);
+	}
 
 
 }
@@ -5067,7 +5070,11 @@ bool GetAST(const char*  filename,
         Parser_InitFile(&parser, fullConfigFilePath);
         Parser_Main(&parser, &pProgram->Declarations);
 
-        //Some com o arquivo de config
+		//apaga declaracoes eof por ex
+		TDeclarations_Destroy(&pProgram->Declarations);
+		TDeclarations_Init(&pProgram->Declarations);
+
+        //Some com o arquivo de configclea
         TScannerItemList_Clear(&parser.ClueList);
         BasicScannerStack_Pop(&parser.Scanner.stack);
         //Some com o arquivo de config
