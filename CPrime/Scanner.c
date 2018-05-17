@@ -460,6 +460,7 @@ static Result Scanner_InitCore(Scanner* pScanner)
   BasicScannerStack_Init(&pScanner->stack);
 
   StrArray_Init(&pScanner->IncludeDir);
+  StrArray_Init(&pScanner->Sources);
 
   // Indica que foi feita uma leitura especulativa
   // pScanner->bHasLookAhead = false;
@@ -747,6 +748,8 @@ void Scanner_Destroy(Scanner* pScanner) _default
     StackInts_Destroy(&pScanner->StackIfDef);
     TFileMap_Destroy(&pScanner->FilesIncluded);
     StrArray_Destroy(&pScanner->IncludeDir);
+    StrArray_Destroy(&pScanner->Sources);
+    
     StrBuilder_Destroy(&pScanner->DebugString);
     StrBuilder_Destroy(&pScanner->ErrorString);
     TScannerItemList_Destroy(&pScanner->AcumulatedTokens);
@@ -1805,6 +1808,23 @@ void Scanner_BuyTokens(Scanner* pScanner)
           IgnorePreProcessorv2(pBasicScanner, &strBuilder);
           Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
         }
+        else if (BasicScanner_IsLexeme(Scanner_Top(pScanner), "source"))
+        {
+          StrBuilder_Append(&strBuilder, lexeme);
+
+          BasicScanner_Match(pBasicScanner);
+          Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
+          lexeme = pBasicScanner->currentItem.lexeme.c_str;
+          String fileName;
+          String_InitWith(&fileName, lexeme + 1);
+          Scanner_Match(pScanner);
+          fileName[strlen(fileName) - 1] = 0;
+          StrArray_Push(&pScanner->Sources, fileName);
+          String_Destroy(&fileName);
+          //
+          IgnorePreProcessorv2(pBasicScanner, &strBuilder);
+          Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
+        }
         else if (BasicScanner_IsLexeme(pBasicScanner, "region"))
         {
           StrBuilder_Append(&strBuilder, "region");
@@ -2236,6 +2256,27 @@ void PrintPreprocessedToFile(const char* fileIn, const char* configFileName)
   PrintPreprocessedToFileCore(fp, &scanner);
 
   fclose(fp);
+  Scanner_Destroy(&scanner);
+  String_Destroy(&fullFileNamePath);
+}
+
+void GetSources(const char* fileIn, StrArray* sources)
+{
+  String fullFileNamePath = STRING_INIT;
+  GetFullPath(fileIn, &fullFileNamePath);
+  Scanner scanner;
+  Scanner_Init(&scanner);
+
+  Scanner_IncludeFile(&scanner, fullFileNamePath, FileIncludeTypeFullPath,
+    false);
+
+  while (Scanner_TokenAt(&scanner, 0) != TK_EOF)
+  {
+    Scanner_Match(&scanner);
+  }
+
+  StrArray_Swap(sources, &scanner.Sources);
+
   Scanner_Destroy(&scanner);
   String_Destroy(&fullFileNamePath);
 }

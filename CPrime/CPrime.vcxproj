@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="amalgamation.c" />
     <ClCompile Include="Array.c" />
     <ClCompile Include="Ast.c" />
     <ClCompile Include="AstPrint.c" />

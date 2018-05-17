@@ -91,6 +91,9 @@ typedef struct
   //Lista de diretorios de include
   StrArray IncludeDir;
 
+  //Lista de diretorios de include
+  StrArray Sources;
+
   //string para debug
   StrBuilder DebugString;
 
@@ -139,7 +142,7 @@ int EvalExpression(const char* s, Scanner* pScanner);
 void Scanner_PrintDebug(Scanner* pScanner);
 void Scanner_GetError(Scanner* pScanner, StrBuilder* str);
 
-
+void GetSources(const char* fileIn, StrArray* sources);
 void PrintPreprocessedToFile(const char* fileIn,
   const char* configFileName);
 

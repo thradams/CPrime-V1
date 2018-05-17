@@ -2664,7 +2664,6 @@ static void TEofDeclaration_CodePrint(TProgram* program,
 	StrBuilder* fp)
 {
 	TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-
 }
 
 static void TStaticAssertDeclaration_CodePrint(TProgram* program,

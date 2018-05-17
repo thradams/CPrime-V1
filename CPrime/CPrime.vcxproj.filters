@@ -73,6 +73,9 @@
     <ClCompile Include="LocalStrBuilder.c">
       <Filter>Source Files\Base</Filter>
     </ClCompile>
+    <ClCompile Include="amalgamation.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">

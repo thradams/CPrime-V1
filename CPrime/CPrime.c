@@ -8,6 +8,7 @@
 #include "CodePrint.h"
 #include "Path.h"
 #include "UnitTest.h"
+#include "amalgamation.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -90,6 +91,8 @@ void PrintHelp()
     printf("\n");
     printf("Options:\n");
     printf("-config FILE                          Configuration file.\n");
+    printf("-build FILE                           Build file.\n");
+    printf("-outDir                               Directory for output.\n");
     printf("-help                                 Print this message.\n");
     printf("-o FILE                               Sets ouput file name.\n");
     printf("-E                                    Preprocess to console.\n");
@@ -151,18 +154,22 @@ int main(int argc, char* argv[])
     printf("https://github.com/thradams/CPrime\n\n");
 
 #ifdef _DEBUG
-    AllTests();
+    //AllTests();
 #endif
     if (argc < 2)
     {
         PrintHelp();
         return 1;
     }
-
+    
+    const char* outputFileName = NULL;
     const char* configFileName = NULL;
+    const char* outputDir = NULL;
+    StrArray sources = STRARRAY_INIT;
 
     String outputFullPath = NULL;
     String inputFullPath = NULL;
+    String buildFileFullPath = STRING_INIT;
 
     Options options = OPTIONS_INIT;
     options.bHideDefaultImplementation = false;
@@ -208,6 +215,46 @@ int main(int argc, char* argv[])
             {
                 options.bHideDefaultImplementation = true;
             }
+            else if (strcmp(option, "-build") == 0)
+            {
+              if (fase == 0)
+              {
+                if (i + 1 < argc)
+                {
+                  
+                  const char* buildFileName  = argv[i + 1];
+
+                  
+                  GetFullDir(buildFileName, &buildFileFullPath);
+                  
+                  
+                  GetSources(buildFileName, &sources);
+                }
+                else
+                {
+                  printf("missing file\n");
+                  break;
+                }
+              }
+              i++;
+              
+            }            
+            else if (strcmp(option, "-outDir") == 0)
+            {
+              if (fase == 0)
+              {
+                if (i + 1 < argc)
+                {
+                  outputDir = argv[i + 1];
+                }
+                else
+                {
+                  printf("missing file\n");
+                  break;
+                }
+              }
+              i++;
+            }
             else if (strcmp(option, "-config") == 0)
             {
                 if (fase == 0)
@@ -228,6 +275,7 @@ int main(int argc, char* argv[])
             {
                 if (i + 1 < argc)
                 {
+                    outputFileName = argv[i + 1];
                     GetFullPath(argv[i + 1], &outputFullPath);
                     i++;
                 }
@@ -266,12 +314,80 @@ int main(int argc, char* argv[])
         }
     }
 
+    if (sources.size > 0)
+    {
+      char inputItemPath[2000] = { 0 };
+      char outputItemPath[2000] = { 0 };
+
+      //criar o diretorio de output se nao existe
+      strcat(outputItemPath, buildFileFullPath);
+      strcat(outputItemPath, outputDir);
+      strcat(outputItemPath, "\\");
+      _mkdir(outputItemPath);
+
+      for (int i = 0; i < sources.size; i++)
+      {
+        inputItemPath[0] = 0;        
+        strcat(inputItemPath, buildFileFullPath);
+        strcat(inputItemPath, sources.pItems[i]);
+
+        outputItemPath[0] = 0;
+        if (outputDir)
+        {
+          //output eh relativo ao build.c
+          strcat(outputItemPath, buildFileFullPath);
+          strcat(outputItemPath, outputDir);
+          strcat(outputItemPath, "\\");
+          strcat(outputItemPath, sources.pItems[i]);
+        }
+
+        Compile(configFileName, inputItemPath, outputItemPath, &options, bPrintASTFile);
+      }
+    }
+
+    //Se tem buid.h e -o entao gera um amalgamation
+    if (sources.size > 0 && outputFileName)
+    {
+      char outputItemPath[2000] = { 0 };
+      strcat(outputItemPath, buildFileFullPath);
+      strcat(outputItemPath, outputDir);
+      strcat(outputItemPath, "\\");
+      strcat(outputItemPath, outputFileName);
+      FreeList();
+      FILE * out = fopen(outputItemPath, "w");
+      if (out)
+      {
+        //Write(argv[1], out);
+
+      
+        for (int i = 0; i < sources.size; i++)
+        {
+          outputItemPath[0] = 0;
+          if (outputDir)
+          {
+            //output eh relativo ao build.c
+            strcat(outputItemPath, buildFileFullPath);
+            strcat(outputItemPath, outputDir);
+            strcat(outputItemPath, "\\");
+            strcat(outputItemPath, sources.pItems[i]);
+          }
+          Write(outputItemPath, false, out);
+        }
+        
+        fclose(out);
+        FreeList();
+      }
+
+      
+    }
+
     clock_t tend = clock();
     printf("Total %d files in = %d seconds\n", numberOfFiles, (int)((tend - tstart) / CLOCKS_PER_SEC));
-
+    
+    StrArray_Destroy(&sources);
     String_Destroy(&outputFullPath);
     String_Destroy(&inputFullPath);
-
+    String_Destroy(&buildFileFullPath);
     return 0;
 }
 
