@@ -749,7 +749,6 @@ void Scanner_Destroy(Scanner* pScanner) _default
     TFileMap_Destroy(&pScanner->FilesIncluded);
     StrArray_Destroy(&pScanner->IncludeDir);
     StrArray_Destroy(&pScanner->Sources);
-    
     StrBuilder_Destroy(&pScanner->DebugString);
     StrBuilder_Destroy(&pScanner->ErrorString);
     TScannerItemList_Destroy(&pScanner->AcumulatedTokens);

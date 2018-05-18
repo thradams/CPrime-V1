@@ -44,11 +44,11 @@
 #pragma source "amalgamation.h"
 #pragma source "amalgamation.c"
 
-#if UNIT_TEST
+//#if UNIT_TEST
 #pragma source "UnitTest.c"
 #pragma source "UnitTest.h"
 
-#endif
+//#endif
 
 
 
