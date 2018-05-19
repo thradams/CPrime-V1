@@ -1035,7 +1035,7 @@ void TUnionSetItem_Delete(TUnionSetItem*);
 
 typedef struct TUnionSet
 {
-  TUnionSetItem * _auto pHead, *pTail;
+  TUnionSetItem *  pHead, *pTail;
 
   TScannerItemList ClueList0; // _union
   TScannerItemList ClueList1; //(
@@ -1314,7 +1314,7 @@ void TPrimaryExpressionLiteralItem_Delete(TPrimaryExpressionLiteralItem *p);
 
 typedef struct
 {
-  TPrimaryExpressionLiteralItem * _auto pHead, *pTail;
+  TPrimaryExpressionLiteralItem *  pHead, *pTail;
 } TPrimaryExpressionLiteralItemList;
 
 void TPrimaryExpressionLiteralItemList_Init(TPrimaryExpressionLiteralItemList* p);
@@ -1374,7 +1374,7 @@ typedef struct TPostfixExpressionCore
   TExpression*_auto   pExpressionLeft;
   TExpression*_auto   pExpressionRight;
 
-  struct TPostfixExpressionCore*   pNext;
+  struct TPostfixExpressionCore* _auto  pNext;
   TInitializerList InitializerList;
   String Identifier;
   TTypeName*_auto  pTypeName; /*typename*/
