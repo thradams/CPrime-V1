@@ -17,7 +17,7 @@
 #endif
 #include "StringEx.h"
 
-
+#include "Mem.h"
 
 void StrBuilder_Init(StrBuilder* p) _default
 {
@@ -38,7 +38,7 @@ void StrBuilder_Destroy(StrBuilder* p)
 {
   if (p)
   {
-    free(p->c_str);
+    Free(p->c_str);
     p->c_str = NULL;
     p->size = 0;
     p->capacity = 0;
@@ -51,7 +51,7 @@ Result StrBuilder_Reserve(StrBuilder* p, int nelements)
 
   if (nelements > p->capacity)
   {
-    char* pnew = (char*)realloc(p->c_str,
+    char* pnew = (char*)Realloc(p->c_str,
                                 (nelements + 1) * sizeof(p->c_str[0]));
 
     if (pnew)

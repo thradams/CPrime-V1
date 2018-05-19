@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdlib.h> //malloc
+#include "Mem.h"
 
 void String_Init(String* s) 
 { 
@@ -19,14 +20,14 @@ void String_Destroy(String*  pString)
 {
   if (pString != NULL)
   {
-    free(*pString);
+    Free(*pString);
     *pString = NULL;
   }
 }
 
 void String_Attach(String* pString, char* psz)
 {
-  free(*pString);
+  Free(*pString);
   *pString = psz;
 }
 
@@ -57,7 +58,7 @@ Result String_InitWith(String* pString, const char*  sourceOpt)
   if (sourceOpt != NULL)
   {
     int len = strlen(sourceOpt) + 1;
-    void *   snew = malloc(sizeof(char) * len);
+    void *   snew = Malloc(sizeof(char) * len);
 
     if (snew == NULL)
     {

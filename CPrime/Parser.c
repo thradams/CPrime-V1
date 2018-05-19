@@ -62,7 +62,7 @@ static bool IsPreprocessorTokenPhase(Tokens token)
 
 bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
 
-bool IsTypeName(Parser* ctx, Tokens token, const char * lexeme);
+int IsTypeName(Parser* ctx, Tokens token, const char * lexeme);
 
 
 
@@ -153,7 +153,7 @@ void Parser_Destroy(Parser* parser)
     //Map_Destroy(&parser->TypeDefNames, NULL);
     StrBuilder_Destroy(&parser->ErrorMessage);
     Scanner_Destroy(&parser->Scanner);
-
+    TScannerItemList_Destroy(&parser->ClueList);
 }
 
 static const char* GetName()
@@ -766,7 +766,8 @@ void TypeName(Parser* ctx, TTypeName* pTypeName)
     Declarator(ctx, true, &pDeclarator);
     if (pDeclarator)
     {
-        pTypeName->Declarator = *pDeclarator;
+      TDeclarator_Swap(&pTypeName->Declarator, pDeclarator);
+      TDeclarator_Delete(pDeclarator);        
     }
 }
 
@@ -1134,10 +1135,10 @@ static bool IsTypeQualifierToken(Tokens token)
     return bResult;
 }
 
-bool IsTypeName(Parser* ctx, Tokens token, const char * lexeme)
+int IsTypeName(Parser* ctx, Tokens token, const char * lexeme)
 {
 
-    bool bResult = false;
+    int bResult = false;
 
     if (lexeme == NULL)
     {
@@ -3520,6 +3521,9 @@ void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
         const char* lexeme = Lexeme(ctx);
         String_Set(&pEnumSpecifier2->Name, lexeme);
         Parser_Match(ctx, &pEnumSpecifier2->ClueList1);
+
+		
+	    SymbolMap_SetAt(ctx->pCurrentScope, pEnumSpecifier2->Name, (TTypePointer*)pEnumSpecifier2);		
     }
 
     else
@@ -3727,7 +3731,8 @@ void Parameter_Declaration(Parser* ctx,
     Declarator(ctx, true, &pDeclarator);
     if (pDeclarator)
     {
-        pParameterDeclaration->Declarator = *pDeclarator;
+        TDeclarator_Swap(&pParameterDeclaration->Declarator, pDeclarator);
+        TDeclarator_Delete(pDeclarator);
     }
 }
 
@@ -4308,7 +4313,7 @@ void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier)
         TSingleTypeSpecifier*  pSingleTypeSpecifier =
             TSingleTypeSpecifier_Create();
 
-        pSingleTypeSpecifier->Token = token;
+        pSingleTypeSpecifier->Token2 = token;
         bResult = true;
 
         Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
@@ -4351,7 +4356,17 @@ void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier)
         if (bIsTypedef)
         {
             TSingleTypeSpecifier* pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
-            pSingleTypeSpecifier->Token = token;
+            
+			if (bIsTypedef == 2 /*struct*/)
+				pSingleTypeSpecifier->Token2 = TK_STRUCT;
+			else if (bIsTypedef == 3 /*union*/)
+				pSingleTypeSpecifier->Token2 = TK_UNION;
+			else if (bIsTypedef == 4 /*enum*/)
+				pSingleTypeSpecifier->Token2 = TK_ENUM;
+
+			else
+				pSingleTypeSpecifier->Token2 = token;
+
             String_Set(&pSingleTypeSpecifier->TypedefName, lexeme);
             bResult = true;
 

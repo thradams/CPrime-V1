@@ -76,6 +76,9 @@
     <ClCompile Include="amalgamation.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Mem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
@@ -144,6 +147,9 @@
     <ClInclude Include="vs2017.h" />
     <ClInclude Include="LocalStrBuilder.h">
       <Filter>Source Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Mem.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

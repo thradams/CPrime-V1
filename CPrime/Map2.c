@@ -6,14 +6,14 @@
 #include <string.h>
 #include <stdlib.h>
 
-
+#include "Mem.h"
 
 void KeyValue_Delete(MapItem2* p) _default
 {
     if (p != NULL)
     {
         String_Destroy(&p->Key);
-        free((void*)p);
+        Free((void*)p);
     }
 }
 
@@ -42,7 +42,7 @@ unsigned int String2_HashKey(const char*  Key)
 }
 
 
-void Map2_RemoveAll(Map2* pMap)
+void Map2_RemoveAll(Map2* pMap, void(*DeleteFunc)(void*))
 {
   if (pMap->pHashTable != NULL)
   {
@@ -56,20 +56,26 @@ void Map2_RemoveAll(Map2* pMap)
       while (pKeyValue != NULL)
       {
         MapItem2* pKeyValueCurrent = pKeyValue;
+
+        if (DeleteFunc)
+          DeleteFunc(pKeyValueCurrent->pValue);
+
         pKeyValue = pKeyValue->pNext;
         KeyValue_Delete(pKeyValueCurrent);
+        
+        
       }
     }
 
-    free(pMap->pHashTable);
+    Free(pMap->pHashTable);
     pMap->pHashTable = NULL;
     pMap->nCount = 0;
   }
 }
 
-void Map2_Destroy(Map2* pMap)
+void Map2_Destroy(Map2* pMap, void(*DeleteFunc)(void*))
 {
-  Map2_RemoveAll(pMap);
+  Map2_RemoveAll(pMap, DeleteFunc);
 }
 
 static MapItem2* Map2_GetAssocAt(
@@ -175,6 +181,7 @@ bool Map2_RemoveKey(Map2* pMap,
         *ppValue = pKeyValue->pValue;
         KeyValue_Delete(pKeyValue);
         bResult = true;
+        
         break;
       }
 
@@ -201,7 +208,7 @@ int Map2_SetAt(Map2* pMap,
     }
 
     MapItem2** pHashTable =
-      (MapItem2**)malloc(sizeof(MapItem2*) * pMap->nHashTableSize);
+      (MapItem2**)Malloc(sizeof(MapItem2*) * pMap->nHashTableSize);
 
     if (pHashTable != NULL)
     {
@@ -221,7 +228,7 @@ int Map2_SetAt(Map2* pMap,
 
     if (pKeyValue == NULL)
     {
-      pKeyValue = (MapItem2*)malloc(sizeof(MapItem2) * 1);
+      pKeyValue = (MapItem2*)Malloc(sizeof(MapItem2) * 1);
       pKeyValue->HashValue = HashValue;
       pKeyValue->pValue = newValue;
       String_InitWith(&pKeyValue->Key, Key);
@@ -259,7 +266,7 @@ void Map2_Swap(Map2 * pA, Map2 * pB)
 
 Map2* Map2_Create(void) _default
 {
-    Map2 *p = (Map2*) malloc(sizeof * p);
+    Map2 *p = (Map2*) Malloc(sizeof * p);
     if (p != NULL)
     {
         Map2_Init(p);
@@ -267,11 +274,11 @@ Map2* Map2_Create(void) _default
     return p;
 }
 
-void Map2_Delete(Map2 * p) _default
+void Map2_Delete(Map2 * p, void(*DeleteFunc)(void*)) 
 {
     if (p != NULL)
     {
-        Map2_Destroy(p);
-        free((void*)p);
+        Map2_Destroy(p, DeleteFunc);
+        Free((void*)p);
     }
 }

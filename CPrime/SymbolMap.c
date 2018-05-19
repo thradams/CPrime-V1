@@ -7,13 +7,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Ast.h"
+#include "Mem.h"
 
 static void SymbolMap_KeyValue_Delete(SymbolMapItem* p)
 {
     if (p)
     {
         String_Destroy(&p->Key);
-        free(p);
+        Free(p);
     }
 }
 
@@ -61,7 +62,7 @@ void SymbolMap_RemoveAll(SymbolMap* pMap)
             }
         }
 
-        free(pMap->pHashTable);
+        Free(pMap->pHashTable);
         pMap->pHashTable = NULL;
         pMap->nCount = 0;
     }
@@ -220,7 +221,7 @@ int SymbolMap_SetAt(SymbolMap* pMap,
         }
 
         SymbolMapItem** pHashTable =
-            (SymbolMapItem**)malloc(sizeof(SymbolMapItem*) * pMap->nHashTableSize);
+            (SymbolMapItem**)Malloc(sizeof(SymbolMapItem*) * pMap->nHashTableSize);
 
         if (pHashTable != NULL)
         {
@@ -240,7 +241,7 @@ int SymbolMap_SetAt(SymbolMap* pMap,
 
         //if (pKeyValue == NULL)
         {
-            pKeyValue = (SymbolMapItem*)malloc(sizeof(SymbolMapItem) * 1);
+            pKeyValue = (SymbolMapItem*)Malloc(sizeof(SymbolMapItem) * 1);
             pKeyValue->HashValue = HashValue;
             pKeyValue->pValue = newValue;
             String_InitWith(&pKeyValue->Key, Key);
@@ -276,7 +277,7 @@ void SymbolMap_Swap(SymbolMap * pA, SymbolMap * pB)
 
 SymbolMap* SymbolMap_Create()
 {
-    SymbolMap* p = (SymbolMap*)malloc(sizeof(SymbolMap));
+    SymbolMap* p = (SymbolMap*)Malloc(sizeof(SymbolMap));
 
     if (p != 0)
     {
@@ -292,7 +293,7 @@ void SymbolMap_Delete(SymbolMap * p)
     if (p != 0)
     {
         SymbolMap_Destroy(p);
-        free(p);
+        Free(p);
     }
 }
 
@@ -387,9 +388,9 @@ void SymbolMap_Print(SymbolMap* pMap)
 
 
 
-bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
+int SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 {
-    bool bIsTypeName = false;
+    int bIsTypeName = false;
 
     while (pMap)
     {
@@ -398,6 +399,23 @@ bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 
         while (pBucket)
         {
+			if (pBucket->pValue->Type == TStructUnionSpecifier_ID &&
+				strcmp(pBucket->Key, identifierName) == 0)
+			{
+				TStructUnionSpecifier* p = (TStructUnionSpecifier*)pBucket->pValue;
+				bIsTypeName = p->Token == TK_STRUCT ? 2 : 3;
+				 //continua para dar preferencia para typedef
+				//break;
+			}
+			else if (pBucket->pValue->Type == TEnumSpecifier_ID &&
+				strcmp(pBucket->Key, identifierName) == 0)
+			{
+				bIsTypeName = 4;
+				//break;
+				//continua para dar preferencia para typedef
+			}
+			
+			else
             if (pBucket->pValue->Type == TDeclaration_ID &&
                 strcmp(pBucket->Key, identifierName) == 0)
             {
@@ -420,7 +438,7 @@ bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
                     }
                 }
             }
-            if (bIsTypeName)
+            if (bIsTypeName == 1)
                 break;
             pBucket = pBucket->pNext;
         }
@@ -610,7 +628,7 @@ TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
                         TSingleTypeSpecifier* pSingleTypeSpecifier =
                             (TSingleTypeSpecifier*)pItem;
 
-                        if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+                        if (pSingleTypeSpecifier->Token2 == TK_IDENTIFIER)
                         {
                             indirectTypedef = pSingleTypeSpecifier->TypedefName;
                         }
@@ -703,7 +721,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
                         TSingleTypeSpecifier* pSingleTypeSpecifier =
                             (TSingleTypeSpecifier*)pItem;
 
-                        if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+                        if (pSingleTypeSpecifier->Token2 == TK_IDENTIFIER)
                         {
                             indirectTypedef = pSingleTypeSpecifier->TypedefName;
                         }
@@ -816,7 +834,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                         TSingleTypeSpecifier* pSingleTypeSpecifier =
                             (TSingleTypeSpecifier*)pItem;
 
-                        if (pSingleTypeSpecifier->Token == TK_IDENTIFIER)
+                        if (pSingleTypeSpecifier->Token2 == TK_IDENTIFIER)
                         {
                             indirectTypedef = pSingleTypeSpecifier->TypedefName;
                         }

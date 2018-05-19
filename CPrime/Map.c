@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "Mem.h"
 
 /**
 * Simple Bob Jenkins's hash algorithm taken from the
@@ -65,7 +66,7 @@ Result BucketItem_CreateMoveKey(BucketItem** pp,
                                 void* data)
 {
     Result result = RESULT_OUT_OF_MEM;
-    BucketItem* node = (BucketItem*)malloc(sizeof(BucketItem) * 1);
+    BucketItem* node = (BucketItem*)Malloc(sizeof(BucketItem) * 1);
     if (node)
     {
         BucketItem_InitMoveKey(node,
@@ -99,7 +100,7 @@ void BucketItem_Delete(BucketItem* p, void(*pfDestroyData)(void*))
     if (p)
     {
         BucketItem_Destroy(p, pfDestroyData);
-        free(p);
+        Free(p);
     }
 }
 
@@ -121,7 +122,7 @@ Result Bucket_Init(Bucket* p, int capacity)
 Result Bucket_Create(Bucket** pp)
 {
     Result result = RESULT_OUT_OF_MEM;
-    Bucket*  p = (Bucket*)malloc(sizeof(Bucket) * 1);
+    Bucket*  p = (Bucket*)Malloc(sizeof(Bucket) * 1);
     if (p)
     {
         result = Bucket_Init(p, 0);
@@ -130,7 +131,7 @@ Result Bucket_Create(Bucket** pp)
             *pp = p;
             p = NULL;
         }
-        free(p);
+        Free(p);
     }
     return result;
 }
@@ -142,7 +143,7 @@ void Bucket_Destroy(Bucket* p, void(*pfDestroyData)(void*))
     {
         BucketItem_Delete(p->data[i], pfDestroyData);
     }
-    free(p->data);
+    Free(p->data);
 }
 
 
@@ -151,7 +152,7 @@ void Bucket_Delete(Bucket* p, void(*pfDestroyData)(void*))
     if (p)
     {
         Bucket_Destroy(p, pfDestroyData);
-        free(p);
+        Free(p);
     }
 }
 
@@ -162,7 +163,7 @@ Result Bucket_Reserve(Bucket* p, int nelements)
 
     if (nelements > p->capacity)
     {
-        BucketItem** pnew = (BucketItem**)realloc(p->data,
+        BucketItem** pnew = (BucketItem**)Realloc(p->data,
                             (nelements + 1) * sizeof(p->data[0]));
 
         if (pnew)
@@ -272,7 +273,7 @@ Result Buckets_Init(Buckets* p,
     p->data = NULL;
     p->size = size;
 
-    p->data = (Bucket**)malloc(sizeof(Bucket*) * size);
+    p->data = (Bucket**)Malloc(sizeof(Bucket*) * size);
     if (p->data)
     {
         for (int i = 0; i < size; i++)
@@ -292,7 +293,7 @@ void Buckets_Destroy(Buckets* p, void(*pfDestroyData)(void*))
         Bucket_Delete(p->data[i],
                       pfDestroyData);
     }
-    free(p->data);
+    Free(p->data);
 }
 
 
@@ -309,7 +310,7 @@ Result Map_Init(Map* map, int nBuckets)
 Result Map_Create(Map** pp, int nBuckets)
 {
     Result result = RESULT_OUT_OF_MEM;
-    Map* p = (Map*)malloc(sizeof(Map));
+    Map* p = (Map*)Malloc(sizeof(Map));
     if (p)
     {
         result = Map_Init(p, nBuckets);
@@ -319,7 +320,7 @@ Result Map_Create(Map** pp, int nBuckets)
         }
         else
         {
-            free(p);
+            Free(p);
         }
     }
     return result;
@@ -333,7 +334,7 @@ void Map_Destroy(Map* map, void(*pfDestroyData)(void*))
 void Map_Delete(Map* p, void(*pfDestroyData)(void*))
 {
     Map_Destroy(p, pfDestroyData);
-    free((void*)p);
+    Free((void*)p);
 }
 
 BucketItem* Map_FindNode(Map* map, const char* key)

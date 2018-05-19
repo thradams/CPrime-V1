@@ -678,13 +678,13 @@ bool TSingleTypeSpecifier_Print(TSingleTypeSpecifier* p, bool b, FILE* fp)
 
     fprintf(fp, "\"");
 
-    if (p->Token==TK_IDENTIFIER)
+    if (p->Token2 ==TK_IDENTIFIER)
     {
         fprintf(fp, "%s", p->TypedefName);
     }
     else
     {
-        fprintf(fp, "%s", TokenToString(p->Token));
+        fprintf(fp, "%s", TokenToString(p->Token2));
     }
 
     fprintf(fp, "\"");

@@ -5,13 +5,14 @@
 #include <string.h>
 #include "Map2.h"
 #include  <stdio.h>
+#include "Mem.h"
 
 void TokenArray_Reserve(TokenArray* p, int nelements) _default
 {
     if (nelements > p->Capacity)
     {
         PPToken** pnew = p->pItems;
-        pnew = (PPToken**)realloc(pnew, nelements * sizeof(PPToken*));
+        pnew = (PPToken**)Realloc(pnew, nelements * sizeof(PPToken*));
         if (pnew)
         {
             p->pItems = pnew;
@@ -71,7 +72,7 @@ void TokenArray_Init(TokenArray* p) _default
 
 TokenArray* TokenArray_Create() _default
 {
-    TokenArray *p = (TokenArray*) malloc(sizeof * p);
+    TokenArray *p = (TokenArray*) Malloc(sizeof * p);
     if (p != NULL)
     {
         TokenArray_Init(p);
@@ -85,7 +86,7 @@ void TokenArray_Destroy(TokenArray* st) _default
     {
         PPToken_Delete(st->pItems[i]);
     }
-    free((void*)st->pItems);
+    Free((void*)st->pItems);
 }
 
 void TokenArray_Swap(TokenArray* p1, TokenArray* p2)
@@ -100,7 +101,7 @@ void TokenArray_Delete(TokenArray* st) _default
     if (st != NULL)
     {
         TokenArray_Destroy(st);
-        free((void*)st);
+        Free((void*)st);
     }
 }
 
@@ -246,9 +247,10 @@ void TokenArrayMap_Init(TokenArrayMap* p)
   *p = t;
 }
 
+
 void TokenArrayMap_Destroy(TokenArrayMap* p) 
 {
-  Map2_Destroy((Map2*)p);
+  Map2_Destroy((Map2*)p, &TokenArray_Delete);
 }
 
 
@@ -322,7 +324,7 @@ void TokenSet_Destroy(TokenSet *pArray) _default
     {
         PPToken_Delete(pArray->pItems[i]);
     }
-    free((void*)pArray->pItems);
+    Free((void*)pArray->pItems);
 }
 
 void SetIntersection(const TokenSet *p1,

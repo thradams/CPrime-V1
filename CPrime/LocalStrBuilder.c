@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "LocalStrBuilder.h"
-
+#include "Mem.h"
 
 void LocalStrBuilder_Init(LocalStrBuilder* p)
 {
@@ -35,7 +35,7 @@ void LocalStrBuilder_Destroy(LocalStrBuilder* p)
 {
   if (p->c_str != p->chars)
   {
-    free(p->c_str);
+    Free(p->c_str);
   }
 }
 
@@ -54,12 +54,12 @@ void LocalStrBuilder_Reserve(LocalStrBuilder* p, int nelements)
     {
       if (p->capacity <= LOCALSTRBUILDER_NCHARS)
       {
-        pnew = (char*)malloc((nelements + 1) * sizeof(char));
+        pnew = (char*)Malloc((nelements + 1) * sizeof(char));
         memcpy(pnew, p->chars, LOCALSTRBUILDER_NCHARS);
       }
       else
       {
-        pnew = (char*)realloc(p->c_str, (nelements + 1) * sizeof(char));
+        pnew = (char*)Realloc(p->c_str, (nelements + 1) * sizeof(char));
       }
 
       p->c_str = pnew;

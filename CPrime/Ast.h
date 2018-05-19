@@ -581,7 +581,7 @@ typedef struct TSingleTypeSpecifier
   typedef-name
   */
   EType Type  _defval(TSingleTypeSpecifier_ID);
-  Tokens Token;
+  Tokens Token2;
   String TypedefName;
   TScannerItemList ClueList0;
 } TSingleTypeSpecifier;
@@ -873,7 +873,7 @@ TDeclarator* TDeclarator_Create();
 void TDeclarator_Init(TDeclarator* p);
 void TDeclarator_Destroy(TDeclarator* p);
 const char* TDeclarator_GetName(TDeclarator* p);
-
+void TDeclarator_Swap(TDeclarator* a, TDeclarator* b);
 
 typedef enum TDirectDeclaratorType
 {

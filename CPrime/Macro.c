@@ -12,11 +12,11 @@
 #include <stdlib.h>
 #include "PPToken.h"
 #include <stdio.h>
-
+#include "Mem.h"
 
 Macro* Macro_Create(void) _default
 {
-    Macro *p = (Macro*) malloc(sizeof * p);
+    Macro *p = (Macro*) Malloc(sizeof * p);
     if (p != NULL)
     {
         String_Init(&p->Name);
@@ -40,7 +40,7 @@ void Macro_Delete(Macro * p) _default
     if (p != NULL)
     {
         Macro_Destroy(p);
-        free((void*)p);
+        Free((void*)p);
     }
 }
 
@@ -1136,7 +1136,7 @@ void MacroMap_Init(MacroMap* p)
 
 void MacroMap_Destroy(MacroMap* p)
 {
-  Map2_Destroy((Map2*)p);
+  Map2_Destroy((Map2*)p, Macro_Delete);
 }
 
 

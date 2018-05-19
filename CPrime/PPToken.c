@@ -2,7 +2,7 @@
 #include "PPToken.h"
 #include <stdlib.h>
 
-
+#include "Mem.h"
 
 
 void PPToken_Destroy(PPToken * p) _default
@@ -27,7 +27,7 @@ PPToken*  PPToken_Clone(PPToken* p)
 
 PPToken* PPToken_Create(const char* s, PPTokenType token)
 {
-	PPToken* p = (PPToken*)malloc(sizeof(PPToken));
+	PPToken* p = (PPToken*)Malloc(sizeof(PPToken));
 
 	if (p != 0)
 	{
@@ -49,7 +49,7 @@ void PPToken_Delete(PPToken * p) _default
     if (p != NULL)
     {
         PPToken_Destroy(p);
-        free((void*)p);
+        Free((void*)p);
     }
 }
 

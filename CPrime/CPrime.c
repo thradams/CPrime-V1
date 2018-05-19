@@ -9,6 +9,7 @@
 #include "Path.h"
 #include "UnitTest.h"
 #include "amalgamation.h"
+#include "Mem.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -16,12 +17,13 @@
 
 void AstPlayground(TProgram* program);
 
-void Compile(const char* configFileName,
+int Compile(const char* configFileName,
     const char* inputFileName,
     const char* outputFileName,
     Options* options,
     bool bPrintASTFile)
 {
+  int bSuccess = 0;
     TProgram program;
     TProgram_Init(&program);
 
@@ -30,7 +32,7 @@ void Compile(const char* configFileName,
     printf("Parsing...\n");
     if (GetAST(inputFileName, configFileName, &program))
     {
-
+        bSuccess = 1;
         AstPlayground(&program);
 
         char drive[CPRIME_MAX_DRIVE];
@@ -75,6 +77,7 @@ void Compile(const char* configFileName,
 
     }
     TProgram_Destroy(&program);
+    return bSuccess;
 }
 
 void PrintHelp()
@@ -341,7 +344,10 @@ int main(int argc, char* argv[])
           strcat(outputItemPath, sources.pItems[i]);
         }
 
-        Compile(configFileName, inputItemPath, outputItemPath, &options, bPrintASTFile);
+        if (!Compile(configFileName, inputItemPath, outputItemPath, &options, bPrintASTFile))
+        {
+          break;
+        }
       }
     }
 
@@ -367,8 +373,11 @@ int main(int argc, char* argv[])
           {
             //output eh relativo ao build.c
             strcat(outputItemPath, buildFileFullPath);
-            strcat(outputItemPath, outputDir);
-            strcat(outputItemPath, "\\");
+            if (outputDir[0] != '\0')
+            {
+              strcat(outputItemPath, outputDir);
+              strcat(outputItemPath, "\\");
+            }
             strcat(outputItemPath, sources.pItems[i]);
           }
           Write(outputItemPath, false, out);
@@ -388,6 +397,8 @@ int main(int argc, char* argv[])
     String_Destroy(&outputFullPath);
     String_Destroy(&inputFullPath);
     String_Destroy(&buildFileFullPath);
+
+    PrintMemory();
     return 0;
 }
 

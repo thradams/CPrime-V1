@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "Parser.h"
-
+#include "Mem.h"
 wchar_t BasicScanner_MatchChar(BasicScanner* scanner);
 
 const char* TokenToString(Tokens tk)
@@ -287,7 +287,7 @@ const char* TokenToString(Tokens tk)
 
 ScannerItem* ScannerItem_Create(void) _default
 {
-    ScannerItem *p = (ScannerItem*) malloc(sizeof * p);
+    ScannerItem *p = (ScannerItem*) Malloc(sizeof * p);
     if (p != NULL)
     {
         ScannerItem_Init(p);
@@ -300,7 +300,7 @@ void ScannerItem_Delete(ScannerItem* pScannerItem) _default
     if (pScannerItem != NULL)
     {
         ScannerItem_Destroy(pScannerItem);
-        free((void*)pScannerItem);
+        Free((void*)pScannerItem);
     }
 }
 
@@ -376,7 +376,7 @@ Result BasicScanner_Create(BasicScanner** pp,
     BasicScannerType Type)
 {
     Result result = RESULT_OUT_OF_MEM;
-    BasicScanner* p = (BasicScanner*)malloc(sizeof(BasicScanner));
+    BasicScanner* p = (BasicScanner*)Malloc(sizeof(BasicScanner));
     if (p)
     {
         result = BasicScanner_Init(p, name, text, Type);
@@ -386,7 +386,7 @@ Result BasicScanner_Create(BasicScanner** pp,
         }
         else
         {
-            free(p);
+            Free(p);
         }
     }
     return result;
@@ -395,7 +395,7 @@ Result BasicScanner_Create(BasicScanner** pp,
 Result BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
 {
     Result result = RESULT_OUT_OF_MEM;
-    BasicScanner* p = (BasicScanner*)malloc(sizeof(BasicScanner));
+    BasicScanner* p = (BasicScanner*)Malloc(sizeof(BasicScanner));
     if (p)
     {
         result = BasicScanner_InitFile(p, fileName);
@@ -405,7 +405,7 @@ Result BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
         }
         else
         {
-            free(p);
+            Free(p);
         }
     }
     return result;
@@ -423,7 +423,7 @@ void BasicScanner_Delete(BasicScanner* pBasicScanner) _default
     if (pBasicScanner != NULL)
     {
         BasicScanner_Destroy(pBasicScanner);
-        free((void*)pBasicScanner);
+        Free((void*)pBasicScanner);
     }
 }
 

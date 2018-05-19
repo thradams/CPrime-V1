@@ -3,6 +3,7 @@
 #include "Macro.h"
 #include "Parser.h"
 #include <stdarg.h>
+#include "Mem.h"
 
 BasicScanner* Scanner_Top(Scanner* pScanner);
 
@@ -177,7 +178,7 @@ PPTokenType TokenToPPToken(Tokens token)
 
 TFile* TFile_Create() _default
 {
-    TFile *p = (TFile*) malloc(sizeof * p);
+    TFile *p = (TFile*) Malloc(sizeof * p);
     if (p != NULL)
     {
         String_Init(&p->FullPath);
@@ -201,7 +202,7 @@ void TFile_Delete(TFile* p) _default
     if (p != NULL)
     {
         TFile_Destroy(p);
-        free((void*)p);
+        Free((void*)p);
     }
 }
 
@@ -227,7 +228,7 @@ void TFileArray_Destroy(TFileArray* p) _default
     {
         TFile_Delete(p->pItems[i]);
     }
-    free((void*)p->pItems);
+    Free((void*)p->pItems);
 }
 
 void TFileArray_Reserve(TFileArray* p, int n) _default
@@ -235,7 +236,7 @@ void TFileArray_Reserve(TFileArray* p, int n) _default
     if (n > p->Capacity)
     {
         TFile** pnew = p->pItems;
-        pnew = (TFile**)realloc(pnew, n * sizeof(TFile*));
+        pnew = (TFile**)Realloc(pnew, n * sizeof(TFile*));
         if (pnew)
         {
             p->pItems = pnew;
@@ -297,7 +298,7 @@ void StackInts_Init(StackInts* p) _default
 }
 void StackInts_Destroy(StackInts* p) /*_default*/
 {
-    free(p->pItems);
+    Free(p->pItems);
 }
 
 void StackInts_Pop(StackInts* p) /*_default*/
@@ -313,7 +314,7 @@ void StackInts_Reserve(StackInts* p, int n) _default
     if (n > p->Capacity)
     {
         State* pnew = p->pItems;
-        pnew = (State*)realloc(pnew, n * sizeof(State));
+        pnew = (State*)Realloc(pnew, n * sizeof(State));
         if (pnew)
         {
             p->pItems = pnew;
@@ -2488,9 +2489,15 @@ bool Scanner_MatchToken(Scanner* pScanner, Tokens token, bool bActive)
 }
 
 
-void TScannerItemList_Destroy(TScannerItemList* p) _default
-{
-    ScannerItem_Delete(p->pHead);
+void TScannerItemList_Destroy(TScannerItemList* p) 
+{    
+    ScannerItem* pCurrent = p->pHead;
+    while (pCurrent)
+    {
+      ScannerItem* p = pCurrent;
+      pCurrent = pCurrent->pNext;
+      ScannerItem_Delete(p);      
+    }
 }
 
 void TScannerItemList_Clear(TScannerItemList* p)

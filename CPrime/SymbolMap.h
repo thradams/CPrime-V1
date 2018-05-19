@@ -48,7 +48,7 @@ SymbolMapItem* SymbolMap_FindBucket(SymbolMap* pMap, const char*  Key);
 void SymbolMap_Swap(SymbolMap * pA, SymbolMap * pB);
 
 void SymbolMap_Print(SymbolMap* pMap);
-bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName);
+int SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName);
 
 struct TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* structTagName);
 struct TEnumSpecifier* SymbolMap_FindEnum(SymbolMap* pMap, const char* enumTagName);

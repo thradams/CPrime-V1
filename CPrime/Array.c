@@ -4,6 +4,7 @@
 
 #include "config.h"
 #include "StringEx.h"
+#include "Mem.h"
 
 Result Array_Reserve(Array* p, int nelements)
 {
@@ -11,7 +12,7 @@ Result Array_Reserve(Array* p, int nelements)
     if(nelements > p->capacity)
     {
         void** pnew = p->pItems;
-        pnew = (void**)realloc(pnew, nelements * sizeof(void*));
+        pnew = (void**)Realloc(pnew, nelements * sizeof(void*));
         if(pnew)
         {
             p->pItems = pnew;
@@ -91,7 +92,7 @@ void Array_Clear(Array* p, void(*pfDestroyData)(void*))
         if(pfDestroyData)
             pfDestroyData(p->pItems[i]);
     }
-    free(p->pItems);
+    Free(p->pItems);
     p->pItems = NULL;
     p->size = 0;
     p->capacity = 0;

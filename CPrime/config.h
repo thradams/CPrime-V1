@@ -17,15 +17,5 @@
 #define _size(x)
 #define _union(x)
 
-/*
-inline void Free(void *p)
-{
-  free(p);
-}
 
-inline void *Malloc(size_t s)
-{
-  return malloc(s);
-}
-*/
 

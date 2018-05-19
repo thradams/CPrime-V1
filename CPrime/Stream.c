@@ -7,6 +7,7 @@
 
 #include <ctype.h>
 #include "Path.h"
+#include "Mem.h"
 
 Result LoadFile(const char* filename, const char** out, int* szOut)
 {
@@ -19,7 +20,7 @@ Result LoadFile(const char* filename, const char** out, int* szOut)
     fseek(fp, 0L, SEEK_END);
     lSize = ftell(fp);
     rewind(fp);
-    char*  buffer = (char*)malloc(lSize + 1);
+    char*  buffer = (char*)Malloc(lSize + 1);
 
     if (buffer)
     {
@@ -40,7 +41,7 @@ Result LoadFile(const char* filename, const char** out, int* szOut)
         *szOut = lSize;
       }
 
-      free(buffer);
+      Free(buffer);
     }
 
     fclose(fp);

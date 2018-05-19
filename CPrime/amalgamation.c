@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "Path.h"
-
+#include "Mem.h"
 
 
 
@@ -20,7 +20,7 @@ struct Header* s_included = 0;
 void MarkAsIncluded(const char* filename)
 {
   
-  struct Header* pNew = malloc(sizeof * pNew);
+  struct Header* pNew = Malloc(sizeof * pNew);
   pNew->fileName = _strdup(filename);
   pNew->pNext = 0;
 
@@ -68,8 +68,8 @@ void FreeList()
   while (pCurrent)
   {
     struct Header* pNext = pCurrent->pNext;
-    free(pCurrent->fileName);
-    free(pCurrent);
+    Free(pCurrent->fileName);
+    Free(pCurrent);
     pCurrent = pNext;
   }
 
