@@ -44,7 +44,7 @@ void TFileArray_Reserve(TFileArray* p, int n);
 
 typedef struct
 {
-    ScannerItem* _auto pHead, *pTail;
+    ScannerItem*  pHead, *pTail;
 }TScannerItemList;
 
 

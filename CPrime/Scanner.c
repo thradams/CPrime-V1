@@ -2494,9 +2494,9 @@ void TScannerItemList_Destroy(TScannerItemList* p)
     ScannerItem* pCurrent = p->pHead;
     while (pCurrent)
     {
-      ScannerItem* p = pCurrent;
+      ScannerItem* pItem = pCurrent;
       pCurrent = pCurrent->pNext;
-      ScannerItem_Delete(p);      
+      ScannerItem_Delete(pItem);
     }
 }
 

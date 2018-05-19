@@ -538,7 +538,7 @@ typedef struct
   enumerator
   enumerator-list, enumerator
   */
-  TEnumerator * _auto pHead, *pTail;
+  TEnumerator *  pHead, *pTail;
 } TEnumeratorList;
 void TEnumeratorList_Destroy(TEnumeratorList* p);
 void TEnumeratorList_Init(TEnumeratorList* p);

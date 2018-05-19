@@ -861,7 +861,7 @@ void TEnumerator_Delete(TEnumerator* p) _default
 {
     if (p != NULL)
     {
-        TEnumerator_Delete(p->pNext);
+        //TEnumerator_Delete(p->pNext);
         String_Destroy(&p->Name);
         TExpression_Delete(p->pExpression);
         TScannerItemList_Destroy(&p->ClueList0);
@@ -882,9 +882,9 @@ void TEnumeratorList_Destroy(TEnumeratorList* p)
     TEnumerator* pCurrent = p->pHead;
     while (pCurrent)
     {
-      TEnumerator* p = pCurrent;
+      TEnumerator* pItem = pCurrent;
       pCurrent = pCurrent->pNext;
-      TEnumerator_Delete(p);
+      TEnumerator_Delete(pItem);
     }
 }
 

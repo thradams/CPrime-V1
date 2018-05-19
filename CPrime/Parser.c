@@ -153,7 +153,6 @@ void Parser_Destroy(Parser* parser)
     //Map_Destroy(&parser->TypeDefNames, NULL);
     StrBuilder_Destroy(&parser->ErrorMessage);
     Scanner_Destroy(&parser->Scanner);
-    TScannerItemList_Destroy(&parser->ClueList);
 }
 
 static const char* GetName()
