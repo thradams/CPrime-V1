@@ -611,8 +611,8 @@ void TPostfixExpressionCore_Delete(TPostfixExpressionCore* p) _default
         String_Destroy(&p->lexeme);
         TExpression_Delete(p->pExpressionLeft);
         TExpression_Delete(p->pExpressionRight);
-		TPostfixExpressionCore_Delete(p->pNext);
-		TInitializerList_Destroy(&p->InitializerList);
+        TPostfixExpressionCore_Delete(p->pNext);
+        TInitializerList_Destroy(&p->InitializerList);
         String_Destroy(&p->Identifier);
         TTypeName_Delete(p->pTypeName);
         TScannerItemList_Destroy(&p->ClueList0);
