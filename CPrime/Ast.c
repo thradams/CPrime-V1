@@ -1105,13 +1105,9 @@ void TDeclarator_Destroy(TDeclarator* p) _default
 
 void TDeclarator_Swap(TDeclarator* a, TDeclarator* b)
 {
-  TScannerItemList_Swap(&a->ClueList, &b->ClueList);
-  
-  TDirectDeclarator* t = a->pDirectDeclarator;
-  a->pDirectDeclarator = b->pDirectDeclarator;
-  b->pDirectDeclarator = t;
-
-  TPointerList_Swap(&a->PointerList, &b->PointerList);
+  TDeclarator t = *a;
+  *a = *b;
+  *b = t;
 }
 
 void TDeclarator_Delete(TDeclarator* p) _default
@@ -1141,7 +1137,7 @@ void TInitDeclarator_Destroy(TInitDeclarator* p) _default
 {
     TDeclarator_Delete(p->pDeclarator);
     TInitializer_Delete(p->pInitializer);
-    TInitDeclarator_Delete(p->pNext);
+   // TInitDeclarator_Delete(p->pNext);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
 }
@@ -1629,9 +1625,15 @@ bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
 	return bIsAuto;
 }
 
-void TPointerList_Destroy(TPointerList* p) _default
+void TPointerList_Destroy(TPointerList* p)
 {
-    TPointer_Delete(p->pHead);
+	TPointer* pCurrent = p->pHead;
+	while (pCurrent)
+	{
+		TPointer* p = pCurrent;
+		pCurrent = pCurrent->pNext;
+		TPointer_Delete(p);
+	}
 }
 
 TPointer* TPointer_Create(void) _default
@@ -1648,7 +1650,7 @@ TPointer* TPointer_Create(void) _default
 void TPointer_Destroy(TPointer* p) _default
 {
     TTypeQualifierList_Destroy(&p->Qualifier);
-    TPointer_Delete(p->pNext);
+    //TPointer_Delete(p->pNext);
     TScannerItemList_Destroy(&p->ClueList0);
 }
 
@@ -2444,7 +2446,14 @@ void TInitDeclaratorList_Init(TInitDeclaratorList* p) _default
 
 void TInitDeclaratorList_Destroy(TInitDeclaratorList* p)
 {
-    TInitDeclarator_Delete(p->pHead);
+	TInitDeclarator* pCurrent = p->pHead;
+	while (pCurrent)
+	{
+		TInitDeclarator* p = pCurrent;
+		pCurrent = pCurrent->pNext;
+		TInitDeclarator_Delete(p);
+	}
+
 }
 
 
@@ -2553,7 +2562,7 @@ void TParameter_Delete(TParameter* p) _default
 {
     if (p != NULL)
     {
-        TParameter_Delete(p->pNext);
+		// TParameter_Delete(p->pNext);
         TDeclarationSpecifiers_Destroy(&p->Specifiers);
         TDeclarator_Destroy(&p->Declarator);
         TScannerItemList_Destroy(&p->ClueList0);
@@ -2567,9 +2576,15 @@ void TParameterList_Init(TParameterList* p) _default
     p->pTail = NULL;
 }
 
-void TParameterList_Destroy(TParameterList* p) _default
+void TParameterList_Destroy(TParameterList* p)
 {
-    TParameter_Delete(p->pHead);
+	TParameter* pCurrent = p->pHead;
+	while (pCurrent)
+	{
+		TParameter* p = pCurrent;
+		pCurrent = pCurrent->pNext;
+		TParameter_Delete(p);
+	}
 }
 
 
@@ -2700,7 +2715,7 @@ void TDesignator_Destroy(TDesignator* p) _default
 {
     String_Destroy(&p->Name);
     TExpression_Delete(p->pExpression);
-    TDesignator_Delete(p->pNext);
+	// TDesignator_Delete(p->pNext);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
 }
@@ -2750,9 +2765,16 @@ void TInitializerList_Init(TInitializerList* p) _default
     p->pTail = NULL;
 }
 
-void TInitializerList_Destroy(TInitializerList* p) _default
+void TInitializerList_Destroy(TInitializerList* p)
 {
-    TInitializerListItem_Delete(p->pHead);
+	TInitializerListItem* pCurrent = p->pHead;
+	while (pCurrent)
+	{
+		TInitializerListItem* p = pCurrent;
+		pCurrent = pCurrent->pNext;
+		TInitializerListItem_Delete(p);
+	}
+    
 }
 
 void TInitializer_Delete(TInitializer* p) _default
@@ -2798,9 +2820,16 @@ void TDesignatorList_Init(TDesignatorList* p) _default
     p->pTail = NULL;
 }
 
-void TDesignatorList_Destroy(TDesignatorList* p) _default
+void TDesignatorList_Destroy(TDesignatorList* p)
 {
-    TDesignator_Delete(p->pHead);
+	TDesignator* pCurrent = p->pHead;
+	while (pCurrent)
+	{
+		TDesignator* p = pCurrent;
+		pCurrent = pCurrent->pNext;
+		TDesignator_Delete(p);
+	}
+
 }
 
 void TDesignatorList_PushBack(TDesignatorList* pList, TDesignator* pItem)
@@ -2820,7 +2849,7 @@ void TInitializerListItem_Destroy(TInitializerListItem* p) _default
 {
     TDesignatorList_Destroy(&p->DesignatorList);
     TInitializer_Delete(p->pInitializer);
-    TInitializerListItem_Delete(p->pNext);
+    //TInitializerListItem_Delete(p->pNext);
     TScannerItemList_Destroy(&p->ClueList);
 }
 
@@ -3362,9 +3391,15 @@ void TPrimaryExpressionLiteralItemList_Init(TPrimaryExpressionLiteralItemList* p
     p->pTail = NULL;
 }
 
-void TPrimaryExpressionLiteralItemList_Destroy(TPrimaryExpressionLiteralItemList* p) _default
+void TPrimaryExpressionLiteralItemList_Destroy(TPrimaryExpressionLiteralItemList* p)
 {
-    TPrimaryExpressionLiteralItem_Delete(p->pHead);
+	TPrimaryExpressionLiteralItem* pCurrent = p->pHead;
+	while (pCurrent)
+	{
+		TPrimaryExpressionLiteralItem* p = pCurrent;
+		pCurrent = pCurrent->pNext;
+		TDesignator_Delete(p);
+	}
 }
 
 void TPrimaryExpressionLiteralItemList_Add(TPrimaryExpressionLiteralItemList* pList, TPrimaryExpressionLiteralItem *pItem)

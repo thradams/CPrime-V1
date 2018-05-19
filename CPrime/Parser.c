@@ -2286,7 +2286,6 @@ bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
 void Type_Qualifier_List(Parser* ctx, TTypeQualifierList* pQualifiers);
 void Declaration_Specifiers(Parser* ctx, TDeclarationSpecifiers* pDeclarationSpecifiers);
 
-//void Declarator(Parser* ctx, bool bAbstract, TDeclarator** pTDeclarator2);
 void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier);
 bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier);
 void Initializer(Parser* ctx,
@@ -3152,7 +3151,6 @@ void Struct_Declarator(Parser* ctx,
 
         *ppTDeclarator2 = pInitDeclarator;
 
-        ASSERT(pInitDeclarator->pDeclarator == NULL);
         Declarator(ctx, false, &pInitDeclarator->pDeclarator);
 
         token = Parser_CurrentToken(ctx);
@@ -4123,7 +4121,9 @@ void Pointer(Parser* ctx, TPointerList* pPointerList)
 //pag 123 C
 void Declarator(Parser* ctx, bool bAbstract, TDeclarator** ppTDeclarator2)
 {
+	assert(*ppTDeclarator2 == NULL);
     *ppTDeclarator2 = NULL; //out
+
     TDeclarator* pDeclarator = TDeclarator_Create();
     /*
     declarator:
@@ -4696,7 +4696,6 @@ void Init_Declarator(Parser* ctx,
     TInitDeclarator* pInitDeclarator =
         TInitDeclarator_Create();
 
-    ASSERT(pInitDeclarator->pDeclarator == NULL);
     Declarator(ctx, false, &pInitDeclarator->pDeclarator);
     Tokens token = Parser_CurrentToken(ctx);
 

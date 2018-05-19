@@ -8,12 +8,14 @@ struct MemInfo
   const char* fileName;
   int line;
 };
-#define MEM_MAX 500000
+#define MEM_MAX 90000
 static struct MemInfo mem[MEM_MAX] = { 0 };
+#define DISABLE
 
 void* DebugMalloc(const char* fileName, int line, size_t size)
 {
   void * p = malloc(size);
+#ifndef DISABLE
   if (p)
   {
     int found = 0;
@@ -35,6 +37,7 @@ void* DebugMalloc(const char* fileName, int line, size_t size)
       printf("aumentar MEM_MAX"); 
     }
   }
+#endif
   return p;
 }
 
@@ -42,8 +45,10 @@ void Free(void* ptr)
 {
   if (ptr == 0)
     return;
+#ifndef DISABLE
 
-  for (int i = 0; i < MEM_MAX; i++)
+  int i = 0;
+  for (; i < MEM_MAX; i++)
   {
     if (mem[i].p == ptr)
     {
@@ -53,12 +58,19 @@ void Free(void* ptr)
       break;
     }
   }
-
+  if (i == MEM_MAX)
+  {
+	  i = 0;
+	  //assert(0);
+  }
+#endif
   free(ptr);
 }
 void *DebugRealloc(const char* fileName, int line, void *ptr, size_t new_size)
 {
   void * p = realloc(ptr, new_size);
+#ifndef DISABLE
+
   if (p != 0)
   {
     if (ptr == 0)
@@ -99,6 +111,25 @@ void *DebugRealloc(const char* fileName, int line, void *ptr, size_t new_size)
             break;
           }
         }
+		//criou memoria 1 vez
+		int found = 0;
+		for (int i = 0; i < MEM_MAX; i++)
+		{
+			if (mem[i].p == 0)
+			{
+				mem[i].p = p;
+				mem[i].fileName = fileName;
+				mem[i].line = line;
+				found = 1;
+				break;
+			}
+		}
+
+		if (!found)
+		{
+			//aumentar 
+			printf("aumentar MEM_MAX");
+		}
       }
       else
       {
@@ -107,7 +138,7 @@ void *DebugRealloc(const char* fileName, int line, void *ptr, size_t new_size)
     }
   }
 
-  
+#endif  
   return p;
 }
 

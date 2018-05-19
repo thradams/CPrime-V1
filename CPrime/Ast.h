@@ -424,7 +424,7 @@ typedef struct TPointer
   * type-qualifier-listopt pointer
   */
   TTypeQualifierList Qualifier;
-  struct TPointer* _auto pNext;
+  struct TPointer* pNext;
   TScannerItemList ClueList0;
 } TPointer;
 
@@ -440,7 +440,7 @@ typedef struct TPointerList
   * type-qualifier-listopt
   * type-qualifier-listopt pointer
   */
-  TPointer* _auto pHead, *pTail;
+  TPointer*  pHead, *pTail;
 } TPointerList;
 
 void TPointerList_PushBack(TPointerList* pList, TPointer* pItem);
@@ -518,7 +518,7 @@ typedef struct TEnumerator
   enumeration-constant
   enumeration-constant = constant-expression
   */
-  struct TEnumerator* _auto pNext;
+  struct TEnumerator*  pNext;
   String Name;
   TExpression*_auto   pExpression;
   TScannerItemList ClueList0;
@@ -708,7 +708,7 @@ typedef struct
   parameter-list , parameter-declaration
   */
 
-  TParameter* _auto pHead, *pTail;
+  TParameter*  pHead, *pTail;
 } TParameterList;
 
 void TParameterList_Destroy(TParameterList* p);
@@ -750,7 +750,7 @@ typedef struct TDesignator
   */
   String Name;
   TExpression *_auto  pExpression;
-  struct TDesignator * _auto pNext;
+  struct TDesignator *  pNext;
   TScannerItemList ClueList0; //. ou [
   TScannerItemList ClueList1; //]
 } TDesignator;
@@ -799,7 +799,7 @@ typedef struct TInitializerListItem
   */
   TDesignatorList  DesignatorList;
   TInitializer*_auto  pInitializer;
-  struct TInitializerListItem* _auto pNext;
+  struct TInitializerListItem*  pNext;
   TScannerItemList ClueList;
   bool bDefault;
 } TInitializerListItem;
@@ -925,7 +925,7 @@ typedef struct TInitDeclarator
   */
   TDeclarator*_auto  pDeclarator;
   TInitializer*_auto   pInitializer;
-  struct TInitDeclarator * _auto pNext;
+  struct TInitDeclarator *  pNext;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1; //defval
 } TInitDeclarator;
@@ -944,7 +944,7 @@ typedef struct TInitDeclaratorList
   init-declarator
   init-declarator-list , init-declarator
   */
-  TInitDeclarator* _auto pHead, *pTail;
+  TInitDeclarator* pHead, *pTail;
 } TInitDeclaratorList;
 
 void TInitDeclaratorList_Destroy(TInitDeclaratorList* p);
@@ -1021,7 +1021,7 @@ void TStructDeclarationList_PushBack(TStructDeclarationList* p, TAnyStructDeclar
 
 typedef struct TUnionSetItem
 {
-  struct TUnionSetItem* _auto  pNext;
+  struct TUnionSetItem*   pNext;
   Tokens Token;
   Tokens TokenFollow;
   String Name;
@@ -1161,7 +1161,7 @@ typedef struct TParameter
   declaration-specifiers abstract-declaratoropt
   */
 
-  struct TParameter* _auto pNext;
+  struct TParameter*  pNext;
   TDeclarationSpecifiers Specifiers;
   TDeclarator Declarator;
   TScannerItemList ClueList0; //, do parametro
@@ -1304,7 +1304,7 @@ void TPrimaryExpressionValue_Delete(TPrimaryExpressionValue* p);
 
 typedef struct TPrimaryExpressionLiteralItem
 {
-  struct TPrimaryExpressionLiteralItem* _auto pNext;
+  struct TPrimaryExpressionLiteralItem*  pNext;
   String lexeme;
   TScannerItemList ClueList0;
 } TPrimaryExpressionLiteralItem;
@@ -1374,7 +1374,7 @@ typedef struct TPostfixExpressionCore
   TExpression*_auto   pExpressionLeft;
   TExpression*_auto   pExpressionRight;
 
-  struct TPostfixExpressionCore* _auto  pNext;
+  struct TPostfixExpressionCore*   pNext;
   TInitializerList InitializerList;
   String Identifier;
   TTypeName*_auto  pTypeName; /*typename*/
