@@ -133,16 +133,16 @@ Result StrArray_Reserve(StrArray* p, int nelements)
 Result StrArray_Push(StrArray* p, const char* pItem)
 {
     String s;
-    Result result = String_InitWith(&s, pItem);
-    if(result == RESULT_OK)
+    String_InitWith(&s, pItem);
+    
     {
-        result = Array_Push((Array*)p, s);
+        Result result = Array_Push((Array*)p, s);
         if(result != RESULT_OK)
         {
             String_Destroy(&s);
         }
     }
-    return result;
+    return RESULT_OK;
 }
 
 static void Array_DeleteStrVoid(void* p)

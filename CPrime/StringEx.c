@@ -38,6 +38,8 @@ void String_Swap(String* pA, String* pB)
   *pB =  temp_Moved;
 }
 
+#ifndef SEARCH_LEAKS
+
 Result String_Set(String *pS1, const char* psz1)
 {
   Result result;
@@ -66,9 +68,8 @@ Result String_InitWith(String* pString, const char*  sourceOpt)
     }
 
     memcpy(snew, sourceOpt, len);
-    *pString = (char*)  snew;
+    *pString = (char*)snew;
   }
-
   else
   {
     *pString = NULL;
@@ -76,6 +77,8 @@ Result String_InitWith(String* pString, const char*  sourceOpt)
 
   return RESULT_OK;
 }
+
+#endif
 
 
 int IsEmptyStr(const char*  psz)

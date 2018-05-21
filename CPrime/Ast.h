@@ -1426,6 +1426,7 @@ struct _union(TPrimaryExpressionLiteral |
   TPostfixExpressionCore |
   TPostfixExpressionCore |
   TCastExpressionType |
+  TTernaryExpression | 
   TPrimaryExpressionLambda) TExpression
 {
   EType Type;

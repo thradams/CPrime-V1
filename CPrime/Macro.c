@@ -218,6 +218,7 @@ void SubstituteArgs(Macro *pMacro,
 
   TokenArray os = TOKENARRAY_INIT;
 
+  PPToken* head = NULL;
   while (is.Size > 0)
   {
 
@@ -227,7 +228,8 @@ void SubstituteArgs(Macro *pMacro,
     TokenArray_Print(&os);
     //printf("\n");
 
-    PPToken* head = TokenArray_PopFront(&is);
+    assert(head == NULL);
+    head = TokenArray_PopFront(&is);
 
     if (PPToken_IsStringizingOp(head))
     {
@@ -259,6 +261,9 @@ void SubstituteArgs(Macro *pMacro,
         //TODO token tipo?
         TokenArray_PushBack(&os, PPToken_Create(strBuilder.c_str, PPTokenType_Other));
         StrBuilder_Destroy(&strBuilder);
+        
+        PPToken_Delete(head);
+        head = NULL;
         continue;
       }
 
@@ -305,6 +310,9 @@ void SubstituteArgs(Macro *pMacro,
           TokenArray_Destroy(&os2);
           TokenArray_Destroy(&t);
         }
+
+        PPToken_Delete(head);
+        head = NULL;
 
         continue;
       }
@@ -382,6 +390,9 @@ void SubstituteArgs(Macro *pMacro,
           }
         }
 
+        PPToken_Delete(head);
+        head = NULL;
+
         continue;
       }
 
@@ -395,13 +406,18 @@ void SubstituteArgs(Macro *pMacro,
         ExpandMacro(argseq, macros, false, skip_defined, evalmode, pCaller, &expanded);
         TokenArray_AppendMove(&os, &expanded);
         TokenArray_Destroy(&expanded);
+
+        PPToken_Delete(head);
+        head = NULL;
+
         continue;
       }
     }
 
     TokenArray_PushBack(&os, head);
+    head = NULL; //moved
   }
-
+  assert(head == NULL);
   TokenArray os2 = TOKENARRAY_INIT;
   HidenSetAdd(hs, &os, &os2);
 
@@ -428,6 +444,7 @@ void ArgToken(TokenArray* tokens,
   PPToken *pToken = TokenArray_PopFront(tokens);
   PPToken_Swap(pToken, token);
   PPToken_Delete(pToken);
+  pToken = NULL;
 
   /*  if (want_space)
     {
@@ -621,7 +638,9 @@ bool GatherArgs(const char* name,
     }
   }
 
-  //#endif
+  
+  PPToken_Destroy(&t);
+
   return (true);
 }
 
@@ -746,13 +765,15 @@ void ExpandMacro(const TokenArray* tsOriginal,
   TokenArray_Print(&ts);
   //printf("\n");
 
+  PPToken* pHead = NULL; //muito facil ter leaks
   while (ts.Size > 0)
   {
     //printf("r = ");
     TokenArray_Print(&r);
     //printf("\n");
 
-    PPToken* pHead =
+    assert(pHead == NULL);
+    pHead =
       TokenArray_PopFront(&ts);
 
     if (!PPToken_IsIdentifier(pHead))
@@ -769,6 +790,9 @@ void ExpandMacro(const TokenArray* tsOriginal,
       TokenArray result = TOKENARRAY_INIT;
       GatherDefinedOperator(&ts, macros, &result);
       TokenArray_AppendMove(&r, &result);
+
+      PPToken_Delete(pHead);
+      pHead = NULL;
 
       TokenArray_Destroy(&result);
       continue;
@@ -799,7 +823,7 @@ void ExpandMacro(const TokenArray* tsOriginal,
       // Skip the head token if it is in the hideset
       //printf("Skipping (head is in HS)\n");
       TokenArray_PushBack(&r, pHead);
-      pHead = NULL;
+      pHead = NULL;//moved
       continue;
     }
 
@@ -817,6 +841,9 @@ void ExpandMacro(const TokenArray* tsOriginal,
       TokenSet hiddenSet = TOKENSET_INIT;
       TokenSetAppendCopy(&hiddenSet, &pHead->HiddenSet);
       TokenSet_PushBack(&hiddenSet, PPToken_Create(pHead->Lexeme, pHead->Token));
+      
+      PPToken_Delete(pHead);
+      pHead = NULL; //usado deletado
 
       TokenArray s = TOKENARRAY_INIT;
 
@@ -847,7 +874,8 @@ void ExpandMacro(const TokenArray* tsOriginal,
       // Map from formal name to value
       TokenArrayMap args = TOKENARRAYMAP_INIT;
 
-      TokenArray_PopFront(&ts);
+      PPToken_Delete(TokenArray_PopFront(&ts));      
+
       PPToken close = TOKEN_INIT;
 
       if (!GatherArgs(pHead->Lexeme,
@@ -858,8 +886,12 @@ void ExpandMacro(const TokenArray* tsOriginal,
                       false, /*m.is_vararg,*/
                       &close))
       {
+        PPToken_Destroy(&close);
+        PPToken_Delete(pHead);
+        pHead = NULL;//deletado
         continue; // Attempt to bail-out on error
       }
+      
 
       /*
       After the arguments for the invocation of a function-like
@@ -873,6 +905,9 @@ void ExpandMacro(const TokenArray* tsOriginal,
                       &close.HiddenSet,
                       &hs);
       TokenSet_PushBack(&hs, PPToken_Create(pMacro->Name, PPTokenType_Identifier));
+
+      PPToken_Delete(pHead);
+      pHead = NULL;//deletado
 
       TokenArray s = TOKENARRAY_INIT;
 
@@ -894,6 +929,7 @@ void ExpandMacro(const TokenArray* tsOriginal,
       TokenArray_Destroy(&s);
 
       TokenArrayMap_Destroy(&args);
+      PPToken_Destroy(&close);
     }
 
     else
@@ -911,6 +947,8 @@ void ExpandMacro(const TokenArray* tsOriginal,
     //TokenArray_Contains(pHead->HiddenSet, pMacro->Name);
     TokenArray_Destroy(&removed_spaces);
   }
+
+  assert(pHead == NULL);
 
   TokenArray_Swap(&r, pOutputSequence2);
 
@@ -997,6 +1035,7 @@ void Glue(const TokenArray* lsI,
     {
       PPToken* tk = TokenArray_PopFront(&rs);
       PPToken_Delete(tk);
+      tk = NULL;
     }
 
     if (ls.Size == 0 &&

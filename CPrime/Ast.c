@@ -776,6 +776,9 @@ void TExpression_Delete(TExpression* p) _default
                 case TPrimaryExpressionLiteral_ID:
                     TPrimaryExpressionLiteral_Delete((TPrimaryExpressionLiteral*)p);
                 break;
+                case TTernaryExpression_ID:
+                    TTernaryExpression_Delete((TTernaryExpression*)p);
+                break;
                 default:
                 break;
             }
@@ -2806,6 +2809,9 @@ void TInitializer_Delete(TInitializer* p) _default
                 break;
                 case TPrimaryExpressionLiteral_ID:
                     TPrimaryExpressionLiteral_Delete((TPrimaryExpressionLiteral*)p);
+                break;
+                case TTernaryExpression_ID:
+                    TTernaryExpression_Delete((TTernaryExpression*)p);
                 break;
                 default:
                 break;

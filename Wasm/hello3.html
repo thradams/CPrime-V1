@@ -123,13 +123,19 @@
   <button class="mybutton">Compile</button>
 
   <p></p>
-  <pre id="editor" style="width:100%; height:500px">       
+  <pre id="editor" style="width:200px; height:500px">       
    int main()
    {
      return 0;
    }
 </pre>
 
+<pre id="editorout" style="position:relative;width:200px; height:500px;margin-right: 10px">       
+  int main()
+  {
+    return 0;
+  }
+</pre>
 
   <span>https://github.com/thradams/CPrime</span>
 
@@ -443,6 +449,15 @@
     editor.session.setMode("ace/mode/c_cpp");
 
     editor.setOptions({
+      fontFamily: "Consolas",
+      fontSize: "11pt"
+    });
+
+var editorout = ace.edit("editorout");
+    editorout.setTheme("ace/theme/twilight");
+    editorout.session.setMode("ace/mode/c_cpp");
+
+    editorout.setOptions({
       fontFamily: "Consolas",
       fontSize: "11pt"
     });

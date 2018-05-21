@@ -54,10 +54,10 @@ Result BucketItem_Init(BucketItem* node,
                        const char* key,
                        void* data)
 {
-    Result result = String_InitWith(&node->key, key);
+    String_InitWith(&node->key, key);
     node->data = data;
     node->hash = hash;
-    return result;
+    return RESULT_OK;
 }
 
 Result BucketItem_CreateMoveKey(BucketItem** pp,
