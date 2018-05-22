@@ -1297,6 +1297,7 @@ void TDirectDeclarator_Destroy(TDirectDeclarator* p) _default
     TDeclarator_Delete(p->pDeclarator);
     TDirectDeclarator_Delete(p->pDirectDeclarator);
     TParameterTypeList_Destroy(&p->Parameters);
+    TExpression_Delete(p->pExpression);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
     TScannerItemList_Destroy(&p->ClueList2);
@@ -2454,9 +2455,9 @@ void TInitDeclaratorList_Destroy(TInitDeclaratorList* p)
 	TInitDeclarator* pCurrent = p->pHead;
 	while (pCurrent)
 	{
-		TInitDeclarator* p = pCurrent;
+		TInitDeclarator* pItem = pCurrent;
 		pCurrent = pCurrent->pNext;
-		TInitDeclarator_Delete(p);
+		TInitDeclarator_Delete(pItem);
 	}
 
 }

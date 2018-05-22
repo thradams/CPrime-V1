@@ -15,7 +15,7 @@
 #include <emscripten/emscripten.h>
 #endif
 
-void AstPlayground(TProgram* program);
+
 
 int Compile(const char* configFileName,
     const char* inputFileName,
@@ -33,7 +33,7 @@ int Compile(const char* configFileName,
     if (GetAST(inputFileName, configFileName, &program))
     {
         bSuccess = 1;
-        AstPlayground(&program);
+        
 
         char drive[CPRIME_MAX_DRIVE];
         char dir[CPRIME_MAX_DIR];
@@ -402,67 +402,3 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-
-
-bool EachStructDeclarator(TStructUnionSpecifier* pStruct,
-    int *i,
-    TSpecifierQualifierList **ppSpecifierQualifierList,
-    TStructDeclarator** ppStructDeclarator)
-{
-    /*
-     Exemplo:
-      TSpecifierQualifierList *pSpecifierQualifierList = NULL;
-      TStructDeclarator* pStructDeclarator = NULL;
-      int i = 0;
-      while (EachStructDeclarator(pStruct, &i, &pSpecifierQualifierList, &pStructDeclarator))
-      {
-            printf("%s\n", TDeclarator_GetName(pStructDeclarator->pDeclarator));
-      }
-    */
-    if (*ppStructDeclarator != NULL)
-    {
-        goto Continue;
-    }
-
-    for (; *i < pStruct->StructDeclarationList.Size; (*i)++)
-    {
-        TAnyStructDeclaration* pAnyStructDeclaration =
-            pStruct->StructDeclarationList.pItems[*i];
-
-        TStructDeclaration* pStructDeclaration =
-            TAnyStructDeclaration_As_TStructDeclaration(pAnyStructDeclaration);
-
-        if (pStructDeclaration != NULL)
-        {
-            *ppSpecifierQualifierList =
-                &pStructDeclaration->SpecifierQualifierList;
-            *ppStructDeclarator =
-                pStructDeclaration->DeclaratorList.pHead;
-
-            while (*ppStructDeclarator != NULL)
-            {
-                return true;
-            Continue:
-                *ppStructDeclarator = (*ppStructDeclarator)->pNext;
-            }
-        }
-    }
-    return false;
-}
-
-
-
-void AstPlayground(TProgram* program)
-{
-
-    // SymbolMap_Print(&program->GlobalScope);
-
-    // TStructUnionSpecifier* p =
-    //     SymbolMap_FindStructUnion(&program->GlobalScope, "X");
-
-
-    // TTypeSpecifier* p2 = 
-     //    SymbolMap_FindTypedefSpecifierTarget(&program->GlobalScope, "Y");
-     //find struct X
-     //find X
-}

@@ -626,7 +626,7 @@ bool Scanner_GetFullPath(Scanner* pScanner, const char* fileName,
 
       if (bFileExists)
       {
-        String_Set(fullPathOut, StrBuilder_Release(&path));
+        String_Set(fullPathOut, path.c_str);
         bFullPathFound = true;
         break;
       }

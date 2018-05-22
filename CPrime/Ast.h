@@ -904,7 +904,7 @@ typedef struct TDirectDeclarator
   struct TDirectDeclarator* _auto  pDirectDeclarator;
   TPosition Position;
   TParameterTypeList  Parameters;
-  TExpression*   pExpression;
+  TExpression * _auto  pExpression;
   TDirectDeclaratorType DeclaratorType; //para diferenciar pois null nao basta []
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -1426,7 +1426,7 @@ struct _union(TPrimaryExpressionLiteral |
   TPostfixExpressionCore |
   TPostfixExpressionCore |
   TCastExpressionType |
-  TTernaryExpression | 
+  TTernaryExpression |   
   TPrimaryExpressionLambda) TExpression
 {
   EType Type;
