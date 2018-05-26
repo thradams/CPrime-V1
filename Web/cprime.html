@@ -98,6 +98,8 @@
           mode: "text/x-csrc"
         }
       );
+      inputEditor.setSize(null, 400);
+
       var outputEditor = CodeMirror.fromTextArea(document.getElementById('out'),
 
         {
@@ -106,6 +108,8 @@
           mode: "text/x-csrc"
         }
       );
+      outputEditor.setSize(null, 400);
+
 
       function OnCompileButton() {
         document.getElementById("output").value = "";
