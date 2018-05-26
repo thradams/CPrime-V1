@@ -4779,27 +4779,24 @@ void GroupDeclaration(Parser* ctx,
   Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET, NULL);  
 }
 
+void PopBack(TScannerItemList* clueList)
+{
+	if (clueList->pHead &&
+		clueList->pHead->pNext == clueList->pTail)
+	{
+		ScannerItem_Delete(clueList->pTail);
+		clueList->pTail = clueList->pHead;
+		clueList->pHead->pNext = 0;
+	}
+}
 bool HasCommentedKeyword(TScannerItemList* clueList, const char* keyword)
 {
   bool bResult = false;
-  ScannerItem* pCurrent = clueList->pHead;
-  while (pCurrent)
+  ScannerItem* pCurrent = clueList->pTail;
+  if (pCurrent && 
+	  pCurrent->token == TK_COMMENT)
   {
-    if (pCurrent->token == TK_SPACES)
-    {
-      //ok
-    }
-    else if (pCurrent->token == TK_COMMENT)
-    {
-      bResult = strncmp(pCurrent->lexeme.c_str + 2, keyword, strlen(keyword)) == 0;
-      break;
-    }
-    else
-    {
-      bResult = false;
-      break;
-    }
-    pCurrent = pCurrent->pNext;
+	  bResult = strncmp(pCurrent->lexeme.c_str + 2, keyword, strlen(keyword)) == 0;
   }
   return bResult;
 }
@@ -4928,6 +4925,7 @@ bool  Declaration(Parser* ctx,
                 }
                 else if (HasCommentedKeyword(&ctx->ClueList, "default"))
                 {
+				  PopBack(&ctx->ClueList);
                   /*
                   6.9.1) function-definition:
                   declaration-specifiers declarator declaration-listopt defaultopt compound-statement

@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
 
     Options options = OPTIONS_INIT;
 	options.Target = CompilerTarget_Annotated;
-
+	
     bool bPrintPreprocessedToFile = false;
     bool bPrintPreprocessedToConsole = false;
     bool bPrintASTFile = false;
