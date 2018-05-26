@@ -108,7 +108,7 @@ void PrintHelp()
 
 
 
-char* CompileText(char * input)
+char* CompileText(int type, char * input)
 {
   char* output = NULL;
 	TProgram program;
@@ -116,7 +116,7 @@ char* CompileText(char * input)
 	if (GetASTFromString(input, &program))
 	{
 		Options options2 = OPTIONS_INIT;
-		options2.bHideDefaultImplementation = false;
+		options2.Target = (enum CompilerTarget) type;
 
 
 		StrBuilder sb = STRBUILDER_INIT;
@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
     String buildFileFullPath = STRING_INIT;
 
     Options options = OPTIONS_INIT;
-    options.bHideDefaultImplementation = false;
+	options.Target = CompilerTarget_Annotated;
 
     bool bPrintPreprocessedToFile = false;
     bool bPrintPreprocessedToConsole = false;
@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
             }
             else if (strcmp(option, "-s") == 0)
             {
-                options.bHideDefaultImplementation = true;
+                options.Target = CompilerTarget_CXX;
             }
             else if (strcmp(option, "-build") == 0)
             {

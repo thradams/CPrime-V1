@@ -1168,9 +1168,9 @@ static void TInitializerList_CodePrint(TProgram* program,
     List_Back(p)->pInitializer == NULL/* &&
                       pSpecifierQualifierList != NULL*/)
   {
-    if (!options->bHideDefaultImplementation)
+    if (options->Target == CompilerTarget_Annotated)
     {
-      Output_Append(fp, options, "_default ");
+      Output_Append(fp, options, "/*default*/ ");
     }
     //a partir de {} e um tipo consegue gerar o final  
     StrBuilder sb = STRBUILDER_INIT;
@@ -1233,13 +1233,15 @@ static void TInitializerListType_CodePrint(TProgram* program,
     //p->InitializerList.pHead ?
     //p->InitializerList.pHead->pInitializer : NULL;
 
-    Output_Append(fp, options, "_default");
-    Output_Append(fp, options, " {");
-    if (options->bHideDefaultImplementation)
+    
+    if (options->Target == CompilerTarget_CXX)
     {
+		Output_Append(fp, options, "{}");
     }
-    else
+    else  if (options->Target == CompilerTarget_Annotated)
     {
+	  Output_Append(fp, options, "/*_default*/");
+
       StrBuilder sb = STRBUILDER_INIT;
       bool bHasInitializers = false;
       InstanciateDestroy2(program,
@@ -1266,7 +1268,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
 
       StrBuilder_Destroy(&sb);
     }
-    Output_Append(fp, options, "}");
+    
   }
   else
   {
@@ -2572,26 +2574,27 @@ static void TDeclaration_CodePrint(TProgram* program,
     if (p->bDefault)
     {
       TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-      StrBuilder_Append(fp, "_default");
 
-      if (options->bHideDefaultImplementation)
-      {
-        Output_Append(fp, options, ";");
-      }
-      else
-      {
-        TNodeClueList_CodePrint(options, &p->pCompoundStatementOpt->ClueList0, fp);
-        Output_Append(fp, options, "{\n");
+	  if (options->Target == CompilerTarget_Annotated)
+	  {
+		  StrBuilder_Append(fp, "/*default*/");
+		  TNodeClueList_CodePrint(options, &p->pCompoundStatementOpt->ClueList0, fp);
+		  Output_Append(fp, options, "{\n");
 
-        DefaultFunctionDefinition_CodePrint(program,
-          options,
-          p,
+		  DefaultFunctionDefinition_CodePrint(program,
+			  options,
+			  p,
 
-          fp);
+			  fp);
 
-        Output_Append(fp, options, "}");
+		  Output_Append(fp, options, "}");
+	  }
+	  else if (options->Target == CompilerTarget_CXX)
+	  {
+		  StrBuilder_Append(fp, "default;");
+	  }
 
-      }
+      
       return;
     }
     else
@@ -2612,10 +2615,10 @@ static void TDeclaration_CodePrint(TProgram* program,
     if (p->bDefault)
     {
 
-      if (!options->bHideDefaultImplementation)
+      if (options->Target == CompilerTarget_Annotated)
       {
         TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-        StrBuilder_Append(fp, "_default");
+        StrBuilder_Append(fp, "/*default*/");
 
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         Output_Append(fp, options, "\n{\n");
@@ -2628,10 +2631,10 @@ static void TDeclaration_CodePrint(TProgram* program,
 
         Output_Append(fp, options, "}");
       }
-      else
+      else if (options->Target == CompilerTarget_CXX)
       {
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-        StrBuilder_Append(fp, " _default");
+        StrBuilder_Append(fp, " default");
         Output_Append(fp, options, ";");
       }
 

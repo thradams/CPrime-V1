@@ -18,6 +18,12 @@ typedef enum
     SearchDelete,
 } Search;
 
+enum CompilerTarget
+{
+	CompilerTarget_Annotated,
+	CompilerTarget_CXX,
+};
+
 typedef struct Options
 {
     ///////////
@@ -27,17 +33,19 @@ typedef struct Options
     ////////////
 	bool bExpandMacros;
 	bool bIncludeComments _defval(1);
-    
+
+	enum CompilerTarget Target;
+
     //Usado para converter para string 
     //exemplo unsigned   /*algo*/ int   
     //tem que imprimir so 'unsigned int'
     bool bPrintRepresentation;
 
 	int IdentationLevel;
-    bool bHideDefaultImplementation;
+   // bool bHideDefaultImplementation;
 } Options;
 
-#define OPTIONS_INIT {true, 0,  false, true, false, 0, false}
+#define OPTIONS_INIT {true, 0,  false, true, CompilerTarget_Annotated, false, 0}
 
 void Options_Destroy(Options* options);
 

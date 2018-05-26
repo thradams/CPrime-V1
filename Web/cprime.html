@@ -24,6 +24,11 @@
 
     <button onclick="OnCompileButton()">Compile</button>
 
+    <select id="outtype" style="margin-left:auto;margin-right: 10px">
+      <option value="0">Annotated C</option>
+      <option value="1">CXX</option>
+    </select>
+
     <div style="width: 100%; overflow: hidden;">
       <div style="width: 48%; float: left;border-width: thin;border-style: solid;">
         <textarea id="in"  style="height: 100%; width: 100%"></textarea>
@@ -82,12 +87,17 @@
 <script type="text/javascript" src="cprime.js"></script>
 
 <script>
-      function CompileText(inputText) {
-        var ptr = allocate(intArrayFromString(inputText), 'i8', ALLOC_NORMAL);
-        var retPtr = _CompileText(ptr);
-        var resValue = Pointer_stringify(retPtr);
-        _free(ptr);
-        _free(ptr);
+      function CompileText( tp, inputText) {
+        //var ptr = allocate(intArrayFromString(inputText), 'i8', ALLOC_NORMAL);
+        var resValue = Module.ccall('CompileText', // name of C function
+  'string', // return type
+  ['number', 'string'], // argument types
+  [tp, inputText]); // arguments
+
+        //var retPtr = _CompileText( ptr);
+        //var resValue = Pointer_stringify(retPtr);
+        //_free(ptr);
+        //_free(ptr);
         return resValue;
       }
 
@@ -114,9 +124,11 @@
       function OnCompileButton() {
         document.getElementById("output").value = "";
         outputEditor.setValue("");
+        var tp = document.getElementById("outtype").selectedIndex;
+  
 
         var it = inputEditor.getValue();
-        var ot = CompileText(it);
+        var ot = CompileText(tp, it);
         outputEditor.setValue(ot);
       }
 
