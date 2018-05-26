@@ -7,322 +7,341 @@
   <title>Emscripten-Generated Code</title>
 
   <body>
-    <script src="codemirror.js"></script>
-    <link rel="stylesheet" href="codemirror.css">
-    <script src="clike.js"></script>
+      <script src="codemirror.js"></script>
+      <link rel="stylesheet" href="codemirror.css">
+      <script src="clike.js"></script>
 
-    <h1>CPrime online</h1>
-    <select onchange="OnChangeSelection(this.value)">
-      <option value="0">Select...</option>
-      <option value="0">Especial Functions</option>
-      <option value="1">Dynamic Array</option>
-      <option value="2">Linked List</option>
-      <option value="3">Initialization</option>
-      <option value="4">Polimorphism</option>
-      <option value="5">Lambdas</option>
-    </select>
+      <h1>CPrime online</h1>
+      <select onchange="OnChangeSelection(this.value)">
+          <option value="0">Select...</option>
+          <option value="0">Especial Functions</option>
+          <option value="1">Dynamic Array</option>
+          <option value="2">Linked List</option>
+          <option value="3">Initialization</option>
+          <option value="4">Polimorphism</option>
+          <option value="5">Lambdas</option>
+      </select>
 
-    <button onclick="OnCompileButton()">Compile</button>
+      <button onclick="OnCompileButton()">Compile</button>
 
-    <select id="outtype" style="margin-left:auto;margin-right: 10px">
-        <option value="0">Annotated C</option>
-        <option value="1">CXX</option>
-        <option value="2">Preprocessed</option>
-    </select>
+      <select id="outtype" style="margin-left:auto;margin-right: 10px">
+          <option value="0">Annotated C</option>
+          <option value="1">CXX</option>
+          <option value="2">Preprocessed</option>
+      </select>
 
-    <div style="width: 100%; overflow: hidden;">
-      <div style="width: 48%; float: left;border-width: thin;border-style: solid;">
-        <textarea id="in"  style="height: 100%; width: 100%"></textarea>
+      <button onclick="OnSwap()">Swap</button>
+
+      <div style="width: 100%; overflow: hidden;">
+          <div style="width: 48%; float: left;border-width: thin;border-style: solid;">
+              <textarea id="in" style="height: 100%; width: 100%"></textarea>
+          </div>
+          <div style="margin-left: 50%; width: 48%;border-width: thin;border-style: solid;">
+              <textarea id="out" style="width: 100%"></textarea>
+          </div>
       </div>
-      <div style="margin-left: 50%; width: 48%;border-width: thin;border-style: solid;">
-        <textarea id="out" style="width: 100%"></textarea>
-      </div>
-    </div>
-    <p>ouput</p>
-    <textarea id="output" rows="8" style="width: 100%"></textarea>
+      <p>ouput</p>
+      <textarea id="output" rows="8" style="width: 100%"></textarea>
 
 
-    
-    
-    <script type='text/javascript'>
 
-      var Module = {
-        preRun: [],
-        postRun: [],
-        print: (function () {
-          var element = document.getElementById('output');
-          if (element) element.value = ''; // clear browser cache
-          return function (text) {
-            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-            // These replacements are necessary if you render to raw HTML
-            //text = text.replace(/&/g, "&amp;");
-            //text = text.replace(/</g, "&lt;");
-            //text = text.replace(/>/g, "&gt;");
-            //text = text.replace('\n', '<br>', 'g');
-            console.log(text);
-            if (element) {
-              element.value += text + "\n";
-              element.scrollTop = element.scrollHeight; // focus on bottom
-            }
+
+      <script type='text/javascript'>
+
+          var Module = {
+              preRun: [],
+              postRun: [],
+              print: (function ()
+              {
+                  var element = document.getElementById('output');
+                  if (element) element.value = ''; // clear browser cache
+                  return function (text)
+                  {
+                      if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                      // These replacements are necessary if you render to raw HTML
+                      //text = text.replace(/&/g, "&amp;");
+                      //text = text.replace(/</g, "&lt;");
+                      //text = text.replace(/>/g, "&gt;");
+                      //text = text.replace('\n', '<br>', 'g');
+                      console.log(text);
+                      if (element)
+                      {
+                          element.value += text + "\n";
+                          element.scrollTop = element.scrollHeight; // focus on bottom
+                      }
+                  };
+              })(),
+              printErr: function (text)
+              {
+                  if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                  if (0)
+                  { // XXX disabled for safety typeof dump == 'function') {
+                      dump(text + '\n'); // fast, straight to the real console
+                  } else
+                  {
+                      console.error(text);
+                  }
+              },
+              setStatus: function (text)
+              {
+              },
+              totalDependencies: 0,
+              monitorRunDependencies: function (left)
+              {
+              }
           };
-        })(),
-        printErr: function (text) {
-          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-          if (0) { // XXX disabled for safety typeof dump == 'function') {
-            dump(text + '\n'); // fast, straight to the real console
-          } else {
-            console.error(text);
+          window.onerror = function (event)
+          {
+          };
+
+      </script>
+
+      <script type="text/javascript" src="cprime.js"></script>
+
+      <script>
+          function CompileText(tp, inputText)
+          {
+              //var ptr = allocate(intArrayFromString(inputText), 'i8', ALLOC_NORMAL);
+              var resValue = Module.ccall('CompileText', // name of C function
+                  'string', // return type
+                  ['number', 'string'], // argument types
+                  [tp, inputText]); // arguments
+
+              //var retPtr = _CompileText( ptr);
+              //var resValue = Pointer_stringify(retPtr);
+              //_free(ptr);
+              //_free(ptr);
+              return resValue;
           }
-        },
-        setStatus: function (text) {
-        },
-        totalDependencies: 0,
-        monitorRunDependencies: function (left) {
-        }
-      };
-      window.onerror = function (event) {
-      };
 
-</script>
+          var inputEditor = CodeMirror.fromTextArea(document.getElementById('in'),
+              {
+                  lineNumbers: true,
+                  matchBrackets: true,
+                  mode: "text/x-csrc"
+              }
+          );
+          inputEditor.setSize(null, 400);
 
-<script type="text/javascript" src="cprime.js"></script>
+          var outputEditor = CodeMirror.fromTextArea(document.getElementById('out'),
 
-<script>
-      function CompileText( tp, inputText) {
-        //var ptr = allocate(intArrayFromString(inputText), 'i8', ALLOC_NORMAL);
-        var resValue = Module.ccall('CompileText', // name of C function
-  'string', // return type
-  ['number', 'string'], // argument types
-  [tp, inputText]); // arguments
+              {
+                  lineNumbers: true,
+                  matchBrackets: true,
+                  mode: "text/x-csrc"
+              }
+          );
+          outputEditor.setSize(null, 400);
 
-        //var retPtr = _CompileText( ptr);
-        //var resValue = Pointer_stringify(retPtr);
-        //_free(ptr);
-        //_free(ptr);
-        return resValue;
-      }
-
-      var inputEditor = CodeMirror.fromTextArea(document.getElementById('in'),
-        {
-          lineNumbers: true,
-          matchBrackets: true,
-          mode: "text/x-csrc"
-        }
-      );
-      inputEditor.setSize(null, 400);
-
-      var outputEditor = CodeMirror.fromTextArea(document.getElementById('out'),
-
-        {
-          lineNumbers: true,
-          matchBrackets: true,
-          mode: "text/x-csrc"
-        }
-      );
-      outputEditor.setSize(null, 400);
+          function OnSwap()
+          {
+              var temp = inputEditor.getValue();
+              inputEditor.setValue(outputEditor.getValue());
+              outputEditor.setValue(temp);
+          }
+          function OnCompileButton()
+          {
+              document.getElementById("output").value = "";
+              outputEditor.setValue("");
+              var tp = document.getElementById("outtype").selectedIndex;
 
 
-      function OnCompileButton() {
-        document.getElementById("output").value = "";
-        outputEditor.setValue("");
-        var tp = document.getElementById("outtype").selectedIndex;
-  
-
-        var it = inputEditor.getValue();
-        var ot = CompileText(tp, it);
-        outputEditor.setValue(ot);
-      }
+              var it = inputEditor.getValue();
+              var ot = CompileText(tp, it);
+              outputEditor.setValue(ot);
+          }
 
 
-      function OnChangeSelection(index) {
-        var sample = [];
-        var s = "";
-        s += "       \n";
-        s += "typedef char * _auto String;           \n";
-        s += "struct X\n";
-        s += "{\n";
-        s += "   String Name;\n";
-        s += "   int i;\n";
-        s += "};\n";
-        s += "    \n";
-        s += "struct X* X_Create() _default;\n";
-        s += "    \n";
-        s += "void X_Init(struct X* p) _default;\n";
-        s += "void X_Destroy(struct X* p) _default;\n";
-        s += "void X_Delete(struct X* p) _default;\n";
-        s += "      \n";
-        s += "int main()\n";
-        s += "{      \n";
-        s += "  return 1;\n";
-        s += "}\n";
-        s += "\n";
-        s += "\n";
-        sample[0] = s;
+          function OnChangeSelection(index)
+          {
+              var sample = [];
+              var s = "";
+              s += "       \n";
+              s += "typedef char * _auto String;           \n";
+              s += "struct X\n";
+              s += "{\n";
+              s += "   String Name;\n";
+              s += "   int i;\n";
+              s += "};\n";
+              s += "    \n";
+              s += "struct X* X_Create() _default;\n";
+              s += "    \n";
+              s += "void X_Init(struct X* p) _default;\n";
+              s += "void X_Destroy(struct X* p) _default;\n";
+              s += "void X_Delete(struct X* p) _default;\n";
+              s += "      \n";
+              s += "int main()\n";
+              s += "{      \n";
+              s += "  return 1;\n";
+              s += "}\n";
+              s += "\n";
+              s += "\n";
+              sample[0] = s;
 
-        s = "\n";
-        s += "struct Item\n";
-        s += "{\n";
-        s += "    int  i;\n";
-        s += "};\n";
-        s += "\n";
-        s += "\n";
-        s += "struct Item* Item_Create();\n";
-        s += "void Item_Delete(struct Item* p);\n";
-        s += "\n";
-        s += "struct Items\n";
-        s += "{\n";
-        s += "    struct Item * _auto * _auto _size(Size) pData;\n";
-        s += "    int Size;\n";
-        s += "    int Capacity;\n";
-        s += "};\n";
-        s += "\n";
-        s += "\n";
-        s += "void Items_PushBack(struct Items* pItems, struct Item* pItem);\n";
-        s += "void Items_Destroy(struct Items* pItems);\n";
-        s += "\n";
-        s += "\n";
-        s += "int main(int argc, char **argv)\n";
-        s += "{\n";
-        s += "    struct Items items = { 0 };\n";
-        s += "\n";
-        s += "    Items_PushBack(&items, Item_Create());\n";
-        s += "    Items_PushBack(&items, Item_Create());\n";
-        s += "    Items_PushBack(&items, Item_Create());\n";
-        s += "\n";
-        s += "    for (int i = 0; i < items.Size; i++)\n";
-        s += "    {\n";
-        s += "        printf(\"%d\\n\", items.pData[i]->i);\n";
-        s += "    }\n";
-        s += "\n";
-        s += "    Items_Destroy(&items);\n";
-        s += "    return 0;\n";
-        s += "}\n";
-        s += "\n";
-        s += "\n";
-        s += "struct Item* Item_Create() _default;\n";
-        s += "void Item_Delete(struct Item* p) _default;\n";
-        s += "void Items_PushBack(struct Items* pItems, struct Item* pItem) _default;\n";
-        s += "void Items_Destroy(struct Items* pItems) _default;\n";
+              s = "\n";
+              s += "struct Item\n";
+              s += "{\n";
+              s += "    int  i;\n";
+              s += "};\n";
+              s += "\n";
+              s += "\n";
+              s += "struct Item* Item_Create();\n";
+              s += "void Item_Delete(struct Item* p);\n";
+              s += "\n";
+              s += "struct Items\n";
+              s += "{\n";
+              s += "    struct Item * _auto * _auto _size(Size) pData;\n";
+              s += "    int Size;\n";
+              s += "    int Capacity;\n";
+              s += "};\n";
+              s += "\n";
+              s += "\n";
+              s += "void Items_PushBack(struct Items* pItems, struct Item* pItem);\n";
+              s += "void Items_Destroy(struct Items* pItems);\n";
+              s += "\n";
+              s += "\n";
+              s += "int main(int argc, char **argv)\n";
+              s += "{\n";
+              s += "    struct Items items = { 0 };\n";
+              s += "\n";
+              s += "    Items_PushBack(&items, Item_Create());\n";
+              s += "    Items_PushBack(&items, Item_Create());\n";
+              s += "    Items_PushBack(&items, Item_Create());\n";
+              s += "\n";
+              s += "    for (int i = 0; i < items.Size; i++)\n";
+              s += "    {\n";
+              s += "        printf(\"%d\\n\", items.pData[i]->i);\n";
+              s += "    }\n";
+              s += "\n";
+              s += "    Items_Destroy(&items);\n";
+              s += "    return 0;\n";
+              s += "}\n";
+              s += "\n";
+              s += "\n";
+              s += "struct Item* Item_Create() _default;\n";
+              s += "void Item_Delete(struct Item* p) _default;\n";
+              s += "void Items_PushBack(struct Items* pItems, struct Item* pItem) _default;\n";
+              s += "void Items_Destroy(struct Items* pItems) _default;\n";
 
-        sample[1] = s;
+              sample[1] = s;
 
-        s = "\n";
-        s += "struct Item\n";
-        s += "{\n";
-        s += "    int i;\n";
-        s += "    struct Item* _auto pNext;\n";
-        s += "};\n";
-        s += "\n";
-        s += "void Item_Delete(struct Item* pItem) _default;\n";
-        s += "\n";
-        s += "struct Items\n";
-        s += "{\n";
-        s += "    struct Item* _auto pHead,* pTail;\n";
-        s += "};\n";
-        s += "\n";
-        s += "void Items_Destroy(struct Items* pItems) _default;\n";
-        s += "\n";
-        s += "void Items_PushBack(struct Items* pItems, struct Item* pItem) _default;\n";
+              s = "\n";
+              s += "struct Item\n";
+              s += "{\n";
+              s += "    int i;\n";
+              s += "    struct Item* _auto pNext;\n";
+              s += "};\n";
+              s += "\n";
+              s += "void Item_Delete(struct Item* pItem) _default;\n";
+              s += "\n";
+              s += "struct Items\n";
+              s += "{\n";
+              s += "    struct Item* _auto pHead,* pTail;\n";
+              s += "};\n";
+              s += "\n";
+              s += "void Items_Destroy(struct Items* pItems) _default;\n";
+              s += "\n";
+              s += "void Items_PushBack(struct Items* pItems, struct Item* pItem) _default;\n";
 
-        sample[2] = s;
+              sample[2] = s;
 
-        s = "typedef struct \n";
-        s += "{\n";
-        s += "  int x _defval(1);\n";
-        s += "  int y _defval(2);\n";
-        s += "\n";
-        s += "} Point;\n";
-        s += "\n";
-        s += "\n";
-        s += "typedef struct \n";
-        s += "{\n";
-        s += "  Point start, end;\n";
-        s += "\n";
-        s += "} Line;\n";
-        s += "\n";
-        s += "\n";
-        s += "int main()\n";
-        s += "{\n";
-        s += "  Point pt = _default {};\n";
-        s += "  Line ln = _default {};\n";
-        s += "\n";
-        s += "}\n";
-        s += "\n";
-        sample[3] = s;
+              s = "typedef struct \n";
+              s += "{\n";
+              s += "  int x _defval(1);\n";
+              s += "  int y _defval(2);\n";
+              s += "\n";
+              s += "} Point;\n";
+              s += "\n";
+              s += "\n";
+              s += "typedef struct \n";
+              s += "{\n";
+              s += "  Point start, end;\n";
+              s += "\n";
+              s += "} Line;\n";
+              s += "\n";
+              s += "\n";
+              s += "int main()\n";
+              s += "{\n";
+              s += "  Point pt = _default {};\n";
+              s += "  Line ln = _default {};\n";
+              s += "\n";
+              s += "}\n";
+              s += "\n";
+              sample[3] = s;
 
-        s = "\n";
-        s += "struct Box\n";
-        s += "{\n";
-        s += "\tint id _defval(1);\n";
-        s += "};\n";
-        s += "\n";
-        s += "struct Box* Box_Create();\n";
-        s += "void Box_Delete(struct Box* pBox);\n";
-        s += "\n";
-        s += "void Box_Draw(struct Box* pBox)\n";
-        s += "{\n";
-        s += "\tprintf(\"Box\\n\");\n";
-        s += "}\n";
-        s += "\n";
-        s += "struct Circle\n";
-        s += "{\n";
-        s += "\tint id _defval(2);\n";
-        s += "};\n";
-        s += "struct Circle* Circle_Create();\n";
-        s += "void Circle_Delete(struct Circle* pCircle);\n";
-        s += "\n";
-        s += "void Circle_Draw(struct Circle* pCircle)\n";
-        s += "{\n";
-        s += "\tprintf(\"Circle\\n\");\n";
-        s += "}\n";
-        s += "\n";
-        s += "struct _union(Box | Circle) Shape\n";
-        s += "{\n";
-        s += "\tint id;\n";
-        s += "};\n";
-        s += "\n";
-        s += "void  Shape_Delete(struct Shape* pShape);\n";
-        s += "void Shape_Draw(struct Shape* pShape);\n";
-        s += "\n";
-        s += "\n";
-        s += "\n";
-        s += "struct Box* Box_Create() _default;\n";
-        s += "void Box_Delete(struct Box* pBox) _default;\n";
-        s += "struct Circle* Circle_Create() _default;\n";
-        s += "void Circle_Delete(struct Circle* pCircle) _default;\n";
-        s += "void  Shape_Delete(struct Shape* pShape) _default;\n";
-        s += "void Shape_Draw(struct Shape* pShape) _default;\n";
+              s = "\n";
+              s += "struct Box\n";
+              s += "{\n";
+              s += "\tint id _defval(1);\n";
+              s += "};\n";
+              s += "\n";
+              s += "struct Box* Box_Create();\n";
+              s += "void Box_Delete(struct Box* pBox);\n";
+              s += "\n";
+              s += "void Box_Draw(struct Box* pBox)\n";
+              s += "{\n";
+              s += "\tprintf(\"Box\\n\");\n";
+              s += "}\n";
+              s += "\n";
+              s += "struct Circle\n";
+              s += "{\n";
+              s += "\tint id _defval(2);\n";
+              s += "};\n";
+              s += "struct Circle* Circle_Create();\n";
+              s += "void Circle_Delete(struct Circle* pCircle);\n";
+              s += "\n";
+              s += "void Circle_Draw(struct Circle* pCircle)\n";
+              s += "{\n";
+              s += "\tprintf(\"Circle\\n\");\n";
+              s += "}\n";
+              s += "\n";
+              s += "struct _union(Box | Circle) Shape\n";
+              s += "{\n";
+              s += "\tint id;\n";
+              s += "};\n";
+              s += "\n";
+              s += "void  Shape_Delete(struct Shape* pShape);\n";
+              s += "void Shape_Draw(struct Shape* pShape);\n";
+              s += "\n";
+              s += "\n";
+              s += "\n";
+              s += "struct Box* Box_Create() _default;\n";
+              s += "void Box_Delete(struct Box* pBox) _default;\n";
+              s += "struct Circle* Circle_Create() _default;\n";
+              s += "void Circle_Delete(struct Circle* pCircle) _default;\n";
+              s += "void  Shape_Delete(struct Shape* pShape) _default;\n";
+              s += "void Shape_Draw(struct Shape* pShape) _default;\n";
 
-        sample[4] = s;
+              sample[4] = s;
 
-        s = "\n";
-        s += "/*\n";
-        s += "  Lambdas without capture.\n";
-        s += "  Currently there is no in-place generation \n";
-        s += "  for lambdas\n";
-        s += "*/\n";
-        s += "\n";
-        s += "void Run(void (*callback)(void*), void* data);\n";
-        s += "\n";
-        s += "\n";
-        s += "int main()\n";
-        s += "{  \n";
-        s += "  Run([](void* data){\n";
-        s += "  \n";
-        s += "    printf(\"first\\n\");\n";
-        s += "    Run([](void* data){\n";
-        s += "      printf(\"second\\n\");\n";
-        s += "    }, 0); \n";
-        s += "    \n";
-        s += "  }, 0);\n";
-        s += "  \n";
-        s += "}";
+              s = "\n";
+              s += "/*\n";
+              s += "  Lambdas without capture.\n";
+              s += "  Currently there is no in-place generation \n";
+              s += "  for lambdas\n";
+              s += "*/\n";
+              s += "\n";
+              s += "void Run(void (*callback)(void*), void* data);\n";
+              s += "\n";
+              s += "\n";
+              s += "int main()\n";
+              s += "{  \n";
+              s += "  Run([](void* data){\n";
+              s += "  \n";
+              s += "    printf(\"first\\n\");\n";
+              s += "    Run([](void* data){\n";
+              s += "      printf(\"second\\n\");\n";
+              s += "    }, 0); \n";
+              s += "    \n";
+              s += "  }, 0);\n";
+              s += "  \n";
+              s += "}";
 
-        sample[5] = s;
+              sample[5] = s;
 
-        inputEditor.setValue(sample[index], -1);
-      }
-    </script>
+              inputEditor.setValue(sample[index], -1);
+          }
+      </script>
 
   </body>
 
