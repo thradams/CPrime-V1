@@ -9,6 +9,13 @@
 
 #include "StrBuilder.h"
 
+#ifdef WIN32
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
+
 void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
 {
 	const char* end; /* end of processed string */
@@ -63,6 +70,14 @@ void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
 	}
 }
 
+void MkDir(char* path)
+{
+#ifdef WIN32
+  _mkdir(path);
+#else
+  mkdir(path, 0777);
+#endif
+}
 
 void MakePath(char* path, char* drv, char* dir, char* name, char* ext)
 {

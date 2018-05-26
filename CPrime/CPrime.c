@@ -7,14 +7,15 @@
 #include "Parser.h"
 #include "CodePrint.h"
 #include "Path.h"
-#include "UnitTest.h"
-#include "amalgamation.h"
-#include "Mem.h"
 
-#ifdef __EMSCRIPTEN__
-#include <emscripten/emscripten.h>
+
+
+#ifdef UNITTEST
+#include "UnitTest.h"
 #endif
 
+#include "amalgamation.h"
+#include "Mem.h"
 
 
 int Compile(const char* configFileName,
@@ -106,49 +107,26 @@ void PrintHelp()
 }
 
 
-#ifdef __EMSCRIPTEN__
 
-EMSCRIPTEN_KEEPALIVE
-char* myFunction(int argc, char * input)
+char* CompileText(char * input)
 {
+  char* output = NULL;
 	TProgram program;
 	TProgram_Init(&program);
-	if (GetASTFromString(input,
-		&program))
+	if (GetASTFromString(input, &program))
 	{
 		Options options2 = OPTIONS_INIT;
 		options2.bHideDefaultImplementation = false;
 
 
-		StrBuilder output = STRBUILDER_INIT;
-		StrBuilder_Reserve(&output, 500);
-		TProgram_PrintCodeToString(&program,
-			&options2, &output);
-		return output.c_str;
-		//StrBuilder_Destroy(&output);
+		StrBuilder sb = STRBUILDER_INIT;
+		StrBuilder_Reserve(&sb, 500);
+		TProgram_PrintCodeToString(&program, &options2, &sb);
+    output = sb.c_str;
 	}
-	return 0;
-
+	return output;
 }
-#endif
 
-void CompileText()
-{
-  TProgram program;
-  TProgram_Init(&program);
-  if (GetASTFromString("struct X {int i;};\n void X_Init(struct X* pX) _default;",
-    &program))
-  {
-    Options options2 = OPTIONS_INIT;
-    options2.bHideDefaultImplementation = false;
-
-
-    StrBuilder output = STRBUILDER_INIT;
-    TProgram_PrintCodeToString(&program,
-      &options2, &output);
-    StrBuilder_Destroy(&output);
-  }
-}
 
 int main(int argc, char* argv[])
 {
@@ -326,7 +304,8 @@ int main(int argc, char* argv[])
       strcat(outputItemPath, buildFileFullPath);
       strcat(outputItemPath, outputDir);
       strcat(outputItemPath, "\\");
-      _mkdir(outputItemPath);
+
+      MkDir(outputItemPath);
 
       for (int i = 0; i < sources.size; i++)
       {

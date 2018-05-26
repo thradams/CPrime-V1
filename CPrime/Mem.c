@@ -1,8 +1,8 @@
 #include "Mem.h"
-#include <crtdbg.h>
+
 
 #if _DEBUG
-
+#include <crtdbg.h>
 
 void* DebugMalloc(const char* fileName, int line, size_t size)
 {

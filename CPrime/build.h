@@ -2,6 +2,8 @@
 //call "Release\CPrime.exe" - config "vs2017.h" 
 
 #pragma source "config.h"
+#pragma source "Mem.h"
+#pragma source "Mem.c"
 #pragma source "Result.h"
 #pragma source "Array.h"
 #pragma source "Array.c"
@@ -45,8 +47,8 @@
 #pragma source "amalgamation.c"
 
 //#if UNIT_TEST
-#pragma source "UnitTest.c"
-#pragma source "UnitTest.h"
+//#pragma source "UnitTest.c"
+//#pragma source "UnitTest.h"
 
 //#endif
 

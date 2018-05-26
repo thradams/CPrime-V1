@@ -4779,6 +4779,30 @@ void GroupDeclaration(Parser* ctx,
   Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET, NULL);  
 }
 
+bool HasCommentedKeyword(TScannerItemList* clueList, const char* keyword)
+{
+  bool bResult = false;
+  ScannerItem* pCurrent = clueList->pHead;
+  while (pCurrent)
+  {
+    if (pCurrent->token == TK_SPACES)
+    {
+      //ok
+    }
+    else if (pCurrent->token == TK_COMMENT)
+    {
+      bResult = strncmp(pCurrent->lexeme.c_str + 2, keyword, strlen(keyword)) == 0;
+      break;
+    }
+    else
+    {
+      bResult = false;
+      break;
+    }
+    pCurrent = pCurrent->pNext;
+  }
+  return bResult;
+}
 
 bool  Declaration(Parser* ctx,
     TAnyDeclaration** ppDeclaration)
@@ -4888,6 +4912,7 @@ bool  Declaration(Parser* ctx,
 
                     //ctx->
                 }
+
                 //
                 if (token == TK__DEFAULT ||
                     token == TK_DEFAULT)
@@ -4900,6 +4925,14 @@ bool  Declaration(Parser* ctx,
                     pFuncVarDeclaration->bDefault = true;
                     Parser_Match(ctx, &pFuncVarDeclaration->ClueList0);
                     token = Parser_CurrentToken(ctx);
+                }
+                else if (HasCommentedKeyword(&ctx->ClueList, "default"))
+                {
+                  /*
+                  6.9.1) function-definition:
+                  declaration-specifiers declarator declaration-listopt defaultopt compound-statement
+                  */
+                  pFuncVarDeclaration->bDefault = true;                  
                 }
 
                 if (token == TK_LEFT_CURLY_BRACKET)

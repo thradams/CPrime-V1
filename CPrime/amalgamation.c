@@ -5,8 +5,13 @@
 #include <stdlib.h>
 #include "Path.h"
 #include "Mem.h"
+#include <string.h>
 
-
+char *strdup(const char *s) {
+  char *d = malloc(strlen(s) + 1);
+  if (d != NULL) strcpy(d, s);
+  return d;
+}
 
 struct Header
 {
@@ -21,7 +26,7 @@ void MarkAsIncluded(const char* filename)
 {
   
   struct Header* pNew = Malloc(sizeof * pNew);
-  pNew->fileName = _strdup(filename);
+  pNew->fileName = strdup(filename);
   pNew->pNext = 0;
 
   if (s_included == NULL)
