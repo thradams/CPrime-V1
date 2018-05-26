@@ -22,6 +22,7 @@ enum CompilerTarget
 {
 	CompilerTarget_Annotated,
 	CompilerTarget_CXX,
+	CompilerTarget_Preprocessed
 };
 
 typedef struct Options

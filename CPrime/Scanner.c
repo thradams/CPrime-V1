@@ -2260,6 +2260,82 @@ void PrintPreprocessedToFile(const char* fileIn, const char* configFileName)
   String_Destroy(&fullFileNamePath);
 }
 
+void PrintPreprocessedToStringCore2(StrBuilder* fp, Scanner* scanner)
+{
+	while (Scanner_TokenAt(scanner, 0) != TK_EOF)
+	{
+		Tokens token = Scanner_TokenAt(scanner, 0);
+		const char* lexeme = Scanner_LexemeAt(scanner, 0);
+		if (Scanner_IsActiveAt(scanner, 0))
+		{
+			switch (token)
+			{
+				// Tokens para linhas do pre processador
+			case TK_PRE_INCLUDE:
+			case TK_PRE_PRAGMA:
+			case TK_PRE_IF:
+			case TK_PRE_ELIF:
+			case TK_PRE_IFNDEF:
+			case TK_PRE_IFDEF:
+			case TK_PRE_ENDIF:
+			case TK_PRE_ELSE:
+			case TK_PRE_ERROR:
+			case TK_PRE_LINE:
+			case TK_PRE_UNDEF:
+			case TK_PRE_DEFINE:
+				StrBuilder_Append(fp, "\n");
+				break;
+
+				// fim tokens preprocessador
+			case TK_LINE_COMMENT:
+			case TK_COMMENT:				
+				StrBuilder_Append(fp, " ");
+				break;
+
+			case TK_BOF:
+				break;
+
+			case TK_MACRO_CALL:
+			case TK_MACRO_EOF:
+			case TK_FILE_EOF:
+				break;
+
+			default:
+				StrBuilder_Append(fp, lexeme);
+				break;
+			}
+		}
+
+		Scanner_Match(scanner);
+	}
+}
+
+void PrintPreprocessedToString2(StrBuilder* fp,const char *input,  const char* configFileName)
+{
+
+	Scanner scanner;
+	Scanner_InitString(&scanner, "name", input);
+
+
+	if (configFileName != NULL)
+	{
+		String configFullPath = STRING_INIT;
+		GetFullPath(configFileName, &configFullPath);
+
+		Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath,
+			true);
+		Scanner_Match(&scanner);
+
+		String_Destroy(&configFullPath);
+	}
+
+
+	PrintPreprocessedToStringCore2(fp, &scanner);
+	
+	Scanner_Destroy(&scanner);
+}
+
+
 void GetSources(const char* fileIn, StrArray* sources)
 {
   String fullFileNamePath = STRING_INIT;

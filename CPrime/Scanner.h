@@ -146,6 +146,7 @@ void GetSources(const char* fileIn, StrArray* sources);
 void PrintPreprocessedToFile(const char* fileIn,
   const char* configFileName);
 
+void PrintPreprocessedToString2(StrBuilder* fp, const char *input, const char* configFileName);
 void PrintPreprocessedToConsole(const char* fileIn,
                                 const char* configFileName);
 
