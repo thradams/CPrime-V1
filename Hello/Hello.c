@@ -7,13 +7,12 @@ struct Point
 
 struct Line
 {
-	struct Point start;
-	struct Point end;
+	struct Point start, end;
+	
 };
 
 int main()
 {
-	struct Point pt =/*@default*/{/*.x=*/ 1, /*.y=*/ 2};
 	struct Line line =/*@default*/{{/*.x=*/ 1, /*.y=*/ 2}, {/*.x=*/ 1, /*.y=*/ 2}};
 	return 0;
 }

@@ -4081,16 +4081,13 @@ void InstanciateDestroy2(TProgram* program,
 					}
 					else
 					{
+						int variableCount = 0;
 						//ok tem a definicao completa da struct
 						for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
 						{
 
 
 
-							if (action == ActionStaticInit && i > 0)
-							{
-								StrBuilder_Append(fp, ", ");
-							}
 
 							TAnyStructDeclaration* pAnyStructDeclaration =
 								pStructUnionSpecifier->StructDeclarationList.pItems[i];
@@ -4109,6 +4106,13 @@ void InstanciateDestroy2(TProgram* program,
 
 								while (pStructDeclarator)
 								{
+
+									if (action == ActionStaticInit && variableCount > 0)
+									{
+										StrBuilder_Append(fp, ", ");
+									}
+
+									variableCount++;
 									//O padrao eh ser o inicializador do tipo
 									TInitializer* pStructMemberInitializer =
 										pStructDeclarator->pInitializer;
