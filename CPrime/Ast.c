@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include "Mem.h"
 
+bool IsAutoToken(Tokens token)
+{
+	return token == TK__AUTO || token == TK_AUTO;
+}
+
 void TDeclarations_Destroy(TDeclarations* p) _default
 {
     for (int i = 0; i < p->Size; i++)
@@ -1616,7 +1621,7 @@ bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
 			for (int i = 0; i < pItem->Qualifier.Size; i++)
 			{
 				TTypeQualifier* pQualifier = pItem->Qualifier.Data[i];
-				if (pQualifier->Token == TK__AUTO ||
+				if (IsAutoToken(pQualifier->Token) ||
 					pQualifier->Token == TK_OWN_QUALIFIER)
 				{
 					bIsAuto = true;
@@ -1791,7 +1796,7 @@ bool TPointerList_IsAutoPointerToObject(TPointerList* pPointerlist)
 	if (pPointer != NULL)
 	{
 		if (pPointer->Qualifier.Size == 1 &&
-			pPointer->Qualifier.Data[0]->Token == TK__AUTO)
+			IsAutoToken(pPointer->Qualifier.Data[0]->Token))
 		{
 			pPointer = pPointer->pNext;
 			if (pPointer == NULL)
@@ -1815,10 +1820,10 @@ bool TPointerList_IsAutoPointerSizeToObject(TPointerList* pPointerlist)
 		if (pPointer->Qualifier.Size == 2 &&
 			pPointer->pNext == NULL)
 		{
-			bResult = (pPointer->Qualifier.Data[0]->Token == TK__AUTO &&
+			bResult = (IsAutoToken(pPointer->Qualifier.Data[0]->Token) &&
 				pPointer->Qualifier.Data[1]->Token == TK__SIZE) ||
 				(pPointer->Qualifier.Data[0]->Token == TK__SIZE &&
-					pPointer->Qualifier.Data[0]->Token == TK__AUTO);
+					IsAutoToken(pPointer->Qualifier.Data[0]->Token));
 		}
 	}
 
@@ -1833,7 +1838,7 @@ bool TPointerList_IsAutoPointerToPointer(TPointerList* pPointerlist)
 	if (pPointer != NULL)
 	{
 		if (pPointer->Qualifier.Size == 1 &&
-			pPointer->Qualifier.Data[0]->Token == TK__AUTO)
+			IsAutoToken(pPointer->Qualifier.Data[0]->Token))
 		{
 			pPointer = pPointer->pNext;
 			if (pPointer != NULL)
@@ -1858,13 +1863,13 @@ bool TPointerList_IsAutoPointerToAutoPointer(TPointerList* pPointerlist)
 	if (pPointer != NULL)
 	{
 		if (pPointer->Qualifier.Size == 1 &&
-			pPointer->Qualifier.Data[0]->Token == TK__AUTO)
+			IsAutoToken(pPointer->Qualifier.Data[0]->Token))
 		{
 			pPointer = pPointer->pNext;
 			if (pPointer != NULL)
 			{
 				if (pPointer->Qualifier.Size == 1 &&
-					pPointer->Qualifier.Data[0]->Token == TK__AUTO)
+					IsAutoToken(pPointer->Qualifier.Data[0]->Token))
 				{
 					bResult = true;
 				}
@@ -1872,8 +1877,8 @@ bool TPointerList_IsAutoPointerToAutoPointer(TPointerList* pPointerlist)
 				{
 					//auto _size()
 					// _size() auto
-					bResult = pPointer->Qualifier.Data[0]->Token == TK__AUTO ||
-						pPointer->Qualifier.Data[1]->Token == TK__AUTO;
+					bResult = IsAutoToken(pPointer->Qualifier.Data[0]->Token)||
+						IsAutoToken(pPointer->Qualifier.Data[1]->Token) ;
 				}
 			}
 		}
