@@ -918,7 +918,18 @@ void BasicScanner_Next(BasicScanner* scanner)
             scanner->currentItem.token = TK_COMMENT;
             ch = BasicScanner_MatchChar(scanner);
             ch = BasicScanner_MatchChar(scanner);
-			
+			if (ch == '@')
+			{
+				//  /*@default*/
+				//  /*@auto*/
+
+				//  /*@ = @*/
+				//  /*@ union ( )@*/
+			}
+			else
+			{
+
+			}
             for (;;)
             {
                 if (ch == '*')
@@ -953,11 +964,11 @@ void BasicScanner_Next(BasicScanner* scanner)
                 }
             }
             //scanner->bLineStart = true;
-			if (strcmp(scanner->currentItem.lexeme.c_str, "/*default*/") == 0)
+			if (strcmp(scanner->currentItem.lexeme.c_str, COMMENT_KEYWORD_DEFAULT) == 0)
 			{
 				scanner->currentItem.token = TK__DEFAULT;
 			}
-			else if (strcmp(scanner->currentItem.lexeme.c_str, "/*auto*/") == 0)
+			else if (strcmp(scanner->currentItem.lexeme.c_str, COMMENT_KEYWORD_AUTO) == 0)
 			{
 				scanner->currentItem.token = TK__AUTO;
 			}

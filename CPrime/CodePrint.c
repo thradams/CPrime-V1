@@ -1124,18 +1124,30 @@ static void TSingleTypeSpecifier_CodePrint(TProgram* program, Options * options,
 
 	if (p->Token2 == TK_STRUCT)
 	{
-		Output_Append(fp, options, "struct ");
+		if (options->Target == CompilerTarget_Annotated)
+		{
+			//acrescenta 
+			Output_Append(fp, options, "struct ");
+		}
 		Output_Append(fp, options, p->TypedefName);
 	}
 	else if (p->Token2 == TK_UNION)
 	{
-		Output_Append(fp, options, "union ");
+		if (options->Target == CompilerTarget_Annotated)
+		{
+			//acrescenta 
+			Output_Append(fp, options, "union ");
+		}
 		Output_Append(fp, options, p->TypedefName);
 
 	}
 	else if (p->Token2 == TK_ENUM)
 	{
-		Output_Append(fp, options, "enum ");
+		if (options->Target == CompilerTarget_Annotated)
+		{
+			//acrescenta 
+			Output_Append(fp, options, "enum ");
+		}
 		Output_Append(fp, options, p->TypedefName);
 
 	}
@@ -1201,7 +1213,7 @@ static void TInitializerList_CodePrint(TProgram* program,
 	{
 		if (options->Target == CompilerTarget_Annotated)
 		{
-			Output_Append(fp, options, "/*default*/ ");
+			Output_Append(fp, options, COMMENT_KEYWORD_DEFAULT);
 		}
 		//a partir de {} e um tipo consegue gerar o final  
 		StrBuilder sb = STRBUILDER_INIT;
@@ -1591,8 +1603,24 @@ static void TFunctionSpecifier_CodePrint(TProgram* program, Options * options, T
 static void TTypeQualifier_CodePrint(TProgram* program, Options * options, TTypeQualifier* p, StrBuilder* fp)
 {
 	TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+	
+	if (p->Token == TK__AUTO || 
+		p->Token == TK_AUTO )
+	{
+		if (options->Target == CompilerTarget_Annotated)
+		{
+			Output_Append(fp, options, COMMENT_KEYWORD_AUTO);
+		}
+		else if (options->Target == CompilerTarget_CXX)
+		{
+			Output_Append(fp, options, "auto");
+		}
+	}
+	else
+	{
+		Output_Append(fp, options, TokenToString(p->Token));
+	}
 
-	Output_Append(fp, options, TokenToString(p->Token));
 #ifdef LANGUAGE_EXTENSIONS
 	if (p->Token == TK__SIZE)
 	{
@@ -1614,14 +1642,9 @@ static void TTypeQualifierList_CodePrint(TProgram* program, Options * options, T
 }
 static void TPointer_CodePrint(TProgram* program, Options * options, TPointer* pPointer, StrBuilder* fp)
 {
-
 	TNodeClueList_CodePrint(options, &pPointer->ClueList0, fp);
 	Output_Append(fp, options, "*");
-
 	TTypeQualifierList_CodePrint(program, options, &pPointer->Qualifier, fp);
-
-
-
 }
 
 void TSpecifierQualifierList_CodePrint(TProgram* program,
@@ -2608,7 +2631,7 @@ static void TDeclaration_CodePrint(TProgram* program,
 
 			if (options->Target == CompilerTarget_Annotated)
 			{
-				StrBuilder_Append(fp, "/*default*/");
+				StrBuilder_Append(fp, COMMENT_KEYWORD_DEFAULT);
 				TNodeClueList_CodePrint(options, &p->pCompoundStatementOpt->ClueList0, fp);
 				Output_Append(fp, options, "{\n");
 
@@ -2649,7 +2672,7 @@ static void TDeclaration_CodePrint(TProgram* program,
 			if (options->Target == CompilerTarget_Annotated)
 			{
 				TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-				StrBuilder_Append(fp, "/*default*/");
+				StrBuilder_Append(fp, COMMENT_KEYWORD_DEFAULT);
 
 				TNodeClueList_CodePrint(options, &p->ClueList1, fp);
 				Output_Append(fp, options, "\n{\n");

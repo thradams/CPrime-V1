@@ -7,6 +7,9 @@
 #include "LocalStrBuilder.h"
 #define LANGUAGE_EXTENSIONS
 //
+#define COMMENT_KEYWORD_AUTO "/*@auto*/"
+#define COMMENT_KEYWORD_DEFAULT "/*@default*/"
+
 
 typedef enum
 {

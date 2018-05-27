@@ -1118,6 +1118,7 @@ static bool IsTypeQualifierToken(Tokens token)
         //type-qualifier-extensions 
 
     case TK__AUTO:
+	case TK_AUTO:
     case TK__SIZE:
 
     case TK_OPT_QUALIFIER:
@@ -1160,6 +1161,7 @@ int IsTypeName(Parser* ctx, Tokens token, const char * lexeme)
 
 #ifdef LANGUAGE_EXTENSIONS
     case TK__AUTO:
+	case TK_AUTO:
     case TK__SIZE:
         //type-qualifier-extensions 
     case TK_OPT_QUALIFIER:
@@ -3960,6 +3962,7 @@ static bool TTypeQualifier_IsFirst(Tokens token)
 #ifdef LANGUAGE_EXTENSIONS
         //type-qualifier-extensions 
     case TK__AUTO:
+	case TK_AUTO:
     case TK__SIZE:
     case TK_OPT_QUALIFIER:
     case TK_OWN_QUALIFIER:
@@ -4038,6 +4041,7 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
         bResult = true;
         break;
     case TK__AUTO:
+	case TK_AUTO:
 
         //type-qualifier-extensions 
     case TK_OPT_QUALIFIER:
