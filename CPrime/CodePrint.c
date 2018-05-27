@@ -1282,11 +1282,22 @@ static void TInitializerListType_CodePrint(TProgram* program,
 
 		if (options->Target == CompilerTarget_CXX)
 		{
-			Output_Append(fp, options, "{}");
+			
+				
+				TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+				Output_Append(fp, options, "{");
+				
+				TNodeClueList_CodePrint(options, &p->ClueList2, fp);
+				Output_Append(fp, options, "}");
+			
+			
+			
 		}
 		else  if (options->Target == CompilerTarget_Annotated)
 		{
+
 			Output_Append(fp, options, COMMENT_KEYWORD_DEFAULT);
+			TNodeClueList_CodePrint(options, &p->ClueList1, fp);
 
 			StrBuilder sb = STRBUILDER_INIT;
 			bool bHasInitializers = false;
@@ -1511,10 +1522,16 @@ void TStructDeclarator_CodePrint(TProgram* program,
 	if (p->pInitializer)
 	{
 		TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-		Output_Append(fp, options, "_defval");
 
-		Output_Append(fp, options, "(");
-
+		if (options->Target == CompilerTarget_Annotated)
+		{
+			Output_Append(fp, options, "_defval");
+			Output_Append(fp, options, "(");
+		}
+		else if (options->Target == CompilerTarget_CXX)
+		{
+			Output_Append(fp, options, "=");
+		}
 		Options options2 = *options;
 		options2.bExpandMacros = true;
 		options2.bIncludeComments = false;
@@ -1525,9 +1542,17 @@ void TStructDeclarator_CodePrint(TProgram* program,
 			p->pDeclarator,
 			(TDeclarationSpecifiers*)pSpecifierQualifierList,
 			p->pInitializer,
-
 			fp);
-		Output_Append(fp, options, ")");
+
+		if (options->Target == CompilerTarget_Annotated)
+		{
+			Output_Append(fp, options, ")");
+		}
+		else if (options->Target == CompilerTarget_CXX)
+		{
+			
+		}
+		
 	}
 
 }
