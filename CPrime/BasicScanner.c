@@ -918,6 +918,7 @@ void BasicScanner_Next(BasicScanner* scanner)
             scanner->currentItem.token = TK_COMMENT;
             ch = BasicScanner_MatchChar(scanner);
             ch = BasicScanner_MatchChar(scanner);
+			
             for (;;)
             {
                 if (ch == '*')
@@ -952,6 +953,15 @@ void BasicScanner_Next(BasicScanner* scanner)
                 }
             }
             //scanner->bLineStart = true;
+			if (strcmp(scanner->currentItem.lexeme.c_str, "/*default*/") == 0)
+			{
+				scanner->currentItem.token = TK__DEFAULT;
+			}
+			else if (strcmp(scanner->currentItem.lexeme.c_str, "/*auto*/") == 0)
+			{
+				scanner->currentItem.token = TK__AUTO;
+			}
+			
             return;
         }
         else
