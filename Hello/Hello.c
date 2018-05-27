@@ -1,15 +1,19 @@
-#include "config.h"
 
+struct Point
+{
+	int x _defval( 1);
+	int y _defval( 2);
+};
 
-
-//#include "stdafx.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <Windows.h>
-
-
+struct Line
+{
+	struct Point start;
+	struct Point end;
+};
 
 int main()
 {
+	struct Point pt =/*@default*/{/*.x=*/ 1, /*.y=*/ 2};
+	struct Line line =/*@default*/{{/*.x=*/ 1, /*.y=*/ 2}, {/*.x=*/ 1, /*.y=*/ 2}};
 	return 0;
 }

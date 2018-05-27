@@ -826,6 +826,20 @@ void TInitializerList_Delete(TInitializerList* p);
 
 typedef struct
 {
+	/*
+	initializer:
+	assignment-expression
+
+	{ initializer-list }    <-----representa esta parte
+	{ initializer-list ,}
+	*/
+	/*
+	  {}
+	  default {}
+	  default { initializer-list } 
+	  default { initializer-list ,}
+	*/
+
   EType Type  _defval(TInitializerListType_ID);
   TInitializerList InitializerList;
   TScannerItemList ClueList0;
@@ -841,6 +855,13 @@ void TInitializerListType_Delete(TInitializerListType* p);
 
 struct _union(TInitializerListType | TExpression) TInitializer
 {
+	/*
+	initializer: 
+	assignment-expression 
+	
+	{ initializer-list } 
+	{ initializer-list ,}
+	*/
   EType Type;
 };
 typedef struct TInitializer TInitializer;

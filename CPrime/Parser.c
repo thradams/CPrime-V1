@@ -4581,15 +4581,18 @@ void Initializer_List(Parser* ctx, TInitializerList* pInitializerList)
         if (ErrorOrEof(ctx))
             break;
 
+		Tokens token = Parser_CurrentToken(ctx);
+		if (token == TK_RIGHT_CURLY_BRACKET)
+		{
+			//Empty initializer
+			break;
+		}
+
         TInitializerListItem* pTInitializerListItem = TInitializerListItem_Create();
         List_Add(pInitializerList, pTInitializerListItem);
-        Tokens token = Parser_CurrentToken(ctx);
+        
 #ifdef LANGUAGE_EXTENSIONS
-        if (token == TK_RIGHT_CURLY_BRACKET)
-        {
-            //Empty initializer
-            break;
-        }
+        
 #endif
         if (token == TK_LEFT_SQUARE_BRACKET ||
             token == TK_FULL_STOP)
