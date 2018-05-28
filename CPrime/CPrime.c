@@ -203,10 +203,18 @@ int main(int argc, char* argv[])
 					PrintHelp();
 				}
 			}
-			else if (strcmp(option, "-s") == 0)
+			else if (strcmp(option, "-cx") == 0)
 			{
 				options.Target = CompilerTarget_CXX;
 			}
+      else if (strcmp(option, "-ca") == 0)
+      {
+        options.Target = CompilerTarget_Annotated;
+      }
+      else if (strcmp(option, "-pr") == 0)
+      {
+        options.Target = CompilerTarget_Preprocessed;
+      }
 			else if (strcmp(option, "-build") == 0)
 			{
 				if (fase == 0)

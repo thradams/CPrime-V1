@@ -113,6 +113,8 @@ typedef enum
     TK__SIZE,
     TK__DEFAULT,
     TK__DEFVAL,
+    TK__CP_BEGIN,
+    TK__CP_END,
 #endif
 
     TK_BREAK,

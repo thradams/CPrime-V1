@@ -1020,6 +1020,12 @@ static void TUnionSetItem_CodePrint(TProgram* program, Options * options, TUnion
 static void TUnionSet_CodePrint(TProgram* program, Options * options, TUnionSet* p, StrBuilder* fp)
 {
 	TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+  
+  if (options->Target == CompilerTarget_Annotated)
+  {
+    Output_Append(fp, options, "/*@ ");
+  }
+
 	Output_Append(fp, options, "_union");
 
 	TNodeClueList_CodePrint(options, &p->ClueList1, fp);
@@ -1034,6 +1040,10 @@ static void TUnionSet_CodePrint(TProgram* program, Options * options, TUnionSet*
 	TNodeClueList_CodePrint(options, &p->ClueList2, fp);
 	Output_Append(fp, options, ")");
 
+  if (options->Target == CompilerTarget_Annotated)
+  {
+    Output_Append(fp, options, "@*/");
+  }
 
 }
 
@@ -1320,7 +1330,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
 			}
 			else
 			{
-				Output_Append(fp, options, "{0}");
+				Output_Append(fp, options, "0");
 			}
 
 			StrBuilder_Destroy(&sb);
@@ -1525,8 +1535,10 @@ void TStructDeclarator_CodePrint(TProgram* program,
 
 		if (options->Target == CompilerTarget_Annotated)
 		{
-			Output_Append(fp, options, "_defval");
-			Output_Append(fp, options, "(");
+			//Output_Append(fp, options, "_defval");
+			//Output_Append(fp, options, "(");
+      
+      Output_Append(fp, options, "/*@ =");
 		}
 		else if (options->Target == CompilerTarget_CXX)
 		{
@@ -1546,7 +1558,8 @@ void TStructDeclarator_CodePrint(TProgram* program,
 
 		if (options->Target == CompilerTarget_Annotated)
 		{
-			Output_Append(fp, options, ")");
+			//Output_Append(fp, options, ")");
+      Output_Append(fp, options, "@*/");
 		}
 		else if (options->Target == CompilerTarget_CXX)
 		{
@@ -3617,7 +3630,7 @@ static bool FindHighLevelFunction(TProgram* program,
 			StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "/*%s=*/", pInitExpressionText);
 			Options options2 = *options;
 			TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
-
+      bComplete = true;
 		}
 		else if (bIsPointer)
 		{

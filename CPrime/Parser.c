@@ -3165,10 +3165,20 @@ void Struct_Declarator(Parser* ctx,
             TExpression_Delete(p);
         }
 #ifdef LANGUAGE_EXTENSIONS
-        else if (token == TK_EQUALS_SIGN)
+        if (token == TK__CP_BEGIN)
+        {
+          Parser_Match(ctx, NULL); //_defval ou =
+          token = Parser_CurrentToken(ctx);
+        }
+        
+        if (token == TK_EQUALS_SIGN)
         {
             Parser_Match(ctx, &pInitDeclarator->ClueList1); //_defval ou =
             Initializer(ctx, &pInitDeclarator->pInitializer, TK_SEMICOLON, TK_SEMICOLON);
+            
+            token = Parser_CurrentToken(ctx);
+            if (token == TK__CP_END)
+              Parser_Match(ctx, NULL); //_defval ou =
         }
         else if (token == TK__DEFVAL)
         {
@@ -3359,6 +3369,8 @@ void UnionSet(Parser* ctx, TUnionSet* pUnionSet)
     Tokens token = Parser_CurrentToken(ctx);
     const char* lexeme = Lexeme(ctx);
 
+    
+
     if (token == TK__UNION)
     {
         Parser_Match(ctx, &pUnionSet->ClueList0);
@@ -3372,6 +3384,8 @@ void UnionSet(Parser* ctx, TUnionSet* pUnionSet)
         Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS,
             &pUnionSet->ClueList2);
     }
+
+   
 }
 
 void Struct_Or_Union_Specifier(Parser* ctx,
@@ -3396,11 +3410,24 @@ void Struct_Or_Union_Specifier(Parser* ctx,
     Tokens token = Parser_CurrentToken(ctx);
     const char* lexeme = Lexeme(ctx);
 
-    pStructUnionSpecifier->Token2 = token;
+    
+
+    if (token == TK__CP_BEGIN)
+    {
+      Parser_Match(ctx, NULL);
+      token = Parser_CurrentToken(ctx);
+    }
 
     if (token == TK__UNION)
     {
+        pStructUnionSpecifier->Token2 = TK__UNION;
         UnionSet(ctx, &pStructUnionSpecifier->UnionSet);
+        token = Parser_CurrentToken(ctx);
+    }
+
+    if (token == TK__CP_END)
+    {
+      Parser_Match(ctx, NULL); //_defval ou =
     }
 
     token = Parser_CurrentToken(ctx);
