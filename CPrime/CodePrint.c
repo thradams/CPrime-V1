@@ -1320,7 +1320,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
 			}
 			else
 			{
-				Output_Append(fp, options, "0");
+				Output_Append(fp, options, "{0}");
 			}
 
 			StrBuilder_Destroy(&sb);
