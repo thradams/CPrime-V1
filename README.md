@@ -13,6 +13,9 @@ Some implementation and maintenance, like destructor for data structures, are de
 
 ## How it works?
 
+See it online
+[playground](http://thradams.com/web/cprime.html)
+
 You can delegate to the robot the implementation of some functions.
 
 Sample
