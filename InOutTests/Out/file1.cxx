@@ -1,8 +1,8 @@
 
 struct Point
 {
-  int x _defval( 1);
-  int y _defval( 2);
+  int x /*@ = 1@*/;
+  int y /*@ = 2@*/;
 };
 
 int main()
