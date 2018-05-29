@@ -4026,7 +4026,7 @@ void Size_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
     token = Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, NULL);
 	if (token == TK__CP_END)
 	{
-		token = Parser_Match(ctx, &pQualifier->ClueList0);
+		token = Parser_Match(ctx, NULL);
 	}
 }
 #endif
