@@ -1063,6 +1063,14 @@ static void TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
 		{
 			Output_Append(fp, options, "union");
 		}
+
+		if (p->Token2 == TK__UNION)
+		{
+			TUnionSet_CodePrint(program, options, &p->UnionSet, fp);
+		}
+
+		TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+
 	}
 	else
 	{
@@ -1076,6 +1084,12 @@ static void TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
 			//{
 				//Output_Append(fp, options, "union");
 		//	}
+			if (p->Token2 == TK__UNION)
+			{
+				TUnionSet_CodePrint(program, options, &p->UnionSet, fp);
+			}
+
+			//TNodeClueList_CodePrint(options, &p->ClueList1, fp);
 		}
 		else if (options->Target == CompilerTarget_Annotated)
 		{
@@ -1087,16 +1101,19 @@ static void TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
 			{
 				Output_Append(fp, options, "union");
 			}
+
+			if (p->Token2 == TK__UNION)
+			{
+				TUnionSet_CodePrint(program, options, &p->UnionSet, fp);
+			}
+
+			TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+
 		}
 	}
 
 
 
-	if (p->Token2 == TK__UNION)
-	{
-		TUnionSet_CodePrint(program, options, &p->UnionSet, fp);
-	}
-	TNodeClueList_CodePrint(options, &p->ClueList1, fp);
 
 	if (options->Target == CompilerTarget_Annotated &&
 		options->bPrintRepresentation)
