@@ -1330,7 +1330,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
 			}
 			else
 			{
-				Output_Append(fp, options, "0");
+				Output_Append(fp, options, "{0}");
 			}
 
 			StrBuilder_Destroy(&sb);
@@ -1657,6 +1657,18 @@ static void TTypeQualifier_CodePrint(TProgram* program, Options * options, TType
 			Output_Append(fp, options, "auto");
 		}
 	}
+	else if (p->Token == TK__SIZE||
+		p->Token == TK_SIZEOF)
+	{
+		if (options->Target == CompilerTarget_Annotated)
+		{
+			Output_Append(fp, options, "/*@size");
+		}
+		else if (options->Target == CompilerTarget_CXX)
+		{
+			Output_Append(fp, options, "_size");
+		}
+	}
 	else
 	{
 		Output_Append(fp, options, TokenToString(p->Token));
@@ -1668,6 +1680,11 @@ static void TTypeQualifier_CodePrint(TProgram* program, Options * options, TType
 		Output_Append(fp, options, "(");
 		Output_Append(fp, options, p->SizeIdentifier);
 		Output_Append(fp, options, ")");
+
+		if (options->Target == CompilerTarget_Annotated)
+		{
+			Output_Append(fp, options, "@*/");
+		}
 	}
 #endif
 }

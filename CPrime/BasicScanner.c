@@ -981,6 +981,15 @@ void BasicScanner_Next(BasicScanner* scanner)
         {
           ch = BasicScanner_MatchChar(scanner);
         }
+
+        if (scanner->currentItem.lexeme.size == strlen("/*@size") &&
+			strcmp(scanner->currentItem.lexeme.c_str, "/*@size") == 0)
+
+		{
+			scanner->currentItem.token = TK__SIZE ;
+			break;
+		}
+
       }
       //scanner->bLineStart = true;
       if (strcmp(scanner->currentItem.lexeme.c_str, COMMENT_KEYWORD_DEFAULT) == 0)

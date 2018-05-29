@@ -1,18 +1,13 @@
 
-struct Point
+struct Item
 {
-	int x _defval( 1);
-	int y _defval( 2);
+	int  i;
 };
 
-struct Line
-{
-	struct Point start, end;
-	
-};
 
-int main()
+struct Items
 {
-	struct Line line =/*@default*/{{/*.x=*/ 1, /*.y=*/ 2}, {/*.x=*/ 1, /*.y=*/ 2}};
-	return 0;
-}
+	struct Item * /*@auto*/ * /*@auto*//*@size(Size)@*/    pData;
+	int Size;
+	int Capacity;
+};
