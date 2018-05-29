@@ -1120,6 +1120,7 @@ static bool IsTypeQualifierToken(Tokens token)
     case TK__AUTO:
 	case TK_AUTO:
     case TK__SIZE:
+	case TK_SIZEOF:
 
     case TK_OPT_QUALIFIER:
     case TK_OWN_QUALIFIER:
@@ -3991,6 +3992,7 @@ static bool TTypeQualifier_IsFirst(Tokens token)
     case TK__AUTO:
 	case TK_AUTO:
     case TK__SIZE:
+	case TK_SIZEOF:
     case TK_OPT_QUALIFIER:
     case TK_OWN_QUALIFIER:
     case TK_DTOR_QUALIFIER:
@@ -4067,6 +4069,7 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
 
 #ifdef LANGUAGE_EXTENSIONS
 
+	case TK_SIZEOF:
     case TK__SIZE:
         Size_Qualifier(ctx, pQualifier);
         bResult = true;

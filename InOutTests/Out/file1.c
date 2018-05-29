@@ -7,5 +7,5 @@ struct Point
 
 int main()
 {
-   Point pt = {};
+  Point pt = {};
 }

@@ -1683,7 +1683,7 @@ static void TTypeQualifier_CodePrint(TProgram* program, Options * options, TType
 		}
 		else if (options->Target == CompilerTarget_CXX)
 		{
-			Output_Append(fp, options, "_size");
+			Output_Append(fp, options, "sizeof");
 		}
 	}
 	else
@@ -1692,7 +1692,7 @@ static void TTypeQualifier_CodePrint(TProgram* program, Options * options, TType
 	}
 
 #ifdef LANGUAGE_EXTENSIONS
-	if (p->Token == TK__SIZE)
+	if (p->Token == TK__SIZE || p->Token == TK_SIZEOF  )
 	{
 		Output_Append(fp, options, "(");
 		Output_Append(fp, options, p->SizeIdentifier);
