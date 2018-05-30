@@ -1,11 +1,40 @@
 
-struct Point
+typedef char * /*@auto*/ String;
+struct X
 {
-  int x /*@ = 1@*/;
-  int y /*@ = 2@*/;
+	String Name;
+	int i;
 };
+
+struct X* X_Create() /*@default*/
+{
+    struct X *p = (struct X *) malloc(sizeof * p);
+    if (p)
+    {
+        X_Init(p);
+    }
+    return p;
+}
+void X_Init(struct X* p) /*@default*/
+{
+    p->Name = 0;
+    p->i = 0;
+}
+void X_Destroy(struct X* p) /*@default*/
+{
+    free((void*)p->Name);
+}
+void X_Delete(struct X* p) /*@default*/
+{
+    if (p)
+    {
+        X_Destroy(p);
+        free((void*)p);
+    }
+}
 
 int main()
 {
-  struct Point pt =/*@default*/ {/*.x=*/ 1, /*.y=*/ 2};
+	struct X x =/*@default*/ {0};
+	return 1;
 }

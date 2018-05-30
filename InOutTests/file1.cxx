@@ -1,11 +1,18 @@
 
-struct Point
+typedef char * auto String;
+struct X
 {
-  int x = 1;
-  int y = 2;
+	String Name;
+	int i;
 };
+
+X* X_Create() default;
+void X_Init(X* p) default;
+void X_Destroy(X* p) default;
+void X_Delete(X* p) default;
 
 int main()
 {
-  Point pt = {};
+	X x = {};
+	return 1;
 }
