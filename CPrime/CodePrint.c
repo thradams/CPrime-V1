@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include "Path.h"
 
-
+static int global_lambda_counter = 0;
 
 void Options_Destroy(Options* options) _default
 {
@@ -614,7 +614,7 @@ static void TPrimaryExpressionLambda_CodePrint(TProgram* program,
 	TPrimaryExpressionLambda * p,
 	StrBuilder* fp)
 {
-	static int global_lambda_counter = 0;
+	
 	//Output_Append(fp, options, "l1");
 	StrBuilder_AppendFmt(fp, "_lambda_%d", global_lambda_counter);
 
@@ -3028,6 +3028,8 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 	const char* outFileName,
 	const char* inputFileName)
 {
+	global_lambda_counter = 0;
+
 	FILE * fp = fopen(outFileName, "w");
 
 	if (fp == NULL)
@@ -3079,6 +3081,7 @@ void TProgram_PrintCodeToString(TProgram* pProgram,
 	StrBuilder* output)
 {
 
+	global_lambda_counter = 0;
 	int k = 0;
 
 

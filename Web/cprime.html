@@ -10,18 +10,13 @@
       <script src="codemirror.js"></script>
       <link rel="stylesheet" href="codemirror.css">
       <script src="clike.js"></script>
+      <script src="samples.js"></script>
 
       <h1>CPrime online</h1>
       <p><a href="https://github.com/thradams/CPrime/blob/master/README.md">github readme</a></p>
 
-      <select onchange="OnChangeSelection(this.value)">
-          <option value="0">Select...</option>
-          <option value="0">Especial Functions</option>
-          <option value="1">Dynamic Array</option>
-          <option value="2">Linked List</option>
-          <option value="3">Initialization</option>
-          <option value="4">Polimorphism</option>
-          <option value="5">Lambdas</option>
+      <select id="samples" onchange="OnChangeSelection(this.value)">
+          <option>Select...</option>
       </select>
 
       <button onclick="OnCompileButton()">Compile</button>
@@ -101,6 +96,18 @@
       <script type="text/javascript" src="cprime.js"></script>
 
       <script>
+
+          //monta a lista com exemplos
+          var se = document.getElementById("samples");
+          for (var i in sample)
+          {
+              var o = document.createElement('option');
+              o.textContent = i;
+              o.value = i;
+              
+              se.appendChild(o);
+          }
+
           function CompileText(tp, inputText)
           {
               //var ptr = allocate(intArrayFromString(inputText), 'i8', ALLOC_NORMAL);
@@ -156,169 +163,6 @@
 
           function OnChangeSelection(index)
           {
-              var sample = [];
-              var s = "";
-              s += "\n";
-              s += "typedef char * auto String;\n";
-              s += "struct X\n";
-              s += "{\n";
-              s += "   String Name;\n";
-              s += "   int i;\n";
-              s += "};\n";
-              s += "\n";
-              s += "X* X_Create() default;\n";
-              s += "void X_Init(X* p) default;\n";
-              s += "void X_Destroy(X* p) default;\n";
-              s += "void X_Delete(X* p) default;\n";
-              s += "\n";
-              s += "int main()\n";
-              s += "{\n";
-              s += "  X x = {};\n";
-              s += "  return 1;\n";
-              s += "}\n";
-              s += "\n";
-              s += "\n";
-              sample[0] = s;
-
-              s = "\n";
-              s += "struct Item\n";
-              s += "{\n";
-              s += "    int i;\n";
-              s += "};\n";
-              s += "\n";
-              s += "\n";
-              s += "Item* Item_Create() default;\n";
-              s += "void Item_Delete(Item* p) default;\n";
-              s += "\n";
-              s += "struct Items\n";
-              s += "{\n";
-              s += "    Item * auto * auto sizeof(Size) pData;\n";
-              s += "    int Size;\n";
-              s += "    int Capacity;\n";
-              s += "};\n";
-              s += "\n";
-              s += "\n";
-              s += "void Items_PushBack(Items* pItems, Item* pItem) default;\n";
-              s += "void Items_Destroy(Items* pItems) default;\n";
-              s += "\n";
-              s += "\n";
-              s += "int main(int argc, char **argv)\n";
-              s += "{\n";
-              s += "    Items items = {};\n";
-              s += "\n";
-              s += "    Items_PushBack(&items, Item_Create());\n";
-              s += "    Items_PushBack(&items, Item_Create());\n";
-              s += "    Items_PushBack(&items, Item_Create());\n";
-              s += "\n";
-              s += "    for (int i = 0; i < items.Size; i++)\n";
-              s += "    {\n";
-              s += "        printf(\"%d\\n\", items.pData[i]->i);\n";
-              s += "    }\n";
-              s += "\n";
-              s += "    Items_Destroy(&items);\n";
-              s += "    return 0;\n";
-              s += "}\n";
-              s += "\n";
-              
-              sample[1] = s;
-
-              s = "\n";
-              s += "struct Item\n";
-              s += "{\n";
-              s += "    int i;\n";
-              s += "    struct Item* auto pNext;\n";
-              s += "};\n";
-              s += "\n";
-              s += "void Item_Delete(Item* pItem) default;\n";
-              s += "\n";
-              s += "struct Items\n";
-              s += "{\n";
-              s += "    Item* auto pHead,* pTail;\n";
-              s += "};\n";
-              s += "\n";
-              s += "void Items_Destroy(Items* pItems) default;\n";
-              s += "\n";
-              s += "void Items_PushBack(Items* pItems, Item* pItem) default;\n";
-
-              sample[2] = s;
-
-              s = "struct Point\n";
-              s += "{\n";
-              s += "  int x = 1;\n";
-              s += "  int y = 2;\n";
-              s += "\n";
-              s += "};\n";
-              s += "\n";
-              s += "\n";
-              s += "struct Line\n";
-              s += "{\n";
-              s += "  Point start, end;\n";
-              s += "};\n";
-              s += "\n";
-              s += "int main()\n";
-              s += "{\n";
-              s += "  Point pt = {};\n";
-              s += "  Line ln = {};\n";
-              s += "}\n";
-              s += "\n";
-              sample[3] = s;
-
-              s = "\n";
-              s += "struct Box\n";
-              s += "{\n";
-              s += "    int id = 1;\n";
-              s += "};\n";
-              s += "\n";
-              s += "Box* Box_Create() default;\n";
-              s += "void Box_Delete(Box* pBox) default;\n";
-              s += "\n";
-              s += "void Box_Draw(Box* pBox)\n";
-              s += "{\n";
-              s += "    printf(\"Box\\n\");\n";
-              s += "}\n";
-              s += "\n";
-              s += "struct Circle\n";
-              s += "{\n";
-              s += "    int id = 2;\n";
-              s += "};\n";
-              s += "Circle* Circle_Create() default;\n";
-              s += "void Circle_Delete(Circle* pCircle) default;\n";
-              s += "\n";
-              s += "void Circle_Draw(Circle* pCircle)\n";
-              s += "{\n";
-              s += "    printf(\"Circle\\n\");\n";
-              s += "}\n";
-              s += "\n";
-              s += "struct _union(Box | Circle) Shape\n";
-              s += "{\n";
-              s += "    int id;\n";
-              s += "};\n";
-              s += "\n";
-              s += "void Shape_Delete(Shape* pShape) default;\n";
-              s += "void Shape_Draw(Shape* pShape) default;\n";
-              s += "\n";
-              
-              sample[4] = s;
-
-              s = "\n";              
-              s += "void Run(void (*callback)(void*), void* data);\n";
-              s += "\n";
-              s += "\n";
-              s += "int main()\n";
-              s += "{  \n";
-              s += "  Run([](void* data){\n";
-              s += "  \n";
-              s += "    printf(\"first\\n\");\n";
-              s += "    Run([](void* data){\n";
-              s += "      printf(\"second\\n\");\n";
-              s += "    }, 0); \n";
-              s += "    \n";
-              s += "  }, 0);\n";
-              s += "  \n";
-              s += "}";
-
-              sample[5] = s;
-
               inputEditor.setValue(sample[index], -1);
           }
       </script>
