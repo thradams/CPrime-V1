@@ -10,6 +10,11 @@ bool IsAutoToken(Tokens token)
 	return token == TK__AUTO || token == TK_AUTO;
 }
 
+bool IsSizeToken(Tokens token)
+{
+	return token == TK__SIZE|| token == TK_SIZEOF;
+}
+
 void TDeclarations_Destroy(TDeclarations* p) _default
 {
     for (int i = 0; i < p->Size; i++)
@@ -1701,7 +1706,7 @@ void TPointerList_Printf(TPointerList* p)
 			TTypeQualifier* pQualifier = pItem->Qualifier.Data[i];
 			printf("%s", TokenToString(pQualifier->Token));
 
-			if (pQualifier->Token == TK__SIZE)
+			if (IsSizeToken(pQualifier->Token))
 			{
 				printf("(%s)", pQualifier->SizeIdentifier);
 			}
@@ -1742,7 +1747,7 @@ const char * TPointerList_GetSize(TPointerList* pPointerlist)
 			{
 				TTypeQualifier* pQualifier = pItem->Qualifier.Data[i];
 
-				if (pQualifier->Token == TK__SIZE)
+				if (IsSizeToken(pQualifier->Token))
 				{
 					pszResult = pQualifier->SizeIdentifier;
 					break;
@@ -1821,8 +1826,8 @@ bool TPointerList_IsAutoPointerSizeToObject(TPointerList* pPointerlist)
 			pPointer->pNext == NULL)
 		{
 			bResult = (IsAutoToken(pPointer->Qualifier.Data[0]->Token) &&
-				pPointer->Qualifier.Data[1]->Token == TK__SIZE) ||
-				(pPointer->Qualifier.Data[0]->Token == TK__SIZE &&
+				IsSizeToken(pPointer->Qualifier.Data[1]->Token)) ||
+				(IsSizeToken(pPointer->Qualifier.Data[0]->Token) &&
 					IsAutoToken(pPointer->Qualifier.Data[0]->Token));
 		}
 	}
