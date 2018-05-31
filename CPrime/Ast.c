@@ -1793,24 +1793,24 @@ bool TPointerList_IsPointerToObject(TPointerList* pPointerlist)
 	return bResult;
 }
 
-
 bool TPointerList_IsAutoPointerToObject(TPointerList* pPointerlist)
 {
+	//retorna true se tem 1 ponteiro qualificado auto
 	bool bResult = false;
 	TPointer* pPointer = pPointerlist->pHead;
-	if (pPointer != NULL)
+	if (pPointer != NULL && pPointer->pNext == NULL)
 	{
-		if (pPointer->Qualifier.Size == 1 &&
-			IsAutoToken(pPointer->Qualifier.Data[0]->Token))
+		//so tem 1 ponteiro
+		//procura se tem algum qualificador auto
+		for (int i = 0; i < pPointer->Qualifier.Size; i++)
 		{
-			pPointer = pPointer->pNext;
-			if (pPointer == NULL)
+			if (IsAutoToken(pPointer->Qualifier.Data[i]->Token))
 			{
 				bResult = true;
+				break;
 			}
 		}
 	}
-
 
 	return bResult;
 }

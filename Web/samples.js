@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 
 	for (int i = 0; i < items.Size; i++)
 	{
-		printf("%d\n", items.pData[i]->i);
+		printf("%d\\n", items.pData[i]->i);
 	}
 
 	Items_Destroy(&items);
@@ -79,7 +79,6 @@ struct Items
 };
 
 void Items_Destroy(Items* pItems) default;
-
 void Items_PushBack(Items* pItems, Item* pItem) default;
 
 `;
