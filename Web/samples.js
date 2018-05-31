@@ -9,10 +9,10 @@ struct X
     int i;
 };
 
-X * X_Create() default ;
-void X_Init(X * p) default ;
-void X_Destroy(X * p) default ;
-void X_Delete(X * p) default ;
+X * X_Create() default;
+void X_Init(X * p) default;
+void X_Destroy(X * p) default;
+void X_Delete(X * p) default;
 
 int main()
 {

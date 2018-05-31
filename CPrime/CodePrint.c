@@ -8,6 +8,7 @@
 #include "Path.h"
 
 static int global_lambda_counter = 0;
+static const char* GetReallocStr(TProgram* program);
 
 void Options_Destroy(Options* options) _default
 {
@@ -2478,7 +2479,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 					"if ($nelements > $p->Capacity)\n"
 					"{\n"
 					" $type** pnew = $p->$data;\n"
-					" pnew = ($type**)Realloc(pnew, $nelements * sizeof($type*));\n"
+					" pnew = ($type**)$realloc(pnew, $nelements * sizeof($type*));\n"
 					" if (pnew)\n"
 					" {\n"
 					"  $p->$data = pnew;\n"
@@ -2490,7 +2491,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 					"if ($nelements > $p->Capacity)\n"
 					"{\n"
 					" $type* pnew = $p->$data;\n"
-					" pnew = ($type*)Realloc(pnew, $nelements * sizeof($type));\n"
+					" pnew = ($type*)$realloc(pnew, $nelements * sizeof($type));\n"
 					" if (pnew)\n"
 					" {\n"
 					"  $p->$data = pnew;\n"
@@ -2505,7 +2506,8 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 				  { "p", TParameter_GetName(pFirstParameter) },
 				{ "nelements", TParameter_GetName(pSecondParameter) },
 				{ "type", itemType.c_str },
-				{ "data", arrayName.c_str }
+				{ "data", arrayName.c_str },
+				{ "realloc", GetReallocStr(program) }
 				};
 
 				StrBuilder_Template(fp,
@@ -2565,7 +2567,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 							"  n = 1;\n"
 							" }\n"
 							" $type** pnew = $p->$data;\n"
-							" pnew = ($type**)Realloc(pnew, n * sizeof($type*));\n"
+							" pnew = ($type**)$realloc(pnew, n * sizeof($type*));\n"
 							" if (pnew)\n"
 							" {\n"
 							"  $p->$data = pnew;\n"
@@ -2585,7 +2587,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 							"  n = 1;\n"
 							" }\n"
 							" $type* pnew = $p->$data;\n"
-							" pnew = ($type*)Realloc(pnew, n * sizeof($type));\n"
+							" pnew = ($type*)$realloc(pnew, n * sizeof($type));\n"
 							" if (pnew)\n"
 							" {\n"
 							"  $p->$data = pnew;\n"
@@ -2604,7 +2606,8 @@ static void DefaultFunctionDefinition_CodePrint(TProgram* program,
 				{ "nelements", TParameter_GetName(pSecondParameter) },
 				{ "type", itemType.c_str },
 				{ "data", arrayName.c_str },
-				{ "prefix", functionPrefix.c_str }
+				{ "prefix", functionPrefix.c_str },
+				{ "realloc", GetReallocStr(program)}
 				};
 
 				StrBuilder_Template(fp,
