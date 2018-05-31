@@ -1273,7 +1273,6 @@ TParameter* TParameterTypeList_GetParameterByIndex(TParameterTypeList* p, int in
 TParameter* TParameterTypeList_FindParameterByName(TParameterTypeList* p, const char* name)
 {
 	TParameter* pParameterResult = NULL;
-	bool bFound = false;
 	if (name)
 	{
 		ForEachListItem(TParameter, pParameter, &p->ParameterList)
@@ -1647,9 +1646,9 @@ void TPointerList_Destroy(TPointerList* p)
 	TPointer* pCurrent = p->pHead;
 	while (pCurrent)
 	{
-		TPointer* p = pCurrent;
+		TPointer* pItem = pCurrent;
 		pCurrent = pCurrent->pNext;
-		TPointer_Delete(p);
+		TPointer_Delete(pItem);
 	}
 }
 
