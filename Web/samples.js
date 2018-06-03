@@ -21,6 +21,40 @@ int main()
 }
 `;
 
+
+sample["Dynamic Array of int"] =
+    `
+struct Items
+{
+	int * auto * auto sizeof(Size) pData;
+	int Size;
+	int Capacity;
+};
+
+
+void Items_PushBack(Items* pItems, int i) default;
+void Items_Destroy(Items* pItems) default;
+
+
+int main(int argc, char **argv)
+{
+	Items items = {};
+
+	Items_PushBack(&items, 1);
+	Items_PushBack(&items, 2);
+	Items_PushBack(&items, 3);
+
+	for (int i = 0; i < items.Size; i++)
+	{
+		printf("%d\\n", items.pData[i]);
+	}
+
+	Items_Destroy(&items);
+	return 0;
+}
+
+`;
+
 sample["Dynamic Array"] =
  `
 struct Item
