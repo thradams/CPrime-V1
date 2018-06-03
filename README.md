@@ -25,11 +25,6 @@ The name of the functions and signature are used to undestand what you want to g
 
 Use XXX_Create for "operator new", XXX_Init for constructor, XXX_Destroy for destructor and XXX_Delete for operator delete. 
 
-CPrime compiler can read "extended C" and generate "annotated C" and vice versa. It also can read annotated C and output updated annotated C. I know it's complicated, see the online demo.
-
-The main reason to have this C with annotations as input is preserve the capacity of using existing IDE and debuggers.
-
-CPrime compiler itself is written in annotated C and output annotated C. 
 
 Sample CXX input:
 
