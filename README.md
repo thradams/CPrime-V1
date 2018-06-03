@@ -17,6 +17,12 @@ This is the compiler (that is written in C) compiled to js using emscripten.
 
 ### Especial functions
 The compiler can generate something similar of C++ constructor,destructor, operator new and operator delete.
+
+To generate these function use **default** at the end of declaration. 
+
+The name of the functions and signature are used to undestand what you want to generate. For instance, use XXX_Create for "operator new"  XXX_Init for constructor, XXX_Destroy for destructor and XXX_Delete for operator delete. 
+
+
 ```c
 
 typedef char * auto String;
@@ -83,9 +89,8 @@ int main()
 
 ```
 The **auto** type qualifier is a qualifier that can be applied in pointers. When a pointer has auto it means that the pointer
-is the **owner of the pointed object**. This information is used to generate destructors. In the feature this information will be used in more places.
-
-
+is the **owner of the pointed object**. This information is used to generate destructors.
+See the declaration of String and the generated destructor X_Destroy.
 
 ### Initialization
 Struct data members can have initializers. This initializers are used to generate special functions and for the default initialization.
