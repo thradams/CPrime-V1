@@ -1,57 +1,456 @@
 # C'
 
-Let´s do pair programming!
-
 ![robot](/robots.jpg)
 (Picture courtesy of my niece Bethina)
 
 ## Description
 
-C' (pronounced c prime) is a tool to help C programmers to write and maintain C code.
-The tool edit the file in place like a refactoring tool. You can think on it as a pair programming with a robot.
-Some implementation and maintenance, like destructor for data structures, are delegated for the robot and you are free to think in the program's logic instead of code something that can be automatically generated.
+C' (pronounced c prime) is C language transpiler that extends the C language with some concepts like constructor/destructor,lambdas, polimorphism ,"auto pointers", "sized pointers" and containers.
 
-## How it works?
+The best introduction is to try the samples online.
+http://www.thradams.com/web/cprime.html
 
-See it online
-[playground](http://thradams.com/web/cprime.html)
+The compiler can understand the "extended C language" and output "C with annotations" and vice versa.
 
-You can delegate to the robot the implementation of some functions.
+CPrime itself is written in annotated C and compiled to annotated C. I know this is complicated, see the demo online and use swap button.
 
-Sample
+## Features 
+
+### Especial functions
+The compiler can generate something similar of C++ constructor,destructor, operator new and operator delete.
+
+To generate these functions use **default** at the end of function declaration. 
+
+The name of the functions and signature are used to undestand what you want to generate. 
+
+Use XXX_Create for "operator new", XXX_Init for constructor, XXX_Destroy for destructor and XXX_Delete for operator delete. 
+
+
+Sample CXX input:
+
 ```c
+
+typedef char * auto String;
 struct X
 {
-  int i;
+    String Name;
+    int i;
 };
-```
-To generate a initialization function for this struct just type:
 
-```c
-void X_Init(struct X* pX) _default;
-```
-When you compile this code you get:
+X * X_Create() default;
+void X_Init(X * p) default;
+void X_Destroy(X * p) default;
+void X_Delete(X * p) default;
 
-```c
-void X_Init(struct X* pX) _default
+int main()
 {
-   pX->i= 0;
+    X x = {};
+    return 1;
+}
+
+```
+Annotated C output:
+
+```c
+
+typedef char * /*@auto*/ String;
+struct X
+{
+    String Name;
+    int i;
+};
+
+struct X * X_Create() /*@default*/
+{
+    struct X *p = (struct X *) malloc(sizeof * p);
+    if (p)
+    {
+        X_Init(p);
+    }
+    return p;
+}
+void X_Init(struct X * p) /*@default*/
+{
+    p->Name = 0;
+    p->i = 0;
+}
+void X_Destroy(struct X * p) /*@default*/
+{
+    free((void*)p->Name);
+}
+void X_Delete(struct X * p) /*@default*/
+{
+    if (p)
+    {
+        X_Destroy(p);
+        free((void*)p);
+    }
+}
+
+int main()
+{
+    struct X x =/*@default*/ {0};
+    return 1;
+}
+
+```
+The **auto** type qualifier is a qualifier that can be applied to pointers. When a pointer has auto it means that the pointer
+is the **owner of the pointed object**. This information is used to generate destructors.
+See the declaration of String and the generated destructor X_Destroy.
+
+
+### Dynamic Arrays (like std::vector)
+Instead of using templates syntax we define the data struct. Some generated functions (PushBack) can undestand the data struct and implement the desired algorithm. This is build-in inside the compiler and maybe some day we can have a code generator script.
+
+```c
+
+struct Item
+{
+	int i;
+};
+
+
+Item* Item_Create() default;
+void Item_Delete(Item* p) default;
+
+struct Items
+{
+	Item * auto * auto sizeof(Size) pData;
+	int Size;
+	int Capacity;
+};
+
+
+void Items_PushBack(Items* pItems, Item* pItem) default;
+void Items_Destroy(Items* pItems) default;
+
+
+int main(int argc, char **argv)
+{
+	Items items = {};
+
+	Items_PushBack(&items, Item_Create());
+	Items_PushBack(&items, Item_Create());
+	Items_PushBack(&items, Item_Create());
+
+	for (int i = 0; i < items.Size; i++)
+	{
+		printf("%d\n", items.pData[i]->i);
+	}
+
+	Items_Destroy(&items);
+	return 0;
+}
+
+```
+```c
+
+struct Item
+{
+	int i;
+};
+
+
+struct Item* Item_Create() /*@default*/
+{
+    struct Item* p = (struct Item*) malloc(sizeof * p);
+    if (p)
+    {
+        p->i = 0;
+    }
+    return p;
+}
+void Item_Delete(struct Item* p) /*@default*/
+{
+    if (p)
+    {
+        free((void*)p);
+    }
+}
+
+struct Items
+{
+	struct Item * /*@auto*/ * /*@auto*/ /*@size(Size)@*/ pData;
+	int Size;
+	int Capacity;
+};
+
+
+void Items_PushBack(struct Items* pItems, struct Item* pItem) /*@default*/
+{
+    if (pItems->Size + 1 > pItems->Capacity)
+    {
+        int n = pItems->Capacity * 2;
+        if (n == 0)
+        {
+            n = 1;
+        }
+        struct Item** pnew = pItems->pData;
+        pnew = (struct Item**)realloc(pnew, n * sizeof(struct Item*));
+        if (pnew)
+        {
+            pItems->pData = pnew;
+            pItems->Capacity = n;
+        }
+    }
+    pItems->pData[pItems->Size] = pItem;
+    pItems->Size++;
+}
+void Items_Destroy(struct Items* pItems) /*@default*/
+{
+    for (int i = 0; i < pItems->Size; i++)
+    {
+        Item_Delete(pItems->pData[i]);
+    }
+    free((void*)pItems->pData);
+}
+
+
+int main(int argc, char **argv)
+{
+	struct Items items =/*@default*/ {0};
+
+	Items_PushBack(&items, Item_Create());
+	Items_PushBack(&items, Item_Create());
+	Items_PushBack(&items, Item_Create());
+
+	for (int i = 0; i < items.Size; i++)
+	{
+		printf("%d\n", items.pData[i]->i);
+	}
+
+	Items_Destroy(&items);
+	return 0;
+}
+
+
+```
+### Initialization
+Struct data members can have initializers. This initializers are used to generate special functions and for the default initialization.
+
+```c
+struct Point
+{
+  int x = 1;
+  int y = 2;
+};
+
+struct Line
+{
+  Point start, end;
+};
+
+int main()
+{
+  Point pt = {};
+  Line ln = {};
 }
 ```
 
-If the struct X is changed then the C' will update the implementation for you.
+```c
+struct Point
+{
+  int x /*@ = 1@*/;
+  int y /*@ = 2@*/;
+};
 
-Other functions like init, delete and destroy also can be generated.
+struct Line
+{
+  struct Point start, end;
+};
 
-Video of basic features:
+int main()
+{
+  struct Point pt =/*@default*/ {/*.x=*/ 1, /*.y=*/ 2};
+  struct Line ln =/*@default*/ {{/*.x=*/ 1, /*.y=*/ 2}, {/*.x=*/ 1, /*.y=*/ 2}};
+}
 
-https://www.youtube.com/watch?v=cFHL6cf1n_k&feature=youtu.be
+```
+### Polimorphism
 
-Online
+```c
 
-http://thradams.com/cprime/hello3.html
+struct Box
+{
+    int id = 1;
+};
 
-# Next steps
+Box* Box_Create() default;
+void Box_Delete(Box* pBox) default;
+
+void Box_Draw(Box* pBox)
+{
+    printf("Box");
+}
+
+struct Circle
+{
+    int id = 2;
+};
+Circle* Circle_Create() default;
+void Circle_Delete(Circle* pCircle) default;
+
+void Circle_Draw(Circle* pCircle)
+{
+    printf("Circle");
+}
+
+struct _union(Box | Circle) Shape
+{
+    int id;
+};
+
+void Shape_Delete(Shape* pShape) default;
+void Shape_Draw(Shape* pShape) default;
+
+
+```
+
+Output:
+
+```c
+
+struct Box
+{
+    int id /*@ = 1@*/;
+};
+
+struct Box* Box_Create() /*@default*/
+{
+    struct Box* p = (struct Box*) malloc(sizeof * p);
+    if (p)
+    {
+        p->id =  1;
+    }
+    return p;
+}
+void Box_Delete(struct Box* pBox) /*@default*/
+{
+    if (pBox)
+    {
+        free((void*)pBox);
+    }
+}
+
+void Box_Draw(struct Box* pBox)
+{
+    printf("Box");
+}
+
+struct Circle
+{
+    int id /*@ = 2@*/;
+};
+struct Circle* Circle_Create() /*@default*/
+{
+    struct Circle* p = (struct Circle*) malloc(sizeof * p);
+    if (p)
+    {
+        p->id =  2;
+    }
+    return p;
+}
+void Circle_Delete(struct Circle* pCircle) /*@default*/
+{
+    if (pCircle)
+    {
+        free((void*)pCircle);
+    }
+}
+
+void Circle_Draw(struct Circle* pCircle)
+{
+    printf("Circle");
+}
+
+struct /*@ _union(Box | Circle)@*/ Shape
+{
+    int id;
+};
+
+void Shape_Delete(struct Shape* pShape) /*@default*/
+{
+    if (pShape)
+    {
+            switch (pShape->id)
+            {
+                case  2:
+                    Circle_Delete((struct Circle*)pShape);
+                break;
+                case  1:
+                    Box_Delete((struct Box*)pShape);
+                break;
+                default:
+                break;
+            }
+    }
+}
+void Shape_Draw(struct Shape* pShape) /*@default*/
+{
+    switch (pShape->id)
+    {
+        case  2:
+            Circle_Draw((struct Circle*)pShape);
+        break;
+        case  1:
+            Box_Draw((struct Box*)pShape);
+        break;
+        default:
+        break;
+    }
+}
+
+
+```
+
+### Lambdas 
+Lambdas without capture are implemented using C++ syntax.
+
+The annotated C version of lambdas is not suporting going back to source yet.
+I hope to implement this soon.
+
+Input
+
+```c
+
+void Run(void (*callback)(void*), void* data);
+
+int main()
+{  
+  Run([](void* data){
+  
+    printf("first");
+    Run([](void* data){
+      printf("second");
+    }, 0);     
+  }, 0);
+}
+
+```
+
+Output
+```c
+
+void Run(void (*callback)(void*), void* data);
+
+static void _lambda_1(void* data){
+      printf("second");
+    }
+
+static void _lambda_0(void* data){
+  
+    printf("first");
+    Run(_lambda_1, 0);     
+  }
+
+int main()
+{  
+  Run(_lambda_0, 0);
+}
+
+```
+
+## Next steps
 
 [Learn more](learn.md) about the generated code.
 
@@ -71,52 +470,12 @@ During the development of this parser and static analysis, I had some difficulti
 At some point I decided that I should address the problem to work better with C before to do the static analysis and then I renamed the project to C’ cprime.  Because I want a tool to be useful now (not something experimental) I spent some time to solve the problem of generating C code from C code including the preprocessed parts. This allowed me to use existing C compilers and IDEs.
 C’ can generate destructors for structs and can have owner pointers in the type system. The motivation for static analysis still there and it is also related with code generation. More motivations like containers and polymorphism are included in the C’ as well.
 
-## Two generatarion models
 
-The first one is the model described here, were the source is changed "in place" like a refactoring tool. The cprime code itself is compiled using this mode. Of course at the begging the source was pure C. I  a had a very good experience adding cprime features for the code that was orinally using only C. This "in place" mode made the change very simple and secure. After some time, I enjoyed the beneficts of using cprime. When I had to modify some AST structs cprime just wrote my code; 49% of the lines AST.c are generated.
-This first mode has motivated the logo and the idea of pair programming with an robot.
-
-The second model is to generate a new file, and keep the source code smaller without the generated code.
-I don´t want to use the second model before to have a complete solution for debug and edit the code. The second model also can be used to convert from C2x to C89 for instance. Many new features could be used and translated for old compilers.
-If you know babel https://babeljs.io/ then you can imagine the cprime like a babel for C.
-
-
-## Current Status & Goals
-
-The C’ can be used today as command line tool to generate and maintain code. You can remove the usage of the tool at any time and use the generated code as normal C code. So the evaluation of the tool is totally uncompromised. I am already using the tool to generate itself. 
- 
 
 ## Roadmap
 
-The improvements on C’ will focus in stability of basic features. I am also planning to add lambdas in the C language to allow replace C++ in other kind of projects where lambdas are used.
-
 At some point I want to include static analysis again and check the onwership and null pointers as part of the type system. 
 
-
-
-
-## Old Videos (experimental features considered)
-
-Polymorphism and Dynamic Array Demo
-
-https://www.youtube.com/watch?v=vzouZGBV8YQ
-
-
-https://www.youtube.com/edit?o=U&video_id=LmUebDRGE1A
-
-Initializers
-
-https://www.youtube.com/watch?v=lIRLijA_n2Q&t=19s
-
-https://www.youtube.com/edit?o=U&video_id=mMHyeDZ0iA8
-
-Build-in function instanciation destroy , create, delete
-
-https://www.youtube.com/watch?v=yaa6uhHi2Xk
-
-Build-in enum to string
-
-https://www.youtube.com/watch?v=2qvCglaRNDU
 
 
 
