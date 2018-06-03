@@ -98,7 +98,132 @@ The ouput "annotated C" also can be used to revert to the orignal code.
 In other words "annotated C" is just another view to the same source. The compiler can be used in any C IDE with this annotated syntax.
 The extended syntax can be used for a better undestanding a high level view of the code.
 
+### Dynamic Arrays (like std::vector)
+Instead of using templates syntax, we define the struct that represents the data and the algorithmls like push_back are created automatically.
 
+```c
+
+struct Item
+{
+	int i;
+};
+
+
+Item* Item_Create() default;
+void Item_Delete(Item* p) default;
+
+struct Items
+{
+	Item * auto * auto sizeof(Size) pData;
+	int Size;
+	int Capacity;
+};
+
+
+void Items_PushBack(Items* pItems, Item* pItem) default;
+void Items_Destroy(Items* pItems) default;
+
+
+int main(int argc, char **argv)
+{
+	Items items = {};
+
+	Items_PushBack(&items, Item_Create());
+	Items_PushBack(&items, Item_Create());
+	Items_PushBack(&items, Item_Create());
+
+	for (int i = 0; i < items.Size; i++)
+	{
+		printf("%d\n", items.pData[i]->i);
+	}
+
+	Items_Destroy(&items);
+	return 0;
+}
+
+```
+```c
+
+struct Item
+{
+	int i;
+};
+
+
+struct Item* Item_Create() /*@default*/
+{
+    struct Item* p = (struct Item*) malloc(sizeof * p);
+    if (p)
+    {
+        p->i = 0;
+    }
+    return p;
+}
+void Item_Delete(struct Item* p) /*@default*/
+{
+    if (p)
+    {
+        free((void*)p);
+    }
+}
+
+struct Items
+{
+	struct Item * /*@auto*/ * /*@auto*/ /*@size(Size)@*/ pData;
+	int Size;
+	int Capacity;
+};
+
+
+void Items_PushBack(struct Items* pItems, struct Item* pItem) /*@default*/
+{
+    if (pItems->Size + 1 > pItems->Capacity)
+    {
+        int n = pItems->Capacity * 2;
+        if (n == 0)
+        {
+            n = 1;
+        }
+        struct Item** pnew = pItems->pData;
+        pnew = (struct Item**)realloc(pnew, n * sizeof(struct Item*));
+        if (pnew)
+        {
+            pItems->pData = pnew;
+            pItems->Capacity = n;
+        }
+    }
+    pItems->pData[pItems->Size] = pItem;
+    pItems->Size++;
+}
+void Items_Destroy(struct Items* pItems) /*@default*/
+{
+    for (int i = 0; i < pItems->Size; i++)
+    {
+        Item_Delete(pItems->pData[i]);
+    }
+    free((void*)pItems->pData);
+}
+
+
+int main(int argc, char **argv)
+{
+	struct Items items =/*@default*/ {0};
+
+	Items_PushBack(&items, Item_Create());
+	Items_PushBack(&items, Item_Create());
+	Items_PushBack(&items, Item_Create());
+
+	for (int i = 0; i < items.Size; i++)
+	{
+		printf("%d\n", items.pData[i]->i);
+	}
+
+	Items_Destroy(&items);
+	return 0;
+}
+
+
+```
 ### Initialization
 Struct data members can have initializers. This initializers are used to generate special functions and for the default initialization.
 
