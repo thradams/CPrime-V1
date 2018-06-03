@@ -11,23 +11,28 @@ The C' will not map exactly the concept or syntax of C++ but you will find simil
 The best introduction is to try the samples online.
 http://www.thradams.com/web/cprime.html
 
-The compiler can understand the "extended C language" and output C With annotations and vice versa.
+The compiler can understand the "extended C language" and output "C with annotations" and vice versa.
 
-CPrime itself is written in annotated C and compiled to annotated C. 
-I know this is complicated! see the demo online and use swap button.
+CPrime itself is written in annotated C and compiled to annotated C. I know this is complicated, see the demo online and use swap button.
 
 ## Features 
 
 ### Especial functions
 The compiler can generate something similar of C++ constructor,destructor, operator new and operator delete.
 
-To generate these function use **default** at the end of function declaration. 
+To generate these functions use **default** at the end of function declaration. 
 
 The name of the functions and signature are used to undestand what you want to generate. 
 
 Use XXX_Create for "operator new", XXX_Init for constructor, XXX_Destroy for destructor and XXX_Delete for operator delete. 
 
-Input:
+CPrime compiler can read "extended C" and generate "annotated C" and vice versa. It also can read annotated C and output updated annotated C. I know it's complicated, see the online demo.
+
+The main reason to have this C with annotations as input is preserve the capacity of using existing IDE and debuggers.
+
+CPrime compiler itself is written in annotated C and output annotated C. 
+
+Sample CXX input:
 
 ```c
 
@@ -50,7 +55,7 @@ int main()
 }
 
 ```
-Output:
+Annotated C output:
 
 ```c
 
