@@ -11,6 +11,10 @@ The C' will not map exactly the concept or syntax of C++ but you will find simil
 The best introduction is to try the samples online.
 http://www.thradams.com/web/cprime.html
 
+The compiler can understand the "extended C language" and output C With annotations and vice versa.
+
+CPrime itself is written in annotated C and compiled to annotated C. 
+I know this is complicated! see the demo online and use swap button.
 
 ## Features 
 
