@@ -94,16 +94,13 @@ int main()
 }
 
 ```
-The **auto** type qualifier is a qualifier that can be applied in pointers. When a pointer has auto it means that the pointer
+The **auto** type qualifier is a qualifier that can be applied to pointers. When a pointer has auto it means that the pointer
 is the **owner of the pointed object**. This information is used to generate destructors.
 See the declaration of String and the generated destructor X_Destroy.
 
-The ouput "annotated C" also can be used to revert to the orignal code.
-In other words "annotated C" is just another view to the same source. The compiler can be used in any C IDE with this annotated syntax.
-The extended syntax can be used for a better undestanding a high level view of the code.
 
 ### Dynamic Arrays (like std::vector)
-Instead of using templates syntax, we define the struct that represents the data and the algorithmls like push_back are created automatically.
+Instead of using templates syntax we define the data struct. Some generated functions (PushBack) can undestand the data struct and implement the desired algorithm. This is build-in inside the compiler and maybe some day we can have a code generator script.
 
 ```c
 
