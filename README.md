@@ -17,7 +17,7 @@ This is the compiler (that is written in C) compiled to js using emscripten.
 
 ### Especial functions
 The compiler can generate something similar of C++ constructor,destructor, operator new and operator delete.
-´´´c
+```c
 
 typedef char * auto String;
 struct X
@@ -37,9 +37,9 @@ int main()
     return 1;
 }
 
-´´´
+```
 
-´´´c
+```c
 
 typedef char * /*@auto*/ String;
 struct X
@@ -81,12 +81,12 @@ int main()
     return 1;
 }
 
-´´´
+```
 
 ### Initialization
 Struct data members can have initializers. This initializers are used to generate special functions and for the default initialization.
 
-´´´c
+```c
 struct Point
 {
   int x = 1;
@@ -103,9 +103,9 @@ int main()
   Point pt = {};
   Line ln = {};
 }
-´´´
+```
 
-´´´c
+```c
 struct Point
 {
   int x /*@ = 1@*/;
@@ -123,7 +123,7 @@ int main()
   struct Line ln =/*@default*/ {{/*.x=*/ 1, /*.y=*/ 2}, {/*.x=*/ 1, /*.y=*/ 2}};
 }
 
-´´´
+```
 
 
 ### Lambdas 
