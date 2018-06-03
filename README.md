@@ -1,55 +1,18 @@
 # C'
 
-Let´s do pair programming!
-
 ![robot](/robots.jpg)
 (Picture courtesy of my niece Bethina)
 
 ## Description
 
-C' (pronounced c prime) is a tool to help C programmers to write and maintain C code.
-The tool edit the file in place like a refactoring tool. You can think on it as a pair programming with a robot.
-Some implementation and maintenance, like destructor for data structures, are delegated for the robot and you are free to think in the program's logic instead of code something that can be automatically generated.
+C' (pronounced c prime) is language and transpiler that extends the C language with some selected concepts of C++.
+The C' will not map exactly the concept or syntax of C++ but you will find similarities.
 
-## How it works?
+The best introduction is to try the samples online.
+http://www.thradams.com/web/cprime.html
 
-See it online
-[playground](http://thradams.com/web/cprime.html)
+This is the compiler (that is written in C) compiled to js using emscripten.
 
-You can delegate to the robot the implementation of some functions.
-
-Sample
-```c
-struct X
-{
-  int i;
-};
-```
-To generate a initialization function for this struct just type:
-
-```c
-void X_Init(struct X* pX) _default;
-```
-When you compile this code you get:
-
-```c
-void X_Init(struct X* pX) _default
-{
-   pX->i= 0;
-}
-```
-
-If the struct X is changed then the C' will update the implementation for you.
-
-Other functions like init, delete and destroy also can be generated.
-
-Video of basic features:
-
-https://www.youtube.com/watch?v=cFHL6cf1n_k&feature=youtu.be
-
-Online
-
-http://thradams.com/cprime/hello3.html
 
 # Next steps
 
@@ -71,52 +34,12 @@ During the development of this parser and static analysis, I had some difficulti
 At some point I decided that I should address the problem to work better with C before to do the static analysis and then I renamed the project to C’ cprime.  Because I want a tool to be useful now (not something experimental) I spent some time to solve the problem of generating C code from C code including the preprocessed parts. This allowed me to use existing C compilers and IDEs.
 C’ can generate destructors for structs and can have owner pointers in the type system. The motivation for static analysis still there and it is also related with code generation. More motivations like containers and polymorphism are included in the C’ as well.
 
-## Two generatarion models
 
-The first one is the model described here, were the source is changed "in place" like a refactoring tool. The cprime code itself is compiled using this mode. Of course at the begging the source was pure C. I  a had a very good experience adding cprime features for the code that was orinally using only C. This "in place" mode made the change very simple and secure. After some time, I enjoyed the beneficts of using cprime. When I had to modify some AST structs cprime just wrote my code; 49% of the lines AST.c are generated.
-This first mode has motivated the logo and the idea of pair programming with an robot.
-
-The second model is to generate a new file, and keep the source code smaller without the generated code.
-I don´t want to use the second model before to have a complete solution for debug and edit the code. The second model also can be used to convert from C2x to C89 for instance. Many new features could be used and translated for old compilers.
-If you know babel https://babeljs.io/ then you can imagine the cprime like a babel for C.
-
-
-## Current Status & Goals
-
-The C’ can be used today as command line tool to generate and maintain code. You can remove the usage of the tool at any time and use the generated code as normal C code. So the evaluation of the tool is totally uncompromised. I am already using the tool to generate itself. 
- 
 
 ## Roadmap
 
-The improvements on C’ will focus in stability of basic features. I am also planning to add lambdas in the C language to allow replace C++ in other kind of projects where lambdas are used.
-
 At some point I want to include static analysis again and check the onwership and null pointers as part of the type system. 
 
-
-
-
-## Old Videos (experimental features considered)
-
-Polymorphism and Dynamic Array Demo
-
-https://www.youtube.com/watch?v=vzouZGBV8YQ
-
-
-https://www.youtube.com/edit?o=U&video_id=LmUebDRGE1A
-
-Initializers
-
-https://www.youtube.com/watch?v=lIRLijA_n2Q&t=19s
-
-https://www.youtube.com/edit?o=U&video_id=mMHyeDZ0iA8
-
-Build-in function instanciation destroy , create, delete
-
-https://www.youtube.com/watch?v=yaa6uhHi2Xk
-
-Build-in enum to string
-
-https://www.youtube.com/watch?v=2qvCglaRNDU
 
 
 
