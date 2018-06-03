@@ -13,7 +13,7 @@ http://www.thradams.com/web/cprime.html
 
 This is the compiler (that is written in C) compiled to js using emscripten.
 
-## Current Features 
+## Features 
 
 ### Especial functions
 The compiler can generate something similar of C++ constructor,destructor, operator new and operator delete.
@@ -406,6 +406,50 @@ void Shape_Draw(struct Shape* pShape) /*@default*/
 
 ### Lambdas 
 Lambdas without capture are implemented using C++ syntax.
+
+The annotated C version of lambdas is not suporting going back to source yet.
+I hope to implement this soon.
+
+Input
+
+```c
+
+void Run(void (*callback)(void*), void* data);
+
+int main()
+{  
+  Run([](void* data){
+  
+    printf("first");
+    Run([](void* data){
+      printf("second");
+    }, 0);     
+  }, 0);
+}
+
+```
+
+Output
+```c
+
+void Run(void (*callback)(void*), void* data);
+
+static void _lambda_1(void* data){
+      printf("second");
+    }
+
+static void _lambda_0(void* data){
+  
+    printf("first");
+    Run(_lambda_1, 0);     
+  }
+
+int main()
+{  
+  Run(_lambda_0, 0);
+}
+
+```
 
 ## Next steps
 
