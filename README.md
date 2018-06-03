@@ -22,6 +22,7 @@ To generate these function use **default** at the end of declaration.
 
 The name of the functions and signature are used to undestand what you want to generate. For instance, use XXX_Create for "operator new"  XXX_Init for constructor, XXX_Destroy for destructor and XXX_Delete for operator delete. 
 
+Input:
 
 ```c
 
@@ -44,6 +45,7 @@ int main()
 }
 
 ```
+Output:
 
 ```c
 
@@ -91,6 +93,11 @@ int main()
 The **auto** type qualifier is a qualifier that can be applied in pointers. When a pointer has auto it means that the pointer
 is the **owner of the pointed object**. This information is used to generate destructors.
 See the declaration of String and the generated destructor X_Destroy.
+
+The ouput "annotated C" also can be used to revert to the orignal code.
+In other words "annotated C" is just another view to the same source. The compiler can be used in any C IDE with this annotated syntax.
+The extended syntax can be used for a better undestanding a high level view of the code.
+
 
 ### Initialization
 Struct data members can have initializers. This initializers are used to generate special functions and for the default initialization.
