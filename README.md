@@ -82,6 +82,10 @@ int main()
 }
 
 ```
+The **auto** type qualifier is a qualifier that can be applied in pointers. When a pointer has auto it means that the pointer
+is the **owner of the pointed object**. This information is used to generate destructors. In the feature this information will be used in more places.
+
+
 
 ### Initialization
 Struct data members can have initializers. This initializers are used to generate special functions and for the default initialization.
