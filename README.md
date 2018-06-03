@@ -18,9 +18,11 @@ This is the compiler (that is written in C) compiled to js using emscripten.
 ### Especial functions
 The compiler can generate something similar of C++ constructor,destructor, operator new and operator delete.
 
-To generate these function use **default** at the end of declaration. 
+To generate these function use **default** at the end of function declaration. 
 
-The name of the functions and signature are used to undestand what you want to generate. For instance, use XXX_Create for "operator new"  XXX_Init for constructor, XXX_Destroy for destructor and XXX_Delete for operator delete. 
+The name of the functions and signature are used to undestand what you want to generate. 
+
+Use XXX_Create for "operator new", XXX_Init for constructor, XXX_Destroy for destructor and XXX_Delete for operator delete. 
 
 Input:
 
