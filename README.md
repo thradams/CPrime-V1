@@ -11,7 +11,6 @@ The C' will not map exactly the concept or syntax of C++ but you will find simil
 The best introduction is to try the samples online.
 http://www.thradams.com/web/cprime.html
 
-This is the compiler (that is written in C) compiled to js using emscripten.
 
 ## Features 
 
