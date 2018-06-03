@@ -26,7 +26,7 @@ sample["Dynamic Array of int"] =
     `
 struct Items
 {
-	int * auto * auto sizeof(Size) pData;
+	int * auto sizeof(Size) pData;
 	int Size;
 	int Capacity;
 };
