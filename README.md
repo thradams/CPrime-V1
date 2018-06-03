@@ -5,8 +5,7 @@
 
 ## Description
 
-C' (pronounced c prime) is language and transpiler that extends the C language with some selected concepts of C++.
-The C' will not map exactly the concept or syntax of C++ but you will find similarities.
+C' (pronounced c prime) is C language transpiler that extends the C language with some concepts like constructor/destructor,lambdas, polimorphism ,"auto pointers", "sized pointers" and containers.
 
 The best introduction is to try the samples online.
 http://www.thradams.com/web/cprime.html
