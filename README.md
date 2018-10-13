@@ -178,7 +178,6 @@ int main(int argc, char **argv)
 
 ```
 
-```
 ### Initialization
 Struct data members can have initializers. This initializers are used to generate special functions and for the default initialization.
 
