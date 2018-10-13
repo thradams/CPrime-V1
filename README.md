@@ -7,11 +7,12 @@
 
 Have you ever imagined in do pair programming with an robot? Now you can.
 
-C' (pronounced c prime) is C language transpiler that read comments in your code and can be responsable to implement and maitaing some parts of your code.
+C' (pronounced c prime) is C language transpiler that read comments in your code and can be responsable to implement and maintain some parts of your code.
 
 * It can generate constructors and destructors 
 * it can generate the operator new and delete (similarly of C++).
 * It can generate polimorphic functions.
+* It can generate containers like vector, list
 * It can help with lamddas and initialization
 
 The best introduction is to try the samples online.
