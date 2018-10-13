@@ -20,6 +20,11 @@ http://www.thradams.com/web/cprime.html
 
 CPrime itself is written using the code generation. Some files are 60% generated.
 
+### Using this tool you achieve decoupling because you don´t have to implement the mechanical relationship between objects.
+
+### This mechanical relatioship also makes possible a new kind of polimorphism where the coupling is much smaller than the traditional interface (virtual) methodoly.
+
+
 ## Features 
 
 ### Especial functions
