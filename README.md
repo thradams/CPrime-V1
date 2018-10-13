@@ -24,6 +24,9 @@ CPrime itself is written using the code generation. Some files are 60% generated
 
 ### This mechanical relatioship also makes possible a new kind of polimorphism where the coupling is much smaller than the traditional interface (virtual) methodoly.
 
+You can compare this code generation with C++ explicity template instantiation.
+But C' instanciates just one function and always explicity.
+
 
 ## Features 
 
