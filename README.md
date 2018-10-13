@@ -372,7 +372,5 @@ C’ can generate destructors for structs and can have owner pointers in the typ
 
 At some point I want to include static analysis again and check the onwership and null pointers as part of the type system. 
 
-
-
-
-
+See:
+https://github.com/isocpp/CppCoreGuidelines/blob/master/docs/Lifetime.pdf
