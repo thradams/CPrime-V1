@@ -1,11 +1,11 @@
 
 #include "PPToken.h"
 #include <stdlib.h>
-
+#include <assert.h>
 #include "Mem.h"
 
 
-void PPToken_Destroy(PPToken * p) _default
+void PPToken_Destroy(PPToken * p) /*default*/
 {
     String_Destroy(&p->Lexeme);
     TokenSet_Destroy(&p->HiddenSet);
@@ -38,13 +38,13 @@ PPToken* PPToken_Create(const char* s, PPTokenType token)
 	}
   else
   {
-    ASSERT(false);
+    //assert(false);
   }
 
 	return p;
 }
 
-void PPToken_Delete(PPToken * p) _default
+void PPToken_Delete(PPToken * p) /*default*/
 {
     if (p != NULL)
     {

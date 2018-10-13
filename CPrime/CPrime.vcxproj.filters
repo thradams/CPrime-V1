@@ -81,9 +81,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="config.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="CodePrint.h">
       <Filter>Source Files</Filter>
     </ClInclude>

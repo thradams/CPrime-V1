@@ -5,12 +5,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "Path.h"
 
 static int global_lambda_counter = 0;
 static const char* GetReallocStr(TProgram* program);
 
-void Options_Destroy(Options* options) _default
+void Options_Destroy(Options* options) /*default*/
 {
 }
 
@@ -93,7 +94,7 @@ static void TNodeClueList_CodePrint(Options* options, TScannerItemList* list,
 
 		case TK_FILE_EOF:
 			options->IncludeLevel--;
-			//ASSERT(IncludeLevel > 0);
+			////assert(IncludeLevel > 0);
 			//bInclude = true;
 			break;
 		case TK_PRE_DEFINE:
@@ -216,7 +217,7 @@ static void TLabeledStatement_CodePrint(TProgram* program, Options * options, TL
 		}
 		else
 		{
-			ASSERT(false);
+			//assert(false);
 		}
 		TNodeClueList_CodePrint(options, &p->ClueList1, fp);
 		Output_Append(fp, options, ":");
@@ -358,7 +359,8 @@ static void TJumpStatement_CodePrint(TProgram* program, Options * options, TJump
 		break;
 
 	default:
-		ASSERT(false);
+		//assert(false);
+		break;
 	}
 
 
@@ -472,7 +474,7 @@ static void TStatement_CodePrint(TProgram* program, Options * options, TStatemen
 		break;
 
 	default:
-		ASSERT(false);
+		//assert(false);
 		break;
 	}
 
@@ -483,7 +485,7 @@ static void TBlockItem_CodePrint(TProgram* program, Options * options, TBlockIte
 {
 	if (p == NULL)
 	{
-		ASSERT(false);
+		//assert(false);
 		return;
 	}
 
@@ -561,7 +563,7 @@ static void TBlockItem_CodePrint(TProgram* program, Options * options, TBlockIte
 		break;
 
 	default:
-		ASSERT(false);
+		//assert(false);
 		break;
 	}
 
@@ -759,7 +761,7 @@ static void TPostfixExpressionCore_CodePrint(TProgram* program,
 
 
 	default:
-		ASSERT(false);
+		//assert(false);
 		break;
 	}
 
@@ -781,7 +783,7 @@ static void TExpression_CodePrint(TProgram* program, Options * options, TExpress
 {
 	if (p == NULL)
 	{
-		//ASSERT(false);
+		////assert(false);
 		return;
 	}
 
@@ -929,10 +931,11 @@ static void TExpression_CodePrint(TProgram* program, Options * options, TExpress
 
 	default:
 
-		ASSERT(false);
+		//assert(false);
+		break;
 	}
 
-
+	
 
 }
 
@@ -1067,7 +1070,8 @@ static void TStructUnionSpecifier_CodePrint(TProgram* program, Options * options
 
 		if (p->Token2 == TK__UNION)
 		{
-			TUnionSet_CodePrint(program, options, &p->UnionSet, fp);
+			//TODO BASEADO EM COMENTARIO NAO fAZ NADA
+			//TUnionSet_CodePrint(program, options, &p->UnionSet, fp);
 		}
 
 		TNodeClueList_CodePrint(options, &p->ClueList1, fp);
@@ -1302,7 +1306,7 @@ static void TInitializerListType_CodePrint(TProgram* program,
 	*/
 	if (p->bDefault || p->InitializerList.pHead == NULL)
 	{
-		TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+		TNodeClueList_CodePrint(options, &p->ClueList1, fp);
 		TInitializer* pInitializer = NULL;
 		//p->InitializerList.pHead ?
 		//p->InitializerList.pHead->pInitializer : NULL;
@@ -1324,8 +1328,9 @@ static void TInitializerListType_CodePrint(TProgram* program,
 		else  if (options->Target == CompilerTarget_Annotated)
 		{
 
-			Output_Append(fp, options, COMMENT_KEYWORD_DEFAULT);
-			TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+			//Output_Append(fp, options, COMMENT_KEYWORD_DEFAULT);
+			if (p->InitializerList.pHead)
+			TNodeClueList_CodePrint(options, &p->InitializerList.pHead->ClueList, fp);
 
 			StrBuilder sb = STRBUILDER_INIT;
 			bool bHasInitializers = false;
@@ -1550,13 +1555,13 @@ void TStructDeclarator_CodePrint(TProgram* program,
 	if (p->pInitializer)
 	{
 		TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-
+#if 0
 		if (options->Target == CompilerTarget_Annotated)
 		{
 			//Output_Append(fp, options, "_defval");
 			//Output_Append(fp, options, "(");
       
-      Output_Append(fp, options, "/*@ =");
+            Output_Append(fp, options, "/*@ =");
 		}
 		else if (options->Target == CompilerTarget_CXX)
 		{
@@ -1583,7 +1588,7 @@ void TStructDeclarator_CodePrint(TProgram* program,
 		{
 			
 		}
-		
+#endif
 	}
 
 }
@@ -1639,7 +1644,7 @@ static void TAnyStructDeclaration_CodePrint(TProgram* program, Options * options
 		break;
 
 	default:
-		ASSERT(false);
+		//assert(false);
 		break;
 	}
 
@@ -1661,26 +1666,25 @@ static void TFunctionSpecifier_CodePrint(TProgram* program, Options * options, T
 
 static void TTypeQualifier_CodePrint(TProgram* program, Options * options, TTypeQualifier* p, StrBuilder* fp)
 {
-	TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+	//TODO nao pode colocr isso se veio de comentario
 	
-	if (p->Token == TK__AUTO || 
-		p->Token == TK_AUTO )
+	if ( p->Token == TK_AUTO )
 	{
 		if (options->Target == CompilerTarget_Annotated)
 		{
-			Output_Append(fp, options, COMMENT_KEYWORD_AUTO);
+			//Output_Append(fp, options, COMMENT_KEYWORD_AUTO);
 		}
 		else if (options->Target == CompilerTarget_CXX)
 		{
+			//TODO 
 			Output_Append(fp, options, "auto");
 		}
 	}
-	else if (p->Token == TK__SIZE||
-		p->Token == TK_SIZEOF)
+	else if (		p->Token == TK_LEFT_SQUARE_BRACKET)
 	{
 		if (options->Target == CompilerTarget_Annotated)
 		{
-			Output_Append(fp, options, "/*@size");
+			//Output_Append(fp, options, "/*@size");
 		}
 		else if (options->Target == CompilerTarget_CXX)
 		{
@@ -1689,19 +1693,21 @@ static void TTypeQualifier_CodePrint(TProgram* program, Options * options, TType
 	}
 	else
 	{
+		TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 		Output_Append(fp, options, TokenToString(p->Token));
 	}
 
 #ifdef LANGUAGE_EXTENSIONS
-	if (p->Token == TK__SIZE || p->Token == TK_SIZEOF  )
+	if ( p->Token == TK_SIZEOF  )
 	{
-		Output_Append(fp, options, "(");
-		Output_Append(fp, options, p->SizeIdentifier);
-		Output_Append(fp, options, ")");
+		//tODO ja esta nos comentarios
+		//Output_Append(fp, options, "(");
+		//Output_Append(fp, options, p->SizeIdentifier);
+		//Output_Append(fp, options, ")");
 
 		if (options->Target == CompilerTarget_Annotated)
 		{
-			Output_Append(fp, options, "@*/");
+			//Output_Append(fp, options, "@*/");
 		}
 	}
 #endif
@@ -1760,7 +1766,7 @@ void TSpecifierQualifierList_CodePrint(TProgram* program,
 			break;
 
 		default:
-			ASSERT(false);
+			//assert(false);
 			break;
 		}
 	}
@@ -1805,7 +1811,7 @@ void TDeclarationSpecifiers_CodePrint(TProgram* program, Options * options, TDec
 			//break;
 
 		default:
-			ASSERT(false);
+			//assert(false);
 			break;
 		}
 	}
@@ -2705,12 +2711,12 @@ static void TDeclaration_CodePrint(TProgram* program,
 
 		if (p->bDefault)
 		{
-			TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+			TNodeClueList_CodePrint(options, &p->pCompoundStatementOpt->ClueList0, fp);
 
 			if (options->Target == CompilerTarget_Annotated)
 			{
-				StrBuilder_Append(fp, COMMENT_KEYWORD_DEFAULT);
-				TNodeClueList_CodePrint(options, &p->pCompoundStatementOpt->ClueList0, fp);
+				//StrBuilder_Append(fp, COMMENT_KEYWORD_DEFAULT);
+				//TNodeClueList_CodePrint(options, &p->pCompoundStatementOpt->ClueList0, fp);
 				Output_Append(fp, options, "{\n");
 
 				DefaultFunctionDefinition_CodePrint(program,
@@ -2744,13 +2750,14 @@ static void TDeclaration_CodePrint(TProgram* program,
 	}
 	else
 	{
+
 		if (p->bDefault)
 		{
 
 			if (options->Target == CompilerTarget_Annotated)
 			{
-				TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-				StrBuilder_Append(fp, COMMENT_KEYWORD_DEFAULT);
+				//TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+				//StrBuilder_Append(fp, COMMENT_KEYWORD_DEFAULT);
 
 				TNodeClueList_CodePrint(options, &p->ClueList1, fp);
 				Output_Append(fp, options, "\n{\n");
@@ -2769,6 +2776,9 @@ static void TDeclaration_CodePrint(TProgram* program,
 				StrBuilder_Append(fp, " default");
 				Output_Append(fp, options, ";");
 			}
+
+			//TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+			//Output_Append(fp, options, ";");
 
 			return;
 		}
@@ -2977,7 +2987,7 @@ static void TAnyDeclaration_CodePrint(TProgram* program, Options * options, TAny
 		break;
 
 	default:
-		ASSERT(false);
+		//assert(false);
 		break;
 	}
 
@@ -4018,7 +4028,7 @@ void InstanciateDestroy2(TProgram* program,
 			else
 			{
 				//nao achou a declaracao
-				ASSERT(false);
+				//assert(false);
 			}
 
 		}
@@ -4097,7 +4107,7 @@ void InstanciateDestroy2(TProgram* program,
 							}
 							else
 							{
-								//ASSERT(false);
+								////assert(false);
 							}
 
 						}
@@ -4107,7 +4117,7 @@ void InstanciateDestroy2(TProgram* program,
 					{
 						//struct sem nome tem que ser criada
 						//com typedef que chama outro codigo
-						ASSERT(pStructUnionSpecifier->Name != NULL);
+						//assert(pStructUnionSpecifier->Name != NULL);
 
 						StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 							"struct %s* p = (struct %s*) %s(sizeof * p);",
@@ -4284,10 +4294,10 @@ void InstanciateDestroy2(TProgram* program,
 									{
 
 										//Tem que detectar isso aqui!
-										// String * _auto pItems;
-										// X * _auto * _auto pItems;
+										// String * /*auto*/ pItems;
+										// X * /*auto*/ * /*auto*/ pItems;
 										//sef or ele vai precisar da informacao do _size
-										// X * _auto * _auto _size(Size) pItems;
+										// X * /*auto*/ * /*auto*/ _size(Size) pItems;
 										//e dai ele passa a string para  funcao gerar
 
 
@@ -4591,7 +4601,7 @@ void InstanciateDestroy2(TProgram* program,
 						}
 						else
 						{
-							//ASSERT(false);
+							////assert(false);
 						}
 
 					}
@@ -4601,7 +4611,7 @@ void InstanciateDestroy2(TProgram* program,
 				{
 					//struct sem nome tem que ser criada
 					//com typedef que chama outro codigo
-					ASSERT(pStructUnionSpecifier->Name != NULL);
+					//assert(pStructUnionSpecifier->Name != NULL);
 
 					StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
 						"struct %s* p = (struct %s*) %s(sizeof * p);",
@@ -4785,10 +4795,10 @@ void InstanciateDestroy2(TProgram* program,
 								{
 
 									//Tem que detectar isso aqui!
-									// String * _auto pItems;
-									// X * _auto * _auto pItems;
+									// String * /*auto*/ pItems;
+									// X * /*auto*/ * /*auto*/ pItems;
 									//sef or ele vai precisar da informacao do _size
-									// X * _auto * _auto _size(Size) pItems;
+									// X * /*auto*/ * /*auto*/ _size(Size) pItems;
 									//e dai ele passa a string para  funcao gerar
 
 
@@ -4941,7 +4951,7 @@ void InstanciateDestroy2(TProgram* program,
 			}
 			else if (bIsAutoPointerToAutoPointer)
 			{
-				ASSERT(false);
+				//assert(false);
 				StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
 			}
 			else
@@ -5031,7 +5041,7 @@ void InstanciateDestroy2(TProgram* program,
 	}
 	else
 	{
-		ASSERT(false);
+		//assert(false);
 	}
 
 }

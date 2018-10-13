@@ -5,6 +5,7 @@
 #include "SymbolMap.h"
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <stdio.h>
 #include "Ast.h"
 #include "Mem.h"
@@ -635,7 +636,7 @@ TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
                     }
                     break;
                     default:
-                        ASSERT(false);
+                        //assert(false);
                         break;
                     }
                 }
@@ -728,7 +729,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
                     }
                     break;
                     default:
-                        ASSERT(false);
+                        //assert(false);
                         break;
 
                     }
@@ -760,7 +761,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
                         }
                         else
                         {
-                            ASSERT(false);
+                            //assert(false);
                         }
                     }
                     else
@@ -841,7 +842,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                     }
                     break;
                     default:
-                        ASSERT(false);
+                        //assert(false);
                         break;
                     }
                 }
@@ -873,7 +874,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
                         }
                         else
                         {
-                            ASSERT(false);
+                            //assert(false);
                         }
                     }
                     else
@@ -941,7 +942,7 @@ TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
                     }
                     else
                     {
-                        ASSERT(false);
+                        //assert(false);
                     }
                 }
                 else
@@ -962,7 +963,7 @@ TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
                     }
                     else
                     {
-                        ASSERT(false);
+                        //assert(false);
                     }
                 }
                 else

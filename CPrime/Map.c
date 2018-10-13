@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <assert.h>
 #include "Mem.h"
 
 /**
@@ -12,7 +12,7 @@
 */
 static uint32_t HashFunc(const char* a)
 {
-    ASSERT(a != NULL);
+    //assert(a != NULL);
     int len = strlen(a);
     const char* key = a;
     uint32_t hash = 0;
@@ -178,7 +178,7 @@ Result Bucket_Reserve(Bucket* p, int nelements)
         }
         else
         {
-            ASSERT(false);
+            //assert(false);
             r = RESULT_OUT_OF_MEM;
         }
     }
@@ -219,7 +219,7 @@ Result Bucket_Append(Bucket* p, BucketItem* pItem)
 
 static int FindNodeIndex(Bucket* bucket, uint32_t hash, const char* key)
 {
-    ASSERT(key != NULL);
+    //assert(key != NULL);
     for (int i = 0; i < bucket->size; i++)
     {
         BucketItem* node = bucket->data[i];
@@ -238,7 +238,7 @@ Result RemoveBucketItem(Bucket* bucket,
                         const char* key,
                         void** ppData)
 {
-    ASSERT(key != NULL);
+    //assert(key != NULL);
     *ppData = NULL; //out
 
     int index = FindNodeIndex(bucket, hash, key);
@@ -344,7 +344,7 @@ BucketItem* Map_FindNode(Map* map, const char* key)
         return NULL;
     }
 
-    ASSERT(key != NULL);
+    //assert(key != NULL);
     uint32_t hash = HashFunc(key);
     int bucket_n = hash % map->buckets.size;
 
@@ -367,7 +367,7 @@ BucketItem* Map_FindNode(Map* map, const char* key)
 
 Result Map_SetMoveKey(Map* map, String* key, void* data)
 {
-    ASSERT(key != NULL);
+    //assert(key != NULL);
     Result result;
 
     BucketItem* pNode = Map_FindNode(map, *key);
@@ -421,17 +421,17 @@ Result Map_SetMoveKey(Map* map, String* key, void* data)
 
 Result Map_Set(Map* map, const char* key, void* data)
 {
-    ASSERT(key != NULL);
+    //assert(key != NULL);
     void* pv;
     Result result = Map_Find(map, key, &pv);
     if (result == RESULT_OK)
     {
         return RESULT_FAIL;
-        //ASSERT(false);
+        ////assert(false);
     }
 
 
-    ASSERT(key != NULL);
+    //assert(key != NULL);
     String localkey;
     String_InitWith(&localkey, key);
 
@@ -444,7 +444,7 @@ Result Map_Set(Map* map, const char* key, void* data)
 
 Result Map_Find(Map* map, const char* key, void** pp)
 {
-    ASSERT(key != NULL);
+    //assert(key != NULL);
     BucketItem* pNode = Map_FindNode(map, key);
     Result result = pNode ? RESULT_OK : RESULT_FAIL;
 
@@ -466,7 +466,7 @@ void* Map_Find2(Map* map, const char* key)
 
 Result Map_DeleteEx(Map* map, const char* key, void** pp)
 {
-    ASSERT(key != NULL);
+    //assert(key != NULL);
     uint32_t hash = HashFunc(key);
     int bucket_n = hash % map->buckets.size;
 
@@ -488,7 +488,7 @@ Result Map_DeleteEx(Map* map, const char* key, void** pp)
 
 Result Map_DeleteItemOpt(Map* map, const char* key, void(*pfDestroyData)(void*))
 {
-    ASSERT(key != NULL);
+    //assert(key != NULL);
     void* p;
     Result result = Map_DeleteEx(map, key, &p);
     if (result == RESULT_OK)
@@ -505,10 +505,10 @@ Result Map_DeleteItem(Map* map, const char* key, void(*pfDestroyData)(void*))
 {
     Result result = Map_DeleteItemOpt(map, key, pfDestroyData);
     void* p;
-    //ASSERT(Map_Find(map, key, &p) != RESULT_OK);
+    ////assert(Map_Find(map, key, &p) != RESULT_OK);
     if (Map_Find(map, key, &p) == RESULT_OK)
     {
-        ASSERT(false);
+        //assert(false);
         Map_DeleteItemOpt(map, key, pfDestroyData);
     }
     return result;
@@ -573,7 +573,7 @@ void MultiMap_Destroy(MultiMap* map, void(*pfDestroyData)(void*))
 
 Result MultiMap_Add(MultiMap* map, const char* key, void* data)
 {
-  ASSERT(key != NULL);
+  //assert(key != NULL);
   Result result;
   
   uint32_t hash = HashFunc(key);
@@ -629,7 +629,7 @@ Bucket*  MultiMap_FindBucket(MultiMap* map, const char* key)
     return NULL;
   }
 
-  ASSERT(key != NULL);
+  //assert(key != NULL);
   uint32_t hash = HashFunc(key);
   int bucket_n = hash % map->buckets.size;
 

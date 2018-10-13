@@ -108,14 +108,7 @@ typedef enum
 
     TK_AUTO,
 	
-#ifdef LANGUAGE_EXTENSIONS
-    TK__AUTO,
-    TK__SIZE,
-    TK__DEFAULT,
-    TK__DEFVAL,
-    TK__CP_BEGIN,
-    TK__CP_END,
-#endif
+
 
     TK_BREAK,
     TK_CASE,
@@ -216,9 +209,9 @@ typedef struct ScannerItem
 {
     LocalStrBuilder lexeme;
     Tokens token;
-    int Line _defval(-1);
-    int FileIndex _defval(-1);
-    bool bActive _defval(1);
+    int Line /*= -1*/;
+    int FileIndex /*= -1 */;
+    bool bActive /*= true*/;
     struct ScannerItem* pNext;
 } ScannerItem;
 

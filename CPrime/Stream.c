@@ -3,6 +3,7 @@
 #include "StringEx.h"
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "StrBuilder.h"
 
 #include <ctype.h>
@@ -54,7 +55,7 @@ Result LoadFile(const char* filename, const char** out, int* szOut)
 Result SStream_InitFile(SStream* pStream,
                         const char* fullPath)
 {
-  ASSERT(IsFullPath(fullPath));
+  //assert(IsFullPath(fullPath));
   String_InitWith(&pStream->NameOrFullPath, fullPath);
   String_InitWith(&pStream->FullDir2, NULL);
   pStream->currentLine = 1;
@@ -119,7 +120,7 @@ Result SStream_Init(SStream* pStream, const char* name, const char*  text)
 }
 
 
-void SStream_Destroy(SStream* pStream) _default
+void SStream_Destroy(SStream* pStream) /*default*/
 {
     String_Destroy(&pStream->NameOrFullPath);
     String_Destroy(&pStream->FullDir2);

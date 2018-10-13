@@ -7,7 +7,7 @@ typedef struct PPToken PPToken;
 
 typedef struct
 {
-    PPToken* _auto * _auto _size(Size) pItems;
+    PPToken* /*auto*/ * /*auto [Size]*/ pItems;
     int Size;
     int Capacity;
 } TokenArray;
@@ -87,7 +87,7 @@ void TokenArrayMap_Swap(TokenArrayMap * pA, TokenArrayMap * pB);
 
 typedef struct
 {
-    PPToken* _auto * _auto _size(Size) pItems;
+    PPToken* /*auto*/ * /*auto [Size]*/ pItems;
     int Size;
     int Capacity;
 } TokenSet;

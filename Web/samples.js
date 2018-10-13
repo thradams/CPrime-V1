@@ -2,21 +2,22 @@ var sample = {};
 
 sample["Especial functions"] =
  `
-typedef char * auto String;
+
+typedef char * /*auto*/ String;
 struct X
 {
     String Name;
     int i;
 };
 
-X * X_Create() default;
-void X_Init(X * p) default;
-void X_Destroy(X * p) default;
-void X_Delete(X * p) default;
+struct X * X_Create() /*default*/;
+void X_Init(struct X * p) /*default*/;
+void X_Destroy(struct X * p) /*default*/;
+void X_Delete(struct X * p) /*default*/;
 
 int main()
 {
-    X x = {};
+    X x = /*default*/{0};
     return 1;
 }
 `;
@@ -26,19 +27,19 @@ sample["Dynamic Array of int"] =
     `
 struct Items
 {
-	int * auto sizeof(Size) pData;
+	int * /*auto [Size]*/ pData;
 	int Size;
 	int Capacity;
 };
 
 
-void Items_PushBack(Items* pItems, int i) default;
-void Items_Destroy(Items* pItems) default;
+void Items_PushBack(Items* pItems, int i) /*default*/;
+void Items_Destroy(Items* pItems) /*default*/;
 
 
 int main(int argc, char **argv)
 {
-	Items items = {};
+	Items items = /*default*/{0};
 
 	Items_PushBack(&items, 1);
 	Items_PushBack(&items, 2);
@@ -55,7 +56,7 @@ int main(int argc, char **argv)
 
 `;
 
-sample["Dynamic Array"] =
+sample["Dynamic Array of Item*"] =
  `
 struct Item
 {
@@ -63,24 +64,24 @@ struct Item
 };
 
 
-Item* Item_Create() default;
-void Item_Delete(Item* p) default;
+struct Item* Item_Create() /*default*/;
+void Item_Delete(struct Item* p) /*default*/;
 
 struct Items
 {
-	Item * auto * auto sizeof(Size) pData;
+	struct Item * /*auto*/ * /*auto [Size]*/ pData;
 	int Size;
 	int Capacity;
 };
 
 
-void Items_PushBack(Items* pItems, Item* pItem) default;
-void Items_Destroy(Items* pItems) default;
+void Items_PushBack(struct Items* pItems, struct Item* pItem) /*default*/;
+void Items_Destroy(struct Items* pItems) /*default*/;
 
 
 int main(int argc, char **argv)
 {
-	Items items = {};
+	struct Items items = /*default*/{0};
 
 	Items_PushBack(&items, Item_Create());
 	Items_PushBack(&items, Item_Create());
@@ -102,37 +103,38 @@ sample["Linked list"] =
 struct Item
 {
     int i;
-    struct Item* auto pNext;
+    struct Item* /*auto*/ pNext;
 };
 
-void Item_Delete(Item* pItem) default;
+void Item_Delete(struct Item* pItem) /*default*/;
 
 struct Items
 {
-    Item* auto pHead,* pTail;
+    struct Item* /*auto*/ pHead,* pTail;
 };
 
-void Items_Destroy(Items* pItems) default;
-void Items_PushBack(Items* pItems, Item* pItem) default;
+void Items_Destroy(struct Items* pItems) /*default*/;
+void Items_PushBack(struct Items* pItems, struct Item* pItem) /*default*/;
 
 `;
 
 sample["Initialization"] =
-`struct Point
+`
+struct Point
 {
-  int x = 1;
-  int y = 2;
+  int x /*= 1*/;
+  int y /*= 2*/;
 };
 
 struct Line
 {
-  Point start, end;
+  struct Point start, end;
 };
 
 int main()
 {
-  Point pt = {};
-  Line ln = {};
+  struct Point pt = /*default*/{0};
+  struct Line ln = /*default*/{0};
 }
 `;
 
@@ -140,36 +142,38 @@ sample["Polimorphism"] =
 `
 struct Box
 {
-    int id = 1;
+    int id /*= 1*/;
 };
 
-Box* Box_Create() default;
-void Box_Delete(Box* pBox) default;
+struct Box* Box_Create() /*default*/;
+void Box_Delete(struct Box* pBox) /*default*/;
 
-void Box_Draw(Box* pBox)
+void Box_Draw(struct Box* pBox)
 {
     printf("Box");
 }
 
 struct Circle
 {
-    int id = 2;
+    int id /*= 2*/;
 };
-Circle* Circle_Create() default;
-void Circle_Delete(Circle* pCircle) default;
+struct Circle* Circle_Create() /*default*/;
+void Circle_Delete(struct Circle* pCircle) /*default*/;
 
-void Circle_Draw(Circle* pCircle)
+void Circle_Draw(struct Circle* pCircle)
 {
     printf("Circle");
 }
 
-struct _union(Box | Circle) Shape
+//Shape is a pointer to Box or Circle
+struct /*Box | Circle*/ Shape
 {
     int id;
 };
 
-void Shape_Delete(Shape* pShape) default;
-void Shape_Draw(Shape* pShape) default;
+void Shape_Delete(struct Shape* pShape) /*default*/;
+
+void Shape_Draw(struct Shape* pShape) /*default*/;
 
 `;
 

@@ -1,8 +1,7 @@
 #include "Array.h"
 #include <stdlib.h>
 #include <string.h>
-
-#include "config.h"
+#include <assert.h>
 #include "StringEx.h"
 #include "Mem.h"
 
@@ -54,7 +53,7 @@ void* Array_PopGet(Array* p)
 	}
 	else
 	{
-		ASSERT(false);
+		//assert(false);
 	}
 	return pItem;
 }
@@ -70,7 +69,7 @@ void Array_Pop(Array* p, void(*pfDestroyData)(void*))
 
 void* Array_Top(Array* p)
 {
-    ASSERT(p->size > 0);
+    //assert(p->size > 0);
     return p->pItems[p->size - 1];
 }
 
@@ -177,7 +176,7 @@ void StrArray_Swap(StrArray* p1, StrArray* p2)
 void* Array_PopFront(Array* p)
 {
 	void* pItem = NULL;
-	ASSERT(p->size > 0);
+	//assert(p->size > 0);
 	if (p->size > 0)
 	{
 		pItem = p->pItems[0];

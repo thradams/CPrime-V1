@@ -8,7 +8,7 @@
 
 #include "Mem.h"
 
-void KeyValue_Delete(MapItem2* p) _default
+void KeyValue_Delete(MapItem2* p) /*default*/
 {
     if (p != NULL)
     {
@@ -250,7 +250,7 @@ int Map2_SetAt(Map2* pMap,
   return result;
 }
 
-void Map2_Init(Map2 * p) _default
+void Map2_Init(Map2 * p) /*default*/
 {
     p->pHashTable = NULL;
     p->nHashTableSize = 0;
@@ -264,7 +264,7 @@ void Map2_Swap(Map2 * pA, Map2 * pB)
   *pB = temp;
 }
 
-Map2* Map2_Create(void) _default
+Map2* Map2_Create(void) /*default*/
 {
     Map2 *p = (Map2*) Malloc(sizeof * p);
     if (p != NULL)

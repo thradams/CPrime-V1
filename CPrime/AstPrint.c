@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "AstPrint.h"
 
 bool TFunctionSpecifier_Print(TFunctionSpecifier* p, bool b, FILE* fp);
@@ -269,7 +270,7 @@ bool TStatement_Print(TStatement *  p, bool b, FILE* fp)
         break;
         
         default:
-        ASSERT(false);
+        //assert(false);
         break;
     }
 
@@ -280,7 +281,7 @@ bool TBlockItem_Print(TBlockItem *  p, bool b, FILE* fp)
 {
     if (p == NULL)
     {
-        ASSERT(false);
+        //assert(false);
         return false;
     }
 
@@ -359,7 +360,7 @@ bool TBlockItem_Print(TBlockItem *  p, bool b, FILE* fp)
         break;
 
         default:
-        ASSERT(false);
+        //assert(false);
         break;
     }
 
@@ -407,7 +408,7 @@ bool TPostfixExpressionCore_Print(TPostfixExpressionCore * p, bool b, FILE* fp)
         case TK_MINUSMINUS:
         break;
         default:
-            ASSERT(false);
+            //assert(false);
             break;
     }
 
@@ -455,7 +456,7 @@ bool TExpression_Print(TExpression *  p, const char* name, bool b, FILE* fp)
 {
     if (p == NULL)
     {
-        //ASSERT(false);
+        ////assert(false);
         return b;
     }
 
@@ -584,7 +585,8 @@ bool TExpression_Print(TExpression *  p, const char* name, bool b, FILE* fp)
 
         default:
 
-        ASSERT(false);
+        //assert(false);
+			break;
     }
 
     fprintf(fp, "}");
@@ -800,7 +802,7 @@ bool TInitializer_Print(TInitializer* p, bool b, FILE* fp)
         break;
 
         default:
-        ASSERT(false);
+        //assert(false);
         break;
     }
 
@@ -1043,7 +1045,7 @@ bool SpecifierQualifier_Print(TSpecifierQualifier* pItem, bool b, FILE* fp)
         //  AlignmentSpecifier_Print((TAlignmentSpecifier*)pItem, b, fp);
         //break;
     default:
-        ASSERT(false);
+        //assert(false);
         break;
     }
     return b;
@@ -1089,7 +1091,7 @@ bool TStructDeclaration_Print(TAnyStructDeclaration* p, bool b, FILE* fp)
         break;
 
         default:
-        ASSERT(false);
+        //assert(false);
         break;
     }
 
@@ -1221,7 +1223,7 @@ bool TDeclarationSpecifier_Print(TDeclarationSpecifier* pItem, bool b, FILE* fp)
         break;
 
         default:
-        ASSERT(false);
+        //assert(false);
         break;
         //CASE(TAlignmentSpecifier) :
         //  AlignmentSpecifier_Print((TAlignmentSpecifier*)pItem, b, fp);
@@ -1301,7 +1303,7 @@ bool TAnyDeclaration_Print(TAnyDeclaration *pDeclaration, bool b, FILE* fp)
         break;
 
         default:
-        ASSERT(false);
+        //assert(false);
         break;
     }
 

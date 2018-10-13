@@ -1,13 +1,31 @@
 
-struct Item
+#include "config.h"
+
+struct Item* Item_Create() /*default*/
 {
-	int  i;
-};
+    struct Item* p = (struct Item*) malloc(sizeof * p);
+    if (p)
+    {
+        p->i = 0;
+    }
+    return p;
+}
+void Item_Delete(struct Item* p) /*default*/
+{
+    if (p)
+    {
+        free((void*)p);
+    }
+}
 
 
-struct Items
+void Items_Destroy(struct Items *p) /*default*/
 {
-	struct Item * /*@auto*/ * /*@auto*//*@size(Size)@*/    pData;
-	int Size;
-	int Capacity;
-};
+    for (int i = 0; i < p->Size; i++)
+    {
+        Item_Delete(p->pData[i]);
+    }
+    free((void*)p->pData);
+}
+
+

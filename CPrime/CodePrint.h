@@ -21,8 +21,8 @@ typedef enum
 enum CompilerTarget
 {
 	CompilerTarget_Annotated,
-	CompilerTarget_CXX,
-	CompilerTarget_Preprocessed
+	CompilerTarget_Preprocessed,
+	CompilerTarget_CXX
 };
 
 typedef struct Options
@@ -33,12 +33,12 @@ typedef struct Options
     int IncludeLevel;// = 0;
     ////////////
 	bool bExpandMacros;
-	bool bIncludeComments _defval(1);
+	bool bIncludeComments /*=1*/;
 
 	enum CompilerTarget Target;
 
     //Usado para converter para string 
-    //exemplo unsigned   /*algo*/ int   
+    //exemplo unsigned   /*algo int   
     //tem que imprimir so 'unsigned int'
     bool bPrintRepresentation;
 

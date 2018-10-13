@@ -19,8 +19,6 @@
 #define __ptr64
 
 
-
-
 #pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\shared"
 #pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\um"
 #pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\ucrt" 

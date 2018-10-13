@@ -4,6 +4,7 @@
 #include "Stream.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "Parser.h"
 #include "Mem.h"
 wchar_t BasicScanner_MatchChar(BasicScanner* scanner);
@@ -111,10 +112,7 @@ const char* TokenToString(Tokens tk)
     break;
   case TK_AUTO:
     return "auto";
-  case TK__AUTO:
-    return "_auto";
-  case TK__SIZE:
-    return "_size";
+
   case TK_BREAK:
     return "break";
   case TK_CASE:
@@ -127,10 +125,7 @@ const char* TokenToString(Tokens tk)
     return "continue";
   case TK_DEFAULT:
     return "default";
-  case TK__DEFAULT:
-    return "_default";
-  case TK__DEFVAL:
-    return "_defval";
+
   case TK_DO:
     return "do";
   case TK_DOUBLE:
@@ -279,39 +274,39 @@ const char* TokenToString(Tokens tk)
   case TK_FILE_EOF:
     return "TK_FILE_EOF";
   default:
-    ASSERT(false);
+    //assert(false);
     break;
   }
   return "???";
 }
 
-ScannerItem* ScannerItem_Create(void) _default
+ScannerItem* ScannerItem_Create(void) /*default*/
 {
-  ScannerItem *p = (ScannerItem*)Malloc(sizeof * p);
-  if (p != NULL)
-  {
-    ScannerItem_Init(p);
-  }
-  return p;
+    ScannerItem *p = (ScannerItem*) Malloc(sizeof * p);
+    if (p != NULL)
+    {
+        ScannerItem_Init(p);
+    }
+    return p;
 }
 
-void ScannerItem_Delete(ScannerItem* pScannerItem) _default
+void ScannerItem_Delete(ScannerItem* pScannerItem) /*default*/
 {
-  if (pScannerItem != NULL)
-  {
-    ScannerItem_Destroy(pScannerItem);
-    Free((void*)pScannerItem);
-  }
+    if (pScannerItem != NULL)
+    {
+        ScannerItem_Destroy(pScannerItem);
+        Free((void*)pScannerItem);
+    }
 }
 
-void ScannerItem_Init(ScannerItem* scannerItem) _default
+void ScannerItem_Init(ScannerItem* scannerItem) /*default*/
 {
-  LocalStrBuilder_Init(&scannerItem->lexeme);
-  scannerItem->token = TK_NONE;
-  scannerItem->Line = -1;
-  scannerItem->FileIndex = -1;
-  scannerItem->bActive = 1;
-  scannerItem->pNext = NULL;
+    LocalStrBuilder_Init(&scannerItem->lexeme);
+    scannerItem->token = TK_NONE;
+    scannerItem->Line =  -1;
+    scannerItem->FileIndex =  -1;
+    scannerItem->bActive =  true;
+    scannerItem->pNext = NULL;
 }
 
 void ScannerItem_Reset(ScannerItem* scannerItem)
@@ -336,9 +331,9 @@ void ScannerItem_Swap(ScannerItem* scannerItem,
   LocalStrBuilder_Swap(&scannerItem->lexeme, &other->lexeme);
 }
 
-void ScannerItem_Destroy(ScannerItem* scannerItem) _default
+void ScannerItem_Destroy(ScannerItem* scannerItem) /*default*/
 {
-  LocalStrBuilder_Destroy(&scannerItem->lexeme);
+    LocalStrBuilder_Destroy(&scannerItem->lexeme);
 }
 
 void BasicScanner_InitCore(BasicScanner* pBasicScanner,
@@ -412,19 +407,19 @@ Result BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
 }
 
 
-void BasicScanner_Destroy(BasicScanner* pBasicScanner) _default
+void BasicScanner_Destroy(BasicScanner* pBasicScanner) /*default*/
 {
-  SStream_Destroy(&pBasicScanner->stream);
-  ScannerItem_Destroy(&pBasicScanner->currentItem);
+    SStream_Destroy(&pBasicScanner->stream);
+    ScannerItem_Destroy(&pBasicScanner->currentItem);
 }
 
-void BasicScanner_Delete(BasicScanner* pBasicScanner) _default
+void BasicScanner_Delete(BasicScanner* pBasicScanner) /*default*/
 {
-  if (pBasicScanner != NULL)
-  {
-    BasicScanner_Destroy(pBasicScanner);
-    Free((void*)pBasicScanner);
-  }
+    if (pBasicScanner != NULL)
+    {
+        BasicScanner_Destroy(pBasicScanner);
+        Free((void*)pBasicScanner);
+    }
 }
 
 struct TkPair
@@ -460,8 +455,8 @@ static struct TkPair singleoperators[] =
   {";", TK_SEMICOLON },
   {"=", TK_EQUALS_SIGN},
   {",", TK_COMMA},
-  { "$", TK_DOLLAR_SIGN}
-  //{ "@", TK_COMMERCIAL_AT }
+  { "$", TK_DOLLAR_SIGN},
+  { "@", TK_COMMERCIAL_AT } //pode ser usado em macros pp-tokens
   //  {"...", TK_DOTDOTDOT},//50
   //  {"%:%:", TK_PERCENTCOLONPERCENTCOLON},
   //  {"<<=", TK_LESSLESSEQUAL},
@@ -506,16 +501,12 @@ static struct TkPair keywords[] =
 {
   //keywords
   { "auto", TK_AUTO },
-  { "_auto", TK__AUTO },
-  { "_size", TK__SIZE },
   { "break", TK_BREAK },
   { "case", TK_CASE },
   { "char", TK_CHAR },
   { "const", TK_CONST },
   { "continue", TK_CONTINUE },
   { "default", TK_DEFAULT },
-  { "_default", TK__DEFAULT },
-  { "_defval", TK__DEFVAL},
   { "do", TK_DO },
   { "double", TK_DOUBLE },
   { "else", TK_ELSE },
@@ -898,21 +889,7 @@ void BasicScanner_Next(BasicScanner* scanner)
     }
     return;
   }
-  
-  if (ch == '@')
-  {
-    if (ch1 == '*')
-    {
-      ch = BasicScanner_MatchChar(scanner);
-      ch = BasicScanner_MatchChar(scanner);
-      if (ch == '/')
-      {
-        ch = BasicScanner_MatchChar(scanner);
-        scanner->currentItem.token = TK__CP_END;
-        return;
-      }
-    }
-  }
+
 
 
   //comentario de linha
@@ -936,19 +913,7 @@ void BasicScanner_Next(BasicScanner* scanner)
       ch = BasicScanner_MatchChar(scanner);
       ch = BasicScanner_MatchChar(scanner);
 
-      if (ch == '@')
-      {        
-        ch = BasicScanner_MatchChar(scanner);        
-        if (ch == ' ')
-        {
-          ch = BasicScanner_MatchChar(scanner);
-          //  /*@ = @*/
-          //  /*@ union ( )@*/
-          scanner->currentItem.token = TK__CP_BEGIN;
-          return;
-        }
-      }
-
+      
       for (;;)
       {
         if (ch == '*')
@@ -982,24 +947,10 @@ void BasicScanner_Next(BasicScanner* scanner)
           ch = BasicScanner_MatchChar(scanner);
         }
 
-        if (scanner->currentItem.lexeme.size == strlen("/*@size") &&
-			strcmp(scanner->currentItem.lexeme.c_str, "/*@size") == 0)
-
-		{
-			scanner->currentItem.token = TK__SIZE ;
-			break;
-		}
+     
 
       }
-      //scanner->bLineStart = true;
-      if (strcmp(scanner->currentItem.lexeme.c_str, COMMENT_KEYWORD_DEFAULT) == 0)
-      {
-        scanner->currentItem.token = TK__DEFAULT;
-      }
-      else if (strcmp(scanner->currentItem.lexeme.c_str, COMMENT_KEYWORD_AUTO) == 0)
-      {
-        scanner->currentItem.token = TK__AUTO;
-      }
+    
 
       return;
     }
@@ -1062,7 +1013,7 @@ void BasicScanner_Next(BasicScanner* scanner)
     scanner->currentItem.token = REVERSE_SOLIDUS;
     return;
   }
-  ASSERT(false);
+  //assert(false);
 }
 
 
@@ -1124,7 +1075,7 @@ BasicScanner* BasicScannerStack_PopGet(BasicScannerStack* stack)
 
 void BasicScannerStack_PopIfNotLast(BasicScannerStack* stack)
 {
-  ASSERT(*stack != NULL);
+  //assert(*stack != NULL);
   if ((*stack)->pPrevious != NULL)
   {
     BasicScanner_Delete(BasicScannerStack_PopGet(stack));

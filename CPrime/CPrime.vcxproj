@@ -169,7 +169,6 @@
     <ClInclude Include="AstPrint.h" />
     <ClInclude Include="BasicScanner.h" />
     <ClInclude Include="CodePrint.h" />
-    <ClInclude Include="config.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="LocalStrBuilder.h" />
     <ClInclude Include="Macro.h" />

@@ -1,7 +1,6 @@
 
 //call "Release\CPrime.exe" - config "vs2017.h" 
 
-#pragma source "config.h"
 #pragma source "Mem.h"
 #pragma source "Mem.c"
 #pragma source "Result.h"

@@ -1,11 +1,15 @@
 #pragma once
 
-#ifndef CPRIME
+struct Item
+{
+	int i;
+};
 
-#define _default
-#define _auto
-#define _size(x)
-#define _defval(x)
-#define _union(x)
 
-#endif
+
+struct Items
+{
+	struct Item * /*auto*/ * /*auto [Size]*/ pData;
+	int Size;
+	int Capacity;
+};

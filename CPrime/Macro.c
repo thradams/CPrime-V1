@@ -10,11 +10,12 @@
 #include "Array.h"
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "PPToken.h"
 #include <stdio.h>
 #include "Mem.h"
 
-Macro* Macro_Create(void) _default
+Macro* Macro_Create(void) /*default*/
 {
     Macro *p = (Macro*) Malloc(sizeof * p);
     if (p != NULL)
@@ -28,14 +29,14 @@ Macro* Macro_Create(void) _default
     return p;
 }
 
-void Macro_Destroy(Macro * p) _default
+void Macro_Destroy(Macro * p) /*default*/
 {
     String_Destroy(&p->Name);
     TokenArray_Destroy(&p->TokenSequence);
     TokenArray_Destroy(&p->FormalArguments);
 }
 
-void Macro_Delete(Macro * p) _default
+void Macro_Delete(Macro * p) /*default*/
 {
     if (p != NULL)
     {
@@ -228,7 +229,7 @@ void SubstituteArgs(Macro *pMacro,
     TokenArray_Print(&os);
     //printf("\n");
 
-    assert(head == NULL);
+    //assert(head == NULL);
     head = TokenArray_PopFront(&is);
 
     if (PPToken_IsStringizingOp(head))
@@ -417,7 +418,7 @@ void SubstituteArgs(Macro *pMacro,
     TokenArray_PushBack(&os, head);
     head = NULL; //moved
   }
-  assert(head == NULL);
+  //assert(head == NULL);
   TokenArray os2 = TOKENARRAY_INIT;
   HidenSetAdd(hs, &os, &os2);
 
@@ -772,7 +773,7 @@ void ExpandMacro(const TokenArray* tsOriginal,
     TokenArray_Print(&r);
     //printf("\n");
 
-    assert(pHead == NULL);
+    //assert(pHead == NULL);
     pHead =
       TokenArray_PopFront(&ts);
 
@@ -948,7 +949,7 @@ void ExpandMacro(const TokenArray* tsOriginal,
     TokenArray_Destroy(&removed_spaces);
   }
 
-  assert(pHead == NULL);
+  //assert(pHead == NULL);
 
   TokenArray_Swap(&r, pOutputSequence2);
 

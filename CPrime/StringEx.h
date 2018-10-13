@@ -2,7 +2,6 @@
 #pragma once
 
 #include <stdbool.h>
-#include "config.h"
 #include "Result.h"
 #include "StringEx.h"
 

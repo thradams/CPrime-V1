@@ -3,7 +3,7 @@
 #include "StrBuilder.h"
 #include <string.h>
 #include <stdlib.h>
-
+#include <assert.h>
 #include <stdlib.h>
 
 #include <string.h>
@@ -19,7 +19,7 @@
 
 #include "Mem.h"
 
-void StrBuilder_Init(StrBuilder* p) _default
+void StrBuilder_Init(StrBuilder* p) /*default*/
 {
     p->c_str = NULL;
     p->size = 0;
@@ -206,7 +206,7 @@ void StrBuilder_Attach(StrBuilder* pStrBuilder,
 {
   if (psz != NULL)
   {
-    ASSERT(nBytes > 0);
+    //assert(nBytes > 0);
     StrBuilder_Destroy(pStrBuilder);
     pStrBuilder->c_str = psz;
     pStrBuilder->capacity = nBytes - 1;
