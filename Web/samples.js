@@ -22,7 +22,47 @@ int main()
 }
 `;
 
+sample["Decopling"] =
+`
+// -- header file -- 
 
+typedef char * /*auto*/ String;
+
+struct X
+{
+    String Name;
+    int i;
+};
+
+struct Y
+{
+  int i;
+  struct X x; //try comment this line
+}
+
+void Y_Init(struct Y * p);
+void Y_Destroy(struct Y * p);
+
+int main()
+{
+    return 1;
+}
+
+//-- implementation file --
+
+void Y_Init(struct Y * p) /*default*/
+{
+    p->i = 0;
+    p->x.Name = 0;
+    p->x.i = 0;
+}
+
+void Y_Destroy(struct Y * p) /*default*/
+{
+    free((void*)p->x.Name);
+}
+
+`
 sample["Dynamic Array of int"] =
     `
 struct Items
