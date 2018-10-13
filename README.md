@@ -5,62 +5,45 @@
 
 ## Description
 
-C' (pronounced c prime) is C language transpiler that extends the C language with some concepts like constructor/destructor,lambdas, polimorphism ,"auto pointers", "sized pointers" and containers.
+Have you ever imagined in do pair programming with an robot? Now you can.
+
+C' (pronounced c prime) is C language transpiler that read comments in your code and can be responsable to implement and maitaing some parts of your code.
+
+* It can generate constructors and destructors 
+* it can generate the operator new and delete (similarly of C++).
+* It can generate polimorphic functions.
+* It can help with lamddas and initialization
 
 The best introduction is to try the samples online.
 http://www.thradams.com/web/cprime.html
 
-The compiler can understand the "extended C language" and output "C with annotations" and vice versa.
-
-CPrime itself is written in annotated C and compiled to annotated C. I know this is complicated, see the demo online and use swap button.
+CPrime itself is written using the code generation. Some files are 60% generated.
 
 ## Features 
 
 ### Especial functions
 The compiler can generate something similar of C++ constructor,destructor, operator new and operator delete.
 
-To generate these functions use **default** at the end of function declaration. 
+To generate these functions use the comment **/*default*/** at the end of function declaration. 
 
 The name of the functions and signature are used to undestand what you want to generate. 
 
 Use XXX_Create for "operator new", XXX_Init for constructor, XXX_Destroy for destructor and XXX_Delete for operator delete. 
 
 
-Sample CXX input:
+Sample input with comments:
 
 ```c
 
-typedef char * auto String;
+typedef char * /*auto*/ String;
+
 struct X
 {
     String Name;
     int i;
 };
 
-X * X_Create() default;
-void X_Init(X * p) default;
-void X_Destroy(X * p) default;
-void X_Delete(X * p) default;
-
-int main()
-{
-    X x = {};
-    return 1;
-}
-
-```
-Annotated C output:
-
-```c
-
-typedef char * /*@auto*/ String;
-struct X
-{
-    String Name;
-    int i;
-};
-
-struct X * X_Create() /*@default*/
+struct X * X_Create() /*default*/
 {
     struct X *p = (struct X *) malloc(sizeof * p);
     if (p)
@@ -69,16 +52,19 @@ struct X * X_Create() /*@default*/
     }
     return p;
 }
-void X_Init(struct X * p) /*@default*/
+
+void X_Init(struct X * p) /*default*/
 {
     p->Name = 0;
     p->i = 0;
 }
-void X_Destroy(struct X * p) /*@default*/
+
+void X_Destroy(struct X * p) /*default*/
 {
     free((void*)p->Name);
 }
-void X_Delete(struct X * p) /*@default*/
+
+void X_Delete(struct X * p) /*default*/
 {
     if (p)
     {
@@ -89,12 +75,13 @@ void X_Delete(struct X * p) /*@default*/
 
 int main()
 {
-    struct X x =/*@default*/ {0};
+    struct X x = /*default*/{0};
     return 1;
 }
 
+
 ```
-The **auto** type qualifier is a qualifier that can be applied to pointers. When a pointer has auto it means that the pointer
+The **/*auto*/** type qualifier is a qualifier that can be applied to pointers. When a pointer has auto it means that the pointer
 is the **owner of the pointed object**. This information is used to generate destructors.
 See the declaration of String and the generated destructor X_Destroy.
 
@@ -110,48 +97,7 @@ struct Item
 };
 
 
-Item* Item_Create() default;
-void Item_Delete(Item* p) default;
-
-struct Items
-{
-	Item * auto * auto sizeof(Size) pData;
-	int Size;
-	int Capacity;
-};
-
-
-void Items_PushBack(Items* pItems, Item* pItem) default;
-void Items_Destroy(Items* pItems) default;
-
-
-int main(int argc, char **argv)
-{
-	Items items = {};
-
-	Items_PushBack(&items, Item_Create());
-	Items_PushBack(&items, Item_Create());
-	Items_PushBack(&items, Item_Create());
-
-	for (int i = 0; i < items.Size; i++)
-	{
-		printf("%d\n", items.pData[i]->i);
-	}
-
-	Items_Destroy(&items);
-	return 0;
-}
-
-```
-```c
-
-struct Item
-{
-	int i;
-};
-
-
-struct Item* Item_Create() /*@default*/
+struct Item* Item_Create() /*default*/
 {
     struct Item* p = (struct Item*) malloc(sizeof * p);
     if (p)
@@ -160,7 +106,7 @@ struct Item* Item_Create() /*@default*/
     }
     return p;
 }
-void Item_Delete(struct Item* p) /*@default*/
+void Item_Delete(struct Item* p) /*default*/
 {
     if (p)
     {
@@ -170,13 +116,13 @@ void Item_Delete(struct Item* p) /*@default*/
 
 struct Items
 {
-	struct Item * /*@auto*/ * /*@auto*/ /*@size(Size)@*/ pData;
+	struct Item * /*auto*/ * /*auto [Size]*/ pData;
 	int Size;
 	int Capacity;
 };
 
 
-void Items_PushBack(struct Items* pItems, struct Item* pItem) /*@default*/
+void Items_PushBack(struct Items* pItems, struct Item* pItem) /*default*/
 {
     if (pItems->Size + 1 > pItems->Capacity)
     {
@@ -196,7 +142,7 @@ void Items_PushBack(struct Items* pItems, struct Item* pItem) /*@default*/
     pItems->pData[pItems->Size] = pItem;
     pItems->Size++;
 }
-void Items_Destroy(struct Items* pItems) /*@default*/
+void Items_Destroy(struct Items* pItems) /*default*/
 {
     for (int i = 0; i < pItems->Size; i++)
     {
@@ -208,7 +154,7 @@ void Items_Destroy(struct Items* pItems) /*@default*/
 
 int main(int argc, char **argv)
 {
-	struct Items items =/*@default*/ {0};
+	struct Items items = /*default*/{0};
 
 	Items_PushBack(&items, Item_Create());
 	Items_PushBack(&items, Item_Create());
@@ -225,33 +171,17 @@ int main(int argc, char **argv)
 
 
 ```
+
+```
 ### Initialization
 Struct data members can have initializers. This initializers are used to generate special functions and for the default initialization.
 
 ```c
+
 struct Point
 {
-  int x = 1;
-  int y = 2;
-};
-
-struct Line
-{
-  Point start, end;
-};
-
-int main()
-{
-  Point pt = {};
-  Line ln = {};
-}
-```
-
-```c
-struct Point
-{
-  int x /*@ = 1@*/;
-  int y /*@ = 2@*/;
+  int x /*= 1*/;
+  int y /*= 2*/;
 };
 
 struct Line
@@ -261,61 +191,23 @@ struct Line
 
 int main()
 {
-  struct Point pt =/*@default*/ {/*.x=*/ 1, /*.y=*/ 2};
-  struct Line ln =/*@default*/ {{/*.x=*/ 1, /*.y=*/ 2}, {/*.x=*/ 1, /*.y=*/ 2}};
+  struct Point pt = /*default*/{/*.x=*/ 1, /*.y=*/ 2};
+  struct Line ln = /*default*/{{/*.x=*/ 1, /*.y=*/ 2}, {/*.x=*/ 1, /*.y=*/ 2}};
 }
+
 
 ```
 ### Polimorphism
 
 ```c
 
-struct Box
-{
-    int id = 1;
-};
-
-Box* Box_Create() default;
-void Box_Delete(Box* pBox) default;
-
-void Box_Draw(Box* pBox)
-{
-    printf("Box");
-}
-
-struct Circle
-{
-    int id = 2;
-};
-Circle* Circle_Create() default;
-void Circle_Delete(Circle* pCircle) default;
-
-void Circle_Draw(Circle* pCircle)
-{
-    printf("Circle");
-}
-
-struct _union(Box | Circle) Shape
-{
-    int id;
-};
-
-void Shape_Delete(Shape* pShape) default;
-void Shape_Draw(Shape* pShape) default;
-
-
-```
-
-Output:
-
-```c
 
 struct Box
 {
-    int id /*@ = 1@*/;
+    int id /*= 1*/;
 };
 
-struct Box* Box_Create() /*@default*/
+struct Box* Box_Create() /*default*/
 {
     struct Box* p = (struct Box*) malloc(sizeof * p);
     if (p)
@@ -324,7 +216,7 @@ struct Box* Box_Create() /*@default*/
     }
     return p;
 }
-void Box_Delete(struct Box* pBox) /*@default*/
+void Box_Delete(struct Box* pBox) /*default*/
 {
     if (pBox)
     {
@@ -339,9 +231,9 @@ void Box_Draw(struct Box* pBox)
 
 struct Circle
 {
-    int id /*@ = 2@*/;
+    int id /*= 2*/;
 };
-struct Circle* Circle_Create() /*@default*/
+struct Circle* Circle_Create() /*default*/
 {
     struct Circle* p = (struct Circle*) malloc(sizeof * p);
     if (p)
@@ -350,7 +242,7 @@ struct Circle* Circle_Create() /*@default*/
     }
     return p;
 }
-void Circle_Delete(struct Circle* pCircle) /*@default*/
+void Circle_Delete(struct Circle* pCircle) /*default*/
 {
     if (pCircle)
     {
@@ -363,12 +255,13 @@ void Circle_Draw(struct Circle* pCircle)
     printf("Circle");
 }
 
-struct /*@ _union(Box | Circle)@*/ Shape
+//Shape is a pointer to Box or Circle
+struct /*Box | Circle*/ Shape
 {
     int id;
 };
 
-void Shape_Delete(struct Shape* pShape) /*@default*/
+void Shape_Delete(struct Shape* pShape) /*default*/
 {
     if (pShape)
     {
@@ -385,7 +278,8 @@ void Shape_Delete(struct Shape* pShape) /*@default*/
             }
     }
 }
-void Shape_Draw(struct Shape* pShape) /*@default*/
+
+void Shape_Draw(struct Shape* pShape) /*default*/
 {
     switch (pShape->id)
     {
@@ -399,15 +293,12 @@ void Shape_Draw(struct Shape* pShape) /*@default*/
         break;
     }
 }
-
-
 ```
+
 
 ### Lambdas 
 Lambdas without capture are implemented using C++ syntax.
-
-The annotated C version of lambdas is not suporting going back to source yet.
-I hope to implement this soon.
+This is one way operation.
 
 Input
 
