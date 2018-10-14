@@ -18,7 +18,7 @@ C' (pronounced c prime) is C language transpiler that read comments in your code
 The best introduction is to try the samples online.
 http://www.thradams.com/web/cprime.html
 
-CPrime itself is written using the code generation. Some files are 60% generated.
+CPrime is written using itself. Some files are 60% generated, see Ast.h and Ast.c.
 
 ### Using this tool you achieve decoupling because you don´t have to implement the mechanical relationship between objects.
 
