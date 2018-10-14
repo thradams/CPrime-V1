@@ -6,6 +6,7 @@
 #include "Path.h"
 #include "Mem.h"
 #include <string.h>
+#include <ctype.h>
 
  char *strdup(const char *s) {
   char *d = malloc(strlen(s) + 1);

@@ -1206,7 +1206,7 @@ typedef struct
 
 void TDeclarations_Destroy(TDeclarations* p);
 void TDeclarations_Init(TDeclarations* p);
-void TDeclarations_PushBack(TDeclarations* p, TDeclaration* pItem);
+void TDeclarations_PushBack(TDeclarations* p, TAnyDeclaration* pItem);
 
 typedef struct TGroupDeclaration
 {

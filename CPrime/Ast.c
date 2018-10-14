@@ -44,7 +44,7 @@ void TDeclarations_Reserve(TDeclarations* p, int n) /*default*/
         }
     }
 }
-void TDeclarations_PushBack(TDeclarations* p, TDeclaration* pItem) /*default*/
+void TDeclarations_PushBack(TDeclarations* p, TAnyDeclaration* pItem) /*default*/
 {
     if (p->Size + 1 > p->Capacity)
     {
