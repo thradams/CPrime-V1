@@ -1627,8 +1627,7 @@ bool TPointerList_IsAutoPointer(TPointerList* pPointerlist)
 			for (int i = 0; i < pItem->Qualifier.Size; i++)
 			{
 				TTypeQualifier* pQualifier = pItem->Qualifier.Data[i];
-				if (IsAutoToken(pQualifier->Token) ||
-					pQualifier->Token == TK_OWN_QUALIFIER)
+				if (IsAutoToken(pQualifier->Token))
 				{
 					bIsAuto = true;
 					break;

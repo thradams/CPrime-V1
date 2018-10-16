@@ -7,8 +7,6 @@
 #include "LocalStrBuilder.h"
 #define LANGUAGE_EXTENSIONS
 //
-#define COMMENT_KEYWORD_AUTO "/*@auto*/"
-#define COMMENT_KEYWORD_DEFAULT "/*@default*/"
 
 
 typedef enum
@@ -195,15 +193,6 @@ typedef enum
     
 } Tokens;
 
-//APELIDOS PARA TOKENS
-//type-qualifier-extensions
-#define TK_OPT_QUALIFIER   TK_QUESTION_MARK
-#define TK_OWN_QUALIFIER   TK_CIRCUMFLEX_ACCENT
-#define TK_DTOR_QUALIFIER  TK_PERCENT_SIGN
-#define TK_MDTOR_QUALIFIER TK_VERTICAL_LINE
-
-//
-#define TK_MOVE TK_ANDAND
 
 typedef struct ScannerItem
 {

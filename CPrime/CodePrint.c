@@ -1245,7 +1245,7 @@ static void TInitializerList_CodePrint(TProgram* program,
 	{
 		if (options->Target == CompilerTarget_Annotated)
 		{
-			Output_Append(fp, options, COMMENT_KEYWORD_DEFAULT);
+			//Output_Append(fp, options, COMMENT_KEYWORD_DEFAULT);
 		}
 		//a partir de {} e um tipo consegue gerar o final  
 		StrBuilder sb = STRBUILDER_INIT;
