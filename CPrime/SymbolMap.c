@@ -400,7 +400,7 @@ int SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 
         while (pBucket)
         {
-			if (pBucket->pValue->Type == TStructUnionSpecifier_ID &&
+			/*if (pBucket->pValue->Type == TStructUnionSpecifier_ID &&
 				strcmp(pBucket->Key, identifierName) == 0)
 			{
 				TStructUnionSpecifier* p = (TStructUnionSpecifier*)pBucket->pValue;
@@ -408,7 +408,8 @@ int SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 				 //continua para dar preferencia para typedef
 				//break;
 			}
-			else if (pBucket->pValue->Type == TEnumSpecifier_ID &&
+			else
+            if (pBucket->pValue->Type == TEnumSpecifier_ID &&
 				strcmp(pBucket->Key, identifierName) == 0)
 			{
 				bIsTypeName = 4;
@@ -416,7 +417,7 @@ int SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 				//continua para dar preferencia para typedef
 			}
 			
-			else
+			else*/
             if (pBucket->pValue->Type == TDeclaration_ID &&
                 strcmp(pBucket->Key, identifierName) == 0)
             {
