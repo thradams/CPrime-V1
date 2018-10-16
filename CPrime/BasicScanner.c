@@ -556,8 +556,7 @@ static struct TkPair keywords[] =
   { "_Static_assert", TK__STATIC_ASSERT },
   { "_Thread_local", TK__THREAD_LOCAL },
   //
-  { "__asm", TK__ASM }, //visual studio
-  {"class", TK_CLASS}
+  { "__asm", TK__ASM } //visual studio
 
 };
 void BasicScanner_Next(BasicScanner* scanner);

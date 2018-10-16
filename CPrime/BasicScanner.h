@@ -167,10 +167,7 @@ typedef enum
 
     ///
     TK__ASM, //visual c++    
-    TK_CLASS,
-
-      //
-
+   
     //Tokens para linhas do pre processador
     TK_PRE_INCLUDE,
     TK_PRE_PRAGMA,
