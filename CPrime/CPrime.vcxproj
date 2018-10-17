@@ -178,7 +178,6 @@
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="PPToken.h" />
-    <ClInclude Include="Result.h" />
     <ClInclude Include="Scanner.h" />
     <ClInclude Include="StrBuilder.h" />
     <ClInclude Include="Stream.h" />

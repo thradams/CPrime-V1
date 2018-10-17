@@ -5,9 +5,9 @@
 #include "StringEx.h"
 #include "Mem.h"
 
-Result Array_Reserve(Array* p, int nelements)
+bool Array_Reserve(Array* p, int nelements)
 {
-    Result result = RESULT_OK;
+    bool result = true;
     if(nelements > p->capacity)
     {
         void** pnew = p->pItems;
@@ -19,16 +19,16 @@ Result Array_Reserve(Array* p, int nelements)
         }
         else
         {
-            result = RESULT_OUT_OF_MEM;
+            result = false /*nomem*/;
         }
     }
     return result;
 }
 
 
-Result Array_Grow(Array* p, int nelements)
+bool Array_Grow(Array* p, int nelements)
 {
-    Result result = RESULT_OK;
+    bool result = true;
     if(nelements > p->capacity)
     {
         int new_nelements = p->capacity + p->capacity / 2;
@@ -73,10 +73,10 @@ void* Array_Top(Array* p)
     return p->pItems[p->size - 1];
 }
 
-Result Array_Push(Array* p, void* pItem)
+bool Array_Push(Array* p, void* pItem)
 {
-    Result result = Array_Grow(p, p->size + 1);
-    if(result == RESULT_OK)
+    bool result = Array_Grow(p, p->size + 1);
+    if(result == true)
     {
         p->pItems[p->size] = pItem;
         p->size++;
@@ -124,24 +124,24 @@ void Array_Swap(Array* p1, Array* p2)
 }
 
 
-Result StrArray_Reserve(StrArray* p, int nelements)
+bool StrArray_Reserve(StrArray* p, int nelements)
 {
     return Array_Reserve((Array*)p, nelements);
 }
 
-Result StrArray_Push(StrArray* p, const char* pItem)
+bool StrArray_Push(StrArray* p, const char* pItem)
 {
     String s;
     String_InitWith(&s, pItem);
     
     {
-        Result result = Array_Push((Array*)p, s);
-        if(result != RESULT_OK)
+        bool result = Array_Push((Array*)p, s);
+        if(result != true)
         {
             String_Destroy(&s);
         }
     }
-    return RESULT_OK;
+    return true;
 }
 
 static void Array_DeleteStrVoid(void* p)

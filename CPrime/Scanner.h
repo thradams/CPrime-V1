@@ -23,9 +23,9 @@ void TFile_Delete(TFile* p);
 typedef Map TFileMap;
 
 void TFileMap_Destroy(TFileMap* p);
-Result TFileMap_Set(TFileMap *map, const char*key, TFile *data);
+bool TFileMap_Set(TFileMap *map, const char*key, TFile *data);
 TFile*  TFileMap_Find(TFileMap* map, const char* key);
-Result TFileMap_DeleteItem(TFileMap *map, const char* key);
+bool TFileMap_DeleteItem(TFileMap *map, const char* key);
 void TFile_DeleteVoid(void* p);
 
 
@@ -113,14 +113,14 @@ void Scanner_SetError(Scanner* pScanner, const char* fmt, ...);
 void Scanner_GetFilePositionString(Scanner* pScanner, StrBuilder* sb);
 
 
-Result Scanner_InitString(Scanner* pScanner,
+bool Scanner_InitString(Scanner* pScanner,
   const char* name,
   const char* Text);
 
-Result PushExpandedMacro(Scanner * pScanner, const char * defineName, const char * defineContent);
+bool PushExpandedMacro(Scanner * pScanner, const char * defineName, const char * defineContent);
 
 
-Result Scanner_Init(Scanner* pScanner);
+bool Scanner_Init(Scanner* pScanner);
 
 typedef enum
 {

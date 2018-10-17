@@ -66,7 +66,7 @@ int IsTypeName(Parser* ctx, Tokens token, const char * lexeme);
 
 
 
-Result Parser_InitString(Parser* parser,
+bool Parser_InitString(Parser* parser,
     const char* name,
     const char* Text)
 {
@@ -92,10 +92,10 @@ Result Parser_InitString(Parser* parser,
     Parser_Match(parser, &clueList0);
     TScannerItemList_Destroy(&clueList0);
 
-    return RESULT_OK;
+    return true;
 }
 
-Result Parser_InitFile(Parser* parser, const char* fileName)
+bool Parser_InitFile(Parser* parser, const char* fileName)
 {
 
 
@@ -125,7 +125,7 @@ Result Parser_InitFile(Parser* parser, const char* fileName)
     Parser_Match(parser, &clueList0);
     TScannerItemList_Destroy(&clueList0);
 
-    return RESULT_OK;
+    return true;
 }
 
 void Parser_PushFile(Parser* parser, const char* fileName)

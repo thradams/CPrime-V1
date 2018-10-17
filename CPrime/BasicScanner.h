@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "StrBuilder.h"
 #include "Stream.h"
-#include "Result.h"
+
 #include "Array.h"
 #include "LocalStrBuilder.h"
 #define LANGUAGE_EXTENSIONS
@@ -240,16 +240,16 @@ bool        BasicScanner_IsLexeme(BasicScanner* scanner, const char* psz);
 //void        BasicScanner_Match(BasicScanner* scanner);
 void        BasicScanner_Match(BasicScanner* scanner);
 bool         BasicScanner_MatchToken(BasicScanner* scanner, Tokens token);
-Result      BasicScanner_InitFile(BasicScanner* pScanner, const char* fileName);
-Result      BasicScanner_CreateFile(const char* fileName, BasicScanner** pp);
+bool      BasicScanner_InitFile(BasicScanner* pScanner, const char* fileName);
+bool      BasicScanner_CreateFile(const char* fileName, BasicScanner** pp);
 void        BasicScanner_Delete(BasicScanner* pScanner);
 
-Result BasicScanner_Init(BasicScanner* pScanner,
+bool BasicScanner_Init(BasicScanner* pScanner,
                          const char* name,
                          const char* Text,
                          BasicScannerType Type);
 
-Result BasicScanner_Create(BasicScanner** pp,
+bool BasicScanner_Create(BasicScanner** pp,
                            const char* name, 
                            const char* Text,
                            BasicScannerType Type);

@@ -349,36 +349,36 @@ void BasicScanner_InitCore(BasicScanner* pBasicScanner,
   pBasicScanner->currentItem.token = TK_BOF;
 }
 
-Result BasicScanner_Init(BasicScanner* pBasicScanner,
+bool BasicScanner_Init(BasicScanner* pBasicScanner,
   const char* name,
   const char* Text,
   BasicScannerType type)
 {
   BasicScanner_InitCore(pBasicScanner, type);
   bool b = SStream_Init(&pBasicScanner->stream, name, Text);
-  return b ? RESULT_OK : RESULT_FAIL;
+  return b ? true : false;
 }
 
-Result BasicScanner_InitFile(BasicScanner* pBasicScanner,
+bool BasicScanner_InitFile(BasicScanner* pBasicScanner,
   const char* fileName)
 {
   BasicScanner_InitCore(pBasicScanner, BasicScannerType_File);
   
   bool b = SStream_InitFile(&pBasicScanner->stream, fileName);
-  return b ? RESULT_OK : RESULT_FAIL;
+  return b ? true : false;
 }
 
-Result BasicScanner_Create(BasicScanner** pp,
+bool BasicScanner_Create(BasicScanner** pp,
   const char* name,
   const char* Text,
   BasicScannerType Type)
 {
-  Result result = RESULT_OUT_OF_MEM;
+  bool result = false /*nomem*/;
   BasicScanner* p = (BasicScanner*)Malloc(sizeof(BasicScanner));
   if (p)
   {
     result = BasicScanner_Init(p, name, Text, Type);
-    if (result == RESULT_OK)
+    if (result == true)
     {
       *pp = p;
     }
@@ -390,14 +390,14 @@ Result BasicScanner_Create(BasicScanner** pp,
   return result;
 }
 
-Result BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
+bool BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
 {
-  Result result = RESULT_OUT_OF_MEM;
+  bool result = false /*nomem*/;
   BasicScanner* p = (BasicScanner*)Malloc(sizeof(BasicScanner));
   if (p)
   {
     result = BasicScanner_InitFile(p, fileName);
-    if (result == RESULT_OK)
+    if (result == true)
     {
       *pp = p;
     }

@@ -259,14 +259,14 @@ void TFileArray_PushBack(TFileArray* p, TFile* pItem) /*default*/
     p->Size++;
 }
 
-Result TFileMap_Set(TFileMap* map, const char* key, TFile* pFile)
+bool TFileMap_Set(TFileMap* map, const char* key, TFile* pFile)
 {
   // tem que ser case insensitive!
   //assert(IsFullPath(key));
   // converter
   // Ajusta o file index de acordo com a entrada dele no mapa
   pFile->FileIndex = map->Size;
-  Result result = Map_Set(map, key, pFile);
+  bool result = Map_Set(map, key, pFile);
   String_Set(&pFile->FullPath, key);
   return result;
 }
@@ -277,7 +277,7 @@ TFile* TFileMap_Find(TFileMap* map, const char* key)
   return (TFile*)Map_Find2(map, key);
 }
 
-Result TFileMap_DeleteItem(TFileMap* map, const char* key)
+bool TFileMap_DeleteItem(TFileMap* map, const char* key)
 {
   return Map_DeleteItem(map, key, TFile_DeleteVoid);
 }
@@ -426,7 +426,7 @@ void Scanner_PrintDebug(Scanner* pScanner)
   printf("---\n");
 }
 
-static Result AddStandardMacro(Scanner* pScanner, const char* name,
+static bool AddStandardMacro(Scanner* pScanner, const char* name,
   const char* value)
 {
   Macro* pDefine1 = Macro_Create();
@@ -436,12 +436,12 @@ static Result AddStandardMacro(Scanner* pScanner, const char* name,
     PPToken_Create(value, PPTokenType_Other));
   pDefine1->FileIndex = 0;
   MacroMap_SetAt(&pScanner->Defines2, name, pDefine1);
-  return RESULT_OK;
+  return true;
 }
 static void Scanner_PushToken(Scanner* pScanner, Tokens token,
   const char* lexeme, bool bActive);
 
-static Result Scanner_InitCore(Scanner* pScanner)
+static bool Scanner_InitCore(Scanner* pScanner)
 {
   TScannerItemList_Init(&pScanner->AcumulatedTokens);
 
@@ -480,36 +480,36 @@ static Result Scanner_InitCore(Scanner* pScanner)
 
   Scanner_PushToken(pScanner, TK_BOF, "", true);
 
-  return RESULT_OK;
+  return true;
 }
 
-Result Scanner_InitString(Scanner* pScanner, const char* name,
+bool Scanner_InitString(Scanner* pScanner, const char* name,
   const char* Text)
 {
   Scanner_InitCore(pScanner);
 
   BasicScanner* pNewScanner;
-  Result result =
+  bool result =
     BasicScanner_Create(&pNewScanner, name, Text, BasicScannerType_Macro);
   BasicScannerStack_Push(&pScanner->stack, pNewScanner);
   return result;
 }
 
-Result PushExpandedMacro(Scanner* pScanner,
+bool PushExpandedMacro(Scanner* pScanner,
 
   const char* callString,
   const char* defineContent)
 {
   if (pScanner->bError)
   {
-    return RESULT_FAIL;
+    return false;
   }
 
   BasicScanner* pNewScanner;
-  Result result = BasicScanner_Create(&pNewScanner, callString, /*defineName*/
+  bool result = BasicScanner_Create(&pNewScanner, callString, /*defineName*/
     defineContent, BasicScannerType_Macro);
 
-  if (result == RESULT_OK)
+  if (result == true)
   {
     pNewScanner->bMacroExpanded = true;
     BasicScanner_Match(pNewScanner); // inicia
@@ -691,9 +691,9 @@ void Scanner_IncludeFile(Scanner* pScanner, const char* includeFileName,
       }
 
       BasicScanner* pNewScanner = NULL;
-      Result result = BasicScanner_CreateFile(fullPath, &pNewScanner);
+      bool result = BasicScanner_CreateFile(fullPath, &pNewScanner);
 
-      if (result == RESULT_OK)
+      if (result == true)
       {
         if (pFile)
         {
@@ -735,7 +735,7 @@ const char* Scanner_GetStreamName(Scanner* pScanner)
   return streamName;
 }
 
-Result Scanner_Init(Scanner* pScanner)
+bool Scanner_Init(Scanner* pScanner)
 {
   return Scanner_InitCore(pScanner);
 }

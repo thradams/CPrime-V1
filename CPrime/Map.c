@@ -32,9 +32,9 @@ static uint32_t HashFunc(const char* a)
     return hash;
 }
 
-Result Bucket_Reserve(Bucket* p, int nelements);
+bool Bucket_Reserve(Bucket* p, int nelements);
 
-Result BucketItem_InitMoveKey(BucketItem* node,
+bool BucketItem_InitMoveKey(BucketItem* node,
                               int hash,
                               String* key /*in out*/,
                               void* data)
@@ -45,11 +45,11 @@ Result BucketItem_InitMoveKey(BucketItem* node,
     String_InitWith(&node->key, NULL);
     String_Swap(&node->key, key);
 
-    return RESULT_OK;
+    return true;
 }
 
 
-Result BucketItem_Init(BucketItem* node,
+bool BucketItem_Init(BucketItem* node,
                        int hash,
                        const char* key,
                        void* data)
@@ -57,15 +57,15 @@ Result BucketItem_Init(BucketItem* node,
     String_InitWith(&node->key, key);
     node->data = data;
     node->hash = hash;
-    return RESULT_OK;
+    return true;
 }
 
-Result BucketItem_CreateMoveKey(BucketItem** pp,
+bool BucketItem_CreateMoveKey(BucketItem** pp,
                                 int hash,
                                 String* key,
                                 void* data)
 {
-    Result result = RESULT_OUT_OF_MEM;
+    bool result = false /*nomem*/;
     BucketItem* node = (BucketItem*)Malloc(sizeof(BucketItem) * 1);
     if (node)
     {
@@ -74,16 +74,16 @@ Result BucketItem_CreateMoveKey(BucketItem** pp,
                                key,
                                data);
         *pp = node;
-        result = RESULT_OK;
+        result = true;
     }
     return result;
 }
 
-Result BucketItem_Change(BucketItem* p,
+bool BucketItem_Change(BucketItem* p,
                          void* data)
 {
     p->data = data;
-    return RESULT_OK;
+    return true;
 }
 
 void BucketItem_Destroy(BucketItem* node, void(*pfDestroyData)(void*))
@@ -104,9 +104,9 @@ void BucketItem_Delete(BucketItem* p, void(*pfDestroyData)(void*))
     }
 }
 
-Result Bucket_Init(Bucket* p, int capacity)
+bool Bucket_Init(Bucket* p, int capacity)
 {
-    Result result = RESULT_OK;
+    bool result = true;
     p->data = NULL;
     p->size = 0;
     p->capacity = 0;
@@ -119,14 +119,14 @@ Result Bucket_Init(Bucket* p, int capacity)
     return result;
 }
 
-Result Bucket_Create(Bucket** pp)
+bool Bucket_Create(Bucket** pp)
 {
-    Result result = RESULT_OUT_OF_MEM;
+    bool result = false /*nomem*/;
     Bucket*  p = (Bucket*)Malloc(sizeof(Bucket) * 1);
     if (p)
     {
         result = Bucket_Init(p, 0);
-        if (result == RESULT_OK)
+        if (result == true)
         {
             *pp = p;
             p = NULL;
@@ -157,9 +157,9 @@ void Bucket_Delete(Bucket* p, void(*pfDestroyData)(void*))
 }
 
 
-Result Bucket_Reserve(Bucket* p, int nelements)
+bool Bucket_Reserve(Bucket* p, int nelements)
 {
-    Result r = RESULT_OK;
+    bool r = true;
 
     if (nelements > p->capacity)
     {
@@ -179,15 +179,15 @@ Result Bucket_Reserve(Bucket* p, int nelements)
         else
         {
             //assert(false);
-            r = RESULT_OUT_OF_MEM;
+            r = false /*nomem*/;
         }
     }
 
     return r;
 }
-static Result Grow(Bucket* p, int nelements)
+static bool Grow(Bucket* p, int nelements)
 {
-    Result r = RESULT_OK;
+    bool r = true;
 
     if (nelements > p->capacity)
     {
@@ -204,11 +204,11 @@ static Result Grow(Bucket* p, int nelements)
     return r;
 }
 
-Result Bucket_Append(Bucket* p, BucketItem* pItem)
+bool Bucket_Append(Bucket* p, BucketItem* pItem)
 {
-    Result result = Grow(p, p->size + 1);
+    bool result = Grow(p, p->size + 1);
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
         p->data[p->size] = pItem;
         p->size++;
@@ -233,7 +233,7 @@ static int FindNodeIndex(Bucket* bucket, uint32_t hash, const char* key)
     return -1;
 }
 
-Result RemoveBucketItem(Bucket* bucket,
+bool RemoveBucketItem(Bucket* bucket,
                         uint32_t hash,
                         const char* key,
                         void** ppData)
@@ -242,9 +242,9 @@ Result RemoveBucketItem(Bucket* bucket,
     *ppData = NULL; //out
 
     int index = FindNodeIndex(bucket, hash, key);
-    Result result = index != -1 ? RESULT_OK : RESULT_FAIL;
+    bool result = index != -1 ? true : false;
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
         //ponteiro de item que vai ser removido (out)
         *ppData = bucket->data[index]->data;
@@ -266,10 +266,10 @@ Result RemoveBucketItem(Bucket* bucket,
 }
 
 
-Result Buckets_Init(Buckets* p,
+bool Buckets_Init(Buckets* p,
                     int size)
 {
-    Result result = RESULT_OUT_OF_MEM;
+    bool result = false /*nomem*/;
     p->data = NULL;
     p->size = size;
 
@@ -280,7 +280,7 @@ Result Buckets_Init(Buckets* p,
         {
             p->data[i] = NULL;
         }
-        result = RESULT_OK;
+        result = true;
     }
 
     return result;
@@ -297,24 +297,24 @@ void Buckets_Destroy(Buckets* p, void(*pfDestroyData)(void*))
 }
 
 
-Result Map_Init(Map* map, int nBuckets)
+bool Map_Init(Map* map, int nBuckets)
 {
     map->Size = 0;
-    Result result = Buckets_Init(&map->buckets, nBuckets);
-    if (result == RESULT_OK)
+    bool result = Buckets_Init(&map->buckets, nBuckets);
+    if (result == true)
     {
     }
     return result;
 }
 
-Result Map_Create(Map** pp, int nBuckets)
+bool Map_Create(Map** pp, int nBuckets)
 {
-    Result result = RESULT_OUT_OF_MEM;
+    bool result = false /*nomem*/;
     Map* p = (Map*)Malloc(sizeof(Map));
     if (p)
     {
         result = Map_Init(p, nBuckets);
-        if (result == RESULT_OK)
+        if (result == true)
         {
             *pp = p;
         }
@@ -365,10 +365,10 @@ BucketItem* Map_FindNode(Map* map, const char* key)
 }
 
 
-Result Map_SetMoveKey(Map* map, String* key, void* data)
+bool Map_SetMoveKey(Map* map, String* key, void* data)
 {
     //assert(key != NULL);
-    Result result;
+    bool result;
 
     BucketItem* pNode = Map_FindNode(map, *key);
     if (pNode)
@@ -388,30 +388,30 @@ Result Map_SetMoveKey(Map* map, String* key, void* data)
     if (bucket == NULL)
     {
         result = Bucket_Create(&bucket);
-        if (result == RESULT_OK)
+        if (result == true)
         {
             map->buckets.data[bucket_n] = bucket;
         }
     }
     else
     {
-        result = RESULT_OK;
+        result = true;
     }
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
         BucketItem* node;
         result = BucketItem_CreateMoveKey(&node,
                                           hash,
                                           key,
                                           data);
-        if (result == RESULT_OK)
+        if (result == true)
         {
             result = Bucket_Append(bucket, node /*moved*/);
         }
     }
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
       map->Size++;
     }
@@ -419,14 +419,14 @@ Result Map_SetMoveKey(Map* map, String* key, void* data)
     return result;
 }
 
-Result Map_Set(Map* map, const char* key, void* data)
+bool Map_Set(Map* map, const char* key, void* data)
 {
     //assert(key != NULL);
     void* pv;
-    Result result = Map_Find(map, key, &pv);
-    if (result == RESULT_OK)
+    bool result = Map_Find(map, key, &pv);
+    if (result == true)
     {
-        return RESULT_FAIL;
+        return false;
         ////assert(false);
     }
 
@@ -442,13 +442,13 @@ Result Map_Set(Map* map, const char* key, void* data)
 }
 
 
-Result Map_Find(Map* map, const char* key, void** pp)
+bool Map_Find(Map* map, const char* key, void** pp)
 {
     //assert(key != NULL);
     BucketItem* pNode = Map_FindNode(map, key);
-    Result result = pNode ? RESULT_OK : RESULT_FAIL;
+    bool result = pNode ? true : false;
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
         *pp = pNode->data;
     }
@@ -459,12 +459,12 @@ Result Map_Find(Map* map, const char* key, void** pp)
 void* Map_Find2(Map* map, const char* key)
 {
     void* pv;
-    Result result = Map_Find(map, key, &pv);
+    bool result = Map_Find(map, key, &pv);
 
-    return result == RESULT_OK ? pv : NULL;
+    return result == true ? pv : NULL;
 }
 
-Result Map_DeleteEx(Map* map, const char* key, void** pp)
+bool Map_DeleteEx(Map* map, const char* key, void** pp)
 {
     //assert(key != NULL);
     uint32_t hash = HashFunc(key);
@@ -474,24 +474,24 @@ Result Map_DeleteEx(Map* map, const char* key, void** pp)
 
     if (bucket == NULL)
     {
-        return RESULT_FAIL;
+        return false;
     }
 
-    Result result = RemoveBucketItem(bucket, hash, key, pp);
+    bool result = RemoveBucketItem(bucket, hash, key, pp);
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
       map->Size--;
     }
     return result;
 }
 
-Result Map_DeleteItemOpt(Map* map, const char* key, void(*pfDestroyData)(void*))
+bool Map_DeleteItemOpt(Map* map, const char* key, void(*pfDestroyData)(void*))
 {
     //assert(key != NULL);
     void* p;
-    Result result = Map_DeleteEx(map, key, &p);
-    if (result == RESULT_OK)
+    bool result = Map_DeleteEx(map, key, &p);
+    if (result == true)
     {
         if (pfDestroyData != NULL)
         {
@@ -501,12 +501,12 @@ Result Map_DeleteItemOpt(Map* map, const char* key, void(*pfDestroyData)(void*))
     return result;
 }
 
-Result Map_DeleteItem(Map* map, const char* key, void(*pfDestroyData)(void*))
+bool Map_DeleteItem(Map* map, const char* key, void(*pfDestroyData)(void*))
 {
-    Result result = Map_DeleteItemOpt(map, key, pfDestroyData);
+    bool result = Map_DeleteItemOpt(map, key, pfDestroyData);
     void* p;
-    ////assert(Map_Find(map, key, &p) != RESULT_OK);
-    if (Map_Find(map, key, &p) == RESULT_OK)
+    ////assert(Map_Find(map, key, &p) != true);
+    if (Map_Find(map, key, &p) == true)
     {
         //assert(false);
         Map_DeleteItemOpt(map, key, pfDestroyData);
@@ -556,11 +556,11 @@ void Map_Swap(Map* map, Map* map2)
 
 ////
 
-Result MultiMap_Init(MultiMap* map, int nBuckets)
+bool MultiMap_Init(MultiMap* map, int nBuckets)
 {
   map->Size = 0;
-  Result result = Buckets_Init(&map->buckets, nBuckets);
-  if (result == RESULT_OK)
+  bool result = Buckets_Init(&map->buckets, nBuckets);
+  if (result == true)
   {
   }
   return result;
@@ -571,10 +571,10 @@ void MultiMap_Destroy(MultiMap* map, void(*pfDestroyData)(void*))
   Buckets_Destroy(&map->buckets, pfDestroyData);
 }
 
-Result MultiMap_Add(MultiMap* map, const char* key, void* data)
+bool MultiMap_Add(MultiMap* map, const char* key, void* data)
 {
   //assert(key != NULL);
-  Result result;
+  bool result;
   
   uint32_t hash = HashFunc(key);
   int bucket_n = hash % map->buckets.size;
@@ -584,17 +584,17 @@ Result MultiMap_Add(MultiMap* map, const char* key, void* data)
   {
     //Não existia..criar
     result = Bucket_Create(&bucket);
-    if (result == RESULT_OK)
+    if (result == true)
     {
       map->buckets.data[bucket_n] = bucket;
     }
   }
   else
   {
-    result = RESULT_OK;
+    result = true;
   }
 
-  if (result == RESULT_OK)
+  if (result == true)
   {
     //Adiciona no fim - não verifica se ja existe
     String stemp = STRING_INIT;
@@ -607,13 +607,13 @@ Result MultiMap_Add(MultiMap* map, const char* key, void* data)
 
     String_Destroy(&stemp);
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
       result = Bucket_Append(bucket, node /*moved*/);
     }
   }
 
-  if (result == RESULT_OK)
+  if (result == true)
   {
     map->Size++;
   }

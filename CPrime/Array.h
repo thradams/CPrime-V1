@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include "Result.h"
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -15,12 +14,12 @@ typedef struct
 
 #define ARRAY_INIT { NULL , 0 , 0 }
 
-Result Array_Reserve(Array* p, int nelements);
-Result Array_Grow(Array* p, int nelements);
+bool Array_Reserve(Array* p, int nelements);
+bool Array_Grow(Array* p, int nelements);
 void Array_Pop(Array* p, void(*pfDestroyData)(void*));
 void* Array_PopGet(Array* p);
 void* Array_Top(Array* p);
-Result Array_Push(Array* p, void* pItem);
+bool Array_Push(Array* p, void* pItem);
 void Array_Clear(Array* p, void(*pfDestroyData)(void*));
 void Array_Init(Array* p);
 
@@ -42,8 +41,8 @@ typedef struct
 
 #define STRARRAY_INIT { NULL , 0 , 0 }
 
-Result StrArray_Reserve(StrArray* p, int nelements);
-Result StrArray_Push(StrArray* p, const char* pItem);
+bool StrArray_Reserve(StrArray* p, int nelements);
+bool StrArray_Push(StrArray* p, const char* pItem);
 void StrArray_Clear(StrArray* p);
 void StrArray_Init(StrArray* p);
 void StrArray_Destroy(StrArray* st);

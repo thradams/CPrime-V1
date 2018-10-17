@@ -93,9 +93,6 @@
     <ClInclude Include="List.h">
       <Filter>Source Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Result.h">
-      <Filter>Source Files\Base</Filter>
-    </ClInclude>
     <ClInclude Include="Stream.h">
       <Filter>Source Files\Base</Filter>
     </ClInclude>

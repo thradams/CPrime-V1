@@ -27,9 +27,9 @@ typedef struct {
   bool bPreprocessorEvalFlag;
 } Parser;
 
-Result Parser_InitFile(Parser *parser, const char *fileName);
+bool Parser_InitFile(Parser *parser, const char *fileName);
 
-Result Parser_InitString(Parser *parser, const char *name, const char *Text);
+bool Parser_InitString(Parser *parser, const char *name, const char *Text);
 
 void Parser_Destroy(Parser *parser);
 

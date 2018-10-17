@@ -3,7 +3,7 @@
 #pragma once
 
 #include <inttypes.h>
-#include "Result.h"
+#include <stdbool.h>
 #include "StringEx.h"
 
 typedef struct
@@ -38,22 +38,22 @@ typedef struct
 
 #define MAP_INIT {BUCKETS_INIT, 0}
 
-Result Map_Init(Map* map, int nBuckets);
+bool Map_Init(Map* map, int nBuckets);
 
 void Map_Swap(Map* map, Map* map2);
 
 void Map_Destroy(Map *map, void(*pfDestroyData)(void*));
 
 void Map_Delete(Map *map, void(*pfDestroyData)(void*));
-Result Map_Create(Map **map, int nBuckets);
+bool Map_Create(Map **map, int nBuckets);
 
-Result Map_Set(Map *map, const char*key, void *data);
-Result Map_SetMoveKey(Map* map, String* key, void* data);
+bool Map_Set(Map *map, const char*key, void *data);
+bool Map_SetMoveKey(Map* map, String* key, void* data);
 
-Result Map_Find(Map* map, const char* key, void** pp);
+bool Map_Find(Map* map, const char* key, void** pp);
 void* Map_Find2(Map* map, const char* key);
-Result Map_DeleteItem(Map *map, const char* key, void(*pfDestroyData)(void*));
-Result Map_DeleteItemOpt(Map* map, const char* key, void(*pfDestroyData)(void*));
+bool Map_DeleteItem(Map *map, const char* key, void(*pfDestroyData)(void*));
+bool Map_DeleteItemOpt(Map* map, const char* key, void(*pfDestroyData)(void*));
 
 void Map_Print(Map *map);
 
@@ -70,11 +70,11 @@ typedef struct
 
 #define MULTIMAP_INIT {BUCKETS_INIT, 0}
 
-Result MultiMap_Init(MultiMap* map, int nBuckets);
+bool MultiMap_Init(MultiMap* map, int nBuckets);
 void MultiMap_Destroy(MultiMap *map, void(*pfDestroyData)(void*));
 
 //Adiciona outro item no mapa sem testar se ja existe
-Result MultiMap_Add(MultiMap *map, const char*key, void *data);
+bool MultiMap_Add(MultiMap *map, const char*key, void *data);
 
 //Retorna todo bucket que tem o mesm hash
 //Ainda é preciso percorrer para saber se sao da mesma key

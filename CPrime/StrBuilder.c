@@ -45,9 +45,9 @@ void StrBuilder_Destroy(StrBuilder* p)
   }
 }
 
-Result StrBuilder_Reserve(StrBuilder* p, int nelements)
+bool StrBuilder_Reserve(StrBuilder* p, int nelements)
 {
-  Result r = RESULT_OK;
+  bool r = true;
 
   if (nelements > p->capacity)
   {
@@ -67,16 +67,16 @@ Result StrBuilder_Reserve(StrBuilder* p, int nelements)
 
     else
     {
-      r = RESULT_OUT_OF_MEM;
+      r = false /*nomem*/;
     }
   }
 
   return r;
 }
 
-static Result StrBuilder_Grow(StrBuilder* p, int nelements)
+static bool StrBuilder_Grow(StrBuilder* p, int nelements)
 {
-  Result r = RESULT_OK;
+  bool r = true;
 
   if (nelements > p->capacity)
   {
@@ -93,11 +93,11 @@ static Result StrBuilder_Grow(StrBuilder* p, int nelements)
   return r;
 }
 
-Result StrBuilder_SetN(StrBuilder* p,
+bool StrBuilder_SetN(StrBuilder* p,
                        const char* source,
                        int nelements)
 {
-  Result r = StrBuilder_Grow(p, nelements);
+  bool r = StrBuilder_Grow(p, nelements);
 
   if (r == 0)
   {
@@ -109,10 +109,10 @@ Result StrBuilder_SetN(StrBuilder* p,
   return r;
 }
 
-Result StrBuilder_Set(StrBuilder* p,
+bool StrBuilder_Set(StrBuilder* p,
                       const char* source)
 {
-    Result r = RESULT_OK;
+    bool r = true;
     if (source == NULL)
     {
         StrBuilder_Clear(p);
@@ -130,18 +130,18 @@ Result StrBuilder_Set(StrBuilder* p,
   return r;
 }
 
-Result StrBuilder_AppendN(StrBuilder* p,
+bool StrBuilder_AppendN(StrBuilder* p,
                           const char* source,
                           int nelements)
 {
   if (IsEmptyStr(source))
   {
-    return RESULT_OK;
+    return true;
   }
 
-  Result r = StrBuilder_Grow(p, p->size + nelements);
+  bool r = StrBuilder_Grow(p, p->size + nelements);
 
-  if (r == RESULT_OK)
+  if (r == true)
   {
     strncpy(p->c_str + p->size,
             /*(p->capacity + 1) - p->size,*/
@@ -154,7 +154,7 @@ Result StrBuilder_AppendN(StrBuilder* p,
   return r;
 }
 
-Result StrBuilder_AppendIdent(StrBuilder* p,
+bool StrBuilder_AppendIdent(StrBuilder* p,
 	int nspaces, 
 	const char* source)
 {
@@ -165,12 +165,12 @@ Result StrBuilder_AppendIdent(StrBuilder* p,
 	return StrBuilder_Append(p, source);
 }
 
-Result StrBuilder_Append(StrBuilder* p,
+bool StrBuilder_Append(StrBuilder* p,
                          const char* source)
 {
   if (IsEmptyStr(source))
   {
-    return RESULT_OK;
+    return true;
   }
 
   return StrBuilder_AppendN(p, source, strlen(source));
@@ -215,7 +215,7 @@ void StrBuilder_Attach(StrBuilder* pStrBuilder,
   }
 }
 
-Result StrBuilder_AppendWChar(StrBuilder* p, wchar_t wch)
+bool StrBuilder_AppendWChar(StrBuilder* p, wchar_t wch)
 {
 #ifdef USE_UTF8
   char buffer[5] = { 0 };
@@ -228,20 +228,20 @@ Result StrBuilder_AppendWChar(StrBuilder* p, wchar_t wch)
 }
 
 
-Result StrBuilder_AppendChar(StrBuilder* p, char ch)
+bool StrBuilder_AppendChar(StrBuilder* p, char ch)
 {
   return StrBuilder_AppendN(p, &ch, 1);
 }
 
-Result StrBuilder_AppendW(StrBuilder* p, const wchar_t* psz)
+bool StrBuilder_AppendW(StrBuilder* p, const wchar_t* psz)
 {
-  Result result = RESULT_FAIL;
+  bool result = false;
 
   while (*psz)
   {
     result = StrBuilder_AppendWChar(p, *psz);
 
-    if (result != RESULT_OK)
+    if (result != true)
     {
       break;
     }
@@ -297,7 +297,7 @@ void StrBuilder_Trim(StrBuilder* p)
 
 
 
-Result StrBuilder_AppendUpper(StrBuilder *p, const char*  s)
+bool StrBuilder_AppendUpper(StrBuilder *p, const char*  s)
 {
   if (s != NULL)
   {
@@ -308,7 +308,7 @@ Result StrBuilder_AppendUpper(StrBuilder *p, const char*  s)
     }
   }
 
-  return RESULT_OK;
+  return true;
 }
 
 
