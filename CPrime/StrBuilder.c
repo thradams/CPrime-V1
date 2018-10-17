@@ -99,7 +99,7 @@ bool StrBuilder_SetN(StrBuilder* p,
 {
   bool r = StrBuilder_Grow(p, nelements);
 
-  if (r == 0)
+  if (r)
   {
     strncpy(p->c_str, /*p->capacity + 1,*/ source, nelements);
     p->c_str[nelements] = '\0';
