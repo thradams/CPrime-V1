@@ -20,9 +20,11 @@ http://www.thradams.com/web/cprime.html
 
 CPrime is written using itself. Some files are 60% generated, see Ast.h and Ast.c.
 
-### Using this tool you achieve decoupling because you don´t have to implement the mechanical relationship between objects.
+## Why?
+Using this tool you achieve **decoupling** because you don´t have to implement the mechanical relationship between objects.
 
-### This mechanical relatioship also makes possible a new kind of polimorphism where the coupling is much smaller than the traditional interface (virtual) methodoly.
+This mechanical relatioship also makes possible a **new kind of polimorphism where the coupling is much smaller** than the traditional interface (virtual) methodoly.
+
 
 You can compare this code generation with C++ explicity template instantiation.
 But C' instanciates just one function and always explicity.
@@ -33,7 +35,7 @@ But C' instanciates just one function and always explicity.
 ### Especial functions
 The compiler can generate something similar of C++ constructor,destructor, operator new and operator delete.
 
-To generate these functions use the comment **/*default*/** at the end of function declaration. 
+To generate these functions use the comment /*default*/ at the end of function declaration. 
 
 The name of the functions and signature are used to undestand what you want to generate. 
 
