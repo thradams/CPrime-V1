@@ -43,17 +43,6 @@ void PrintMemory() {}
 #endif
 
 
-
-typedef enum 
-{
-    RESULT_OK = 0,
-    RESULT_OUT_OF_MEM,
-    RESULT_FAIL
-} Result;
-
-
-
-
 #include <stdbool.h>
 
 typedef struct
@@ -66,12 +55,12 @@ typedef struct
 
 #define ARRAY_INIT { NULL , 0 , 0 }
 
-Result Array_Reserve(Array* p, int nelements);
-Result Array_Grow(Array* p, int nelements);
+bool Array_Reserve(Array* p, int nelements);
+bool Array_Grow(Array* p, int nelements);
 void Array_Pop(Array* p, void(*pfDestroyData)(void*));
 void* Array_PopGet(Array* p);
 void* Array_Top(Array* p);
-Result Array_Push(Array* p, void* pItem);
+bool Array_Push(Array* p, void* pItem);
 void Array_Clear(Array* p, void(*pfDestroyData)(void*));
 void Array_Init(Array* p);
 
@@ -93,8 +82,8 @@ typedef struct
 
 #define STRARRAY_INIT { NULL , 0 , 0 }
 
-Result StrArray_Reserve(StrArray* p, int nelements);
-Result StrArray_Push(StrArray* p, const char* pItem);
+bool StrArray_Reserve(StrArray* p, int nelements);
+bool StrArray_Push(StrArray* p, const char* pItem);
 void StrArray_Clear(StrArray* p);
 void StrArray_Init(StrArray* p);
 void StrArray_Destroy(StrArray* st);
@@ -160,13 +149,13 @@ do {\
   }\
 } while (0)
 #else
-Result String_InitWith(String* pString, const char* source);
-Result String_Set(String *pS1, const char* psz1);
+void String_InitWith(String* pString, const char* source);
+void String_Set(String *pS1, const char* psz1);
 #endif
 
-Result Array_Reserve(Array* p, int nelements)
+bool Array_Reserve(Array* p, int nelements)
 {
-    Result result = RESULT_OK;
+    bool result = true;
     if(nelements > p->capacity)
     {
         void** pnew = p->pItems;
@@ -178,16 +167,16 @@ Result Array_Reserve(Array* p, int nelements)
         }
         else
         {
-            result = RESULT_OUT_OF_MEM;
+            result = false /*nomem*/;
         }
     }
     return result;
 }
 
 
-Result Array_Grow(Array* p, int nelements)
+bool Array_Grow(Array* p, int nelements)
 {
-    Result result = RESULT_OK;
+    bool result = true;
     if(nelements > p->capacity)
     {
         int new_nelements = p->capacity + p->capacity / 2;
@@ -232,10 +221,10 @@ void* Array_Top(Array* p)
     return p->pItems[p->size - 1];
 }
 
-Result Array_Push(Array* p, void* pItem)
+bool Array_Push(Array* p, void* pItem)
 {
-    Result result = Array_Grow(p, p->size + 1);
-    if(result == RESULT_OK)
+    bool result = Array_Grow(p, p->size + 1);
+    if(result == true)
     {
         p->pItems[p->size] = pItem;
         p->size++;
@@ -283,24 +272,24 @@ void Array_Swap(Array* p1, Array* p2)
 }
 
 
-Result StrArray_Reserve(StrArray* p, int nelements)
+bool StrArray_Reserve(StrArray* p, int nelements)
 {
     return Array_Reserve((Array*)p, nelements);
 }
 
-Result StrArray_Push(StrArray* p, const char* pItem)
+bool StrArray_Push(StrArray* p, const char* pItem)
 {
     String s;
     String_InitWith(&s, pItem);
     
     {
-        Result result = Array_Push((Array*)p, s);
-        if(result != RESULT_OK)
+        bool result = Array_Push((Array*)p, s);
+        if(result != true)
         {
             String_Destroy(&s);
         }
     }
-    return RESULT_OK;
+    return true;
 }
 
 static void Array_DeleteStrVoid(void* p)
@@ -550,7 +539,7 @@ typedef struct
 
 void StrBuilder_Init(StrBuilder* p);
 
-Result StrBuilder_Reserve(StrBuilder* p, int nelements);
+bool StrBuilder_Reserve(StrBuilder* p, int nelements);
 
 void StrBuilder_Attach(StrBuilder* wstr,
                        char* psz,
@@ -562,18 +551,18 @@ void StrBuilder_Swap(StrBuilder* str1, StrBuilder* str2);
 
 void StrBuilder_Clear(StrBuilder* wstr);
 
-Result StrBuilder_SetN(StrBuilder* p,
+bool StrBuilder_SetN(StrBuilder* p,
                        const char* source,
                        int nelements);
 
-Result StrBuilder_Set(StrBuilder* p,
+bool StrBuilder_Set(StrBuilder* p,
                       const char* source);
 
-Result StrBuilder_AppendN(StrBuilder* p,
+bool StrBuilder_AppendN(StrBuilder* p,
                           const char* source,
                           int nelements);
 
-Result StrBuilder_Append(StrBuilder* p,
+bool StrBuilder_Append(StrBuilder* p,
                          const char* source);
 
 char* StrBuilder_Release(StrBuilder* p);
@@ -582,13 +571,13 @@ char* StrBuilder_Release(StrBuilder* p);
 void StrBuilder_AppendFmt(StrBuilder * p, const char* fmt, ...);
 void StrBuilder_AppendFmtIdent(StrBuilder * p, int nspaces, const char* fmt, ...);
 
-Result StrBuilder_AppendWChar(StrBuilder * p, wchar_t wch);
-Result StrBuilder_AppendW(StrBuilder * p, const wchar_t* psz);
-Result StrBuilder_AppendChar(StrBuilder * p, char wch);
+bool StrBuilder_AppendWChar(StrBuilder * p, wchar_t wch);
+bool StrBuilder_AppendW(StrBuilder * p, const wchar_t* psz);
+bool StrBuilder_AppendChar(StrBuilder * p, char wch);
 void StrBuilder_Trim(StrBuilder* p);
-Result StrBuilder_AppendUpper(StrBuilder *p, const char* s);
+bool StrBuilder_AppendUpper(StrBuilder *p, const char* s);
 
-Result StrBuilder_AppendIdent(StrBuilder* p,
+bool StrBuilder_AppendIdent(StrBuilder* p,
 	int nspaces,
 	const char* source);
 
@@ -632,6 +621,7 @@ wchar_t SStream_LookAhead(struct SStream* pStream);
 
 void SStream_Match(struct SStream* pStream);
 bool SStream_MatchChar(struct SStream* pStream, wchar_t ch);
+
 
 #define LANGUAGE_EXTENSIONS
 //
@@ -868,16 +858,16 @@ bool        BasicScanner_IsLexeme(BasicScanner* scanner, const char* psz);
 //void        BasicScanner_Match(BasicScanner* scanner);
 void        BasicScanner_Match(BasicScanner* scanner);
 bool         BasicScanner_MatchToken(BasicScanner* scanner, Tokens token);
-Result      BasicScanner_InitFile(BasicScanner* pScanner, const char* fileName);
-Result      BasicScanner_CreateFile(const char* fileName, BasicScanner** pp);
+bool      BasicScanner_InitFile(BasicScanner* pScanner, const char* fileName);
+bool      BasicScanner_CreateFile(const char* fileName, BasicScanner** pp);
 void        BasicScanner_Delete(BasicScanner* pScanner);
 
-Result BasicScanner_Init(BasicScanner* pScanner,
+bool BasicScanner_Init(BasicScanner* pScanner,
                          const char* name,
                          const char* Text,
                          BasicScannerType Type);
 
-Result BasicScanner_Create(BasicScanner** pp,
+bool BasicScanner_Create(BasicScanner** pp,
                            const char* name, 
                            const char* Text,
                            BasicScannerType Type);
@@ -936,22 +926,22 @@ typedef struct
 
 #define MAP_INIT {BUCKETS_INIT, 0}
 
-Result Map_Init(Map* map, int nBuckets);
+bool Map_Init(Map* map, int nBuckets);
 
 void Map_Swap(Map* map, Map* map2);
 
 void Map_Destroy(Map *map, void(*pfDestroyData)(void*));
 
 void Map_Delete(Map *map, void(*pfDestroyData)(void*));
-Result Map_Create(Map **map, int nBuckets);
+bool Map_Create(Map **map, int nBuckets);
 
-Result Map_Set(Map *map, const char*key, void *data);
-Result Map_SetMoveKey(Map* map, String* key, void* data);
+bool Map_Set(Map *map, const char*key, void *data);
+bool Map_SetMoveKey(Map* map, String* key, void* data);
 
-Result Map_Find(Map* map, const char* key, void** pp);
+bool Map_Find(Map* map, const char* key, void** pp);
 void* Map_Find2(Map* map, const char* key);
-Result Map_DeleteItem(Map *map, const char* key, void(*pfDestroyData)(void*));
-Result Map_DeleteItemOpt(Map* map, const char* key, void(*pfDestroyData)(void*));
+bool Map_DeleteItem(Map *map, const char* key, void(*pfDestroyData)(void*));
+bool Map_DeleteItemOpt(Map* map, const char* key, void(*pfDestroyData)(void*));
 
 void Map_Print(Map *map);
 
@@ -968,11 +958,11 @@ typedef struct
 
 #define MULTIMAP_INIT {BUCKETS_INIT, 0}
 
-Result MultiMap_Init(MultiMap* map, int nBuckets);
+bool MultiMap_Init(MultiMap* map, int nBuckets);
 void MultiMap_Destroy(MultiMap *map, void(*pfDestroyData)(void*));
 
 //Adiciona outro item no mapa sem testar se ja existe
-Result MultiMap_Add(MultiMap *map, const char*key, void *data);
+bool MultiMap_Add(MultiMap *map, const char*key, void *data);
 
 //Retorna todo bucket que tem o mesm hash
 //Ainda é preciso percorrer para saber se sao da mesma key
@@ -1244,9 +1234,9 @@ void TFile_Delete(TFile* p);
 typedef Map TFileMap;
 
 void TFileMap_Destroy(TFileMap* p);
-Result TFileMap_Set(TFileMap *map, const char*key, TFile *data);
+bool TFileMap_Set(TFileMap *map, const char*key, TFile *data);
 TFile*  TFileMap_Find(TFileMap* map, const char* key);
-Result TFileMap_DeleteItem(TFileMap *map, const char* key);
+bool TFileMap_DeleteItem(TFileMap *map, const char* key);
 void TFile_DeleteVoid(void* p);
 
 
@@ -1334,14 +1324,14 @@ void Scanner_SetError(Scanner* pScanner, const char* fmt, ...);
 void Scanner_GetFilePositionString(Scanner* pScanner, StrBuilder* sb);
 
 
-Result Scanner_InitString(Scanner* pScanner,
+bool Scanner_InitString(Scanner* pScanner,
   const char* name,
   const char* Text);
 
-Result PushExpandedMacro(Scanner * pScanner, const char * defineName, const char * defineContent);
+bool PushExpandedMacro(Scanner * pScanner, const char * defineName, const char * defineContent);
 
 
-Result Scanner_Init(Scanner* pScanner);
+bool Scanner_Init(Scanner* pScanner);
 
 typedef enum
 {
@@ -7968,9 +7958,9 @@ typedef struct {
   bool bPreprocessorEvalFlag;
 } Parser;
 
-Result Parser_InitFile(Parser *parser, const char *fileName);
+bool Parser_InitFile(Parser *parser, const char *fileName);
 
-Result Parser_InitString(Parser *parser, const char *name, const char *Text);
+bool Parser_InitString(Parser *parser, const char *name, const char *Text);
 
 void Parser_Destroy(Parser *parser);
 
@@ -8331,36 +8321,36 @@ void BasicScanner_InitCore(BasicScanner* pBasicScanner,
   pBasicScanner->currentItem.token = TK_BOF;
 }
 
-Result BasicScanner_Init(BasicScanner* pBasicScanner,
+bool BasicScanner_Init(BasicScanner* pBasicScanner,
   const char* name,
   const char* Text,
   BasicScannerType type)
 {
   BasicScanner_InitCore(pBasicScanner, type);
   bool b = SStream_Init(&pBasicScanner->stream, name, Text);
-  return b ? RESULT_OK : RESULT_FAIL;
+  return b ? true : false;
 }
 
-Result BasicScanner_InitFile(BasicScanner* pBasicScanner,
+bool BasicScanner_InitFile(BasicScanner* pBasicScanner,
   const char* fileName)
 {
   BasicScanner_InitCore(pBasicScanner, BasicScannerType_File);
   
   bool b = SStream_InitFile(&pBasicScanner->stream, fileName);
-  return b ? RESULT_OK : RESULT_FAIL;
+  return b ? true : false;
 }
 
-Result BasicScanner_Create(BasicScanner** pp,
+bool BasicScanner_Create(BasicScanner** pp,
   const char* name,
   const char* Text,
   BasicScannerType Type)
 {
-  Result result = RESULT_OUT_OF_MEM;
+  bool result = false /*nomem*/;
   BasicScanner* p = (BasicScanner*)Malloc(sizeof(BasicScanner));
   if (p)
   {
     result = BasicScanner_Init(p, name, Text, Type);
-    if (result == RESULT_OK)
+    if (result == true)
     {
       *pp = p;
     }
@@ -8372,14 +8362,14 @@ Result BasicScanner_Create(BasicScanner** pp,
   return result;
 }
 
-Result BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
+bool BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
 {
-  Result result = RESULT_OUT_OF_MEM;
+  bool result = false /*nomem*/;
   BasicScanner* p = (BasicScanner*)Malloc(sizeof(BasicScanner));
   if (p)
   {
     result = BasicScanner_InitFile(p, fileName);
-    if (result == RESULT_OK)
+    if (result == true)
     {
       *pp = p;
     }
@@ -15892,9 +15882,9 @@ static uint32_t HashFunc(const char* a)
     return hash;
 }
 
-Result Bucket_Reserve(Bucket* p, int nelements);
+bool Bucket_Reserve(Bucket* p, int nelements);
 
-Result BucketItem_InitMoveKey(BucketItem* node,
+bool BucketItem_InitMoveKey(BucketItem* node,
                               int hash,
                               String* key /*in out*/,
                               void* data)
@@ -15905,11 +15895,11 @@ Result BucketItem_InitMoveKey(BucketItem* node,
     String_InitWith(&node->key, NULL);
     String_Swap(&node->key, key);
 
-    return RESULT_OK;
+    return true;
 }
 
 
-Result BucketItem_Init(BucketItem* node,
+bool BucketItem_Init(BucketItem* node,
                        int hash,
                        const char* key,
                        void* data)
@@ -15917,15 +15907,15 @@ Result BucketItem_Init(BucketItem* node,
     String_InitWith(&node->key, key);
     node->data = data;
     node->hash = hash;
-    return RESULT_OK;
+    return true;
 }
 
-Result BucketItem_CreateMoveKey(BucketItem** pp,
+bool BucketItem_CreateMoveKey(BucketItem** pp,
                                 int hash,
                                 String* key,
                                 void* data)
 {
-    Result result = RESULT_OUT_OF_MEM;
+    bool result = false /*nomem*/;
     BucketItem* node = (BucketItem*)Malloc(sizeof(BucketItem) * 1);
     if (node)
     {
@@ -15934,16 +15924,16 @@ Result BucketItem_CreateMoveKey(BucketItem** pp,
                                key,
                                data);
         *pp = node;
-        result = RESULT_OK;
+        result = true;
     }
     return result;
 }
 
-Result BucketItem_Change(BucketItem* p,
+bool BucketItem_Change(BucketItem* p,
                          void* data)
 {
     p->data = data;
-    return RESULT_OK;
+    return true;
 }
 
 void BucketItem_Destroy(BucketItem* node, void(*pfDestroyData)(void*))
@@ -15964,9 +15954,9 @@ void BucketItem_Delete(BucketItem* p, void(*pfDestroyData)(void*))
     }
 }
 
-Result Bucket_Init(Bucket* p, int capacity)
+bool Bucket_Init(Bucket* p, int capacity)
 {
-    Result result = RESULT_OK;
+    bool result = true;
     p->data = NULL;
     p->size = 0;
     p->capacity = 0;
@@ -15979,14 +15969,14 @@ Result Bucket_Init(Bucket* p, int capacity)
     return result;
 }
 
-Result Bucket_Create(Bucket** pp)
+bool Bucket_Create(Bucket** pp)
 {
-    Result result = RESULT_OUT_OF_MEM;
+    bool result = false /*nomem*/;
     Bucket*  p = (Bucket*)Malloc(sizeof(Bucket) * 1);
     if (p)
     {
         result = Bucket_Init(p, 0);
-        if (result == RESULT_OK)
+        if (result == true)
         {
             *pp = p;
             p = NULL;
@@ -16017,9 +16007,9 @@ void Bucket_Delete(Bucket* p, void(*pfDestroyData)(void*))
 }
 
 
-Result Bucket_Reserve(Bucket* p, int nelements)
+bool Bucket_Reserve(Bucket* p, int nelements)
 {
-    Result r = RESULT_OK;
+    bool r = true;
 
     if (nelements > p->capacity)
     {
@@ -16039,15 +16029,15 @@ Result Bucket_Reserve(Bucket* p, int nelements)
         else
         {
             //assert(false);
-            r = RESULT_OUT_OF_MEM;
+            r = false /*nomem*/;
         }
     }
 
     return r;
 }
-static Result Grow(Bucket* p, int nelements)
+static bool Grow(Bucket* p, int nelements)
 {
-    Result r = RESULT_OK;
+    bool r = true;
 
     if (nelements > p->capacity)
     {
@@ -16064,11 +16054,11 @@ static Result Grow(Bucket* p, int nelements)
     return r;
 }
 
-Result Bucket_Append(Bucket* p, BucketItem* pItem)
+bool Bucket_Append(Bucket* p, BucketItem* pItem)
 {
-    Result result = Grow(p, p->size + 1);
+    bool result = Grow(p, p->size + 1);
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
         p->data[p->size] = pItem;
         p->size++;
@@ -16093,7 +16083,7 @@ static int FindNodeIndex(Bucket* bucket, uint32_t hash, const char* key)
     return -1;
 }
 
-Result RemoveBucketItem(Bucket* bucket,
+bool RemoveBucketItem(Bucket* bucket,
                         uint32_t hash,
                         const char* key,
                         void** ppData)
@@ -16102,9 +16092,9 @@ Result RemoveBucketItem(Bucket* bucket,
     *ppData = NULL; //out
 
     int index = FindNodeIndex(bucket, hash, key);
-    Result result = index != -1 ? RESULT_OK : RESULT_FAIL;
+    bool result = index != -1 ? true : false;
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
         //ponteiro de item que vai ser removido (out)
         *ppData = bucket->data[index]->data;
@@ -16126,10 +16116,10 @@ Result RemoveBucketItem(Bucket* bucket,
 }
 
 
-Result Buckets_Init(Buckets* p,
+bool Buckets_Init(Buckets* p,
                     int size)
 {
-    Result result = RESULT_OUT_OF_MEM;
+    bool result = false /*nomem*/;
     p->data = NULL;
     p->size = size;
 
@@ -16140,7 +16130,7 @@ Result Buckets_Init(Buckets* p,
         {
             p->data[i] = NULL;
         }
-        result = RESULT_OK;
+        result = true;
     }
 
     return result;
@@ -16157,24 +16147,24 @@ void Buckets_Destroy(Buckets* p, void(*pfDestroyData)(void*))
 }
 
 
-Result Map_Init(Map* map, int nBuckets)
+bool Map_Init(Map* map, int nBuckets)
 {
     map->Size = 0;
-    Result result = Buckets_Init(&map->buckets, nBuckets);
-    if (result == RESULT_OK)
+    bool result = Buckets_Init(&map->buckets, nBuckets);
+    if (result == true)
     {
     }
     return result;
 }
 
-Result Map_Create(Map** pp, int nBuckets)
+bool Map_Create(Map** pp, int nBuckets)
 {
-    Result result = RESULT_OUT_OF_MEM;
+    bool result = false /*nomem*/;
     Map* p = (Map*)Malloc(sizeof(Map));
     if (p)
     {
         result = Map_Init(p, nBuckets);
-        if (result == RESULT_OK)
+        if (result == true)
         {
             *pp = p;
         }
@@ -16225,10 +16215,10 @@ BucketItem* Map_FindNode(Map* map, const char* key)
 }
 
 
-Result Map_SetMoveKey(Map* map, String* key, void* data)
+bool Map_SetMoveKey(Map* map, String* key, void* data)
 {
     //assert(key != NULL);
-    Result result;
+    bool result;
 
     BucketItem* pNode = Map_FindNode(map, *key);
     if (pNode)
@@ -16248,30 +16238,30 @@ Result Map_SetMoveKey(Map* map, String* key, void* data)
     if (bucket == NULL)
     {
         result = Bucket_Create(&bucket);
-        if (result == RESULT_OK)
+        if (result == true)
         {
             map->buckets.data[bucket_n] = bucket;
         }
     }
     else
     {
-        result = RESULT_OK;
+        result = true;
     }
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
         BucketItem* node;
         result = BucketItem_CreateMoveKey(&node,
                                           hash,
                                           key,
                                           data);
-        if (result == RESULT_OK)
+        if (result == true)
         {
             result = Bucket_Append(bucket, node /*moved*/);
         }
     }
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
       map->Size++;
     }
@@ -16279,14 +16269,14 @@ Result Map_SetMoveKey(Map* map, String* key, void* data)
     return result;
 }
 
-Result Map_Set(Map* map, const char* key, void* data)
+bool Map_Set(Map* map, const char* key, void* data)
 {
     //assert(key != NULL);
     void* pv;
-    Result result = Map_Find(map, key, &pv);
-    if (result == RESULT_OK)
+    bool result = Map_Find(map, key, &pv);
+    if (result == true)
     {
-        return RESULT_FAIL;
+        return false;
         ////assert(false);
     }
 
@@ -16302,13 +16292,13 @@ Result Map_Set(Map* map, const char* key, void* data)
 }
 
 
-Result Map_Find(Map* map, const char* key, void** pp)
+bool Map_Find(Map* map, const char* key, void** pp)
 {
     //assert(key != NULL);
     BucketItem* pNode = Map_FindNode(map, key);
-    Result result = pNode ? RESULT_OK : RESULT_FAIL;
+    bool result = pNode ? true : false;
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
         *pp = pNode->data;
     }
@@ -16319,12 +16309,12 @@ Result Map_Find(Map* map, const char* key, void** pp)
 void* Map_Find2(Map* map, const char* key)
 {
     void* pv;
-    Result result = Map_Find(map, key, &pv);
+    bool result = Map_Find(map, key, &pv);
 
-    return result == RESULT_OK ? pv : NULL;
+    return result == true ? pv : NULL;
 }
 
-Result Map_DeleteEx(Map* map, const char* key, void** pp)
+bool Map_DeleteEx(Map* map, const char* key, void** pp)
 {
     //assert(key != NULL);
     uint32_t hash = HashFunc(key);
@@ -16334,24 +16324,24 @@ Result Map_DeleteEx(Map* map, const char* key, void** pp)
 
     if (bucket == NULL)
     {
-        return RESULT_FAIL;
+        return false;
     }
 
-    Result result = RemoveBucketItem(bucket, hash, key, pp);
+    bool result = RemoveBucketItem(bucket, hash, key, pp);
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
       map->Size--;
     }
     return result;
 }
 
-Result Map_DeleteItemOpt(Map* map, const char* key, void(*pfDestroyData)(void*))
+bool Map_DeleteItemOpt(Map* map, const char* key, void(*pfDestroyData)(void*))
 {
     //assert(key != NULL);
     void* p;
-    Result result = Map_DeleteEx(map, key, &p);
-    if (result == RESULT_OK)
+    bool result = Map_DeleteEx(map, key, &p);
+    if (result == true)
     {
         if (pfDestroyData != NULL)
         {
@@ -16361,12 +16351,12 @@ Result Map_DeleteItemOpt(Map* map, const char* key, void(*pfDestroyData)(void*))
     return result;
 }
 
-Result Map_DeleteItem(Map* map, const char* key, void(*pfDestroyData)(void*))
+bool Map_DeleteItem(Map* map, const char* key, void(*pfDestroyData)(void*))
 {
-    Result result = Map_DeleteItemOpt(map, key, pfDestroyData);
+    bool result = Map_DeleteItemOpt(map, key, pfDestroyData);
     void* p;
-    ////assert(Map_Find(map, key, &p) != RESULT_OK);
-    if (Map_Find(map, key, &p) == RESULT_OK)
+    ////assert(Map_Find(map, key, &p) != true);
+    if (Map_Find(map, key, &p) == true)
     {
         //assert(false);
         Map_DeleteItemOpt(map, key, pfDestroyData);
@@ -16416,11 +16406,11 @@ void Map_Swap(Map* map, Map* map2)
 
 ////
 
-Result MultiMap_Init(MultiMap* map, int nBuckets)
+bool MultiMap_Init(MultiMap* map, int nBuckets)
 {
   map->Size = 0;
-  Result result = Buckets_Init(&map->buckets, nBuckets);
-  if (result == RESULT_OK)
+  bool result = Buckets_Init(&map->buckets, nBuckets);
+  if (result == true)
   {
   }
   return result;
@@ -16431,10 +16421,10 @@ void MultiMap_Destroy(MultiMap* map, void(*pfDestroyData)(void*))
   Buckets_Destroy(&map->buckets, pfDestroyData);
 }
 
-Result MultiMap_Add(MultiMap* map, const char* key, void* data)
+bool MultiMap_Add(MultiMap* map, const char* key, void* data)
 {
   //assert(key != NULL);
-  Result result;
+  bool result;
   
   uint32_t hash = HashFunc(key);
   int bucket_n = hash % map->buckets.size;
@@ -16444,17 +16434,17 @@ Result MultiMap_Add(MultiMap* map, const char* key, void* data)
   {
     //Não existia..criar
     result = Bucket_Create(&bucket);
-    if (result == RESULT_OK)
+    if (result == true)
     {
       map->buckets.data[bucket_n] = bucket;
     }
   }
   else
   {
-    result = RESULT_OK;
+    result = true;
   }
 
-  if (result == RESULT_OK)
+  if (result == true)
   {
     //Adiciona no fim - não verifica se ja existe
     String stemp = STRING_INIT;
@@ -16467,13 +16457,13 @@ Result MultiMap_Add(MultiMap* map, const char* key, void* data)
 
     String_Destroy(&stemp);
 
-    if (result == RESULT_OK)
+    if (result == true)
     {
       result = Bucket_Append(bucket, node /*moved*/);
     }
   }
 
-  if (result == RESULT_OK)
+  if (result == true)
   {
     map->Size++;
   }
@@ -16849,7 +16839,7 @@ int IsTypeName(Parser* ctx, Tokens token, const char * lexeme);
 
 
 
-Result Parser_InitString(Parser* parser,
+bool Parser_InitString(Parser* parser,
     const char* name,
     const char* Text)
 {
@@ -16875,10 +16865,10 @@ Result Parser_InitString(Parser* parser,
     Parser_Match(parser, &clueList0);
     TScannerItemList_Destroy(&clueList0);
 
-    return RESULT_OK;
+    return true;
 }
 
-Result Parser_InitFile(Parser* parser, const char* fileName)
+bool Parser_InitFile(Parser* parser, const char* fileName)
 {
 
 
@@ -16908,7 +16898,7 @@ Result Parser_InitFile(Parser* parser, const char* fileName)
     Parser_Match(parser, &clueList0);
     TScannerItemList_Destroy(&clueList0);
 
-    return RESULT_OK;
+    return true;
 }
 
 void Parser_PushFile(Parser* parser, const char* fileName)
@@ -22804,14 +22794,14 @@ void TFileArray_PushBack(TFileArray* p, TFile* pItem) /*default*/
     p->Size++;
 }
 
-Result TFileMap_Set(TFileMap* map, const char* key, TFile* pFile)
+bool TFileMap_Set(TFileMap* map, const char* key, TFile* pFile)
 {
   // tem que ser case insensitive!
   //assert(IsFullPath(key));
   // converter
   // Ajusta o file index de acordo com a entrada dele no mapa
   pFile->FileIndex = map->Size;
-  Result result = Map_Set(map, key, pFile);
+  bool result = Map_Set(map, key, pFile);
   String_Set(&pFile->FullPath, key);
   return result;
 }
@@ -22822,7 +22812,7 @@ TFile* TFileMap_Find(TFileMap* map, const char* key)
   return (TFile*)Map_Find2(map, key);
 }
 
-Result TFileMap_DeleteItem(TFileMap* map, const char* key)
+bool TFileMap_DeleteItem(TFileMap* map, const char* key)
 {
   return Map_DeleteItem(map, key, TFile_DeleteVoid);
 }
@@ -22971,7 +22961,7 @@ void Scanner_PrintDebug(Scanner* pScanner)
   printf("---\n");
 }
 
-static Result AddStandardMacro(Scanner* pScanner, const char* name,
+static bool AddStandardMacro(Scanner* pScanner, const char* name,
   const char* value)
 {
   Macro* pDefine1 = Macro_Create();
@@ -22981,12 +22971,12 @@ static Result AddStandardMacro(Scanner* pScanner, const char* name,
     PPToken_Create(value, PPTokenType_Other));
   pDefine1->FileIndex = 0;
   MacroMap_SetAt(&pScanner->Defines2, name, pDefine1);
-  return RESULT_OK;
+  return true;
 }
 static void Scanner_PushToken(Scanner* pScanner, Tokens token,
   const char* lexeme, bool bActive);
 
-static Result Scanner_InitCore(Scanner* pScanner)
+static bool Scanner_InitCore(Scanner* pScanner)
 {
   TScannerItemList_Init(&pScanner->AcumulatedTokens);
 
@@ -23025,36 +23015,36 @@ static Result Scanner_InitCore(Scanner* pScanner)
 
   Scanner_PushToken(pScanner, TK_BOF, "", true);
 
-  return RESULT_OK;
+  return true;
 }
 
-Result Scanner_InitString(Scanner* pScanner, const char* name,
+bool Scanner_InitString(Scanner* pScanner, const char* name,
   const char* Text)
 {
   Scanner_InitCore(pScanner);
 
   BasicScanner* pNewScanner;
-  Result result =
+  bool result =
     BasicScanner_Create(&pNewScanner, name, Text, BasicScannerType_Macro);
   BasicScannerStack_Push(&pScanner->stack, pNewScanner);
   return result;
 }
 
-Result PushExpandedMacro(Scanner* pScanner,
+bool PushExpandedMacro(Scanner* pScanner,
 
   const char* callString,
   const char* defineContent)
 {
   if (pScanner->bError)
   {
-    return RESULT_FAIL;
+    return false;
   }
 
   BasicScanner* pNewScanner;
-  Result result = BasicScanner_Create(&pNewScanner, callString, /*defineName*/
+  bool result = BasicScanner_Create(&pNewScanner, callString, /*defineName*/
     defineContent, BasicScannerType_Macro);
 
-  if (result == RESULT_OK)
+  if (result == true)
   {
     pNewScanner->bMacroExpanded = true;
     BasicScanner_Match(pNewScanner); // inicia
@@ -23236,9 +23226,9 @@ void Scanner_IncludeFile(Scanner* pScanner, const char* includeFileName,
       }
 
       BasicScanner* pNewScanner = NULL;
-      Result result = BasicScanner_CreateFile(fullPath, &pNewScanner);
+      bool result = BasicScanner_CreateFile(fullPath, &pNewScanner);
 
-      if (result == RESULT_OK)
+      if (result == true)
       {
         if (pFile)
         {
@@ -23280,7 +23270,7 @@ const char* Scanner_GetStreamName(Scanner* pScanner)
   return streamName;
 }
 
-Result Scanner_Init(Scanner* pScanner)
+bool Scanner_Init(Scanner* pScanner)
 {
   return Scanner_InitCore(pScanner);
 }
@@ -25228,9 +25218,9 @@ void StrBuilder_Destroy(StrBuilder* p)
   }
 }
 
-Result StrBuilder_Reserve(StrBuilder* p, int nelements)
+bool StrBuilder_Reserve(StrBuilder* p, int nelements)
 {
-  Result r = RESULT_OK;
+  bool r = true;
 
   if (nelements > p->capacity)
   {
@@ -25250,16 +25240,16 @@ Result StrBuilder_Reserve(StrBuilder* p, int nelements)
 
     else
     {
-      r = RESULT_OUT_OF_MEM;
+      r = false /*nomem*/;
     }
   }
 
   return r;
 }
 
-static Result StrBuilder_Grow(StrBuilder* p, int nelements)
+static bool StrBuilder_Grow(StrBuilder* p, int nelements)
 {
-  Result r = RESULT_OK;
+  bool r = true;
 
   if (nelements > p->capacity)
   {
@@ -25276,13 +25266,13 @@ static Result StrBuilder_Grow(StrBuilder* p, int nelements)
   return r;
 }
 
-Result StrBuilder_SetN(StrBuilder* p,
+bool StrBuilder_SetN(StrBuilder* p,
                        const char* source,
                        int nelements)
 {
-  Result r = StrBuilder_Grow(p, nelements);
+  bool r = StrBuilder_Grow(p, nelements);
 
-  if (r == 0)
+  if (r)
   {
     strncpy(p->c_str, /*p->capacity + 1,*/ source, nelements);
     p->c_str[nelements] = '\0';
@@ -25292,10 +25282,10 @@ Result StrBuilder_SetN(StrBuilder* p,
   return r;
 }
 
-Result StrBuilder_Set(StrBuilder* p,
+bool StrBuilder_Set(StrBuilder* p,
                       const char* source)
 {
-    Result r = RESULT_OK;
+    bool r = true;
     if (source == NULL)
     {
         StrBuilder_Clear(p);
@@ -25313,18 +25303,18 @@ Result StrBuilder_Set(StrBuilder* p,
   return r;
 }
 
-Result StrBuilder_AppendN(StrBuilder* p,
+bool StrBuilder_AppendN(StrBuilder* p,
                           const char* source,
                           int nelements)
 {
   if (IsEmptyStr(source))
   {
-    return RESULT_OK;
+    return true;
   }
 
-  Result r = StrBuilder_Grow(p, p->size + nelements);
+  bool r = StrBuilder_Grow(p, p->size + nelements);
 
-  if (r == RESULT_OK)
+  if (r == true)
   {
     strncpy(p->c_str + p->size,
             /*(p->capacity + 1) - p->size,*/
@@ -25337,7 +25327,7 @@ Result StrBuilder_AppendN(StrBuilder* p,
   return r;
 }
 
-Result StrBuilder_AppendIdent(StrBuilder* p,
+bool StrBuilder_AppendIdent(StrBuilder* p,
 	int nspaces, 
 	const char* source)
 {
@@ -25348,12 +25338,12 @@ Result StrBuilder_AppendIdent(StrBuilder* p,
 	return StrBuilder_Append(p, source);
 }
 
-Result StrBuilder_Append(StrBuilder* p,
+bool StrBuilder_Append(StrBuilder* p,
                          const char* source)
 {
   if (IsEmptyStr(source))
   {
-    return RESULT_OK;
+    return true;
   }
 
   return StrBuilder_AppendN(p, source, strlen(source));
@@ -25398,7 +25388,7 @@ void StrBuilder_Attach(StrBuilder* pStrBuilder,
   }
 }
 
-Result StrBuilder_AppendWChar(StrBuilder* p, wchar_t wch)
+bool StrBuilder_AppendWChar(StrBuilder* p, wchar_t wch)
 {
 #ifdef USE_UTF8
   char buffer[5] = { 0 };
@@ -25411,20 +25401,20 @@ Result StrBuilder_AppendWChar(StrBuilder* p, wchar_t wch)
 }
 
 
-Result StrBuilder_AppendChar(StrBuilder* p, char ch)
+bool StrBuilder_AppendChar(StrBuilder* p, char ch)
 {
   return StrBuilder_AppendN(p, &ch, 1);
 }
 
-Result StrBuilder_AppendW(StrBuilder* p, const wchar_t* psz)
+bool StrBuilder_AppendW(StrBuilder* p, const wchar_t* psz)
 {
-  Result result = RESULT_FAIL;
+  bool result = false;
 
   while (*psz)
   {
     result = StrBuilder_AppendWChar(p, *psz);
 
-    if (result != RESULT_OK)
+    if (result != true)
     {
       break;
     }
@@ -25480,7 +25470,7 @@ void StrBuilder_Trim(StrBuilder* p)
 
 
 
-Result StrBuilder_AppendUpper(StrBuilder *p, const char*  s)
+bool StrBuilder_AppendUpper(StrBuilder *p, const char*  s)
 {
   if (s != NULL)
   {
@@ -25491,7 +25481,7 @@ Result StrBuilder_AppendUpper(StrBuilder *p, const char*  s)
     }
   }
 
-  return RESULT_OK;
+  return true;
 }
 
 
@@ -25753,22 +25743,16 @@ void String_Swap(String* pA, String* pB)
 
 #ifndef SEARCH_LEAKS
 
-Result String_Set(String *pS1, const char* psz1)
+void String_Set(String *pS1, const char* psz1)
 {
-  Result result;
   String s1_Moved;
-  result = String_InitWith(&s1_Moved, psz1);
+  String_InitWith(&s1_Moved, psz1);
 
-  if (result == RESULT_OK)
-  {
-    String_Swap(&s1_Moved, pS1);
-    String_Destroy(&s1_Moved);
-  }
-
-  return result;
+  String_Swap(&s1_Moved, pS1);
+  String_Destroy(&s1_Moved);
 }
 
-Result String_InitWith(String* pString, const char*  sourceOpt)
+void String_InitWith(String* pString, const char*  sourceOpt)
 {
   if (sourceOpt != NULL)
   {
@@ -25777,7 +25761,7 @@ Result String_InitWith(String* pString, const char*  sourceOpt)
 
     if (snew == NULL)
     {
-      return RESULT_OUT_OF_MEM;
+      return;
     }
 
     memcpy(snew, sourceOpt, len);
@@ -25787,8 +25771,6 @@ Result String_InitWith(String* pString, const char*  sourceOpt)
   {
     *pString = NULL;
   }
-
-  return RESULT_OK;
 }
 
 #endif
