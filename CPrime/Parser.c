@@ -68,7 +68,7 @@ int IsTypeName(Parser* ctx, Tokens token, const char * lexeme);
 
 Result Parser_InitString(Parser* parser,
     const char* name,
-    const char* text)
+    const char* Text)
 {
     TScannerItemList_Init(&parser->ClueList);
     parser->IncludeLevel = 0;
@@ -85,7 +85,7 @@ Result Parser_InitString(Parser* parser,
 
 
     /////////
-    Scanner_InitString(&parser->Scanner, name, text);
+    Scanner_InitString(&parser->Scanner, name, Text);
 
     //sair do BOF
     TScannerItemList clueList0 = { 0 };

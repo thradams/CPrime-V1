@@ -222,7 +222,7 @@ typedef enum
 typedef struct BasicScanner
 {
     BasicScannerType Type;
-    SStream stream;
+    struct SStream stream;
     ScannerItem currentItem;
 
     //true antes do 1 token de cada linha
@@ -246,12 +246,12 @@ void        BasicScanner_Delete(BasicScanner* pScanner);
 
 Result BasicScanner_Init(BasicScanner* pScanner,
                          const char* name,
-                         const char* text,
+                         const char* Text,
                          BasicScannerType Type);
 
 Result BasicScanner_Create(BasicScanner** pp,
                            const char* name, 
-                           const char* text,
+                           const char* Text,
                            BasicScannerType Type);
 
 void BasicScanner_Destroy(BasicScanner* pScanner);

@@ -1,39 +1,40 @@
 #pragma once
-#include "Result.h"
 #include "StringEx.h"
 #include <stdio.h>
 #include <wchar.h>
+#include <stdbool.h>
 
-typedef struct
+struct SStream
 {
     //name to identify this stream
     String NameOrFullPath;
     String FullDir2;
 
     //stream content and length
-    String text;
-    int text_length;
+    String Text;
+    int TextLen;
 
-    int position;
-    wchar_t currentChar;
+    int CurrentPos;
+    wchar_t CurrentChar;
 
-    int currentLine;
-    int currentCol;
+    int CurrentLine;
+    int CurrentCol;
 
-} SStream;
+};
 
 
 
-Result SStream_Init(SStream* pfStream,
-                    const char* name,
-                    const char* psz);
+bool SStream_Init(struct SStream* pfStream,
+    const char* name,
+    const char* psz);
 
-Result SStream_InitFile(SStream* pfStream,
-                        const char* fileName);
+bool SStream_InitFile(struct SStream* pfStream,
+    const char* fileName);
 
-void SStream_Destroy(SStream* pfStream);
+void SStream_Destroy(struct SStream* pfStream);
 
-wchar_t SStream_LookAhead(SStream* pStream);
+wchar_t SStream_LookAhead(struct SStream* pStream);
 
-void SStream_Match(SStream* pStream);
-bool SStream_MatchChar(SStream* pStream, wchar_t ch);
+void SStream_Match(struct SStream* pStream);
+bool SStream_MatchChar(struct SStream* pStream, wchar_t ch);
+

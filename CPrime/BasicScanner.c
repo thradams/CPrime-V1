@@ -351,30 +351,33 @@ void BasicScanner_InitCore(BasicScanner* pBasicScanner,
 
 Result BasicScanner_Init(BasicScanner* pBasicScanner,
   const char* name,
-  const char* text,
+  const char* Text,
   BasicScannerType type)
 {
   BasicScanner_InitCore(pBasicScanner, type);
-  return SStream_Init(&pBasicScanner->stream, name, text);
+  bool b = SStream_Init(&pBasicScanner->stream, name, Text);
+  return b ? RESULT_OK : RESULT_FAIL;
 }
 
 Result BasicScanner_InitFile(BasicScanner* pBasicScanner,
   const char* fileName)
 {
   BasicScanner_InitCore(pBasicScanner, BasicScannerType_File);
-  return SStream_InitFile(&pBasicScanner->stream, fileName);
+  
+  bool b = SStream_InitFile(&pBasicScanner->stream, fileName);
+  return b ? RESULT_OK : RESULT_FAIL;
 }
 
 Result BasicScanner_Create(BasicScanner** pp,
   const char* name,
-  const char* text,
+  const char* Text,
   BasicScannerType Type)
 {
   Result result = RESULT_OUT_OF_MEM;
   BasicScanner* p = (BasicScanner*)Malloc(sizeof(BasicScanner));
   if (p)
   {
-    result = BasicScanner_Init(p, name, text, Type);
+    result = BasicScanner_Init(p, name, Text, Type);
     if (result == RESULT_OK)
     {
       *pp = p;
@@ -586,7 +589,7 @@ void BasicScanner_Next(BasicScanner* scanner)
       ScannerItem_Reset(&scanner->currentItem);
       scanner->currentItem.token = scanner->m_Token;
       LocalStrBuilder_Set(&scanner->currentItem.lexeme,
-        scanner->stream.text);
+        scanner->stream.Text);
       scanner->bLineStart = false;
     }
     else
@@ -604,14 +607,14 @@ void BasicScanner_Next(BasicScanner* scanner)
   }
 
 
-  scanner->currentItem.Line = scanner->stream.currentLine;
+  scanner->currentItem.Line = scanner->stream.CurrentLine;
   scanner->currentItem.FileIndex = scanner->FileIndex;
 
   //bool bLineStart = scanner->bLineStart;
   //scanner->bLineStart = false;
   wchar_t ch = '\0';
   ScannerItem_Reset(&scanner->currentItem);
-  ch = scanner->stream.currentChar;
+  ch = scanner->stream.CurrentChar;
   wchar_t ch1 = SStream_LookAhead(&scanner->stream);
   if (ch == '.' && ch1 == '.')
   {
@@ -799,8 +802,8 @@ void BasicScanner_Next(BasicScanner* scanner)
           ch = BasicScanner_MatchChar(scanner);
         }
       }
-      if (scanner->stream.currentChar == 'e' ||
-        scanner->stream.currentChar == 'E')
+      if (scanner->stream.CurrentChar == 'e' ||
+        scanner->stream.CurrentChar == 'E')
       {
         ch = BasicScanner_MatchChar(scanner);
         if (ch == '-' ||
@@ -825,7 +828,7 @@ void BasicScanner_Next(BasicScanner* scanner)
     {
       //so coloca \n
       SStream_Match(&scanner->stream);
-      ch = scanner->stream.currentChar;
+      ch = scanner->stream.CurrentChar;
       ch = BasicScanner_MatchChar(scanner);
     }
     else
@@ -875,7 +878,7 @@ void BasicScanner_Next(BasicScanner* scanner)
     scanner->currentItem.token = TK_SPACES;
   }
   //
-  if (scanner->stream.currentChar == '#')
+  if (scanner->stream.CurrentChar == '#')
   {
     ch = BasicScanner_MatchChar(scanner);
     if (scanner->bLineStart)
@@ -928,7 +931,7 @@ void BasicScanner_Next(BasicScanner* scanner)
         {
           //so coloca \n
           SStream_Match(&scanner->stream);
-          ch = scanner->stream.currentChar;
+          ch = scanner->stream.CurrentChar;
           if (ch == L'\n')
           {
             ch = BasicScanner_MatchChar(scanner);
@@ -1034,9 +1037,9 @@ bool BasicScanner_IsLexeme(BasicScanner* scanner, const char* psz)
 wchar_t BasicScanner_MatchChar(BasicScanner* scanner)
 {
   LocalStrBuilder_AppendChar(&scanner->currentItem.lexeme,
-    (char)scanner->stream.currentChar);
+    (char)scanner->stream.CurrentChar);
   SStream_Match(&scanner->stream);
-  return scanner->stream.currentChar;
+  return scanner->stream.CurrentChar;
 }
 
 //////////////////////////////////////////////

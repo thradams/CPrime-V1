@@ -115,7 +115,7 @@ void Scanner_GetFilePositionString(Scanner* pScanner, StrBuilder* sb);
 
 Result Scanner_InitString(Scanner* pScanner,
   const char* name,
-  const char* text);
+  const char* Text);
 
 Result PushExpandedMacro(Scanner * pScanner, const char * defineName, const char * defineContent);
 

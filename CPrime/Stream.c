@@ -10,9 +10,9 @@
 #include "Path.h"
 #include "Mem.h"
 
-Result LoadFile(const char* filename, const char** out, int* szOut)
+bool LoadFile(const char* filename, const char** out, int* szOut)
 {
-  Result result = RESULT_FAIL;
+  bool result = false;
   int lSize = 0;
   FILE*  fp = (FILE* ) fopen(filename, "rb");
 
@@ -38,7 +38,7 @@ Result LoadFile(const char* filename, const char** out, int* szOut)
         buffer[lSize] = '\0';
         *out = buffer;
         buffer = NULL;
-        result = RESULT_OK;
+        result = true;
         *szOut = lSize;
       }
 
@@ -52,124 +52,124 @@ Result LoadFile(const char* filename, const char** out, int* szOut)
 }
 
 
-Result SStream_InitFile(SStream* pStream,
+bool SStream_InitFile(struct SStream* pStream,
                         const char* fullPath)
 {
   //assert(IsFullPath(fullPath));
   String_InitWith(&pStream->NameOrFullPath, fullPath);
   String_InitWith(&pStream->FullDir2, NULL);
-  pStream->currentLine = 1;
-  pStream->currentCol = 1;
-  pStream->position = 0;
-  Result result = LoadFile(fullPath, (const char**)&pStream->text,
-                           &pStream->text_length);
+  pStream->CurrentLine = 1;
+  pStream->CurrentCol = 1;
+  pStream->CurrentPos = 0;
+  bool result = LoadFile(fullPath, (const char**)&pStream->Text,
+                           &pStream->TextLen);
 
-  if (result == RESULT_OK)
+  if (result)
   {
     //O objetivo aqui eh pegar o diretorio
     GetFullDir(fullPath, &pStream->FullDir2);
 
-    if (pStream->text != NULL &&
-        pStream->text[0] != '\0')
+    if (pStream->Text != NULL &&
+        pStream->Text[0] != '\0')
     {
       //unicode?
-      pStream->currentChar = pStream->text[0];
+      pStream->CurrentChar = pStream->Text[0];
     }
 
     else
     {
-      pStream->currentChar = '\0';
+      pStream->CurrentChar = '\0';
     }
   }
 
   return result;
 }
 
-Result SStream_Init(SStream* pStream, const char* name, const char*  text)
+bool SStream_Init(struct SStream* pStream, const char* name, const char*  Text)
 {
-  pStream->currentLine = 1;
-  pStream->currentCol = 1;
-  pStream->position = 0;
-  String_InitWith(&pStream->text, text);
+  pStream->CurrentLine = 1;
+  pStream->CurrentCol = 1;
+  pStream->CurrentPos = 0;
+  String_InitWith(&pStream->Text, Text);
   String_InitWith(&pStream->NameOrFullPath, name);
   String_InitWith(&pStream->FullDir2, "");
 
-  if (text != NULL)
+  if (Text != NULL)
   {
-    pStream->text_length = strlen(text);
+    pStream->TextLen = strlen(Text);
   }
 
   else
   {
-    pStream->text_length = 0;
+    pStream->TextLen = 0;
   }
 
-  if (pStream->text != NULL &&
-      pStream->text[0] != '\0')
+  if (pStream->Text != NULL &&
+      pStream->Text[0] != '\0')
   {
     //unicode?
-    pStream->currentChar = pStream->text[0];
+    pStream->CurrentChar = pStream->Text[0];
   }
 
   else
   {
-    pStream->currentChar = '\0';
+    pStream->CurrentChar = '\0';
   }
 
-  return RESULT_OK;
+  return true;
 }
 
 
-void SStream_Destroy(SStream* pStream) /*default*/
+void SStream_Destroy(struct SStream* pStream) /*default*/
 {
     String_Destroy(&pStream->NameOrFullPath);
     String_Destroy(&pStream->FullDir2);
-    String_Destroy(&pStream->text);
+    String_Destroy(&pStream->Text);
 }
 
 
-wchar_t SStream_LookAhead(SStream* pStream)
+wchar_t SStream_LookAhead(struct SStream* pStream)
 {
-  if (pStream->position + 1 >= pStream->text_length)
+  if (pStream->CurrentPos + 1 >= pStream->TextLen)
   {
     return '\0';
   }
 
-  return pStream->text[pStream->position + 1];
+  return pStream->Text[pStream->CurrentPos + 1];
 }
 
-bool SStream_MatchChar(SStream* pStream, wchar_t ch)
+bool SStream_MatchChar(struct SStream* pStream, wchar_t ch)
 {
-    bool b = pStream->currentChar == ch;
+    bool b = pStream->CurrentChar == ch;
     SStream_Match(pStream);
     return b;
 }
 
-void SStream_Match(SStream* pStream)
+void SStream_Match(struct SStream* pStream)
 {
-  if (pStream->position >= pStream->text_length)
+  if (pStream->CurrentPos >= pStream->TextLen)
   {
-    pStream->currentChar = L'\0';
+    pStream->CurrentChar = L'\0';
     return;
   }
 
-  pStream->currentCol++;
-  pStream->position++;
+  pStream->CurrentCol++;
+  pStream->CurrentPos++;
 
-  if (pStream->position == pStream->text_length)
+  if (pStream->CurrentPos == pStream->TextLen)
   {
-    pStream->currentChar = '\0';
+    pStream->CurrentChar = '\0';
   }
 
   else
   {
-    pStream->currentChar = pStream->text[pStream->position];
+    pStream->CurrentChar = pStream->Text[pStream->CurrentPos];
   }
 
-  if (pStream->currentChar == '\n')
+  if (pStream->CurrentChar == '\n')
   {
-    pStream->currentLine++;
-    pStream->currentCol = 0;
+    pStream->CurrentLine++;
+    pStream->CurrentCol = 0;
   }
 }
 

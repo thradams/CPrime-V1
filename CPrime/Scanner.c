@@ -364,7 +364,7 @@ void Scanner_GetError(Scanner* pScanner, StrBuilder* str)
   {
     StrBuilder_AppendFmt(str, "%s(%d)\n",
       p->stream.NameOrFullPath,
-      p->stream.currentLine);
+      p->stream.CurrentLine);
   }
 }
 
@@ -381,7 +381,7 @@ void Scanner_GetFilePositionString(Scanner* pScanner, StrBuilder* sb)
 
   if (pScannerTop)
   {
-    StrBuilder_AppendFmt(sb, "(%d): ", pScannerTop->stream.currentLine);
+    StrBuilder_AppendFmt(sb, "(%d): ", pScannerTop->stream.CurrentLine);
   }
   else
   {
@@ -399,7 +399,7 @@ void Scanner_SetError(Scanner* pScanner, const char* fmt, ...)
     {
       StrBuilder_AppendFmt(&pScanner->ErrorString, "%s(%d) :",
         Scanner_Top(pScanner)->stream.NameOrFullPath,
-        Scanner_Top(pScanner)->stream.currentLine);
+        Scanner_Top(pScanner)->stream.CurrentLine);
     }
     else
     {
@@ -420,7 +420,7 @@ void Scanner_PrintDebug(Scanner* pScanner)
 
   ForEachBasicScanner(p, pScanner->stack)
   {
-    printf("%s(%d):\n", p->stream.NameOrFullPath, p->stream.currentLine);
+    printf("%s(%d):\n", p->stream.NameOrFullPath, p->stream.CurrentLine);
   }
 
   printf("---\n");
@@ -484,13 +484,13 @@ static Result Scanner_InitCore(Scanner* pScanner)
 }
 
 Result Scanner_InitString(Scanner* pScanner, const char* name,
-  const char* text)
+  const char* Text)
 {
   Scanner_InitCore(pScanner);
 
   BasicScanner* pNewScanner;
   Result result =
-    BasicScanner_Create(&pNewScanner, name, text, BasicScannerType_Macro);
+    BasicScanner_Create(&pNewScanner, name, Text, BasicScannerType_Macro);
   BasicScannerStack_Push(&pScanner->stack, pNewScanner);
   return result;
 }

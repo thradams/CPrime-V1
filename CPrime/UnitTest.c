@@ -460,7 +460,7 @@ void Scanner_Test8(void)
 
 void Stream_Test1(void)
 {
-  SStream stream;
+  struct SStream stream;
   SStream_Init(&stream, "name", "123");
   TEST(SStream_MatchChar(&stream, L'1'));
   TEST(SStream_LookAhead(&stream) == '3');
