@@ -40,22 +40,16 @@ void String_Swap(String* pA, String* pB)
 
 #ifndef SEARCH_LEAKS
 
-Result String_Set(String *pS1, const char* psz1)
+void String_Set(String *pS1, const char* psz1)
 {
-  Result result;
   String s1_Moved;
-  result = String_InitWith(&s1_Moved, psz1);
+  String_InitWith(&s1_Moved, psz1);
 
-  if (result == RESULT_OK)
-  {
-    String_Swap(&s1_Moved, pS1);
-    String_Destroy(&s1_Moved);
-  }
-
-  return result;
+  String_Swap(&s1_Moved, pS1);
+  String_Destroy(&s1_Moved);
 }
 
-Result String_InitWith(String* pString, const char*  sourceOpt)
+void String_InitWith(String* pString, const char*  sourceOpt)
 {
   if (sourceOpt != NULL)
   {
@@ -64,7 +58,7 @@ Result String_InitWith(String* pString, const char*  sourceOpt)
 
     if (snew == NULL)
     {
-      return RESULT_OUT_OF_MEM;
+      return;
     }
 
     memcpy(snew, sourceOpt, len);
@@ -74,8 +68,6 @@ Result String_InitWith(String* pString, const char*  sourceOpt)
   {
     *pString = NULL;
   }
-
-  return RESULT_OK;
 }
 
 #endif

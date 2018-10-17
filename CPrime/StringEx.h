@@ -2,8 +2,6 @@
 #pragma once
 
 #include <stdbool.h>
-#include "Result.h"
-#include "StringEx.h"
 
 
 typedef char * String;
@@ -62,6 +60,6 @@ do {\
   }\
 } while (0)
 #else
-Result String_InitWith(String* pString, const char* source);
-Result String_Set(String *pS1, const char* psz1);
+void String_InitWith(String* pString, const char* source);
+void String_Set(String *pS1, const char* psz1);
 #endif
