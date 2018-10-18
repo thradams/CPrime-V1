@@ -2,8 +2,6 @@
 #include <stdbool.h>
 #include "StrBuilder.h"
 #include "Stream.h"
-
-#include "Array.h"
 #include "LocalStrBuilder.h"
 #define LANGUAGE_EXTENSIONS
 //

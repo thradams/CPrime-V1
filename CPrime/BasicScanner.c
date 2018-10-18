@@ -1,12 +1,12 @@
-#include "Scanner.h"
 
-#include "StrBuilder.h"
-#include "Stream.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "Parser.h"
+#include "StrBuilder.h"
+#include "Stream.h"
 #include "Mem.h"
+#include "Scanner.h"
+
 wchar_t BasicScanner_MatchChar(BasicScanner* scanner);
 
 const char* TokenToString(Tokens tk)
