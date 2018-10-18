@@ -408,7 +408,7 @@ bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 
                 TDeclaration* pDeclaration =
                     (TDeclaration*)pBucket->pValue;
-                bool bIsTypeDef = false;
+                
                 for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
                 {
                     TDeclarationSpecifier* pItem = pDeclaration->Specifiers.pData[i];
