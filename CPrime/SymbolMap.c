@@ -389,9 +389,10 @@ void SymbolMap_Print(SymbolMap* pMap)
 
 
 
-int SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
+bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 {
-    int bIsTypeName = false;
+    bool bIsTypeName = false;
+    bool foundResult = false;
 
     while (pMap)
     {
@@ -400,30 +401,14 @@ int SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 
         while (pBucket)
         {
-			/*if (pBucket->pValue->Type == TStructUnionSpecifier_ID &&
-				strcmp(pBucket->Key, identifierName) == 0)
-			{
-				TStructUnionSpecifier* p = (TStructUnionSpecifier*)pBucket->pValue;
-				bIsTypeName = p->Token == TK_STRUCT ? 2 : 3;
-				 //continua para dar preferencia para typedef
-				//break;
-			}
-			else
-            if (pBucket->pValue->Type == TEnumSpecifier_ID &&
-				strcmp(pBucket->Key, identifierName) == 0)
-			{
-				bIsTypeName = 4;
-				//break;
-				//continua para dar preferencia para typedef
-			}
-			
-			else*/
             if (pBucket->pValue->Type == TDeclaration_ID &&
                 strcmp(pBucket->Key, identifierName) == 0)
             {
+                foundResult = true;
+
                 TDeclaration* pDeclaration =
                     (TDeclaration*)pBucket->pValue;
-
+                bool bIsTypeDef = false;
                 for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
                 {
                     TDeclarationSpecifier* pItem = pDeclaration->Specifiers.pData[i];
@@ -434,18 +419,20 @@ int SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
                             (TStorageSpecifier*)pItem;
                         if (pStorageSpecifier->Token == TK_TYPEDEF)
                         {
-                            bIsTypeName = 1;
+                            bIsTypeName = true;
                             break;
                         }
                     }
                 }
             }
-            if (bIsTypeName == 1)
+
+            if (foundResult)
                 break;
+
             pBucket = pBucket->pNext;
         }
 
-        if (bIsTypeName)
+        if (foundResult)
             break;
 
         pMap = pMap->pPrevious;
