@@ -312,7 +312,7 @@ void ScannerItem_Init(ScannerItem* scannerItem) /*default*/
 void ScannerItem_Reset(ScannerItem* scannerItem)
 {
     LocalStrBuilder_Clear(&scannerItem->lexeme);
-    scannerItem->token = TK_EOF;
+    scannerItem->token = TK_ERROR;
 }
 
 void ScannerItem_Copy(ScannerItem* scannerItem,
@@ -947,6 +947,11 @@ void BasicScanner_Next(BasicScanner* scanner)
                     ch = BasicScanner_MatchChar(scanner);
                 }
             }
+
+            if (ch == 'L' || ch == 'l' || ch == 'F' || ch == 'f')
+            {
+                ch = BasicScanner_MatchChar(scanner);
+            }
         }
 
         scanner->bLineStart = false;
@@ -1146,6 +1151,11 @@ void BasicScanner_Next(BasicScanner* scanner)
         ch = BasicScanner_MatchChar(scanner);
         scanner->currentItem.token = REVERSE_SOLIDUS;
         return;
+    }
+
+    if (scanner->currentItem.token == TK_ERROR)
+    {
+        printf("invalid char, scanner");
     }
     //assert(false);
 }
