@@ -752,7 +752,7 @@ void BasicScanner_Next(BasicScanner* scanner)
     if (ch == '0' && 
         (
         (ch1 == 'x' || ch1 == 'X') || //hex 
-        (ch1 >= '0' || ch1 <= '9')) //octal
+        (ch1 >= '0' && ch1 <= '9')) //octal
         )
     {
         ch = BasicScanner_MatchChar(scanner);
@@ -760,9 +760,13 @@ void BasicScanner_Next(BasicScanner* scanner)
         {
             scanner->currentItem.token = TK_HEX_INTEGER;
         }
-        else
+        else if (ch1 >= '0' && ch1 <= '9')
         {
             scanner->currentItem.token = TK_OCTAL_INTEGER;
+        }
+        else
+        {
+            assert(false);
         }
         ch = BasicScanner_MatchChar(scanner);
         
