@@ -3032,6 +3032,8 @@ static void TInitializerListItem_CodePrint(TProgram* program,
 		pDeclarationSpecifiers,
 		p->pInitializer,
 		fp);
+
+    TNodeClueList_CodePrint(options, &p->ClueList, fp);
 }
 
 
