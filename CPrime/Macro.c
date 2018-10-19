@@ -1174,9 +1174,14 @@ void MacroMap_Init(MacroMap* p)
   *p = t;
 }
 
+static void Macro_DeleteVoid(void *p)
+{
+    Macro_Delete((Macro*)p);
+}
+
 void MacroMap_Destroy(MacroMap* p)
 {
-  Map2_Destroy((Map2*)p, Macro_Delete);
+  Map2_Destroy((Map2*)p, Macro_DeleteVoid);
 }
 
 

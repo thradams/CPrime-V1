@@ -915,7 +915,7 @@ TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
             switch (pItem->Type)
             {
             case TSingleTypeSpecifier_ID:
-                pSpecifierTarget = pItem;
+                pSpecifierTarget = (TTypeSpecifier *)pItem;
                 break;
 
             case TStructUnionSpecifier_ID:

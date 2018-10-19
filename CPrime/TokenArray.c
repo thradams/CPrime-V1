@@ -248,9 +248,14 @@ void TokenArrayMap_Init(TokenArrayMap* p)
 }
 
 
+static void TokenArray_DeleteVoid(void* p)
+{
+    TokenArray_Delete((TokenArray*) p);
+}
+
 void TokenArrayMap_Destroy(TokenArrayMap* p) 
 {
-  Map2_Destroy((Map2*)p, &TokenArray_Delete);
+  Map2_Destroy((Map2*)p, &TokenArray_DeleteVoid);
 }
 
 

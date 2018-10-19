@@ -891,6 +891,7 @@ typedef struct TDeclarator
 } TDeclarator;
 
 TDeclarator* TDeclarator_Create();
+void TDeclarator_Delete(TDeclarator* p);
 void TDeclarator_Init(TDeclarator* p);
 void TDeclarator_Destroy(TDeclarator* p);
 const char* TDeclarator_GetName(TDeclarator* p);

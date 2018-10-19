@@ -1334,7 +1334,8 @@ TDeclarationSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualif
 			pSpecifierQualifier->Type == TStructUnionSpecifier_ID ||
 			pSpecifierQualifier->Type == TEnumSpecifier_ID)
 		{
-			pSpecifier = pSpecifierQualifier;
+            //ATENCAO
+			pSpecifier = (TDeclarationSpecifier *)pSpecifierQualifier;
 			break;
 		}
 	}

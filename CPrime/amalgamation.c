@@ -8,8 +8,8 @@
 #include <string.h>
 #include <ctype.h>
 
- char *strdup(const char *s) {
-  char *d = malloc(strlen(s) + 1);
+ static char *strdup2(const char *s) {
+  char *d = (char*)Malloc(strlen(s) + 1);
   if (d != NULL) strcpy(d, s);
   return d;
 }
@@ -26,8 +26,8 @@ struct Header* s_included = 0;
 void MarkAsIncluded(const char* filename)
 {
   
-  struct Header* pNew = Malloc(sizeof * pNew);
-  pNew->fileName = strdup(filename);
+  struct Header* pNew = (struct Header*)Malloc(sizeof * pNew);
+  pNew->fileName = strdup2(filename);
   pNew->pNext = 0;
 
   if (s_included == NULL)

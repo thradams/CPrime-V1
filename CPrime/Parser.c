@@ -3074,7 +3074,8 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
             Type_Specifier(ctx, &pTypeSpecifier);
             if (pTypeSpecifier != NULL)
             {
-                TSpecifierQualifierList_PushBack(pSpecifierQualifierList, pTypeSpecifier);
+                //ATENCAO
+                TSpecifierQualifierList_PushBack(pSpecifierQualifierList, (TSpecifierQualifier *) pTypeSpecifier);
             }
         }
         else
@@ -4628,7 +4629,8 @@ void Declaration_Specifiers(Parser* ctx,
         {
             TTypeSpecifier* pTypeSpecifier = NULL;
             Type_Specifier(ctx, &pTypeSpecifier);
-            TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, pTypeSpecifier);
+            //ATENCAO
+            TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, (TDeclarationSpecifier *)pTypeSpecifier);
         }
         else
         {
@@ -4640,7 +4642,8 @@ void Declaration_Specifiers(Parser* ctx,
     {
         TTypeQualifier* pTypeQualifier = TTypeQualifier_Create();
         Type_Qualifier(ctx, pTypeQualifier);
-        TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
+        //ATENCAO
+        TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, (TDeclarationSpecifier *)TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
     }
     else if (TFunctionSpecifier_IsFirst(token))
     {
@@ -5218,6 +5221,11 @@ void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
     {
 
         TAnyDeclaration* pDeclarationOut = NULL;
+        if (declarationIndex == 213)
+        {
+            declarationIndex = 213;
+            //SetError(ctx, "213");
+        }
         bool bHasDecl = Declaration(ctx, &pDeclarationOut);
         if (bHasDecl)
         {
@@ -5236,6 +5244,7 @@ void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
 
 
             declarationIndex++;
+            printf("%d\n", declarationIndex);
 
         }
         else
