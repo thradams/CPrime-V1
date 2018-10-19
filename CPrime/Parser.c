@@ -5221,11 +5221,7 @@ void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
     {
 
         TAnyDeclaration* pDeclarationOut = NULL;
-        if (declarationIndex == 213)
-        {
-            declarationIndex = 213;
-            //SetError(ctx, "213");
-        }
+       
         bool bHasDecl = Declaration(ctx, &pDeclarationOut);
         if (bHasDecl)
         {
@@ -5244,8 +5240,6 @@ void Parse_Declarations(Parser* ctx, TDeclarations* declarations)
 
 
             declarationIndex++;
-            printf("%d\n", declarationIndex);
-
         }
         else
         {

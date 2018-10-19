@@ -282,7 +282,7 @@ const char* TokenToString(Tokens tk)
 
 ScannerItem* ScannerItem_Create(void) /*default*/
 {
-    ScannerItem *p = (ScannerItem*)Malloc(sizeof * p);
+    ScannerItem *p = (ScannerItem*) Malloc(sizeof * p);
     if (p != NULL)
     {
         ScannerItem_Init(p);
@@ -303,9 +303,9 @@ void ScannerItem_Init(ScannerItem* scannerItem) /*default*/
 {
     LocalStrBuilder_Init(&scannerItem->lexeme);
     scannerItem->token = TK_NONE;
-    scannerItem->Line = -1;
-    scannerItem->FileIndex = -1;
-    scannerItem->bActive = true;
+    scannerItem->Line =  -1;
+    scannerItem->FileIndex =  -1;
+    scannerItem->bActive =  true;
     scannerItem->pNext = NULL;
 }
 
