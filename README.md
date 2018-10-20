@@ -98,88 +98,45 @@ See the declaration of String and the generated destructor X_Destroy.
 
 
 ### Dynamic Arrays (like std::vector)
-Instead of using templates syntax we define the data struct. Some generated functions (PushBack) can undestand the data struct and implement the desired algorithm. This is build-in inside the compiler and maybe some day we can have a code generator script.
+Instead of using templates, we define a concrete data structure.
+Two functions can be created 'PushBack' and 'Reserve' and the normal 'Destroy'.
 
+When the algorithm 'PushBack' is instaciated it will check the type. If the type looks like an vector (pointer, size and capacity) then the function will be instaciated having that in mind. The same function, let´s say PushBack can be instanciated for list.
+
+Differently from C++, one instanciation will not instantiate another one.
+But one instantion can use another one if present. Comment 'Reserve' and compare.
 ```c
-
-struct Item
-{
-	int i;
-};
-
-
-struct Item* Item_Create() /*default*/
-{
-    struct Item* p = (struct Item*) malloc(sizeof * p);
-    if (p)
-    {
-        p->i = 0;
-    }
-    return p;
-}
-void Item_Delete(struct Item* p) /*default*/
-{
-    if (p)
-    {
-        free((void*)p);
-    }
-}
 
 struct Items
 {
-	struct Item * /*auto*/ * /*auto [Size]*/ pData;
+	int * /*auto [Size]*/ pData;
 	int Size;
 	int Capacity;
 };
 
 
-void Items_PushBack(struct Items* pItems, struct Item* pItem) /*default*/
-{
-    if (pItems->Size + 1 > pItems->Capacity)
-    {
-        int n = pItems->Capacity * 2;
-        if (n == 0)
-        {
-            n = 1;
-        }
-        struct Item** pnew = pItems->pData;
-        pnew = (struct Item**)realloc(pnew, n * sizeof(struct Item*));
-        if (pnew)
-        {
-            pItems->pData = pnew;
-            pItems->Capacity = n;
-        }
-    }
-    pItems->pData[pItems->Size] = pItem;
-    pItems->Size++;
-}
-void Items_Destroy(struct Items* pItems) /*default*/
-{
-    for (int i = 0; i < pItems->Size; i++)
-    {
-        Item_Delete(pItems->pData[i]);
-    }
-    free((void*)pItems->pData);
-}
+void Items_Reserve(Items* pItems, int n) /*default*/;
+void Items_PushBack(Items* pItems, int i) /*default*/;
+
+void Items_Destroy(Items* pItems) /*default*/;
 
 
 int main(int argc, char **argv)
 {
-	struct Items items = /*default*/{0};
+	Items items = /*default*/{0};
 
-	Items_PushBack(&items, Item_Create());
-	Items_PushBack(&items, Item_Create());
-	Items_PushBack(&items, Item_Create());
+	Items_PushBack(&items, 1);
+	Items_PushBack(&items, 2);
+	Items_PushBack(&items, 3);
 
 	for (int i = 0; i < items.Size; i++)
 	{
-		printf("%d\n", items.pData[i]->i);
+		printf("%d\n", items.pData[i]);
 	}
 
 	Items_Destroy(&items);
 	return 0;
 }
-
 
 ```
 
