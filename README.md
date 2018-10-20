@@ -21,10 +21,12 @@ http://www.thradams.com/web/cprime.html
 CPrime is written using itself. Some files are 60% generated, see Ast.h and Ast.c.
 
 ## Why?
+
+First you need to like C, otherwise you will probably prefer C++ instead of this tool.
+
 Using this tool you achieve **decoupling** because you don´t have to implement the mechanical relationship between objects.
 
 This mechanical relatioship also makes possible a **new kind of polimorphism where the coupling is much smaller** than the traditional interface (virtual) methodoly.
-
 
 You can compare this code generation with C++ explicity template instantiation.
 But C' instanciates just one function and always explicity.
