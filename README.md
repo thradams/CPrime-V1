@@ -312,8 +312,6 @@ int main()
 
 ## Next steps
 
-[Learn more](learn.md) about the generated code.
-
 [Using](usingcp.md) the compiler.
 
 
@@ -330,7 +328,11 @@ During the development of this parser and static analysis, I had some difficulti
 At some point I decided that I should address the problem to work better with C before to do the static analysis and then I renamed the project to C’ cprime.  Because I want a tool to be useful now (not something experimental) I spent some time to solve the problem of generating C code from C code including the preprocessed parts. This allowed me to use existing C compilers and IDEs.
 C’ can generate destructors for structs and can have owner pointers in the type system. The motivation for static analysis still there and it is also related with code generation. More motivations like containers and polymorphism are included in the C’ as well.
 
+## Current status
 
+I still having some problem to parse (see issues)  and I am fixing these problems parsing existing code like oppenssl, sqlite, duktape, opcua ansi stack, tiny c threads. (Basicaly libs I use)
+
+I also need to make the code compatible with VC++ to parse some code, for instance, integer suffixes i64 etc.
 
 ## Roadmap
 
