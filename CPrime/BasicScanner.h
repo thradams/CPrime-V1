@@ -221,7 +221,7 @@ typedef enum
 typedef struct BasicScanner
 {
     BasicScannerType Type;
-    struct SStream stream;
+    struct Stream stream;
     ScannerItem currentItem;
 
     //true antes do 1 token de cada linha

@@ -355,7 +355,7 @@ bool BasicScanner_Init(BasicScanner* pBasicScanner,
     BasicScannerType type)
 {
     BasicScanner_InitCore(pBasicScanner, type);
-    bool b = SStream_Init(&pBasicScanner->stream, name, Text);
+    bool b = Stream_Init(&pBasicScanner->stream, name, Text);
     return b ? true : false;
 }
 
@@ -364,7 +364,7 @@ bool BasicScanner_InitFile(BasicScanner* pBasicScanner,
 {
     BasicScanner_InitCore(pBasicScanner, BasicScannerType_File);
 
-    bool b = SStream_InitFile(&pBasicScanner->stream, fileName);
+    bool b = Stream_InitFile(&pBasicScanner->stream, fileName);
     return b ? true : false;
 }
 
@@ -412,7 +412,7 @@ bool BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
 
 void BasicScanner_Destroy(BasicScanner* pBasicScanner) /*default*/
 {
-    SStream_Destroy(&pBasicScanner->stream);
+    Stream_Destroy(&pBasicScanner->stream);
     ScannerItem_Destroy(&pBasicScanner->currentItem);
 }
 
@@ -607,15 +607,15 @@ void BasicScanner_Next(BasicScanner* scanner)
     }
 
 
-    scanner->currentItem.Line = scanner->stream.CurrentLine;
+    scanner->currentItem.Line = scanner->stream.Line;
     scanner->currentItem.FileIndex = scanner->FileIndex;
 
     //bool bLineStart = scanner->bLineStart;
     //scanner->bLineStart = false;
     wchar_t ch = '\0';
     ScannerItem_Reset(&scanner->currentItem);
-    ch = scanner->stream.CurrentChar;
-    wchar_t ch1 = SStream_LookAhead(&scanner->stream);
+    ch = scanner->stream.Character;
+    wchar_t ch1 = Stream_LookAhead(&scanner->stream);
     if (ch == '.' && ch1 == '.')
     {
         BasicScanner_MatchChar(scanner);
@@ -739,7 +739,7 @@ void BasicScanner_Next(BasicScanner* scanner)
             {
                 scanner->currentItem.token = keywords[i].token;
                 //StrBuilder_Append(&scanner->currentItem.lexeme, keywords[i].lexeme);
-                //SStream_Next(&scanner->stream);
+                //Stream_Next(&scanner->stream);
                 break;
             }
         }
@@ -933,8 +933,8 @@ void BasicScanner_Next(BasicScanner* scanner)
                 }
             }
 
-            if (scanner->stream.CurrentChar == 'e' ||
-                scanner->stream.CurrentChar == 'E')
+            if (scanner->stream.Character == 'e' ||
+                scanner->stream.Character == 'E')
             {
                 ch = BasicScanner_MatchChar(scanner);
                 if (ch == '-' ||
@@ -964,8 +964,8 @@ void BasicScanner_Next(BasicScanner* scanner)
         if (ch == L'\r' && ch1 == L'\n')
         {
             //so coloca \n
-            SStream_Match(&scanner->stream);
-            ch = scanner->stream.CurrentChar;
+            Stream_Match(&scanner->stream);
+            ch = scanner->stream.Character;
             ch = BasicScanner_MatchChar(scanner);
         }
         else
@@ -1015,7 +1015,7 @@ void BasicScanner_Next(BasicScanner* scanner)
         scanner->currentItem.token = TK_SPACES;
     }
     //
-    if (scanner->stream.CurrentChar == '#')
+    if (scanner->stream.Character == '#')
     {
         ch = BasicScanner_MatchChar(scanner);
         if (scanner->bLineStart)
@@ -1067,8 +1067,8 @@ void BasicScanner_Next(BasicScanner* scanner)
                 else if (ch == L'\r')
                 {
                     //so coloca \n
-                    SStream_Match(&scanner->stream);
-                    ch = scanner->stream.CurrentChar;
+                    Stream_Match(&scanner->stream);
+                    ch = scanner->stream.Character;
                     if (ch == L'\n')
                     {
                         ch = BasicScanner_MatchChar(scanner);
@@ -1179,9 +1179,9 @@ bool BasicScanner_IsLexeme(BasicScanner* scanner, const char* psz)
 wchar_t BasicScanner_MatchChar(BasicScanner* scanner)
 {
     LocalStrBuilder_AppendChar(&scanner->currentItem.lexeme,
-        (char)scanner->stream.CurrentChar);
-    SStream_Match(&scanner->stream);
-    return scanner->stream.CurrentChar;
+        (char)scanner->stream.Character);
+    Stream_Match(&scanner->stream);
+    return scanner->stream.Character;
 }
 
 //////////////////////////////////////////////

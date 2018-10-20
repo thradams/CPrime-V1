@@ -4,7 +4,7 @@
 #include <wchar.h>
 #include <stdbool.h>
 
-struct SStream
+struct Stream
 {
     //name to identify this stream
     String NameOrFullPath;
@@ -14,27 +14,25 @@ struct SStream
     String Text;
     int TextLen;
 
-    int CurrentPos;
-    wchar_t CurrentChar;
-
-    int CurrentLine;
-    int CurrentCol;
-
+    wchar_t Character;
+    int Position;
+    int Line;
+    int Column;
 };
 
 
 
-bool SStream_Init(struct SStream* pfStream,
+bool Stream_Init(struct Stream* pfStream,
     const char* name,
     const char* psz);
 
-bool SStream_InitFile(struct SStream* pfStream,
+bool Stream_InitFile(struct Stream* pfStream,
     const char* fileName);
 
-void SStream_Destroy(struct SStream* pfStream);
+void Stream_Destroy(struct Stream* pfStream);
 
-wchar_t SStream_LookAhead(struct SStream* pStream);
+wchar_t Stream_LookAhead(struct Stream* pStream);
 
-void SStream_Match(struct SStream* pStream);
-bool SStream_MatchChar(struct SStream* pStream, wchar_t ch);
+void Stream_Match(struct Stream* pStream);
+bool Stream_MatchChar(struct Stream* pStream, wchar_t ch);
 

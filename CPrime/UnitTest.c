@@ -460,15 +460,15 @@ void Scanner_Test8(void)
 
 void Stream_Test1(void)
 {
-  struct SStream stream;
-  SStream_Init(&stream, "name", "123");
-  TEST(SStream_MatchChar(&stream, L'1'));
-  TEST(SStream_LookAhead(&stream) == '3');
-  TEST(SStream_MatchChar(&stream, L'2'));
-  TEST(SStream_MatchChar(&stream, L'3'));
-  TEST(SStream_MatchChar(&stream, L'\0'));
-  TEST(SStream_MatchChar(&stream, L'\0'));
-  SStream_Destroy(&stream);
+  struct Stream stream;
+  Stream_Init(&stream, "name", "123");
+  TEST(Stream_MatchChar(&stream, L'1'));
+  TEST(Stream_LookAhead(&stream) == '3');
+  TEST(Stream_MatchChar(&stream, L'2'));
+  TEST(Stream_MatchChar(&stream, L'3'));
+  TEST(Stream_MatchChar(&stream, L'\0'));
+  TEST(Stream_MatchChar(&stream, L'\0'));
+  Stream_Destroy(&stream);
 }
 
 void BasicScanner_Test1(void)

@@ -52,15 +52,15 @@ bool LoadFile(const char* filename, const char** out, int* szOut)
 }
 
 
-bool SStream_InitFile(struct SStream* pStream,
+bool Stream_InitFile(struct Stream* pStream,
                         const char* fullPath)
 {
   //assert(IsFullPath(fullPath));
   String_InitWith(&pStream->NameOrFullPath, fullPath);
   String_InitWith(&pStream->FullDir2, NULL);
-  pStream->CurrentLine = 1;
-  pStream->CurrentCol = 1;
-  pStream->CurrentPos = 0;
+  pStream->Line = 1;
+  pStream->Column = 1;
+  pStream->Position = 0;
   bool result = LoadFile(fullPath, (const char**)&pStream->Text,
                            &pStream->TextLen);
 
@@ -73,23 +73,23 @@ bool SStream_InitFile(struct SStream* pStream,
         pStream->Text[0] != '\0')
     {
       //unicode?
-      pStream->CurrentChar = pStream->Text[0];
+      pStream->Character = pStream->Text[0];
     }
 
     else
     {
-      pStream->CurrentChar = '\0';
+      pStream->Character = '\0';
     }
   }
 
   return result;
 }
 
-bool SStream_Init(struct SStream* pStream, const char* name, const char*  Text)
+bool Stream_Init(struct Stream* pStream, const char* name, const char*  Text)
 {
-  pStream->CurrentLine = 1;
-  pStream->CurrentCol = 1;
-  pStream->CurrentPos = 0;
+  pStream->Line = 1;
+  pStream->Column = 1;
+  pStream->Position = 0;
   String_InitWith(&pStream->Text, Text);
   String_InitWith(&pStream->NameOrFullPath, name);
   String_InitWith(&pStream->FullDir2, "");
@@ -108,19 +108,19 @@ bool SStream_Init(struct SStream* pStream, const char* name, const char*  Text)
       pStream->Text[0] != '\0')
   {
     //unicode?
-    pStream->CurrentChar = pStream->Text[0];
+    pStream->Character = pStream->Text[0];
   }
 
   else
   {
-    pStream->CurrentChar = '\0';
+    pStream->Character = '\0';
   }
 
   return true;
 }
 
 
-void SStream_Destroy(struct SStream* pStream) /*default*/
+void Stream_Destroy(struct Stream* pStream) /*default*/
 {
     String_Destroy(&pStream->NameOrFullPath);
     String_Destroy(&pStream->FullDir2);
@@ -128,48 +128,48 @@ void SStream_Destroy(struct SStream* pStream) /*default*/
 }
 
 
-wchar_t SStream_LookAhead(struct SStream* pStream)
+wchar_t Stream_LookAhead(struct Stream* pStream)
 {
-  if (pStream->CurrentPos + 1 >= pStream->TextLen)
+  if (pStream->Position + 1 >= pStream->TextLen)
   {
     return '\0';
   }
 
-  return pStream->Text[pStream->CurrentPos + 1];
+  return pStream->Text[pStream->Position + 1];
 }
 
-bool SStream_MatchChar(struct SStream* pStream, wchar_t ch)
+bool Stream_MatchChar(struct Stream* pStream, wchar_t ch)
 {
-    bool b = pStream->CurrentChar == ch;
-    SStream_Match(pStream);
+    bool b = pStream->Character == ch;
+    Stream_Match(pStream);
     return b;
 }
 
-void SStream_Match(struct SStream* pStream)
+void Stream_Match(struct Stream* pStream)
 {
-  if (pStream->CurrentPos >= pStream->TextLen)
+  if (pStream->Position >= pStream->TextLen)
   {
-    pStream->CurrentChar = L'\0';
+    pStream->Character = L'\0';
     return;
   }
 
-  pStream->CurrentCol++;
-  pStream->CurrentPos++;
+  pStream->Column++;
+  pStream->Position++;
 
-  if (pStream->CurrentPos == pStream->TextLen)
+  if (pStream->Position == pStream->TextLen)
   {
-    pStream->CurrentChar = '\0';
+    pStream->Character = '\0';
   }
 
   else
   {
-    pStream->CurrentChar = pStream->Text[pStream->CurrentPos];
+    pStream->Character = pStream->Text[pStream->Position];
   }
 
-  if (pStream->CurrentChar == '\n')
+  if (pStream->Character == '\n')
   {
-    pStream->CurrentLine++;
-    pStream->CurrentCol = 0;
+    pStream->Line++;
+    pStream->Column = 0;
   }
 }
 
