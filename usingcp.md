@@ -2,30 +2,15 @@
 
 ## Using the compiler
 
-Download binaries here: **JUST 390K**
+Download binaries here: **JUST 123K**
 
 https://github.com/thradams/CPrime/releases
 
-For windows there is a setup.
+It is just a folder with the compiler and configuration file.
 
-Open the command line and try some samples:
+The configuration file is used to inform the include directories
+also the define some macros.
 
-```c
-cprime hello.c -o hello2.c
-```
-This will compile hello.c to hello2.c
-
-## Include directories (Configuration file)
-
-Because C' is a full parser it requires the include dir.
-
-See [config files](config.md) for some configuration files.
-
-### Command line to use the config file:
-
-```c
-cprime -config config.h hello.c -o hello2.c
-```
 
 ### Command line help Help
 ```
