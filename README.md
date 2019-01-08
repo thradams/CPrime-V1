@@ -337,6 +337,6 @@ I also need to make the code compatible with VC++ to parse some code, for instan
 ## Roadmap
 
 At some point I want to include static analysis again and check the onwership and null pointers as part of the type system. 
-
+ 
 See:
 https://github.com/isocpp/CppCoreGuidelines/blob/master/docs/Lifetime.pdf
