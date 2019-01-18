@@ -17,7 +17,7 @@ void X_Delete(struct X * p) /*default*/;
 
 int main()
 {
-    X x = /*default*/{0};
+    struct X x = /*default*/{0};
     return 1;
 }
 `;
@@ -73,13 +73,13 @@ struct Items
 };
 
 
-void Items_PushBack(Items* pItems, int i) /*default*/;
-void Items_Destroy(Items* pItems) /*default*/;
+void Items_PushBack(struct Items* pItems, int i) /*default*/;
+void Items_Destroy(struct Items* pItems) /*default*/;
 
 
 int main(int argc, char **argv)
 {
-	Items items = /*default*/{0};
+	struct Items items = /*default*/{0};
 
 	Items_PushBack(&items, 1);
 	Items_PushBack(&items, 2);
