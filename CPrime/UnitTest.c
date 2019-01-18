@@ -264,6 +264,29 @@ void Scanner_Test13(void)
   Scanner_Destroy(&scanner2);
 }
 
+void Scanner_Test15(void)
+{
+    Scanner scanner2;
+    Scanner_Init(&scanner2);
+    Scanner_IncludeFile(&scanner2, ".\\Test\\Test14.h", FileIncludeTypeQuoted, false);
+
+    MATCH(&scanner2, TK_BOF);
+    MATCH(&scanner2, TK_PRE_DEFINE);
+    MATCH(&scanner2, TK_BREAKLINE);
+
+    MATCH(&scanner2, TK_MACRO_CALL);
+    MATCH(&scanner2, TK_IDENTIFIER);
+    MATCH(&scanner2, TK_SPACES);
+    MATCH(&scanner2, TK_IDENTIFIER);
+
+    MATCH(&scanner2, TK_MACRO_EOF);
+
+    MATCH(&scanner2, TK_EOF);
+
+
+    Scanner_Destroy(&scanner2);
+}
+
 void Scanner_Test14(void)
 {
   Scanner scanner2;
@@ -696,8 +719,10 @@ void Parser_Test6(void)
 void AllTests(void)
 {
   printf("RUNNING TESTS ...\n");
-  Scanner_Test10();
+  Scanner_Test15();
   Scanner_Test14();
+  Scanner_Test10();
+
   Scanner_Test11();
 
 

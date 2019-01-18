@@ -353,6 +353,8 @@ void SubstituteArgs(Macro *pMacro,
           }
           */
           // Non-formal arguments don't deserve special treatment
+            TokenArray_PushBack(&os, head);
+            head = NULL; //moved
         }
         else
         {
