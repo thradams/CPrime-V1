@@ -22,8 +22,6 @@ CPrime is written using itself. Some files are 60% generated, see Ast.h and Ast.
 
 ## Why?
 
-First you need to like C, otherwise you will probably prefer C++ instead of this tool.
-
 Using this tool you achieve **decoupling** because you don´t have to implement the mechanical relationship between objects.
 
 This mechanical relatioship also makes possible a **new kind of polimorphism where the coupling is much smaller** than the traditional interface (virtual) methodoly.
@@ -319,8 +317,6 @@ int main()
 
 I work professionally with C++ since 2000 keeping my knowledge about C++ updated. After 2014 I noticed that my interest for the C language was gradually increasing. 
 
-It is hard to summarize the reasons for that, but I can say that the rise of complexity and fancy libraries and styles of C++ are not adding value in the software I write.  I still like C++ and it is possible to use C++ compilers in way that meet my expectations of simplicity and maintenance. However, I think I can have a more portable, fast and easy to maintaing and teach code with C.
-
 In 2012, I opened a topic in com.lang.C++.moderated about the possibility of to have “smart pointers” inside the C++ type system and later in 2015 I watched the Herb Sutter presentation cppcon “Writing Good C++14 By Default" where he talks about memory ownership checked statically.  After this point I became very motivated to implement the checked ownership analysis in the C language as part of the type system and I started to write my C parser in C. 
 
 During the development of this parser and static analysis, I had some difficulties with the C language that have already begin addressed by C++, like to generate special member functions. I was doing constructors and destructor by hand and wondering how they could be designed and used in C. 
@@ -337,6 +333,6 @@ I also need to make the code compatible with VC++ to parse some code, for instan
 ## Roadmap
 
 At some point I want to include static analysis again and check the onwership and null pointers as part of the type system. 
-
+ 
 See:
 https://github.com/isocpp/CppCoreGuidelines/blob/master/docs/Lifetime.pdf
