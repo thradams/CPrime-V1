@@ -2,42 +2,42 @@
 #include "StringEx.h"
 #include  "TokenArray.h"
 
-typedef enum
+enum PPTokenType
 {
-	PPTokenType_Identifier,
-	PPTokenType_Number,
-	PPTokenType_CharConstant,
-	PPTokenType_StringLiteral,
-	PPTokenType_Punctuator,
-  PPTokenType_Spaces,
-	PPTokenType_Other,
-} PPTokenType;
+    PPTokenType_Identifier,
+    PPTokenType_Number,
+    PPTokenType_CharConstant,
+    PPTokenType_StringLiteral,
+    PPTokenType_Punctuator,
+    PPTokenType_Spaces,
+    PPTokenType_Other,
+};
 
-typedef struct PPToken
+struct PPToken
 {
-	PPTokenType Token;
-	String Lexeme;
-	TokenSet HiddenSet;
-} PPToken;
+    enum PPTokenType Token;
+    String Lexeme;
+    TokenSet HiddenSet;
+};
 
 #define TOKEN_INIT { PPTokenType_Other, STRING_INIT, TOKENSET_INIT }
 
 
-void PPToken_Destroy(PPToken* p);
+void PPToken_Destroy(struct PPToken* p);
 
-PPToken*  PPToken_Create(const char* s, PPTokenType token);
-PPToken*  PPToken_Clone(PPToken* p);
-void PPToken_Delete(PPToken * p);
+struct PPToken* PPToken_Create(const char* s, enum PPTokenType token);
+struct PPToken* PPToken_Clone(struct PPToken* p);
+void PPToken_Delete(struct PPToken* p);
 void PPToken_DeleteVoid(void* pv);
-void PPToken_Swap(PPToken * pA, PPToken * pB);
+void PPToken_Swap(struct PPToken* pA, struct PPToken* pB);
 
 
-bool PPToken_IsIdentifier(PPToken* pHead);
-bool PPToken_IsSpace(PPToken* pHead);
-bool PPToken_IsStringizingOp(PPToken* pHead);
-bool PPToken_IsConcatOp(PPToken* pHead);
-bool PPToken_IsStringLit(PPToken* pHead);
-bool PPToken_IsCharLit(PPToken* pHead);
-bool PPToken_IsOpenPar(PPToken* pHead);
-bool PPToken_IsChar(PPToken* pHead, char ch);
-bool PPToken_IsLexeme(PPToken* pHead, const char* ch);
+bool PPToken_IsIdentifier(struct PPToken* pHead);
+bool PPToken_IsSpace(struct PPToken* pHead);
+bool PPToken_IsStringizingOp(struct PPToken* pHead);
+bool PPToken_IsConcatOp(struct PPToken* pHead);
+bool PPToken_IsStringLit(struct PPToken* pHead);
+bool PPToken_IsCharLit(struct PPToken* pHead);
+bool PPToken_IsOpenPar(struct PPToken* pHead);
+bool PPToken_IsChar(struct PPToken* pHead, char ch);
+bool PPToken_IsLexeme(struct PPToken* pHead, const char* ch);

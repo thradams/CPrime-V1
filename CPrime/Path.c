@@ -9,7 +9,7 @@
 
 #include "StrBuilder.h"
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
 #include <direct.h>
 #else
 #include <sys/stat.h>
@@ -78,7 +78,7 @@ void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
 
 void MkDir(char* path)
 {
-#ifdef WIN32
+#if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
     _mkdir(path);
 #else
     mkdir(path, 0777);
@@ -203,7 +203,7 @@ void GetFullDir(const char* fileName, String* out)
 {
     char buffer[CPRIME_MAX_PATH];
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
 
     _fullpath(
         buffer,
@@ -233,7 +233,7 @@ void GetFullPath(const char* fileName, String* out)
 {
     char buffer[CPRIME_MAX_PATH];
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
 
 
     _fullpath(

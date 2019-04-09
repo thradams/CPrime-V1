@@ -10,9 +10,9 @@ BasicScanner* Scanner_Top(Scanner* pScanner);
 
 void Scanner_MatchDontExpand(Scanner* pScanner);
 
-PPTokenType TokenToPPToken(Tokens token)
+enum PPTokenType TokenToPPToken(Tokens token)
 {
-  PPTokenType result = PPTokenType_Other;
+  enum PPTokenType result = PPTokenType_Other;
 
   switch (token)
   {
@@ -973,11 +973,11 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
   if (token == TK_LEFT_PARENTHESIS)
   {
     // Adiciona o nome da macro
-    PPToken* ppTokenName = PPToken_Create(pMacro->Name, PPTokenType_Identifier);
+      struct PPToken* ppTokenName = PPToken_Create(pMacro->Name, PPTokenType_Identifier);
     TokenArray_PushBack(ppTokenArray, ppTokenName);
 
     // Match do (
-    PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+    struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
     TokenArray_PushBack(ppTokenArray, ppToken);
 
     StrBuilder_Append(strBuilder, lexeme);
@@ -995,7 +995,7 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
       if (token == TK_LEFT_PARENTHESIS)
       {
 
-        PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+          struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
 
         TokenArray_PushBack(ppTokenArray, ppToken);
 
@@ -1011,7 +1011,7 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
       {
         if (iInsideParentesis == 1)
         {
-          PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+            struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
           TokenArray_PushBack(ppTokenArray, ppToken);
 
           StrBuilder_Append(strBuilder, lexeme);
@@ -1025,7 +1025,7 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
 
         iInsideParentesis--;
 
-        PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+        struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
         TokenArray_PushBack(ppTokenArray, ppToken);
 
         StrBuilder_Append(strBuilder, lexeme);
@@ -1046,7 +1046,7 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
         }
 
         // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
-        PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+        struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
         TokenArray_PushBack(ppTokenArray, ppToken);
 
         StrBuilder_Append(strBuilder, lexeme);
@@ -1057,7 +1057,7 @@ static void GetMacroArguments(Scanner* pScanner, BasicScanner* pBasicScanner,
       else
       {
         // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
-        PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+          struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
         TokenArray_PushBack(ppTokenArray, ppToken);
 
         StrBuilder_Append(strBuilder, lexeme);
@@ -1167,7 +1167,7 @@ void GetPPTokens(BasicScanner* pBasicScanner, TokenArray* pptokens,
     if (token != TK_BACKSLASHBREAKLINE)
     {
       // TODO comentarios entram como espaco
-      PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+        struct       PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
       TokenArray_PushBack(pptokens, ppToken);
     }
     BasicScanner_Match(pBasicScanner);
@@ -1250,7 +1250,7 @@ void ParsePreDefinev2(Scanner* pScanner, StrBuilder* strBuilder)
       token = pBasicScanner->currentItem.token;
       lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
-      PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+      struct       PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
       TokenArray_PushBack(&pNewMacro->FormalArguments, ppToken);
 
       StrBuilder_Append(strBuilder, lexeme);
@@ -1416,7 +1416,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner* pScanner)
     {
       TokenArray ppTokenArray = TOKENARRAY_INIT;
       // o nome eh a propria expansao
-      PPToken* ppTokenName =
+      struct       PPToken* ppTokenName =
         PPToken_Create(pMacro2->Name, TokenToPPToken(TK_IDENTIFIER));
       TokenArray_PushBack(&ppTokenArray, ppTokenName);
 

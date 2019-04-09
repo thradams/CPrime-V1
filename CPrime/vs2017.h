@@ -18,8 +18,10 @@
 //#define _MSC_VER  1300
 #define __ptr64
 
+//C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.20.27508\include\vcruntime.h
 
-#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\shared"
-#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\um"
-#pragma dir "c:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\ucrt" 
-#pragma dir "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\include"
+#pragma dir "C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared"
+#pragma dir "C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um"
+#pragma dir "C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt"
+
+#pragma dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.20.27508\include"

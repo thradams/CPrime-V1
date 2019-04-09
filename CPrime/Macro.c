@@ -64,7 +64,7 @@ void HidenSetAdd(const TokenSet* hs,
 
   for (int i = 0; i < ts->Size; i++)
   {
-    PPToken* t = ts->pItems[i];
+      struct PPToken* t = ts->pItems[i];
 
     for (int k = 0; k < hs->Size; k++)
     {
@@ -153,7 +153,7 @@ void AppendStringize(StrBuilder* strBuilder, const TokenArray* ts)
 
   for (int i = 0; i < ts->Size; i++)
   {
-    PPToken* pToken = ts->pItems[i];
+      struct PPToken* pToken = ts->pItems[i];
 
     if (PPToken_IsSpace(pToken))
     {
@@ -219,7 +219,7 @@ void SubstituteArgs(Macro *pMacro,
 
   TokenArray os = TOKENARRAY_INIT;
 
-  PPToken* head = NULL;
+  struct PPToken* head = NULL;
   while (is.Size > 0)
   {
 
@@ -442,9 +442,9 @@ void SubstituteArgs(Macro *pMacro,
 void ArgToken(TokenArray* tokens,
               bool get_more,
               bool want_space,
-              PPToken* token)
+    struct PPToken* token)
 {
-  PPToken *pToken = TokenArray_PopFront(tokens);
+    struct PPToken *pToken = TokenArray_PopFront(tokens);
   PPToken_Swap(pToken, token);
   PPToken_Delete(pToken);
   pToken = NULL;
@@ -526,9 +526,9 @@ bool GatherArgs(const char* name,
                 TokenArrayMap* args,
                 bool get_more,
                 bool is_vararg,
-                PPToken* close)
+    struct PPToken* close)
 {
-  PPToken t = TOKEN_INIT;
+    struct PPToken t = TOKEN_INIT;
 
   for (int i = 0; i < formal_args->Size; i++)
   {
@@ -662,7 +662,7 @@ void GatherDefinedOperator(TokenArray* tokens,
   // Skip leading space
   while (PPToken_IsSpace(tokens->pItems[0]))
   {
-    PPToken* pp = TokenArray_PopFront(tokens);
+            struct PPToken* pp = TokenArray_PopFront(tokens);
     TokenArray_PushBack(result, pp);
   }
 
@@ -671,14 +671,14 @@ void GatherDefinedOperator(TokenArray* tokens,
     // defined X form
     if (MacroMap_Find(macros, tokens->pItems[0]->Lexeme) != NULL)
     {
-      PPToken* pp0 = TokenArray_PopFront(tokens);
+                struct PPToken* pp0 = TokenArray_PopFront(tokens);
       String_Set(&pp0->Lexeme, "1");
       TokenArray_PushBack(result, pp0);
     }
 
     else
     {
-      PPToken* pp0 = TokenArray_PopFront(tokens);
+        struct PPToken* pp0 = TokenArray_PopFront(tokens);
       String_Set(&pp0->Lexeme, "0");
       TokenArray_PushBack(result, pp0);
     }
@@ -699,7 +699,7 @@ void GatherDefinedOperator(TokenArray* tokens,
     // Skip spaces
     while (PPToken_IsSpace(tokens->pItems[0]))
     {
-      PPToken* pp = TokenArray_PopFront(tokens);
+        struct PPToken* pp = TokenArray_PopFront(tokens);
       TokenArray_PushBack(result, pp);
     }
 
@@ -710,14 +710,14 @@ void GatherDefinedOperator(TokenArray* tokens,
 
     if (MacroMap_Find(macros, tokens->pItems[0]->Lexeme) != NULL)
     {
-      PPToken* pp0 = TokenArray_PopFront(tokens);
+        struct PPToken* pp0 = TokenArray_PopFront(tokens);
       String_Set(&pp0->Lexeme, "1");
       TokenArray_PushBack(result, pp0);
     }
 
     else
     {
-      PPToken* pp0 = TokenArray_PopFront(tokens);
+        struct PPToken* pp0 = TokenArray_PopFront(tokens);
       String_Set(&pp0->Lexeme, "0");
       TokenArray_PushBack(result, pp0);
     }
@@ -728,7 +728,7 @@ void GatherDefinedOperator(TokenArray* tokens,
     // Skip spaces
     while (PPToken_IsSpace(tokens->pItems[0]))
     {
-      PPToken* pp = TokenArray_PopFront(tokens);
+        struct PPToken* pp = TokenArray_PopFront(tokens);
       TokenArray_PushBack(result, pp);
     }
 
@@ -768,7 +768,7 @@ void ExpandMacro(const TokenArray* tsOriginal,
   TokenArray_Print(&ts);
   //printf("\n");
 
-  PPToken* pHead = NULL; //muito facil ter leaks
+  struct PPToken* pHead = NULL; //muito facil ter leaks
   while (ts.Size > 0)
   {
     //printf("r = ");
@@ -818,7 +818,7 @@ void ExpandMacro(const TokenArray* tsOriginal,
       continue;
     }
 
-    PPToken* pFound =
+    struct PPToken* pFound =
       TokenSet_Find(&pHead->HiddenSet, pMacro->Name);
 
     if (pFound)
@@ -879,7 +879,7 @@ void ExpandMacro(const TokenArray* tsOriginal,
 
       PPToken_Delete(TokenArray_PopFront(&ts));      
 
-      PPToken close = TOKEN_INIT;
+      struct PPToken close = TOKEN_INIT;
 
       if (!GatherArgs(pHead->Lexeme,
                       &ts,
@@ -1036,7 +1036,7 @@ void Glue(const TokenArray* lsI,
 
     while (rs.Size > 0 && PPToken_IsSpace(rs.pItems[0]))
     {
-      PPToken* tk = TokenArray_PopFront(&rs);
+        struct PPToken* tk = TokenArray_PopFront(&rs);
       PPToken_Delete(tk);
       tk = NULL;
     }
