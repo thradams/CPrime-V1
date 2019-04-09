@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
     const char* outputFileName = NULL;
     const char* configFileName = NULL;
     const char* outputDir = NULL;
-    StrArray sources = STRARRAY_INIT;
+    struct StrArray sources = STRARRAY_INIT;
 
     String outputFullPath = NULL;
     String inputFullPath = NULL;

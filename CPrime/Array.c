@@ -124,12 +124,12 @@ void Array_Swap(Array* p1, Array* p2)
 }
 
 
-bool StrArray_Reserve(StrArray* p, int nelements)
+bool StrArray_Reserve(struct StrArray* p, int nelements)
 {
     return Array_Reserve((Array*)p, nelements);
 }
 
-bool StrArray_Push(StrArray* p, const char* pItem)
+bool StrArray_Push(struct StrArray* p, const char* pItem)
 {
     String s;
     String_InitWith(&s, pItem);
@@ -149,24 +149,24 @@ static void Array_DeleteStrVoid(void* p)
     String_Destroy((String*)(&p));
 }
 
-void StrArray_Clear(StrArray* p)
+void StrArray_Clear(struct StrArray* p)
 {
     Array_Clear((Array*)p, Array_DeleteStrVoid);
 }
 
-void StrArray_Init(StrArray* p)
+void StrArray_Init(struct StrArray* p)
 {
     Array_Init((Array*)p);
 }
 
-void StrArray_Destroy(StrArray* p)
+void StrArray_Destroy(struct StrArray* p)
 {
     Array_Destroy((Array*)p, &Array_DeleteStrVoid);
 }
 
-void StrArray_Swap(StrArray* p1, StrArray* p2)
+void StrArray_Swap(struct StrArray* p1, struct StrArray* p2)
 {
-  StrArray temp = *p1;
+    struct StrArray temp = *p1;
   *p1 = *p2;
   *p2 = temp;
 }

@@ -31,19 +31,19 @@ void* Array_RemoveAt(Array* p, int index);
 //////
 
 
-typedef struct
-{
+struct StrArray
+ {
     const char** pItems;
     int size;
     int capacity;
 
-} StrArray;
+};
 
 #define STRARRAY_INIT { NULL , 0 , 0 }
 
-bool StrArray_Reserve(StrArray* p, int nelements);
-bool StrArray_Push(StrArray* p, const char* pItem);
-void StrArray_Clear(StrArray* p);
-void StrArray_Init(StrArray* p);
-void StrArray_Destroy(StrArray* st);
-void StrArray_Swap(StrArray* p1, StrArray* p2);
+bool StrArray_Reserve(struct StrArray* p, int nelements);
+bool StrArray_Push(struct StrArray* p, const char* pItem);
+void StrArray_Clear(struct StrArray* p);
+void StrArray_Init(struct StrArray* p);
+void StrArray_Destroy(struct StrArray* st);
+void StrArray_Swap(struct StrArray* p1, struct StrArray* p2);

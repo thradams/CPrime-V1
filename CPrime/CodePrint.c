@@ -5053,8 +5053,8 @@ void InstanciateDestroy2(TProgram* program,
 bool IsSuffix(const char* s, const char* suffix)
 {
 	bool bResult = false;
-	int len = strlen(s);
-	int len2 = strlen(suffix);
+	int len = (int)strlen(s);
+	int len2 = (int)strlen(suffix);
 	if (len > len2)
 	{
 		const char* pEndPart = &s[len - len2];

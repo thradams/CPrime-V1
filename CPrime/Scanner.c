@@ -2368,7 +2368,7 @@ void PrintPreprocessedToString2(StrBuilder* fp, const char *input, const char* c
 }
 
 
-void GetSources(const char* fileIn, StrArray* sources)
+void GetSources(const char* fileIn, struct StrArray* sources)
 {
   String fullFileNamePath = STRING_INIT;
   GetFullPath(fileIn, &fullFileNamePath);
