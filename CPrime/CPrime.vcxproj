@@ -103,7 +103,6 @@
     <ClInclude Include="Ast.h" />
     <ClInclude Include="AstPrint.h" />
     <ClInclude Include="BasicScanner.h" />
-    <ClInclude Include="codelite.h" />
     <ClInclude Include="CodePrint.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="List.h" />

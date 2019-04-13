@@ -27,8 +27,7 @@ void Array_Destroy(Array* st, void(*pfDestroyData)(void*));
 
 void Array_Swap(Array* p1, Array* p2);
 void* Array_PopFront(Array* p);
-void* Array_RemoveAt(Array* p, int index);
-//////
+
 
 
 struct StrArray
