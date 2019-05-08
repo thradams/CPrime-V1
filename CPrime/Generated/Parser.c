@@ -766,11 +766,11 @@ void TTypeName_Swap(TTypeName* a, TTypeName* b)
 
 void TTypeName_Init(TTypeName* p) /*@default*/
 {
-	p->Type = TypeName_ID;
-	p->SpecifierQualifierList.pData = NULL;
-	p->SpecifierQualifierList.Size = 0;
-	p->SpecifierQualifierList.Capacity = 0;
-	TDeclarator_Init(&p->Declarator);
+    p->Type = TypeName_ID;
+    p->SpecifierQualifierList.pData = NULL;
+    p->SpecifierQualifierList.Size = 0;
+    p->SpecifierQualifierList.Capacity = 0;
+    TDeclarator_Init(&p->Declarator);
 }
 
 
@@ -4021,7 +4021,7 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
 
 	//extensions
 	/*
-	auto
+	/*auto
 	_size(identifier)
 	_size(int)
 	*/
@@ -4520,7 +4520,7 @@ void Initializer(Parser * ctx,
 
 	/*
 	initializer:
-	default
+	/*default
 	assignment-expression
 	_defaultopt { initializer-list }
 	_defaultopt { initializer-list , }
