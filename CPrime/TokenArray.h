@@ -6,7 +6,7 @@
 
 typedef struct
 {
-    struct PPToken* /*@auto*/* /*@auto [Size]*/ pItems;
+    struct PPToken* /*@auto*/* /*@auto*/ /*@[Size]*/ pItems;
     int Size;
     int Capacity;
 } TokenArray;
@@ -86,7 +86,7 @@ void TokenArrayMap_Swap(TokenArrayMap* pA, TokenArrayMap* pB);
 
 typedef struct
 {
-    struct PPToken* /*@auto*/* /*@auto [Size]*/ pItems;
+    struct PPToken* /*@auto*/* /*@auto*/ /*@[Size]*/ pItems;
     int Size;
     int Capacity;
 } TokenSet;

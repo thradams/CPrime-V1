@@ -179,7 +179,7 @@ enum PPTokenType TokenToPPToken(Tokens token)
 
 TFile* TFile_Create() /*@default*/
 {
-    TFile* p = (TFile*)Malloc(sizeof * p);
+    TFile *p = (TFile*) Malloc(sizeof * p);
     if (p != NULL)
     {
         String_Init(&p->FullPath);
@@ -237,7 +237,7 @@ void TFileArray_Reserve(TFileArray* p, int n) /*@default*/
     if (n > p->Capacity)
     {
         TFile** pnew = p->pItems;
-        pnew = (TFile * *)Realloc(pnew, n * sizeof(TFile*));
+        pnew = (TFile**)Realloc(pnew, n * sizeof(TFile*));
         if (pnew)
         {
             p->pItems = pnew;

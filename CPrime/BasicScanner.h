@@ -197,8 +197,8 @@ typedef struct ScannerItem
     LocalStrBuilder lexeme;
     Tokens token;
     int Line /*@= -1*/;
-    int FileIndex /*@= -1 */;
-    bool bActive /*@= true*/;
+    int FileIndex /*@= -1*/ ;
+    bool bActive /*@= 1*/;
     struct ScannerItem* pNext;
 } ScannerItem;
 

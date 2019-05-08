@@ -31,7 +31,7 @@ void TFile_DeleteVoid(void* p);
 
 typedef struct
 {
-    TFile* /*@auto*/ * /*@auto [Size]*/ pItems;
+    TFile* /*@auto*/ * /*@auto*/ /*@[Size]*/ pItems;
     int Size;
     int Capacity;
 } TFileArray;
@@ -66,7 +66,7 @@ typedef enum
 
 typedef struct
 {
-    State* /*@auto [Size]*/pItems;
+    State* /*@auto*/ /*@[Size]*/pItems;
     int Size;
     int Capacity;
 } StackInts;

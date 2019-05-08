@@ -3068,20 +3068,8 @@ void TBlockItemList_Reserve(TBlockItemList* p, int n) /*@default*/
 {
     if (n > p->Capacity)
     {
-        /*
-  block-item-list:
-  block-item
-  block-item-list block-item
-  */TBlockItem** pnew = p->pItems;
-        pnew = (/*
-  block-item-list:
-  block-item
-  block-item-list block-item
-  */TBlockItem**)Realloc(pnew, n * sizeof(/*
-  block-item-list:
-  block-item
-  block-item-list block-item
-  */TBlockItem*));
+        TBlockItem** pnew = p->pItems;
+        pnew = (TBlockItem**)Realloc(pnew, n * sizeof(TBlockItem*));
         if (pnew)
         {
             p->pItems = pnew;
@@ -4954,20 +4942,8 @@ void TSpecifierQualifierList_Reserve(TSpecifierQualifierList* p, int n) /*@defau
 {
     if (n > p->Capacity)
     {
-        /*
-  specifier-qualifier-list:
-  type-specifier specifier-qualifier-listopt
-  type-qualifier specifier-qualifier-listopt
-  */TSpecifierQualifier** pnew = p->pData;
-        pnew = (/*
-  specifier-qualifier-list:
-  type-specifier specifier-qualifier-listopt
-  type-qualifier specifier-qualifier-listopt
-  */TSpecifierQualifier**)Realloc(pnew, n * sizeof(/*
-  specifier-qualifier-list:
-  type-specifier specifier-qualifier-listopt
-  type-qualifier specifier-qualifier-listopt
-  */TSpecifierQualifier*));
+        TSpecifierQualifier** pnew = p->pData;
+        pnew = (TSpecifierQualifier**)Realloc(pnew, n * sizeof(TSpecifierQualifier*));
         if (pnew)
         {
             p->pData = pnew;
@@ -5304,29 +5280,8 @@ void TDeclarationSpecifiers_Reserve(TDeclarationSpecifiers* p, int n) /*@default
 {
     if (n > p->Capacity)
     {
-        /*
-  declaration-specifiers:
-  storage-class-specifier declaration-specifiersopt
-  type-specifier declaration-specifiersopt
-  type-qualifier declaration-specifiersopt
-  function-specifier declaration-specifiersopt
-  alignment-specifier declaration-specifiersopt
-  */TDeclarationSpecifier** pnew = p->pData;
-        pnew = (/*
-  declaration-specifiers:
-  storage-class-specifier declaration-specifiersopt
-  type-specifier declaration-specifiersopt
-  type-qualifier declaration-specifiersopt
-  function-specifier declaration-specifiersopt
-  alignment-specifier declaration-specifiersopt
-  */TDeclarationSpecifier**)Realloc(pnew, n * sizeof(/*
-  declaration-specifiers:
-  storage-class-specifier declaration-specifiersopt
-  type-specifier declaration-specifiersopt
-  type-qualifier declaration-specifiersopt
-  function-specifier declaration-specifiersopt
-  alignment-specifier declaration-specifiersopt
-  */TDeclarationSpecifier*));
+        TDeclarationSpecifier** pnew = p->pData;
+        pnew = (TDeclarationSpecifier**)Realloc(pnew, n * sizeof(TDeclarationSpecifier*));
         if (pnew)
         {
             p->pData = pnew;
@@ -9385,6 +9340,14 @@ void Output_Append(StrBuilder* p,
 static void TNodeClueList_CodePrint(Options * options, TScannerItemList * list,
   StrBuilder * fp)
 {
+    if (options->bCannonical)
+    {
+        // no modo cannonical quem coloca os espacos
+        //eh a funcao especializada
+        //para que o tipo seja somente ele 
+        return;
+    };
+
   ForEachListItem(ScannerItem, pNodeClue, list)
   {
     switch (pNodeClue->token)
@@ -21022,7 +20985,7 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
 
 	//extensions
 	/*
-	/*auto
+	auto
 	_size(identifier)
 	_size(int)
 	*/
@@ -21521,7 +21484,7 @@ void Initializer(Parser * ctx,
 
 	/*
 	initializer:
-	/*default
+	default
 	assignment-expression
 	_defaultopt { initializer-list }
 	_defaultopt { initializer-list , }

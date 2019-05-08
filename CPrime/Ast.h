@@ -160,7 +160,7 @@ typedef struct {
   block-item
   block-item-list block-item
   */
-  TBlockItem * /*@auto*/ * /*@auto [Size]*/ pItems;
+  TBlockItem * /*@auto*/ * /*@auto*/ /*@[Size]*/ pItems;
   int Size;
   int Capacity;
 } TBlockItemList;
@@ -654,7 +654,7 @@ typedef struct {
   type-specifier specifier-qualifier-listopt
   type-qualifier specifier-qualifier-listopt
   */
-  TSpecifierQualifier * /*@auto*/ * /*@auto [Size]*/ pData;
+  TSpecifierQualifier * /*@auto*/ * /*@auto*/ /*@[Size]*/ pData;
   int Size;
   int Capacity;
 } TSpecifierQualifierList;
@@ -683,7 +683,7 @@ typedef struct TDeclarationSpecifiers {
   function-specifier declaration-specifiersopt
   alignment-specifier declaration-specifiersopt
   */
-  TDeclarationSpecifier * /*@auto*/ * /*@auto [Size]*/ pData;
+  TDeclarationSpecifier * /*@auto*/ * /*@auto*/ /*@[Size]*/ pData;
   int Size;
   int Capacity;
 } TDeclarationSpecifiers;
@@ -1029,7 +1029,7 @@ CAST(TAnyStructDeclaration, TEofDeclaration)
 
 typedef struct
 {
-  TAnyStructDeclaration* /*@auto*/ * /*@auto [Size]*/ pItems;
+  TAnyStructDeclaration* /*@auto*/ * /*@auto*/ /*@[Size]*/ pItems;
   int Size;
   int Capacity;
 } TStructDeclarationList;
@@ -1198,7 +1198,7 @@ const char* TParameter_GetTypedefName(TParameter* p);
 
 typedef struct
 {
-  TAnyDeclaration * /*@auto*/ * /*@auto [Size]*/ pItems;
+  TAnyDeclaration * /*@auto*/ * /*@auto*/ /*@[Size]*/ pItems;
   int Size;
   int Capacity;
 } TDeclarations;

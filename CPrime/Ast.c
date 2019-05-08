@@ -966,7 +966,6 @@ void TUnionSet_Init(TUnionSet* p) /*@default*/
     p->pTail = NULL;
     TScannerItemList_Init(&p->ClueList0);
     TScannerItemList_Init(&p->ClueList1);
-
 }
 
 void TUnionSet_Destroy(TUnionSet* p) 

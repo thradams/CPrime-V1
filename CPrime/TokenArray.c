@@ -11,8 +11,8 @@ void TokenArray_Reserve(TokenArray* p, int nelements) /*@default*/
 {
     if (nelements > p->Capacity)
     {
-        struct/*a*/PPToken** pnew = p->pItems;
-        pnew = (struct/*a*/PPToken**)Realloc(pnew, nelements * sizeof(struct/*a*/PPToken*));
+        struct PPToken** pnew = p->pItems;
+        pnew = (struct PPToken**)Realloc(pnew, nelements * sizeof(struct PPToken*));
         if (pnew)
         {
             p->pItems = pnew;

@@ -307,9 +307,9 @@ void ScannerItem_Init(ScannerItem* scannerItem) /*@default*/
 {
     LocalStrBuilder_Init(&scannerItem->lexeme);
     scannerItem->token = TK_NONE;
-    scannerItem->Line =  -1;
-    scannerItem->FileIndex =  -1;
-    scannerItem->bActive =  true;
+    scannerItem->Line = -1;
+    scannerItem->FileIndex = -1;
+    scannerItem->bActive = 1;
     scannerItem->pNext = NULL;
 }
 
