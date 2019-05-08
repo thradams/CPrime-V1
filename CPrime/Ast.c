@@ -1009,7 +1009,6 @@ TStructUnionSpecifier* TStructUnionSpecifier_Create() /*@default*/
         TStructDeclarationList_Init(&p->StructDeclarationList);
         String_Init(&p->Name);
         p->Token = TK_NONE;
-        p->Token2 = TK_NONE;
         TUnionSet_Init(&p->UnionSet);
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);

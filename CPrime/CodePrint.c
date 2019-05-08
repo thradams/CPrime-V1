@@ -1083,9 +1083,8 @@ static void TStructUnionSpecifier_CodePrint(TProgram * program, Options * option
             Output_Append(fp, options, " ");
         }
 
-        if (p->Token2 == TK__UNION)
+        if (p->UnionSet.pHead != NULL)
         {
-            //TODO BASEADO EM COMENTARIO NAO fAZ NADA
             TUnionSet_CodePrint(program, options, &p->UnionSet, fp);
         }
 
@@ -1108,7 +1107,7 @@ static void TStructUnionSpecifier_CodePrint(TProgram * program, Options * option
             Output_Append(fp, options, " ");
         }
 
-        if (p->Token2 == TK__UNION)
+        if (p->UnionSet.pHead != NULL)
         {
             TUnionSet_CodePrint(program, options, &p->UnionSet, fp);
         }
@@ -2226,7 +2225,7 @@ static int FindRuntimeID(TProgram * program,
     //////////////
 
     if (pStructUnionSpecifier &&
-        pStructUnionSpecifier->Token2 == TK__UNION)
+        pStructUnionSpecifier->UnionSet.pHead != NULL)
     {
         if (pStructUnionSpecifier->StructDeclarationList.Size > 0)
         {
@@ -2350,7 +2349,7 @@ void FindUnionSetOf(TProgram * program,
     }
 
     if (pStructUnionSpecifier &&
-        pStructUnionSpecifier->Token2 == TK__UNION)
+        pStructUnionSpecifier->UnionSet.pHead != NULL)
     {
         TUnionSetItem* pCurrent =
             pStructUnionSpecifier->UnionSet.pHead;
@@ -2683,7 +2682,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
                 TStructUnionSpecifier* pStructUnionSpecifier =
                     GetStructSpecifier(program, &pFirstParameter->Specifiers);
                 if (pStructUnionSpecifier &&
-                    pStructUnionSpecifier->Token2 == TK__UNION)
+                    pStructUnionSpecifier->UnionSet.pHead != NULL)
                 {
                     options->IdentationLevel++;
                     UnionTypeDefault(program,
@@ -4113,7 +4112,7 @@ void InstanciateDestroy2(TProgram * program,
                 //DAQUI para baixo o codigo eh todo igual ao da struct
                 //COMPARTILHAR        
                 bool bIsUnionTypes = pStructUnionSpecifier &&
-                    pStructUnionSpecifier->Token2 == TK__UNION;
+                    pStructUnionSpecifier->UnionSet.pHead != NULL;
 
                 if (pStructUnionSpecifier &&
                     pStructUnionSpecifier->StructDeclarationList.Size > 0)
@@ -4606,7 +4605,7 @@ void InstanciateDestroy2(TProgram * program,
             }
 
             bool bIsUnionTypes = pStructUnionSpecifier &&
-                pStructUnionSpecifier->Token2 == TK__UNION;
+                pStructUnionSpecifier->UnionSet.pHead != NULL;
 
 
             if (pStructUnionSpecifier &&

@@ -3404,7 +3404,6 @@ void Struct_Or_Union_Specifier(Parser* ctx,
 
 	if (token == TK_LESS_THAN_SIGN)
 	{
-		pStructUnionSpecifier->Token2 = TK__UNION;
 		UnionSet(ctx, &pStructUnionSpecifier->UnionSet);
 		token = Parser_CurrentToken(ctx);
 	}

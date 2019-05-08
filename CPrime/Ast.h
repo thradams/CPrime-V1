@@ -1085,7 +1085,7 @@ typedef struct TStructUnionSpecifier
   String Name;
 
   Tokens Token;
-  Tokens Token2;
+
 
   TUnionSet UnionSet;
   TScannerItemList ClueList0; //struct-or-union

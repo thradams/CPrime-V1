@@ -183,8 +183,7 @@ const char* TokenToString(Tokens tk)
         return "typedef";
     case TK_UNION:
         return "union";
-    case TK__UNION:
-        return "_union";
+
     case TK_UNSIGNED:
         return "unsigned";
     case TK_VOID:
@@ -546,7 +545,7 @@ static struct TkPair keywords[] =
     { "switch", TK_SWITCH },
     { "typedef", TK_TYPEDEF },
     { "union", TK_UNION },
-    { "_union", TK__UNION },
+ 
     { "unsigned", TK_UNSIGNED },
     { "void", TK_VOID },
     { "volatile", TK_VOLATILE },
