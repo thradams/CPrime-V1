@@ -201,7 +201,7 @@ int main(int argc, char* argv[])
             else if (strcmp(option, "-cx") == 0)
             {
                 options.Target = CompilerTarget_CXX;
-            }
+            }            
             else if (strcmp(option, "-ca") == 0)
             {
                 options.Target = CompilerTarget_Annotated;

@@ -7,12 +7,12 @@
 #include  <stdio.h>
 #include "Mem.h"
 
-void TokenArray_Reserve(TokenArray* p, int nelements) /*default*/
+void TokenArray_Reserve(TokenArray* p, int nelements) /*@default*/
 {
     if (nelements > p->Capacity)
     {
-        struct PPToken** pnew = p->pItems;
-        pnew = (struct PPToken * *)Realloc(pnew, nelements * sizeof(struct PPToken*));
+        struct/*a*/PPToken** pnew = p->pItems;
+        pnew = (struct/*a*/PPToken**)Realloc(pnew, nelements * sizeof(struct/*a*/PPToken*));
         if (pnew)
         {
             p->pItems = pnew;
@@ -42,7 +42,7 @@ struct PPToken* TokenArray_Top(TokenArray* p)
     return (struct PPToken*)Array_Top((Array*)p);
 }
 
-void TokenArray_PushBack(TokenArray* p, struct PPToken* pItem) /*default*/
+void TokenArray_PushBack(TokenArray* p, struct PPToken* pItem) /*@default*/
 {
     if (p->Size + 1 > p->Capacity)
     {
@@ -63,16 +63,16 @@ void TokenArray_Clear(TokenArray* p)
 }
 
 
-void TokenArray_Init(TokenArray* p) /*default*/
+void TokenArray_Init(TokenArray* p) /*@default*/
 {
     p->pItems = NULL;
     p->Size = 0;
     p->Capacity = 0;
 }
 
-TokenArray* TokenArray_Create() /*default*/
+TokenArray* TokenArray_Create() /*@default*/
 {
-    TokenArray* p = (TokenArray*)Malloc(sizeof * p);
+    TokenArray *p = (TokenArray*) Malloc(sizeof * p);
     if (p != NULL)
     {
         TokenArray_Init(p);
@@ -80,7 +80,7 @@ TokenArray* TokenArray_Create() /*default*/
     return p;
 }
 
-void TokenArray_Destroy(TokenArray* st) /*default*/
+void TokenArray_Destroy(TokenArray* st) /*@default*/
 {
     for (int i = 0; i < st->Size; i++)
     {
@@ -96,7 +96,7 @@ void TokenArray_Swap(TokenArray* p1, TokenArray* p2)
     *p2 = temp;
 }
 
-void TokenArray_Delete(TokenArray* st) /*default*/
+void TokenArray_Delete(TokenArray* st) /*@default*/
 {
     if (st != NULL)
     {
@@ -323,7 +323,7 @@ void TokenSet_Clear(TokenSet * p)
 }
 
 
-void TokenSet_Destroy(TokenSet * pArray) /*default*/
+void TokenSet_Destroy(TokenSet * pArray) /*@default*/
 {
     for (int i = 0; i < pArray->Size; i++)
     {

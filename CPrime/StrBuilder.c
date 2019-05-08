@@ -19,7 +19,7 @@
 
 #include "Mem.h"
 
-void StrBuilder_Init(StrBuilder* p) /*default*/
+void StrBuilder_Init(StrBuilder* p) /*@default*/
 {
     p->c_str = NULL;
     p->size = 0;

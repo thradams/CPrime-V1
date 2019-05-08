@@ -5,7 +5,7 @@
 #include "Mem.h"
 
 
-void PPToken_Destroy(struct  PPToken * p) /*default*/
+void PPToken_Destroy(struct  PPToken * p) /*@default*/
 {
     String_Destroy(&p->Lexeme);
     TokenSet_Destroy(&p->HiddenSet);
@@ -44,7 +44,7 @@ struct PPToken* PPToken_Create(const char* s, enum PPTokenType token)
 	return p;
 }
 
-void PPToken_Delete(struct PPToken * p) /*default*/
+void PPToken_Delete(struct PPToken * p) /*@default*/
 {
     if (p != NULL)
     {

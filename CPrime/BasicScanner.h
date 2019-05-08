@@ -15,6 +15,8 @@ typedef enum
     TK_ENDMARK,
     TK_LINE_COMMENT,
     TK_COMMENT,
+    TK_OPEN_COMMENT,
+    TK_CLOSE_COMMENT,
     TK_STRING_LITERAL,
     TK_IDENTIFIER,
     TK_SPACES,
@@ -194,9 +196,9 @@ typedef struct ScannerItem
 {
     LocalStrBuilder lexeme;
     Tokens token;
-    int Line /*= -1*/;
-    int FileIndex /*= -1 */;
-    bool bActive /*= true*/;
+    int Line /*@= -1*/;
+    int FileIndex /*@= -1 */;
+    bool bActive /*@= true*/;
     struct ScannerItem* pNext;
 } ScannerItem;
 

@@ -24,6 +24,10 @@ const char* TokenToString(Tokens tk)
         return "LINE_COMMENT";
     case TK_COMMENT:
         return "COMMENT";
+    case TK_CLOSE_COMMENT:
+        return "CLOSE_COMMENT";
+    case TK_OPEN_COMMENT:
+        return "OPEN_COMMENT";
     case TK_STRING_LITERAL:
         return "LITERALSTR";
     case TK_IDENTIFIER:
@@ -280,7 +284,7 @@ const char* TokenToString(Tokens tk)
     return "???";
 }
 
-ScannerItem* ScannerItem_Create(void) /*default*/
+ScannerItem* ScannerItem_Create(void) /*@default*/
 {
     ScannerItem *p = (ScannerItem*) Malloc(sizeof * p);
     if (p != NULL)
@@ -290,7 +294,7 @@ ScannerItem* ScannerItem_Create(void) /*default*/
     return p;
 }
 
-void ScannerItem_Delete(ScannerItem* pScannerItem) /*default*/
+void ScannerItem_Delete(ScannerItem* pScannerItem) /*@default*/
 {
     if (pScannerItem != NULL)
     {
@@ -299,7 +303,7 @@ void ScannerItem_Delete(ScannerItem* pScannerItem) /*default*/
     }
 }
 
-void ScannerItem_Init(ScannerItem* scannerItem) /*default*/
+void ScannerItem_Init(ScannerItem* scannerItem) /*@default*/
 {
     LocalStrBuilder_Init(&scannerItem->lexeme);
     scannerItem->token = TK_NONE;
@@ -331,7 +335,7 @@ void ScannerItem_Swap(ScannerItem* scannerItem,
     LocalStrBuilder_Swap(&scannerItem->lexeme, &other->lexeme);
 }
 
-void ScannerItem_Destroy(ScannerItem* scannerItem) /*default*/
+void ScannerItem_Destroy(ScannerItem* scannerItem) /*@default*/
 {
     LocalStrBuilder_Destroy(&scannerItem->lexeme);
 }
@@ -410,13 +414,13 @@ bool BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
 }
 
 
-void BasicScanner_Destroy(BasicScanner* pBasicScanner) /*default*/
+void BasicScanner_Destroy(BasicScanner* pBasicScanner) /*@default*/
 {
     Stream_Destroy(&pBasicScanner->stream);
     ScannerItem_Destroy(&pBasicScanner->currentItem);
 }
 
-void BasicScanner_Delete(BasicScanner* pBasicScanner) /*default*/
+void BasicScanner_Delete(BasicScanner* pBasicScanner) /*@default*/
 {
     if (pBasicScanner != NULL)
     {
@@ -641,6 +645,16 @@ void BasicScanner_Next(BasicScanner* scanner)
             return;
         }
     }
+
+    if (ch == '*' && ch1 == '/')
+    {
+        scanner->currentItem.token = TK_CLOSE_COMMENT;
+        ch = BasicScanner_MatchChar(scanner); 
+        ch = BasicScanner_MatchChar(scanner);
+        
+        return;
+    }
+
     //procura por puncturtorscom 1 caracteres
     for (int i = 0; i < sizeof(singleoperators) / sizeof(singleoperators[0]); i++)
     {
@@ -1051,44 +1065,48 @@ void BasicScanner_Next(BasicScanner* scanner)
             scanner->currentItem.token = TK_COMMENT;
             ch = BasicScanner_MatchChar(scanner);
             ch = BasicScanner_MatchChar(scanner);
-
-
-            for (;;)
+            if (ch == '@')
             {
-                if (ch == '*')
+                scanner->currentItem.token = TK_OPEN_COMMENT;
+                ch = BasicScanner_MatchChar(scanner);
+            }
+            else
+            {
+                for (;;)
                 {
-                    ch = BasicScanner_MatchChar(scanner);
-                    if (ch == '/')
+                    if (ch == '*')
                     {
                         ch = BasicScanner_MatchChar(scanner);
-                        break;
+                        if (ch == '/')
+                        {
+                            ch = BasicScanner_MatchChar(scanner);
+                            break;
+                        }
                     }
-                }
-                else if (ch == L'\r')
-                {
-                    //so coloca \n
-                    Stream_Match(&scanner->stream);
-                    ch = scanner->stream.Character;
-                    if (ch == L'\n')
+                    else if (ch == L'\r')
+                    {
+                        //so coloca \n
+                        Stream_Match(&scanner->stream);
+                        ch = scanner->stream.Character;
+                        if (ch == L'\n')
+                        {
+                            ch = BasicScanner_MatchChar(scanner);
+                        }
+                        else
+                        {
+                        }
+                    }
+                    else if (ch == L'\n')
                     {
                         ch = BasicScanner_MatchChar(scanner);
                     }
                     else
                     {
+                        ch = BasicScanner_MatchChar(scanner);
                     }
                 }
-                else if (ch == L'\n')
-                {
-                    ch = BasicScanner_MatchChar(scanner);
-                }
-                else
-                {
-                    ch = BasicScanner_MatchChar(scanner);
-                }
-
-
-
             }
+           
 
 
             return;

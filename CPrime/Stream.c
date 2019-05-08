@@ -120,7 +120,7 @@ bool Stream_Init(struct Stream* pStream, const char* name, const char*  Text)
 }
 
 
-void Stream_Destroy(struct Stream* pStream) /*default*/
+void Stream_Destroy(struct Stream* pStream) /*@default*/
 {
     String_Destroy(&pStream->NameOrFullPath);
     String_Destroy(&pStream->FullDir2);

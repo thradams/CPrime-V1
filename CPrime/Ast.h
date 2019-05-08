@@ -104,9 +104,9 @@ typedef struct
   static_assert-declaration:
   _Static_assert ( constant-expression , string-literal ) ;
   */
-  EType Type /*=TStaticAssertDeclaration_ID*/;
+  EType Type /*@=TStaticAssertDeclaration_ID*/;
 
-  TExpression* /*auto*/  pConstantExpression;
+  TExpression* /*@auto*/  pConstantExpression;
   String Text;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -126,7 +126,7 @@ typedef struct
   /*
   Marca fim de um arquivo
   */
-  EType Type /*=TEofDeclaration_ID*/;
+  EType Type /*@=TEofDeclaration_ID*/;
   TScannerItemList ClueList0;
 } TEofDeclaration;
 
@@ -139,10 +139,10 @@ typedef struct TStatement TStatement;
 struct TGroupDeclaration;
 typedef struct TGroupDeclaration TGroupDeclaration;
 
-struct /*TStaticAssertDeclaration |
+struct /*@<TStaticAssertDeclaration |
   TDeclaration |
   TGroupDeclaration |
-  TEofDeclaration*/ TAnyDeclaration
+  TEofDeclaration>*/ TAnyDeclaration
 {
   EType Type;
 };
@@ -160,7 +160,7 @@ typedef struct {
   block-item
   block-item-list block-item
   */
-  TBlockItem * /*auto*/ * /*auto [Size]*/ pItems;
+  TBlockItem * /*@auto*/ * /*@auto [Size]*/ pItems;
   int Size;
   int Capacity;
 } TBlockItemList;
@@ -172,7 +172,7 @@ void TBlockItemList_PushBack(TBlockItemList* p, TBlockItem* pItem);
 
 typedef struct
 {
-  EType Type  /*=TCompoundStatement_ID*/;
+  EType Type  /*@=TCompoundStatement_ID*/;
   TBlockItemList BlockItemList;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -198,7 +198,7 @@ typedef struct TTypeQualifier
   _size ( SizeIdentifier )
   */
 
-  EType Type /*=TTypeQualifier_ID*/;
+  EType Type /*@=TTypeQualifier_ID*/;
   String SizeIdentifier;
   Tokens Token;
   TScannerItemList ClueList0;
@@ -214,7 +214,7 @@ typedef struct {
   type-qualifier-list type-qualifier
   */
 
-  TTypeQualifier * /*auto*/ Data[4];
+  TTypeQualifier * /*@auto*/ Data[4];
   int Size;
 
 } TTypeQualifierList;
@@ -230,8 +230,8 @@ void TTypeQualifier_Delete(TTypeQualifier* p);
 
 typedef struct
 {
-  EType Type /*=TExpressionStatement_ID*/;
-  TExpression * /*auto*/    pExpression;
+  EType Type /*@=TExpressionStatement_ID*/;
+  TExpression * /*@auto*/    pExpression;
   TScannerItemList ClueList0;
 } TExpressionStatement;
 
@@ -240,10 +240,10 @@ void TExpressionStatement_Delete(TExpressionStatement* p);
 
 typedef struct
 {
-  EType Type /*=TJumpStatement_ID*/;
+  EType Type /*@=TJumpStatement_ID*/;
   Tokens token;
   String Identifier;
-  TExpression * /*auto*/   pExpression;
+  TExpression * /*@auto*/   pExpression;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
   TScannerItemList ClueList2;
@@ -255,7 +255,7 @@ void TJumpStatement_Delete(TJumpStatement* p);
 
 typedef struct
 {
-  EType Type  /*=TAsmStatement_ID*/;
+  EType Type  /*@=TAsmStatement_ID*/;
   TScannerItemList ClueList;
 } TAsmStatement;
 
@@ -264,12 +264,12 @@ void TAsmStatement_Delete(TAsmStatement* p);
 
 typedef struct
 {
-  EType Type  /*=TForStatement_ID*/;
-  TAnyDeclaration* /*auto*/   pInitDeclarationOpt;
-  TExpression* /*auto*/   pExpression1;
-  TExpression* /*auto*/  pExpression2;
-  TExpression* /*auto*/   pExpression3;
-  TStatement* /*auto*/   pStatement;
+  EType Type  /*@=TForStatement_ID*/;
+  TAnyDeclaration* /*@auto*/   pInitDeclarationOpt;
+  TExpression* /*@auto*/   pExpression1;
+  TExpression* /*@auto*/  pExpression2;
+  TExpression* /*@auto*/   pExpression3;
+  TStatement* /*@auto*/   pStatement;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
   TScannerItemList ClueList2;
@@ -282,9 +282,9 @@ void TForStatement_Delete(TForStatement* p);
 
 typedef struct
 {
-  EType Type  /*=TWhileStatement_ID*/;
-  TExpression* /*auto*/   pExpression;
-  TStatement* /*auto*/   pStatement;
+  EType Type  /*@=TWhileStatement_ID*/;
+  TExpression* /*@auto*/   pExpression;
+  TStatement* /*@auto*/   pStatement;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
   TScannerItemList ClueList2;
@@ -295,9 +295,9 @@ void TWhileStatement_Delete(TWhileStatement* p);
 
 typedef struct
 {
-  EType Type  /*=TDoStatement_ID*/;
-  TExpression * /*auto*/    pExpression;
-  TStatement* /*auto*/    pStatement;
+  EType Type  /*@=TDoStatement_ID*/;
+  TExpression * /*@auto*/    pExpression;
+  TStatement* /*@auto*/    pStatement;
   TScannerItemList ClueList0; //do
   TScannerItemList ClueList1; //while
   TScannerItemList ClueList2; //(
@@ -311,10 +311,10 @@ void TDoStatement_Delete(TDoStatement* p);
 
 typedef struct
 {
-  EType Type  /*=TLabeledStatement_ID*/;
+  EType Type  /*@=TLabeledStatement_ID*/;
 
-  TStatement * /*auto*/   pStatementOpt;
-  TExpression * /*auto*/   pExpression;
+  TStatement * /*@auto*/   pStatementOpt;
+  TExpression * /*@auto*/   pExpression;
   String Identifier;
   Tokens token;
   TScannerItemList ClueList0;
@@ -327,9 +327,9 @@ void TLabeledStatement_Delete(TLabeledStatement* p);
 
 typedef struct
 {
-  EType Type  /*=TSwitchStatement_ID*/;
-  TExpression * /*auto*/   pConditionExpression;
-  TStatement* /*auto*/    pExpression;
+  EType Type  /*@=TSwitchStatement_ID*/;
+  TExpression * /*@auto*/   pConditionExpression;
+  TStatement* /*@auto*/    pExpression;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
   TScannerItemList ClueList2;
@@ -341,10 +341,10 @@ void TSwitchStatement_Delete(TSwitchStatement* p);
 
 typedef struct
 {
-  EType Type  /*=TIfStatement_ID*/;
-  TExpression* /*auto*/    pConditionExpression;
-  TStatement* /*auto*/   pStatement;
-  TStatement* /*auto*/   pElseStatement;
+  EType Type  /*@=TIfStatement_ID*/;
+  TExpression* /*@auto*/    pConditionExpression;
+  TStatement* /*@auto*/   pStatement;
+  TStatement* /*@auto*/   pElseStatement;
   TScannerItemList ClueList0; //if 
   TScannerItemList ClueList1; //(
   TScannerItemList ClueList2; //)
@@ -355,7 +355,7 @@ TIfStatement* TIfStatement_Create(void);
 void TIfStatement_Delete(TIfStatement* p);
 
 
-struct /*TCompoundStatement |
+struct /*@<TCompoundStatement |
   TExpressionStatement |
   TLabeledStatement |
   TJumpStatement |
@@ -364,7 +364,7 @@ struct /*TCompoundStatement |
   TForStatement |
   TAsmStatement |
   TWhileStatement |
-  TSwitchStatement*/ TStatement
+  TSwitchStatement>*/ TStatement
 {
   EType Type;
 };
@@ -391,7 +391,7 @@ typedef struct TDeclaration TDeclaration;
 declaration
 statement
 */
-struct /*TDeclaration | TStatement*/ TBlockItem
+struct /*@<TDeclaration | TStatement>*/ TBlockItem
 {
   EType Type;
 };
@@ -467,7 +467,7 @@ typedef struct
   inline
   _Noreturn
   */
-  EType Type  /*=TFunctionSpecifier_ID*/;
+  EType Type  /*@=TFunctionSpecifier_ID*/;
   Tokens Token;
   TScannerItemList ClueList0;
 } TFunctionSpecifier;
@@ -487,7 +487,7 @@ typedef struct
   auto
   register
   */
-  EType Type  /*=TStorageSpecifier_ID*/;
+  EType Type  /*@=TStorageSpecifier_ID*/;
   Tokens Token;
   TScannerItemList ClueList0;
 } TStorageSpecifier;
@@ -503,7 +503,7 @@ typedef struct
   _Alignas ( type-name )
   _Alignas ( constant-expression )
   */
-  EType Type  /*=TAlignmentSpecifier_ID*/;
+  EType Type  /*@=TAlignmentSpecifier_ID*/;
   String TypeName;
 } TAlignmentSpecifier;
 
@@ -520,7 +520,7 @@ typedef struct TEnumerator
   */
   struct TEnumerator*  pNext;
   String Name;
-  TExpression* /*auto*/   pExpression;
+  TExpression* /*@auto*/   pExpression;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1; // =
   TScannerItemList ClueList2; // ,
@@ -552,7 +552,7 @@ typedef struct TEnumSpecifier
   enum identifier
   */
 
-  EType Type  /*=TEnumSpecifier_ID*/;
+  EType Type  /*@=TEnumSpecifier_ID*/;
   String Name;
   TEnumeratorList EnumeratorList;
   TScannerItemList ClueList0;
@@ -580,7 +580,7 @@ typedef struct TSingleTypeSpecifier
   _Complex
   typedef-name
   */
-  EType Type  /*=TSingleTypeSpecifier_ID*/;
+  EType Type  /*@=TSingleTypeSpecifier_ID*/;
   Tokens Token2;
   String TypedefName;
   TScannerItemList ClueList0;
@@ -604,11 +604,11 @@ function-specifier declaration-specifiersopt
 alignment-specifier declaration-specifiersopt
 */
 
-struct /*TStorageSpecifier |
+struct /*@<TStorageSpecifier |
   TTypeSpecifier |
   TTypeQualifier |
   TFunctionSpecifier |
-  TAlignmentSpecifier*/ TDeclarationSpecifier
+  TAlignmentSpecifier>*/ TDeclarationSpecifier
 {
   EType Type;
 };
@@ -626,8 +626,7 @@ specifier-qualifier-list:
 type-specifier specifier-qualifier-listopt
 type-qualifier specifier-qualifier-listopt
 */
-struct /*TTypeSpecifier |
-  TTypeQualifier*/ TSpecifierQualifier
+struct /*@<TTypeSpecifier | TTypeQualifier>*/ TSpecifierQualifier
 {
   EType Type;
 };
@@ -655,7 +654,7 @@ typedef struct {
   type-specifier specifier-qualifier-listopt
   type-qualifier specifier-qualifier-listopt
   */
-  TSpecifierQualifier * /*auto*/ * /*auto [Size]*/ pData;
+  TSpecifierQualifier * /*@auto*/ * /*@auto [Size]*/ pData;
   int Size;
   int Capacity;
 } TSpecifierQualifierList;
@@ -684,7 +683,7 @@ typedef struct TDeclarationSpecifiers {
   function-specifier declaration-specifiersopt
   alignment-specifier declaration-specifiersopt
   */
-  TDeclarationSpecifier * /*auto*/ * /*auto [Size]*/ pData;
+  TDeclarationSpecifier * /*@auto*/ * /*@auto [Size]*/ pData;
   int Size;
   int Capacity;
 } TDeclarationSpecifiers;
@@ -749,7 +748,7 @@ typedef struct TDesignator
   . identifier
   */
   String Name;
-  TExpression * /*auto*/  pExpression;
+  TExpression * /*@auto*/  pExpression;
   struct TDesignator *  pNext;
   TScannerItemList ClueList0; //. ou [
   TScannerItemList ClueList1; //]
@@ -767,7 +766,7 @@ typedef struct
   designator
   designator-list designator
   */
-  TDesignator* /*auto*/ pHead, *pTail;
+  TDesignator* /*@auto*/ pHead, *pTail;
 } TDesignatorList;
 void TDesignatorList_Destroy(TDesignatorList* p);
 void TDesignatorList_Init(TDesignatorList* p);
@@ -798,7 +797,7 @@ typedef struct TInitializerListItem
   initializer-list , designationopt initializer
   */
   TDesignatorList  DesignatorList;
-  TInitializer* /*auto*/  pInitializer;
+  TInitializer* /*@auto*/  pInitializer;
   struct TInitializerListItem*  pNext;
   TScannerItemList ClueList;
   bool bDefault;
@@ -817,7 +816,7 @@ typedef struct TInitializerList
   initializer-list , designationopt initializer
   */
 
-  TInitializerListItem * /*auto*/ pHead, *pTail;
+  TInitializerListItem * /*@auto*/ pHead, *pTail;
 } TInitializerList;
 
 void TInitializerList_Init(TInitializerList* p);
@@ -840,7 +839,7 @@ typedef struct
 	  default { initializer-list ,}
 	*/
 
-  EType Type  /*=TInitializerListType_ID*/;
+  EType Type  /*@=TInitializerListType_ID*/;
   TInitializerList InitializerList;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -853,7 +852,7 @@ void TInitializerListType_Delete(TInitializerListType* p);
 
 
 
-struct /*TInitializerListType | TExpression*/ TInitializer
+struct /*@<TInitializerListType | TExpression>*/ TInitializer
 {
 	/*
 	initializer: 
@@ -886,7 +885,7 @@ typedef struct TDeclarator
   */
 
   TPointerList PointerList;
-  TDirectDeclarator* /*auto*/  pDirectDeclarator;
+  TDirectDeclarator* /*@auto*/  pDirectDeclarator;
   TScannerItemList ClueList;
 } TDeclarator;
 
@@ -922,11 +921,11 @@ typedef struct TDirectDeclarator
   */
 
   String Identifier;
-  TDeclarator* /*auto*/ pDeclarator;
-  struct TDirectDeclarator* /*auto*/  pDirectDeclarator;
+  TDeclarator* /*@auto*/ pDeclarator;
+  struct TDirectDeclarator* /*@auto*/  pDirectDeclarator;
   TPosition Position;
   TParameterTypeList  Parameters;
-  TExpression * /*auto*/  pExpression;
+  TExpression * /*@auto*/  pExpression;
   TDirectDeclaratorType DeclaratorType; //para diferenciar pois null nao basta []
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -945,8 +944,8 @@ typedef struct TInitDeclarator
   declarator
   declarator = initializer
   */
-  TDeclarator* /*auto*/  pDeclarator;
-  TInitializer* /*auto*/   pInitializer;
+  TDeclarator* /*@auto*/  pDeclarator;
+  TInitializer* /*@auto*/   pInitializer;
   struct TInitDeclarator *  pNext;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1; //defval
@@ -982,7 +981,7 @@ typedef struct TStructDeclaratorList
   init-declarator
   init-declarator-list , init-declarator
   */
-  TInitDeclarator* /*auto*/ pHead, *pTail;
+  TInitDeclarator* /*@auto*/ pHead, *pTail;
 } TStructDeclaratorList;
 
 
@@ -999,7 +998,7 @@ typedef struct TStructDeclaration
   static_assert-declaration
   */
 
-  EType Type  /*=TStructDeclaration_ID*/;
+  EType Type  /*@=TStructDeclaration_ID*/;
 
   TSpecifierQualifierList SpecifierQualifierList;
   TStructDeclaratorList DeclaratorList;
@@ -1016,8 +1015,7 @@ struct-declaration:
 specifier-qualifier-list struct-declarator-listopt ;
 static_assert-declaration
 */
-struct /*TStructDeclaration |
-  TStaticAssertDeclaration*/ TAnyStructDeclaration
+struct /*@<TStructDeclaration | TStaticAssertDeclaration>*/ TAnyStructDeclaration
 {
   EType Type;
 };
@@ -1031,7 +1029,7 @@ CAST(TAnyStructDeclaration, TEofDeclaration)
 
 typedef struct
 {
-  TAnyStructDeclaration* /*auto*/ * /*auto [Size]*/ pItems;
+  TAnyStructDeclaration* /*@auto*/ * /*@auto [Size]*/ pItems;
   int Size;
   int Capacity;
 } TStructDeclarationList;
@@ -1059,9 +1057,9 @@ typedef struct TUnionSet
 {
   TUnionSetItem *  pHead, *pTail;
 
-  TScannerItemList ClueList0; // _union
-  TScannerItemList ClueList1; //(
-  TScannerItemList ClueList2; //)
+  TScannerItemList ClueList0; // <
+  TScannerItemList ClueList1; // > 
+  //TScannerItemList ClueList2; //>
 
 } TUnionSet;
 void TUnionSet_Init(TUnionSet* p);
@@ -1082,7 +1080,7 @@ typedef struct TStructUnionSpecifier
   struct-or-union union-set-opt identifier
   */
 
-  EType Type  /*=TStructUnionSpecifier_ID*/;
+  EType Type  /*@=TStructUnionSpecifier_ID*/;
   TStructDeclarationList StructDeclarationList;
   String Name;
 
@@ -1090,10 +1088,10 @@ typedef struct TStructUnionSpecifier
   Tokens Token2;
 
   TUnionSet UnionSet;
-  TScannerItemList ClueList0;
-  TScannerItemList ClueList1;
-  TScannerItemList ClueList2;
-  TScannerItemList ClueList3;
+  TScannerItemList ClueList0; //struct-or-union
+  TScannerItemList ClueList1; //identifieropt
+  TScannerItemList ClueList2; //{
+  TScannerItemList ClueList3; //}
 
 } TStructUnionSpecifier;
 
@@ -1105,10 +1103,10 @@ struct TAtomicTypeSpecifier;
 typedef struct TAtomicTypeSpecifier TAtomicTypeSpecifier;
 
 
-struct /*TSingleTypeSpecifier |
+struct /*@<TSingleTypeSpecifier |
   TAtomicTypeSpecifier |
   TEnumSpecifier |
-  TStructUnionSpecifier*/ TTypeSpecifier
+  TStructUnionSpecifier>*/ TTypeSpecifier
 {
   EType Type;
 };
@@ -1130,12 +1128,12 @@ typedef struct TDeclaration
   static_assert-declaration
   */
 
-  EType Type  /*=TDeclaration_ID*/;
+  EType Type  /*@=TDeclaration_ID*/;
   TDeclarationSpecifiers Specifiers;
   TInitDeclaratorList InitDeclaratorList;
 
   //se for funcao
-  TCompoundStatement* /*auto*/  pCompoundStatementOpt;
+  TCompoundStatement* /*@auto*/  pCompoundStatementOpt;
 
   int FileIndex;
   int Line;
@@ -1200,7 +1198,7 @@ const char* TParameter_GetTypedefName(TParameter* p);
 
 typedef struct
 {
-  TAnyDeclaration * /*auto*/ * /*auto [Size]*/ pItems;
+  TAnyDeclaration * /*@auto*/ * /*@auto [Size]*/ pItems;
   int Size;
   int Capacity;
 } TDeclarations;
@@ -1216,7 +1214,7 @@ typedef struct TGroupDeclaration
   {
   }
   */
-  EType Type  /*=TGroupDeclaration_ID*/;
+  EType Type  /*@=TGroupDeclaration_ID*/;
   TDeclarations Declarations;
   String Identifier;
   TScannerItemList ClueList0;
@@ -1262,7 +1260,7 @@ typedef struct TTypeName
   type-name:
   specifier-qualifier-list abstract-declaratoropt
   */
-  EType Type  /*=TypeName_ID*/;
+  EType Type  /*@=TypeName_ID*/;
   TSpecifierQualifierList SpecifierQualifierList;
   TDeclarator Declarator;
 } TTypeName;
@@ -1278,7 +1276,7 @@ typedef struct TAtomicTypeSpecifier
   atomic-type-specifier:
   _Atomic ( type-name )
   */
-  EType Type  /*=TAtomicTypeSpecifier_ID*/;
+  EType Type  /*@=TAtomicTypeSpecifier_ID*/;
   TTypeName TypeName;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -1311,10 +1309,10 @@ typedef struct
   generic-selection
   */
 
-  EType Type /*=TPrimaryExpressionValue_ID*/;
+  EType Type /*@=TPrimaryExpressionValue_ID*/;
   Tokens token;
   String lexeme;
-  TExpression* /*auto*/   pExpressionOpt; //( expression )
+  TExpression* /*@auto*/   pExpressionOpt; //( expression )
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
 } TPrimaryExpressionValue;
@@ -1346,7 +1344,7 @@ void TPrimaryExpressionLiteralItemList_Add(TPrimaryExpressionLiteralItemList* p,
 
 typedef struct
 {
-  EType Type /*=TPrimaryExpressionLiteral_ID*/;
+  EType Type /*@=TPrimaryExpressionLiteral_ID*/;
   TPrimaryExpressionLiteralItemList List;
 } TPrimaryExpressionLiteral;
 
@@ -1357,10 +1355,10 @@ void TPrimaryExpressionLiteral_Delete(TPrimaryExpressionLiteral* p);
 
 typedef struct
 {
-  EType Type /*=TBinaryExpression_ID*/;
+  EType Type /*@=TBinaryExpression_ID*/;
   Tokens token;
-  TExpression* /*auto*/   pExpressionLeft;
-  TExpression* /*auto*/    pExpressionRight;
+  TExpression* /*@auto*/   pExpressionLeft;
+  TExpression* /*@auto*/    pExpressionRight;
   TPosition Position;
 
   TScannerItemList ClueList0;
@@ -1372,11 +1370,11 @@ void TBinaryExpression_Delete(TBinaryExpression* p);
 
 typedef struct
 {
-  EType Type /*=TTernaryExpression_ID*/;
+  EType Type /*@=TTernaryExpression_ID*/;
   Tokens token;
-  TExpression* /*auto*/   pExpressionLeft;
-  TExpression* /*auto*/    pExpressionMiddle;
-  TExpression* /*auto*/    pExpressionRight;
+  TExpression* /*@auto*/   pExpressionLeft;
+  TExpression* /*@auto*/    pExpressionMiddle;
+  TExpression* /*@auto*/    pExpressionRight;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
 } TTernaryExpression;
@@ -1390,16 +1388,16 @@ typedef struct TTypeName TTypeName;
 
 typedef struct TPostfixExpressionCore
 {
-  EType Type  /*=TPostfixExpressionCore_ID*/;
+  EType Type  /*@=TPostfixExpressionCore_ID*/;
   Tokens token;
   String lexeme;
-  TExpression* /*auto*/   pExpressionLeft;
-  TExpression* /*auto*/   pExpressionRight;
+  TExpression* /*@auto*/   pExpressionLeft;
+  TExpression* /*@auto*/   pExpressionRight;
 
-  struct TPostfixExpressionCore* /*auto*/  pNext;
+  struct TPostfixExpressionCore* /*@auto*/  pNext;
   TInitializerList InitializerList;
   String Identifier;
-  TTypeName* /*auto*/  pTypeName; /*typename*/
+  TTypeName* /*@auto*/  pTypeName; /*typename*/
 
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -1415,8 +1413,8 @@ void TPostfixExpressionCore_Delete(TPostfixExpressionCore* p);
 
 typedef struct
 {
-  EType Type  /*=TCastExpressionType_ID*/;
-  TExpression* /*auto*/    pExpression;
+  EType Type  /*@=TCastExpressionType_ID*/;
+  TExpression* /*@auto*/    pExpression;
   TTypeName TypeName;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -1428,9 +1426,9 @@ void TCastExpressionType_Delete(TCastExpressionType* p);
 
 typedef struct
 {
-  EType Type  /*=TUnaryExpressionOperator_ID*/;
+  EType Type  /*@=TUnaryExpressionOperator_ID*/;
   Tokens token;
-  TExpression* /*auto*/   pExpressionRight;
+  TExpression* /*@auto*/   pExpressionRight;
   TTypeName TypeName;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1; //sizeof (
@@ -1441,7 +1439,7 @@ typedef struct
 TUnaryExpressionOperator* TUnaryExpressionOperator_Create();
 void TUnaryExpressionOperator_Delete(TUnaryExpressionOperator* p);
 
-struct /*TPrimaryExpressionLiteral |
+struct /*@<TPrimaryExpressionLiteral |
   TPrimaryExpressionValue |
   TBinaryExpression |
   TUnaryExpressionOperator |
@@ -1449,7 +1447,7 @@ struct /*TPrimaryExpressionLiteral |
   TPostfixExpressionCore |
   TCastExpressionType |
   TTernaryExpression |   
-  TPrimaryExpressionLambda*/ TExpression
+  TPrimaryExpressionLambda>*/ TExpression
 {
   EType Type;
 };
@@ -1468,10 +1466,10 @@ CAST(TExpression, TCastExpressionType)
 
 typedef struct TPrimaryExpressionLambda
 {
-  EType Type /*=TPrimaryExpressionLambda_ID*/;
+  EType Type /*@=TPrimaryExpressionLambda_ID*/;
 
   TCompoundStatement* pCompoundStatement;
-  TParameterTypeList * /*auto*/ pParameterTypeListOpt;
+  TParameterTypeList * /*@auto*/ pParameterTypeListOpt;
   TScannerItemList ClueList0; //[
   TScannerItemList ClueList1; //]
   TScannerItemList ClueList2; //(

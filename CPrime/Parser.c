@@ -38,6 +38,8 @@ static bool IsPreprocessorTokenPhase(Tokens token)
 	return
 		token == TK_SPACES ||
 		token == TK_COMMENT ||
+        token == TK_OPEN_COMMENT ||
+        token == TK_CLOSE_COMMENT ||
 		token == TK_LINE_COMMENT ||
 		token == TK_BREAKLINE ||
 		token == TK_BACKSLASHBREAKLINE ||
@@ -762,7 +764,7 @@ void TTypeName_Swap(TTypeName* a, TTypeName* b)
 	*b = temp;
 }
 
-void TTypeName_Init(TTypeName* p) /*default*/
+void TTypeName_Init(TTypeName* p) /*@default*/
 {
 	p->Type = TypeName_ID;
 	p->SpecifierQualifierList.pData = NULL;
@@ -3120,42 +3122,6 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
 
 }
 
-static const char* FindComment(TScannerItemList* clueList)
-{
-	const char* psz = NULL;
-	ScannerItem* pCurrent = clueList->pHead;
-	while (pCurrent)
-	{
-		if (pCurrent &&
-			pCurrent->token == TK_COMMENT)
-		{
-			psz = pCurrent->lexeme.c_str;
-			break;
-		}
-		pCurrent = pCurrent->pNext;
-	}
-	return psz;
-}
-
-static const char* FindThisComment(TScannerItemList* clueList,
-	const char* comment)
-{
-	const char* psz = NULL;
-	ScannerItem* pCurrent = clueList->pHead;
-	while (pCurrent)
-	{
-		if (pCurrent &&
-			pCurrent->token == TK_COMMENT &&
-			strcmp(pCurrent->lexeme.c_str, comment) == 0)
-		{
-			psz = pCurrent->lexeme.c_str;
-			break;
-		}
-		pCurrent = pCurrent->pNext;
-	}
-	return psz;
-}
-
 
 void Struct_Declarator(Parser* ctx,
 
@@ -3190,51 +3156,7 @@ void Struct_Declarator(Parser* ctx,
 
 		token = Parser_CurrentToken(ctx);
 
-		if (token == TK_COMMA || token == TK_SEMICOLON)
-		{
-			/////////////
 
-			//ctx->ClueList.
-			const char* pString = FindComment(&ctx->ClueList);
-			if (pString)
-			{
-				StrBuilder local = STRBUILDER_INIT;
-				StrBuilder_AppendN(&local, pString + 2, strlen(pString) - 4);
-
-				MacroMap * pDefines = &ctx->Scanner.Defines2;
-				Parser parser;
-				Parser_InitString(&parser, "eval expression", local.c_str);
-				StrBuilder_Destroy(&local);
-
-				//vou pegar emprestado 
-				parser.GlobalScope = ctx->GlobalScope;
-				parser.pCurrentScope = &parser.GlobalScope;
-
-				if (pDefines)
-				{
-					// usa o mapa de macros para o pre-processador
-					MacroMap_Swap(&parser.Scanner.Defines2, pDefines);
-				}
-
-				//token = Parser_CurrentToken(&parser);
-
-				Parser_Match(&parser, &pInitDeclarator->ClueList1); //_defval ou =
-				Initializer(&parser, &pInitDeclarator->pInitializer, TK_SEMICOLON, TK_SEMICOLON);
-
-				if (pDefines)
-				{
-					MacroMap_Swap(&parser.Scanner.Defines2, pDefines);
-				}
-
-				//era so emprestado
-				parser.GlobalScope.pHashTable = NULL;
-
-				Parser_Destroy(&parser);
-			}
-
-
-			/////////////
-		}
 
 		if (token == TK_COLON)
 		{
@@ -3285,14 +3207,14 @@ void Struct_Declarator_List(Parser* ctx,
 		{
 			//Tem mais
 			Parser_Match(ctx, &pTDeclarator2->ClueList0);
-			//ANNOTATED AQUI TEM O COMENTARIO /*= 1*/
+			//ANNOTATED AQUI TEM O COMENTARIO /*@= 1*/
 
 			Struct_Declarator_List(ctx, pStructDeclarationList);
 		}
 		else if (token == TK_SEMICOLON)
 		{
 			//em ctx cluelist
-			//ANNOTATED AQUI TEM O COMENTARIO /*= 1*/
+			//ANNOTATED AQUI TEM O COMENTARIO /*@= 1*/
 			break;
 		}
 		else
@@ -3335,7 +3257,7 @@ void Struct_Declaration(Parser* ctx,
 				&pStructDeclarationBase->DeclaratorList);
 
 			Parser_MatchToken(ctx, TK_SEMICOLON, &pStructDeclarationBase->ClueList1);
-			//TODO AQUI TEM O COMENTARIO /*= 1*/
+			//TODO AQUI TEM O COMENTARIO /*@= 1*/
 		}
 		else
 		{
@@ -3434,26 +3356,22 @@ void UnionSet(Parser* ctx, TUnionSet* pUnionSet)
 {
 	/*
 	_union-set:
-	_union ( _union-set-list )
+	< _union-set-list >
 	*/
 
 	Tokens token = Parser_CurrentToken(ctx);
 	const char* lexeme = Lexeme(ctx);
 
 
-
-	if (token == TK__UNION)
+	if (token == TK_LESS_THAN_SIGN)
 	{
 		Parser_Match(ctx, &pUnionSet->ClueList0);
 
 
-		Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS,
-			&pUnionSet->ClueList1);
-
 		UnionSetList(ctx, pUnionSet);
 
-		Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS,
-			&pUnionSet->ClueList2);
+		Parser_MatchToken(ctx, TK_GREATER_THAN_SIGN,
+			&pUnionSet->ClueList1);
 	}
 
 
@@ -3484,7 +3402,7 @@ void Struct_Or_Union_Specifier(Parser* ctx,
 
 
 
-	if (token == TK__UNION)
+	if (token == TK_LESS_THAN_SIGN)
 	{
 		pStructUnionSpecifier->Token2 = TK__UNION;
 		UnionSet(ctx, &pStructUnionSpecifier->UnionSet);
@@ -3492,60 +3410,8 @@ void Struct_Or_Union_Specifier(Parser* ctx,
 	}
 
 
-
 	token = Parser_CurrentToken(ctx);
 	lexeme = Lexeme(ctx);
-
-	//if (ctx->ClueList.pHead != NULL && ctx->ClueList.pHead->pNext)
-	{
-		//ctx->ClueList.
-		const char* pString = FindComment(&ctx->ClueList);
-		if (pString)
-		{
-			//tem que ver se eh isso mesmo...
-
-			pStructUnionSpecifier->Token2 = TK__UNION;
-
-
-			StrBuilder local = STRBUILDER_INIT;
-			StrBuilder_AppendN(&local, pString + 2, strlen(pString) - 4);
-
-			MacroMap * pDefines = &ctx->Scanner.Defines2;
-			Parser parser;
-			Parser_InitString(&parser, "eval expression", local.c_str);
-			StrBuilder_Destroy(&local);
-
-			//vou pegar emprestado 
-			parser.GlobalScope = ctx->GlobalScope;
-			parser.pCurrentScope = &parser.GlobalScope;
-
-
-			if (pDefines)
-			{
-				// usa o mapa de macros para o pre-processador
-				MacroMap_Swap(&parser.Scanner.Defines2, pDefines);
-			}
-
-			Tokens token2 = Parser_CurrentToken(&parser);
-
-			UnionSetList(&parser, &pStructUnionSpecifier->UnionSet);
-
-			//Parser_Match(&parser, &pInitDeclarator->ClueList1); //_defval ou =
-			//Initializer(&parser, &pInitDeclarator->pInitializer, TK_SEMICOLON, TK_SEMICOLON);
-
-			if (pDefines)
-			{
-				MacroMap_Swap(&parser.Scanner.Defines2, pDefines);
-			}
-
-			//era so emprestado
-			parser.GlobalScope.pHashTable = NULL;
-
-			Parser_Destroy(&parser);
-		}
-
-
-	}
 
 	if (token == TK_IDENTIFIER)
 	{
@@ -4246,54 +4112,7 @@ void Pointer(Parser* ctx, TPointerList* pPointerList)
 
 	token = Parser_CurrentToken(ctx);
 
-	//if (ctx->ClueList.pHead != NULL && ctx->ClueList.pHead->pNext)
-	{
-		//ctx->ClueList.
-		const char* pString = FindComment(&ctx->ClueList);
-		if (pString)
-		{
-			StrBuilder local = STRBUILDER_INIT;
-			StrBuilder_AppendN(&local, pString + 2, strlen(pString) - 4);
 
-			MacroMap * pDefines = &ctx->Scanner.Defines2;
-			Parser parser;
-			Parser_InitString(&parser, "eval expression", local.c_str);
-			StrBuilder_Destroy(&local);
-			//vou pegar emprestado 
-			parser.GlobalScope = ctx->GlobalScope;
-			parser.pCurrentScope = &parser.GlobalScope;
-
-
-			if (pDefines)
-
-			{
-				// usa o mapa de macros para o pre-processador
-				MacroMap_Swap(&parser.Scanner.Defines2, pDefines);
-			}
-
-			Tokens token2 = Parser_CurrentToken(&parser);
-
-			if (IsTypeQualifierToken(token2))
-			{
-				Type_Qualifier_List(&parser, &pPointer->Qualifier);
-			}
-
-			//Parser_Match(&parser, &pInitDeclarator->ClueList1); //_defval ou =
-			//Initializer(&parser, &pInitDeclarator->pInitializer, TK_SEMICOLON, TK_SEMICOLON);
-
-			if (pDefines)
-			{
-				MacroMap_Swap(&parser.Scanner.Defines2, pDefines);
-			}
-
-			//era so emprestado
-			parser.GlobalScope.pHashTable = NULL;
-
-			Parser_Destroy(&parser);
-		}
-
-
-	}
 	//Opcional
 	if (IsTypeQualifierToken(token))
 	{
@@ -4740,12 +4559,6 @@ void Initializer(Parser * ctx,
 			TInitializerListType* pTInitializerList =
 				TInitializerListType_Create();
 
-			const char* pChar = FindThisComment(&ctx->ClueList, "/*default*/");
-			if (pChar)
-			{
-				pTInitializerList->bDefault = true;
-			}
-
 
 			*ppInitializer = (TInitializer*)pTInitializerList;
 
@@ -5114,10 +4927,9 @@ bool  Declaration(Parser * ctx,
 
 					//ctx->
 				}
-#if 0
+
 				//
-				if (token == TK__DEFAULT ||
-					token == TK_DEFAULT)
+				if (token == TK_DEFAULT)
 				{
 					/*
 					6.9.1) function-definition:
@@ -5128,25 +4940,11 @@ bool  Declaration(Parser * ctx,
 					Parser_Match(ctx, &pFuncVarDeclaration->ClueList0);
 					token = Parser_CurrentToken(ctx);
 				}
-				else if (HasCommentedKeyword(&ctx->ClueList, "default"))
-				{
-					PopBack(&ctx->ClueList);
-					/*
-					6.9.1) function-definition:
-					declaration-specifiers declarator declaration-listopt defaultopt compound-statement
-					*/
-					pFuncVarDeclaration->bDefault = true;
-				}
-#endif
+
 				if (token == TK_LEFT_CURLY_BRACKET)
 				{
-					const char* pChar = FindThisComment(&ctx->ClueList, "/*default*/");
-					if (pChar)
-					{
-						pFuncVarDeclaration->bDefault = true;
-					}
-
-					//ANNOTATED AQUI TEM O COMENTARIO /*default*/ antes do {
+	
+					//ANNOTATED AQUI TEM O COMENTARIO /*@default*/ antes do {
 
 					//Ativa o escopo dos parametros
 					//Adiconar os parametros em um escopo um pouco a cima.
@@ -5190,12 +4988,8 @@ bool  Declaration(Parser * ctx,
 
 				else
 				{
-					const char* pChar = FindThisComment(&ctx->ClueList, "/*default*/");
-					if (pChar)
-					{
-						pFuncVarDeclaration->bDefault = true;
-					}
-					//ANNOTATED AQUI TEM O COMENTARIO /*default*/ antes do ;
+					
+					//ANNOTATED AQUI TEM O COMENTARIO /*@default*/ antes do ;
 					Parser_MatchToken(ctx, TK_SEMICOLON, &pFuncVarDeclaration->ClueList1);
 				}
 

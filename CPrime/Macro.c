@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include "Mem.h"
 
-Macro* Macro_Create(void) /*default*/
+Macro* Macro_Create(void) /*@default*/
 {
     Macro *p = (Macro*) Malloc(sizeof * p);
     if (p != NULL)
@@ -29,14 +29,14 @@ Macro* Macro_Create(void) /*default*/
     return p;
 }
 
-void Macro_Destroy(Macro * p) /*default*/
+void Macro_Destroy(Macro * p) /*@default*/
 {
     String_Destroy(&p->Name);
     TokenArray_Destroy(&p->TokenSequence);
     TokenArray_Destroy(&p->FormalArguments);
 }
 
-void Macro_Delete(Macro * p) /*default*/
+void Macro_Delete(Macro * p) /*@default*/
 {
     if (p != NULL)
     {
