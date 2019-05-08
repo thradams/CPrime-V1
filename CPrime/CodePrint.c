@@ -71,6 +71,14 @@ void Output_Append(StrBuilder* p,
 static void TNodeClueList_CodePrint(Options * options, TScannerItemList * list,
   StrBuilder * fp)
 {
+    if (options->bCannonical)
+    {
+        // no modo cannonical quem coloca os espacos
+        //eh a funcao especializada
+        //para que o tipo seja somente ele 
+        return;
+    };
+
   ForEachListItem(ScannerItem, pNodeClue, list)
   {
     switch (pNodeClue->token)
