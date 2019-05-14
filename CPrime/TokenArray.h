@@ -28,10 +28,6 @@ void     TokenArray_Destroy(TokenArray* st);
 void     TokenArray_Delete(TokenArray* st);
 void     TokenArray_Swap(TokenArray* p1, TokenArray* p2);
 
-//
-
-
-bool TokenArray_Contain(TokenArray* pArray, struct PPToken* pToken);
 
 void TokenArray_AppendCopy(TokenArray* pArrayTo, const TokenArray* pArrayFrom);
 void TokenArray_AppendMove(TokenArray* pArrayTo, TokenArray* pArrayFrom);
@@ -43,8 +39,6 @@ void TokenArray_Erase(TokenArray* pArray, int begin, int end);
 
 
 ///////////////////////////////
-
-
 
 
 typedef struct TokenArrayMapItem
