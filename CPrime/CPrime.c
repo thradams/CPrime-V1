@@ -152,9 +152,9 @@ int main(int argc, char* argv[])
     const char* outputDir = NULL;
     struct StrArray sources = STRARRAY_INIT;
 
-    String outputFullPath = NULL;
-    String inputFullPath = NULL;
-    String buildFileFullPath = STRING_INIT;
+    String * /*@auto*/ outputFullPath = NULL;
+    String * /*@auto*/ inputFullPath = NULL;
+    String * /*@auto*/ buildFileFullPath = NULL;
 
     Options options = OPTIONS_INIT;
     options.Target = CompilerTarget_Annotated;
@@ -387,9 +387,9 @@ int main(int argc, char* argv[])
     printf("Total %d files in = %d seconds\n", numberOfFiles, (int)((tend - tstart) / CLOCKS_PER_SEC));
 
     StrArray_Destroy(&sources);
-    String_Destroy(&outputFullPath);
-    String_Destroy(&inputFullPath);
-    String_Destroy(&buildFileFullPath);
+    Free(outputFullPath);
+    Free(inputFullPath);
+    Free(buildFileFullPath);
 
     PrintMemory();
     return 0;

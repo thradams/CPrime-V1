@@ -66,7 +66,7 @@ TGroupDeclaration* TGroupDeclaration_Create() /*@default*/
     {
         p->Type = TGroupDeclaration_ID;
         TDeclarations_Init(&p->Declarations);
-        String_Init(&p->Identifier);
+        p->Identifier = NULL;
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
         TScannerItemList_Init(&p->ClueList2);
@@ -78,7 +78,7 @@ void TGroupDeclaration_Delete(TGroupDeclaration* p) /*@default*/
     if (p != NULL)
     {
         TDeclarations_Destroy(&p->Declarations);
-        String_Destroy(&p->Identifier);
+        Free((void*)p->Identifier);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
         TScannerItemList_Destroy(&p->ClueList2);
@@ -207,7 +207,7 @@ TLabeledStatement* TLabeledStatement_Create(void) /*@default*/
         p->Type = TLabeledStatement_ID;
         p->pStatementOpt = NULL;
         p->pExpression = NULL;
-        String_Init(&p->Identifier);
+        p->Identifier = NULL;
         p->token = TK_NONE;
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
@@ -221,7 +221,7 @@ void TLabeledStatement_Delete(TLabeledStatement* p)/*@default*/
     {
         TStatement_Delete(p->pStatementOpt);
         TExpression_Delete(p->pExpression);
-        String_Destroy(&p->Identifier);
+        Free((void*)p->Identifier);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
         Free((void*)p);
@@ -355,7 +355,7 @@ TJumpStatement* TJumpStatement_Create(void) /*@default*/
     {
         p->Type = TJumpStatement_ID;
         p->token = TK_NONE;
-        String_Init(&p->Identifier);
+        p->Identifier = NULL;
         p->pExpression = NULL;
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
@@ -368,7 +368,7 @@ void TJumpStatement_Delete(TJumpStatement* p) /*@default*/
 {
     if (p != NULL)
     {
-        String_Destroy(&p->Identifier);
+        Free((void*)p->Identifier);
         TExpression_Delete(p->pExpression);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
@@ -554,7 +554,7 @@ void TPrimaryExpressionValue_Init(TPrimaryExpressionValue* p) /*@default*/
 {
     p->Type = TPrimaryExpressionValue_ID;
     p->token = TK_NONE;
-    String_Init(&p->lexeme);
+    p->lexeme = NULL;
     p->pExpressionOpt = NULL;
     TScannerItemList_Init(&p->ClueList0);
     TScannerItemList_Init(&p->ClueList1);
@@ -562,7 +562,7 @@ void TPrimaryExpressionValue_Init(TPrimaryExpressionValue* p) /*@default*/
 
 void TPrimaryExpressionValue_Destroy(TPrimaryExpressionValue* p) /*@default*/
 {
-    String_Destroy(&p->lexeme);
+    Free((void*)p->lexeme);
     TExpression_Delete(p->pExpressionOpt);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
@@ -620,12 +620,12 @@ void TPostfixExpressionCore_Delete(TPostfixExpressionCore* p) /*@default*/
 {
     if (p != NULL)
     {
-        String_Destroy(&p->lexeme);
+        Free((void*)p->lexeme);
         TExpression_Delete(p->pExpressionLeft);
         TExpression_Delete(p->pExpressionRight);
         TPostfixExpressionCore_Delete(p->pNext);
         TInitializerList_Destroy(&p->InitializerList);
-        String_Destroy(&p->Identifier);
+        Free((void*)p->Identifier);
         TTypeName_Delete(p->pTypeName);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
@@ -723,7 +723,7 @@ void TPrimaryExpressionLiteralItem_Delete(TPrimaryExpressionLiteralItem *p) /*@d
 {
     if (p != NULL)
     {
-        String_Destroy(&p->lexeme);
+        Free((void*)p->lexeme);
         TScannerItemList_Destroy(&p->ClueList0);
         Free((void*)p);
     }
@@ -734,7 +734,7 @@ TPrimaryExpressionLiteralItem* TPrimaryExpressionLiteralItem_Create() /*@default
     if (p != NULL)
     {
         p->pNext = NULL;
-        String_Init(&p->lexeme);
+        p->lexeme = NULL;
         TScannerItemList_Init(&p->ClueList0);
     }
     return p;
@@ -828,7 +828,7 @@ TStaticAssertDeclaration* TStaticAssertDeclaration_Create() /*@default*/
     {
         p->Type = TStaticAssertDeclaration_ID;
         p->pConstantExpression = NULL;
-        String_Init(&p->Text);
+        p->Text = NULL;
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
         TScannerItemList_Init(&p->ClueList2);
@@ -844,7 +844,7 @@ void TStaticAssertDeclaration_Delete(TStaticAssertDeclaration* p) /*@default*/
     if (p != NULL)
     {
         TExpression_Delete(p->pConstantExpression);
-        String_Destroy(&p->Text);
+        Free((void*)p->Text);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
         TScannerItemList_Destroy(&p->ClueList2);
@@ -861,7 +861,7 @@ TEnumerator* TEnumerator_Create(void) /*@default*/
     if (p != NULL)
     {
         p->pNext = NULL;
-        String_Init(&p->Name);
+        p->Name = NULL;
         p->pExpression = NULL;
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
@@ -875,7 +875,7 @@ void TEnumerator_Delete(TEnumerator* p) /*@default*/
 {
     if (p != NULL)
     {
-        String_Destroy(&p->Name);
+        Free((void*)p->Name);
         TExpression_Delete(p->pExpression);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
@@ -907,7 +907,7 @@ TEnumSpecifier* TEnumSpecifier_Create(void) /*@default*/
     if (p != NULL)
     {
         p->Type = TEnumSpecifier_ID;
-        String_Init(&p->Name);
+        p->Name = NULL;
         TEnumeratorList_Init(&p->EnumeratorList);
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
@@ -921,7 +921,7 @@ void TEnumSpecifier_Delete(TEnumSpecifier* p) /*@default*/
 {
     if (p != NULL)
     {
-        String_Destroy(&p->Name);
+        Free((void*)p->Name);
         TEnumeratorList_Destroy(&p->EnumeratorList);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
@@ -941,7 +941,7 @@ TUnionSetItem* TUnionSetItem_Create() /*@default*/
         p->pNext = NULL;
         p->Token = TK_NONE;
         p->TokenFollow = TK_NONE;
-        String_Init(&p->Name);
+        p->Name = NULL;
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
         TScannerItemList_Init(&p->ClueList2);
@@ -952,7 +952,7 @@ void TUnionSetItem_Delete(TUnionSetItem* p) /*@default*/
 {
     if (p != NULL)
     {
-        String_Destroy(&p->Name);
+        Free((void*)p->Name);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
         TScannerItemList_Destroy(&p->ClueList2);
@@ -1007,7 +1007,7 @@ TStructUnionSpecifier* TStructUnionSpecifier_Create() /*@default*/
     {
         p->Type = TStructUnionSpecifier_ID;
         TStructDeclarationList_Init(&p->StructDeclarationList);
-        String_Init(&p->Name);
+        p->Name = NULL;
         p->Token = TK_NONE;
         TUnionSet_Init(&p->UnionSet);
         TScannerItemList_Init(&p->ClueList0);
@@ -1022,7 +1022,7 @@ void TStructUnionSpecifier_Delete(TStructUnionSpecifier* p) /*@default*/
     if (p != NULL)
     {
         TStructDeclarationList_Destroy(&p->StructDeclarationList);
-        String_Destroy(&p->Name);
+        Free((void*)p->Name);
         TUnionSet_Destroy(&p->UnionSet);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
@@ -1040,14 +1040,14 @@ TSingleTypeSpecifier* TSingleTypeSpecifier_Create(void) /*@default*/
     {
         p->Type = TSingleTypeSpecifier_ID;
         p->Token2 = TK_NONE;
-        String_Init(&p->TypedefName);
+        p->TypedefName = NULL;
         TScannerItemList_Init(&p->ClueList0);
     }
     return p;
 }
 void TSingleTypeSpecifier_Destroy(TSingleTypeSpecifier* p) /*@default*/
 {
-    String_Destroy(&p->TypedefName);
+    Free((void*)p->TypedefName);
     TScannerItemList_Destroy(&p->ClueList0);
 }
 void TSingleTypeSpecifier_Delete(TSingleTypeSpecifier* p) /*@default*/
@@ -1302,7 +1302,7 @@ const char* TParameterTypeList_GetSecondParameterName(TParameterTypeList* p)
 
 void TDirectDeclarator_Destroy(TDirectDeclarator* p) /*@default*/
 {
-    String_Destroy(&p->Identifier);
+    Free((void*)p->Identifier);
     TDeclarator_Delete(p->pDeclarator);
     TDirectDeclarator_Delete(p->pDirectDeclarator);
     TParameterTypeList_Destroy(&p->Parameters);
@@ -1509,13 +1509,13 @@ TAlignmentSpecifier* TAlignmentSpecifier_Create(void) /*@default*/
     if (p != NULL)
     {
         p->Type = TAlignmentSpecifier_ID;
-        String_Init(&p->TypeName);
+        p->TypeName = NULL;
     }
     return p;
 }
 void TAlignmentSpecifier_Destroy(TAlignmentSpecifier* p) /*@default*/
 {
-    String_Destroy(&p->TypeName);
+    Free((void*)p->TypeName);
 }
 
 void TAlignmentSpecifier_Delete(TAlignmentSpecifier* p) /*@default*/
@@ -1943,7 +1943,7 @@ TTypeQualifier* TTypeQualifier_Create(void) /*@default*/
     if (p != NULL)
     {
         p->Type = TTypeQualifier_ID;
-        String_Init(&p->SizeIdentifier);
+        p->SizeIdentifier = NULL;
         p->Token = TK_NONE;
         TScannerItemList_Init(&p->ClueList0);
     }
@@ -1951,7 +1951,7 @@ TTypeQualifier* TTypeQualifier_Create(void) /*@default*/
 }
 void TTypeQualifier_Destroy(TTypeQualifier* p) /*@default*/
 {
-    String_Destroy(&p->SizeIdentifier);
+    Free((void*)p->SizeIdentifier);
     TScannerItemList_Destroy(&p->ClueList0);
 }
 void TTypeQualifier_Delete(TTypeQualifier* p) /*@default*/
@@ -1965,7 +1965,7 @@ void TTypeQualifier_Delete(TTypeQualifier* p) /*@default*/
 
 void TTypeQualifier_Copy(TTypeQualifier* dest, TTypeQualifier* src)
 {
-	String_Set(&dest->SizeIdentifier, src->SizeIdentifier);
+	PTR_STRING_REPLACE(dest->SizeIdentifier, src->SizeIdentifier);
 	dest->Token = src->Token;
 	//dest->ClueList0 nao vamos copiar
 	//dest->Type nao precisa copiar
@@ -2717,7 +2717,7 @@ TDesignator* TDesignator_Create(void) /*@default*/
     TDesignator *p = (TDesignator*) Malloc(sizeof * p);
     if (p != NULL)
     {
-        String_Init(&p->Name);
+        p->Name = NULL;
         p->pExpression = NULL;
         p->pNext = NULL;
         TScannerItemList_Init(&p->ClueList0);
@@ -2727,7 +2727,7 @@ TDesignator* TDesignator_Create(void) /*@default*/
 }
 void TDesignator_Destroy(TDesignator* p) /*@default*/
 {
-    String_Destroy(&p->Name);
+    Free((void*)p->Name);
     TExpression_Delete(p->pExpression);
     TScannerItemList_Destroy(&p->ClueList0);
     TScannerItemList_Destroy(&p->ClueList1);
@@ -3474,7 +3474,7 @@ TDirectDeclarator* TDirectDeclarator_Create() /*@default*/
     TDirectDeclarator *p = (TDirectDeclarator*) Malloc(sizeof * p);
     if (p != NULL)
     {
-        String_Init(&p->Identifier);
+        p->Identifier = NULL;
         p->pDeclarator = NULL;
         p->pDirectDeclarator = NULL;
         p->Position.FileIndex = 0;
@@ -3542,12 +3542,12 @@ TPostfixExpressionCore* TPostfixExpressionCore_Create() /*@default*/
     {
         p->Type = TPostfixExpressionCore_ID;
         p->token = TK_NONE;
-        String_Init(&p->lexeme);
+        p->lexeme = NULL;
         p->pExpressionLeft = NULL;
         p->pExpressionRight = NULL;
         p->pNext = NULL;
         TInitializerList_Init(&p->InitializerList);
-        String_Init(&p->Identifier);
+        p->Identifier = NULL;
         p->pTypeName = NULL;
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);

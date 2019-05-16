@@ -56,8 +56,8 @@ bool Stream_InitFile(struct Stream* pStream,
                         const char* fullPath)
 {
   //assert(IsFullPath(fullPath));
-  String_InitWith(&pStream->NameOrFullPath, fullPath);
-  String_InitWith(&pStream->FullDir2, NULL);
+  pStream->NameOrFullPath = StrDup(fullPath);
+  pStream->FullDir2 = NULL;
   pStream->Line = 1;
   pStream->Column = 1;
   pStream->Position = 0;
@@ -90,9 +90,9 @@ bool Stream_Init(struct Stream* pStream, const char* name, const char*  Text)
   pStream->Line = 1;
   pStream->Column = 1;
   pStream->Position = 0;
-  String_InitWith(&pStream->Text, Text);
-  String_InitWith(&pStream->NameOrFullPath, name);
-  String_InitWith(&pStream->FullDir2, "");
+  pStream->Text = StrDup(Text);
+  pStream->NameOrFullPath = StrDup(name);
+  pStream->FullDir2 = StrDup("");
 
   if (Text != NULL)
   {
@@ -122,9 +122,9 @@ bool Stream_Init(struct Stream* pStream, const char* name, const char*  Text)
 
 void Stream_Destroy(struct Stream* pStream) /*@default*/
 {
-    String_Destroy(&pStream->NameOrFullPath);
-    String_Destroy(&pStream->FullDir2);
-    String_Destroy(&pStream->Text);
+    Free((void*)pStream->NameOrFullPath);
+    Free((void*)pStream->FullDir2);
+    Free((void*)pStream->Text);
 }
 
 

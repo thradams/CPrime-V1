@@ -4306,7 +4306,7 @@ void InstanciateDestroy2(TProgram * program,
                                             {
                                                 pStructMemberInitializer = TExpression_As_TInitializer(TPrimaryExpressionValue_As_TExpression(&initializerExpression));
                                                 initializerExpression.token = TK_IDENTIFIER;
-                                                String_Set(&initializerExpression.lexeme, structDeclaratorName);
+                                                PTR_STRING_REPLACE(initializerExpression.lexeme, structDeclaratorName);
                                             }
                                         }
 
@@ -4322,7 +4322,7 @@ void InstanciateDestroy2(TProgram * program,
                                             {
                                                 pStructMemberInitializer = TExpression_As_TInitializer(TPrimaryExpressionValue_As_TExpression(&initializerExpression));
                                                 initializerExpression.token = TK_IDENTIFIER;
-                                                String_Set(&initializerExpression.lexeme, structDeclaratorName);
+                                                PTR_STRING_REPLACE(initializerExpression.lexeme, structDeclaratorName);
                                             }
                                         }
 
@@ -4807,7 +4807,7 @@ void InstanciateDestroy2(TProgram * program,
                                         {
                                             pStructMemberInitializer = TExpression_As_TInitializer(TPrimaryExpressionValue_As_TExpression(&initializerExpression));
                                             initializerExpression.token = TK_IDENTIFIER;
-                                            String_Set(&initializerExpression.lexeme, structDeclaratorName);
+                                            PTR_STRING_REPLACE(initializerExpression.lexeme, structDeclaratorName);
                                         }
                                     }
 
@@ -4823,7 +4823,7 @@ void InstanciateDestroy2(TProgram * program,
                                         {
                                             pStructMemberInitializer = TExpression_As_TInitializer(TPrimaryExpressionValue_As_TExpression(&initializerExpression));
                                             initializerExpression.token = TK_IDENTIFIER;
-                                            String_Set(&initializerExpression.lexeme, structDeclaratorName);
+                                            PTR_STRING_REPLACE(initializerExpression.lexeme, structDeclaratorName);
                                         }
                                     }
 

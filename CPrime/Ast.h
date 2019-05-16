@@ -107,7 +107,7 @@ typedef struct
   EType Type /*@=TStaticAssertDeclaration_ID*/;
 
   TExpression* /*@auto*/  pConstantExpression;
-  String Text;
+  String * /*@auto*/ Text;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
   TScannerItemList ClueList2;
@@ -199,7 +199,7 @@ typedef struct TTypeQualifier
   */
 
   EType Type /*@=TTypeQualifier_ID*/;
-  String SizeIdentifier;
+  String * /*@auto*/ SizeIdentifier;
   Tokens Token;
   TScannerItemList ClueList0;
 
@@ -242,7 +242,7 @@ typedef struct
 {
   EType Type /*@=TJumpStatement_ID*/;
   Tokens token;
-  String Identifier;
+  String * /*@auto*/ Identifier;
   TExpression * /*@auto*/   pExpression;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -315,7 +315,7 @@ typedef struct
 
   TStatement * /*@auto*/   pStatementOpt;
   TExpression * /*@auto*/   pExpression;
-  String Identifier;
+  String * /*@auto*/ Identifier;
   Tokens token;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -504,7 +504,7 @@ typedef struct
   _Alignas ( constant-expression )
   */
   EType Type  /*@=TAlignmentSpecifier_ID*/;
-  String TypeName;
+  String * /*@auto*/ TypeName;
 } TAlignmentSpecifier;
 
 TAlignmentSpecifier* TAlignmentSpecifier_Create(void);
@@ -519,7 +519,7 @@ typedef struct TEnumerator
   enumeration-constant = constant-expression
   */
   struct TEnumerator*  pNext;
-  String Name;
+  String * /*@auto*/ Name;
   TExpression* /*@auto*/   pExpression;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1; // =
@@ -553,7 +553,7 @@ typedef struct TEnumSpecifier
   */
 
   EType Type  /*@=TEnumSpecifier_ID*/;
-  String Name;
+  String * /*@auto*/ Name;
   TEnumeratorList EnumeratorList;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -582,7 +582,7 @@ typedef struct TSingleTypeSpecifier
   */
   EType Type  /*@=TSingleTypeSpecifier_ID*/;
   Tokens Token2;
-  String TypedefName;
+  String * /*@auto*/ TypedefName;
   TScannerItemList ClueList0;
 } TSingleTypeSpecifier;
 
@@ -747,7 +747,7 @@ typedef struct TDesignator
   [ constant-expression ]
   . identifier
   */
-  String Name;
+  String * /*@auto*/ Name;
   TExpression * /*@auto*/  pExpression;
   struct TDesignator *  pNext;
   TScannerItemList ClueList0; //. ou [
@@ -920,7 +920,7 @@ typedef struct TDirectDeclarator
   direct-declarator ( identifier-listopt )
   */
 
-  String Identifier;
+  String * /*@auto*/ Identifier;
   TDeclarator* /*@auto*/ pDeclarator;
   struct TDirectDeclarator* /*@auto*/  pDirectDeclarator;
   TPosition Position;
@@ -1044,7 +1044,7 @@ typedef struct TUnionSetItem
   struct TUnionSetItem*   pNext;
   Tokens Token;
   Tokens TokenFollow;
-  String Name;
+  String * /*@auto*/ Name;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
   TScannerItemList ClueList2;
@@ -1082,7 +1082,7 @@ typedef struct TStructUnionSpecifier
 
   EType Type  /*@=TStructUnionSpecifier_ID*/;
   TStructDeclarationList StructDeclarationList;
-  String Name;
+  String * /*@auto*/ Name;
 
   Tokens Token;
 
@@ -1216,7 +1216,7 @@ typedef struct TGroupDeclaration
   */
   EType Type  /*@=TGroupDeclaration_ID*/;
   TDeclarations Declarations;
-  String Identifier;
+  String * /*@auto*/ Identifier;
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
   TScannerItemList ClueList2;
@@ -1311,7 +1311,7 @@ typedef struct
 
   EType Type /*@=TPrimaryExpressionValue_ID*/;
   Tokens token;
-  String lexeme;
+  String * /*@auto*/ lexeme;
   TExpression* /*@auto*/   pExpressionOpt; //( expression )
   TScannerItemList ClueList0;
   TScannerItemList ClueList1;
@@ -1325,7 +1325,7 @@ void TPrimaryExpressionValue_Delete(TPrimaryExpressionValue* p);
 typedef struct TPrimaryExpressionLiteralItem
 {
   struct TPrimaryExpressionLiteralItem*  pNext;
-  String lexeme;
+  String * /*@auto*/ lexeme;
   TScannerItemList ClueList0;
 } TPrimaryExpressionLiteralItem;
 
@@ -1390,13 +1390,13 @@ typedef struct TPostfixExpressionCore
 {
   EType Type  /*@=TPostfixExpressionCore_ID*/;
   Tokens token;
-  String lexeme;
+  String * /*@auto*/ lexeme;
   TExpression* /*@auto*/   pExpressionLeft;
   TExpression* /*@auto*/   pExpressionRight;
 
   struct TPostfixExpressionCore* /*@auto*/  pNext;
   TInitializerList InitializerList;
-  String Identifier;
+  String * /*@auto*/ Identifier;
   TTypeName* /*@auto*/  pTypeName; /*typename*/
 
   TScannerItemList ClueList0;

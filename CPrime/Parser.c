@@ -501,7 +501,7 @@ void PrimaryExpressionLiteral(Parser* ctx, TExpression** ppPrimaryExpression)
 		TPrimaryExpressionLiteralItem* pPrimaryExpressionLiteralItem
 			= TPrimaryExpressionLiteralItem_Create();
 		const char* lexeme2 = Lexeme(ctx);
-		String_Set(&pPrimaryExpressionLiteralItem->lexeme, lexeme2);
+		PTR_STRING_REPLACE(pPrimaryExpressionLiteralItem->lexeme, lexeme2);
 
 		token = Parser_Match(ctx,
 			&pPrimaryExpressionLiteralItem->ClueList0);
@@ -656,7 +656,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 			= TPrimaryExpressionValue_Create();
 
 		pPrimaryExpressionValue->token = token;
-		String_Set(&pPrimaryExpressionValue->lexeme, lexeme);
+		PTR_STRING_REPLACE(pPrimaryExpressionValue->lexeme, lexeme);
 
 
 		Parser_Match(ctx,
@@ -674,7 +674,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 			= TPrimaryExpressionValue_Create();
 
 		pPrimaryExpressionValue->token = token;
-		String_Set(&pPrimaryExpressionValue->lexeme, Lexeme(ctx));
+		PTR_STRING_REPLACE(pPrimaryExpressionValue->lexeme, Lexeme(ctx));
 
 
 		Parser_Match(ctx,
@@ -701,7 +701,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 
 
 		pPrimaryExpressionValue->token = token;
-		String_Set(&pPrimaryExpressionValue->lexeme, Lexeme(ctx));
+		PTR_STRING_REPLACE(pPrimaryExpressionValue->lexeme, Lexeme(ctx));
 		pPrimaryExpressionValue->pExpressionOpt = pExpression;
 
 
@@ -856,7 +856,7 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
 
 		Parser_Match(ctx, &pPostfixExpressionCore->ClueList0);
 
-		String_Set(&pPostfixExpressionCore->Identifier, Lexeme(ctx));
+		PTR_STRING_REPLACE(pPostfixExpressionCore->Identifier, Lexeme(ctx));
 
 		Parser_MatchToken(ctx, TK_IDENTIFIER,
 			&pPostfixExpressionCore->ClueList1);
@@ -870,7 +870,7 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
 
 		Parser_Match(ctx, &pPostfixExpressionCore->ClueList0);
 
-		String_Set(&pPostfixExpressionCore->Identifier, Lexeme(ctx));
+		PTR_STRING_REPLACE(pPostfixExpressionCore->Identifier, Lexeme(ctx));
 
 		Parser_MatchToken(ctx, TK_IDENTIFIER, &pPostfixExpressionCore->ClueList1);
 	}
@@ -1029,20 +1029,20 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
 				TPostfixExpressionCore_Create();
 			pPostfixExpressionCore->pExpressionLeft = *ppExpression;
 
-			String lexemeCopy = STRING_INIT;
+			String * /*@auto*/ lexemeCopy = NULL;
 
 			TPrimaryExpressionValue* ppri =
 				TExpression_As_TPrimaryExpressionValue(*ppExpression);
 			if (ppri)
 			{
-				String_Set(&lexemeCopy, ppri->lexeme);
+				PTR_STRING_REPLACE(lexemeCopy, ppri->lexeme);
 			}
 			PostfixExpressionCore(ctx, pPostfixExpressionCore);
 			*ppExpression = (TExpression*)pPostfixExpressionCore;
 
 
 
-			String_Destroy(&lexemeCopy);
+			Free(lexemeCopy);
 		}
 		break;
 		case TK_LEFT_SQUARE_BRACKET:
@@ -2405,7 +2405,7 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
 		*ppStatement = (TStatement*)pJumpStatement;
 
 		Parser_Match(ctx, &pJumpStatement->ClueList0);
-		String_Set(&pJumpStatement->Identifier, Lexeme(ctx));
+		PTR_STRING_REPLACE(pJumpStatement->Identifier, Lexeme(ctx));
 		Parser_MatchToken(ctx, TK_IDENTIFIER, &pJumpStatement->ClueList1);
 		Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList2);
 	}
@@ -2636,7 +2636,7 @@ void Labeled_Statement(Parser* ctx, TStatement** ppStatement)
 	if (token == TK_IDENTIFIER)
 	{
 		//aqui nao eh um tipo
-		String_Set(&pLabeledStatement->Identifier, Lexeme(ctx));
+		PTR_STRING_REPLACE(pLabeledStatement->Identifier, Lexeme(ctx));
 
 		Parser_Match(ctx, &pLabeledStatement->ClueList0);
 
@@ -3054,7 +3054,7 @@ void Static_Assert_Declaration(Parser* ctx, TStaticAssertDeclaration* pStaticAss
 
 		Parser_MatchToken(ctx, TK_COMMA, &pStaticAssertDeclaration->ClueList2);
 
-		String_Set(&pStaticAssertDeclaration->Text, Lexeme(ctx));
+		PTR_STRING_REPLACE(pStaticAssertDeclaration->Text, Lexeme(ctx));
 		Parser_MatchToken(ctx, TK_STRING_LITERAL, &pStaticAssertDeclaration->ClueList3);
 
 		Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pStaticAssertDeclaration->ClueList4);
@@ -3314,7 +3314,7 @@ void UnionSetItem(Parser* ctx, TUnionSet* p)
 
 	if (token == TK_IDENTIFIER)
 	{
-		String_Set(&pItem->Name, lexeme);
+		PTR_STRING_REPLACE(pItem->Name, lexeme);
 		Parser_Match(ctx, &pItem->ClueList1);
 		TUnionSet_PushBack(p, pItem);
 	}
@@ -3323,7 +3323,7 @@ void UnionSetItem(Parser* ctx, TUnionSet* p)
 	{
 		Parser_Match(ctx, &pItem->ClueList0);
 
-		String_Set(&pItem->Name, lexeme);
+		PTR_STRING_REPLACE(pItem->Name, lexeme);
 		Parser_MatchToken(ctx, TK_IDENTIFIER, &pItem->ClueList1);
 		TUnionSet_PushBack(p, pItem);
 	}
@@ -3415,7 +3415,7 @@ void Struct_Or_Union_Specifier(Parser* ctx,
 	if (token == TK_IDENTIFIER)
 	{
 		//ANNOTATED AQUI TEM O COMENTARIO /*Box | Circle*/ antes nome da struct
-		String_Set(&pStructUnionSpecifier->Name, lexeme);
+		PTR_STRING_REPLACE(pStructUnionSpecifier->Name, lexeme);
 		Parser_Match(ctx, &pStructUnionSpecifier->ClueList1);
 	}
 
@@ -3447,7 +3447,7 @@ void Enumeration_Constant(Parser* ctx,
 	TEnumerator* pEnumerator2)
 {
 	const char* lexeme = Lexeme(ctx);
-	String_Set(&pEnumerator2->Name, lexeme);
+	PTR_STRING_REPLACE(pEnumerator2->Name, lexeme);
 	Parser_MatchToken(ctx, TK_IDENTIFIER, &pEnumerator2->ClueList0);
 }
 
@@ -3526,7 +3526,7 @@ void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
 	if (token == TK_IDENTIFIER)
 	{
 		const char* lexeme = Lexeme(ctx);
-		String_Set(&pEnumSpecifier2->Name, lexeme);
+		PTR_STRING_REPLACE(pEnumSpecifier2->Name, lexeme);
 		Parser_Match(ctx, &pEnumSpecifier2->ClueList1);
 
 
@@ -3536,7 +3536,7 @@ void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
 	else
 	{
 		const char* name = GetName();
-		String_Set(&pEnumSpecifier2->Name, name);
+		PTR_STRING_REPLACE(pEnumSpecifier2->Name, name);
 		Parser_Match(ctx, &pEnumSpecifier2->ClueList2);
 	}
 
@@ -3816,7 +3816,7 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
 		pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeIdentifier;
 
 		const char* lexeme = Lexeme(ctx);
-		String_Set(&pDirectDeclarator->Identifier, lexeme);
+		PTR_STRING_REPLACE(pDirectDeclarator->Identifier, lexeme);
 		pDirectDeclarator->Position.Line = GetCurrentLine(ctx);
 		pDirectDeclarator->Position.FileIndex = GetFileIndex(ctx);
 		Parser_Match(ctx, &pDirectDeclarator->ClueList0);
@@ -3836,7 +3836,7 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
 		//abstract declarator que nao tem nome.
 		//vou criar aqui por enquanto um cara vazio
 		pDirectDeclarator = TDirectDeclarator_Create();
-		String_Set(&pDirectDeclarator->Identifier, "");
+		PTR_STRING_REPLACE(pDirectDeclarator->Identifier, "");
 		pDirectDeclarator->Position.Line = GetCurrentLine(ctx);
 		pDirectDeclarator->Position.FileIndex = GetFileIndex(ctx);
 
@@ -3994,7 +3994,7 @@ void Size_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
 	switch (token)
 	{
 	case TK_IDENTIFIER:
-		String_Set(&pQualifier->SizeIdentifier, Lexeme(ctx));
+		PTR_STRING_REPLACE(pQualifier->SizeIdentifier, Lexeme(ctx));
 		token = Parser_MatchToken(ctx, TK_IDENTIFIER, NULL);
 		break;
 	default:
@@ -4376,7 +4376,7 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
 			else
 				pSingleTypeSpecifier->Token2 = token;
 
-			String_Set(&pSingleTypeSpecifier->TypedefName, lexeme);
+			PTR_STRING_REPLACE(pSingleTypeSpecifier->TypedefName, lexeme);
 			bResult = true;
 
 			Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
@@ -4696,7 +4696,7 @@ void Designator(Parser * ctx, TDesignator * p)
 		//TNodeClueList_MoveToEnd(&p->ClueList, &ctx->Scanner.ClueList);
 		Parser_Match(ctx, &p->ClueList0);
 
-		String_Set(&p->Name, Lexeme(ctx));
+		PTR_STRING_REPLACE(p->Name, Lexeme(ctx));
 		Parser_MatchToken(ctx, TK_IDENTIFIER, NULL);
 	}
 }
@@ -4779,7 +4779,7 @@ void GroupDeclaration(Parser * ctx,
 	Parser_Match(ctx, &p->ClueList0);//default
 
 
-	String_Set(&p->Identifier, Lexeme(ctx));
+	PTR_STRING_REPLACE(p->Identifier, Lexeme(ctx));
 	Parser_MatchToken(ctx, TK_IDENTIFIER, &p->ClueList1);//identifier
 
 	Parser_MatchToken(ctx, TK_LEFT_CURLY_BRACKET, &p->ClueList2);
@@ -5120,7 +5120,7 @@ bool GetAST(const char* filename,
 	if (configFileName != NULL)
 	{
 		//opcional   
-		String fullConfigFilePath = STRING_INIT;
+		String * /*@auto*/ fullConfigFilePath = NULL;
 		GetFullPath(configFileName, &fullConfigFilePath);
 
 		Parser_InitFile(&parser, fullConfigFilePath);
@@ -5134,10 +5134,10 @@ bool GetAST(const char* filename,
 		TScannerItemList_Clear(&parser.ClueList);
 		BasicScannerStack_Pop(&parser.Scanner.stack);
 		//Some com o arquivo de config
-		String_Destroy(&fullConfigFilePath);
+		Free(fullConfigFilePath);
 	}
 
-	String fullFileNamePath = STRING_INIT;
+	String * /*@auto*/ fullFileNamePath = NULL;
 	GetFullPath(filename, &fullFileNamePath);
 
 
@@ -5168,7 +5168,7 @@ bool GetAST(const char* filename,
 	bResult = !Parser_HasError(&parser);
 
 	Parser_Destroy(&parser);
-	String_Destroy(&fullFileNamePath);
+	Free(fullFileNamePath);
 
 	return bResult;
 }

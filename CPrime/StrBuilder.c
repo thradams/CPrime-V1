@@ -134,7 +134,7 @@ bool StrBuilder_AppendN(StrBuilder* p,
                           const char* source,
                           int nelements)
 {
-  if (IsEmptyStr(source))
+  if (source == NULL || source[0] == '\0')
   {
     return true;
   }
@@ -168,7 +168,7 @@ bool StrBuilder_AppendIdent(StrBuilder* p,
 bool StrBuilder_Append(StrBuilder* p,
                          const char* source)
 {
-  if (IsEmptyStr(source))
+  if (source == NULL || source[0] == '\0')
   {
     return true;
   }

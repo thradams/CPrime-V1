@@ -10,7 +10,7 @@ typedef struct SymbolMapItem
 {
 	struct SymbolMapItem* pNext;
 	unsigned int HashValue;
-	String Key;
+	String * /*@auto*/ Key;
     TTypePointer* pValue;
 } SymbolMapItem;
 

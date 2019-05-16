@@ -12,7 +12,7 @@ void KeyValue_Delete(MapItem2* p) /*@default*/
 {
     if (p != NULL)
     {
-        String_Destroy(&p->Key);
+        Free((void*)p->Key);
         Free((void*)p);
     }
 }
@@ -231,7 +231,7 @@ int Map2_SetAt(Map2* pMap,
       pKeyValue = (MapItem2*)Malloc(sizeof(MapItem2) * 1);
       pKeyValue->HashValue = HashValue;
       pKeyValue->pValue = newValue;
-      String_InitWith(&pKeyValue->Key, Key);
+      pKeyValue->Key = StrDup(Key);
       pKeyValue->pNext = pMap->pHashTable[nHashBucket];
       pMap->pHashTable[nHashBucket] = pKeyValue;
       pMap->nCount++;
@@ -243,7 +243,10 @@ int Map2_SetAt(Map2* pMap,
       result = 1;
       *ppPreviousValue = pKeyValue->pValue;
       pKeyValue->pValue = newValue;
-      String_Set(&pKeyValue->Key, Key);
+      
+      Free(pKeyValue->Key);
+      pKeyValue->Key = StrDup(Key);
+     
     }
   }
 

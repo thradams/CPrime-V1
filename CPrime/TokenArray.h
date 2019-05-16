@@ -45,7 +45,7 @@ typedef struct TokenArrayMapItem
 {
     struct MapItem2* pNext;
     unsigned int HashValue;
-    String Key;
+    String * /*@auto*/ Key;
     TokenArray* pValue;
 } TokenArrayMapItem;
 

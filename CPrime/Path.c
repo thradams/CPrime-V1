@@ -199,7 +199,7 @@ bool FileExists(const char* fullPath)
 }
 
 
-void GetFullDir(const char* fileName, String* out)
+void GetFullDir(const char* fileName, char** out)
 {
     char buffer[CPRIME_MAX_PATH];
 
@@ -224,12 +224,13 @@ void GetFullDir(const char* fileName, String* out)
     StrBuilder_Init(&s);
     StrBuilder_Append(&s, drive);
     StrBuilder_Append(&s, dir);
-    String_Attach(out, StrBuilder_Release(&s));
+    *out = StrBuilder_Release(&s);
+    
     StrBuilder_Destroy(&s);
 }
 
 
-void GetFullPath(const char* fileName, String* out)
+void GetFullPath(const char* fileName, char** out)
 {
     char buffer[CPRIME_MAX_PATH];
 
@@ -256,6 +257,6 @@ void GetFullPath(const char* fileName, String* out)
     StrBuilder_Append(&s, dir);
     StrBuilder_Append(&s, fname);
     StrBuilder_Append(&s, ext);
-    String_Attach(out, StrBuilder_Release(&s));
+    *out = StrBuilder_Release(&s);
     StrBuilder_Destroy(&s);
 }

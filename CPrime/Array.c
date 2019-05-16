@@ -131,14 +131,13 @@ bool StrArray_Reserve(struct StrArray* p, int nelements)
 
 bool StrArray_Push(struct StrArray* p, const char* pItem)
 {
-    String s;
-    String_InitWith(&s, pItem);
+    char* s = StrDup(pItem);
     
     {
         bool result = Array_Push((Array*)p, s);
         if(result != true)
         {
-            String_Destroy(&s);
+            Free(s);
         }
     }
     return true;
@@ -146,7 +145,8 @@ bool StrArray_Push(struct StrArray* p, const char* pItem)
 
 static void Array_DeleteStrVoid(void* p)
 {
-    String_Destroy((String*)(&p));
+  Free(p);
+    //String_Destroy((char**)(&p));
 }
 
 void StrArray_Clear(struct StrArray* p)

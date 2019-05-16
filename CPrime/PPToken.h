@@ -16,11 +16,11 @@ enum PPTokenType
 struct PPToken
 {
     enum PPTokenType Token;
-    String Lexeme;
+    String * /*@auto*/Lexeme;
     TokenSet HiddenSet;
 };
 
-#define TOKEN_INIT { PPTokenType_Other, STRING_INIT, TOKENSET_INIT }
+#define TOKEN_INIT { PPTokenType_Other, NULL, TOKENSET_INIT }
 
 
 void PPToken_Destroy(struct PPToken* p);

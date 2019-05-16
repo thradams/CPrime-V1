@@ -4,14 +4,16 @@
 #include <wchar.h>
 #include <stdbool.h>
 
+#define ptr * /*@auto*/
+
 struct Stream
 {
     //name to identify this stream
-    String NameOrFullPath;
-    String FullDir2;
-
+    String* /*@auto*/ NameOrFullPath;
+    String* /*@auto*/ FullDir2;
+     
     //stream content and length
-    String Text;
+    String * /*@auto*/ Text;
     int TextLen;
 
     wchar_t Character;

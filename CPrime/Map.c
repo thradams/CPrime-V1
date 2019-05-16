@@ -36,14 +36,14 @@ bool Bucket_Reserve(Bucket* p, int nelements);
 
 bool BucketItem_InitMoveKey(BucketItem* node,
                               int hash,
-                              String* key /*in out*/,
+                              String** key /*in out*/,
                               void* data)
 {
     node->data = data;
     node->hash = hash;
 
-    String_InitWith(&node->key, NULL);
-    String_Swap(&node->key, key);
+    node->key = *key;
+    *key = NULL;
 
     return true;
 }
@@ -54,7 +54,7 @@ bool BucketItem_Init(BucketItem* node,
                        const char* key,
                        void* data)
 {
-    String_InitWith(&node->key, key);
+    node->key = StrDup(key);    
     node->data = data;
     node->hash = hash;
     return true;
@@ -62,7 +62,7 @@ bool BucketItem_Init(BucketItem* node,
 
 bool BucketItem_CreateMoveKey(BucketItem** pp,
                                 int hash,
-                                String* key,
+                                String** key,
                                 void* data)
 {
     bool result = false /*nomem*/;
@@ -88,7 +88,7 @@ bool BucketItem_Change(BucketItem* p,
 
 void BucketItem_Destroy(BucketItem* node, void(*pfDestroyData)(void*))
 {
-    String_Destroy(&node->key);
+    Free(node->key);
     if (pfDestroyData)
     {
         pfDestroyData(node->data);
@@ -365,7 +365,7 @@ BucketItem* Map_FindNode(Map* map, const char* key)
 }
 
 
-bool Map_SetMoveKey(Map* map, String* key, void* data)
+bool Map_SetMoveKey(Map* map, String** key, void* data)
 {
     //assert(key != NULL);
     bool result;
@@ -432,12 +432,9 @@ bool Map_Set(Map* map, const char* key, void* data)
 
 
     //assert(key != NULL);
-    String localkey;
-    String_InitWith(&localkey, key);
-
+    String* /*@auto*/ localkey = StrDup(key);
     result = Map_SetMoveKey(map, &localkey, data);
-
-    String_Destroy(&localkey);
+    Free(localkey);
     return result;
 }
 
@@ -597,15 +594,15 @@ bool MultiMap_Add(MultiMap* map, const char* key, void* data)
   if (result == true)
   {
     //Adiciona no fim - não verifica se ja existe
-    String stemp = STRING_INIT;
-    String_Set(&stemp, key);
+    String * /*@auto*/stemp = StrDup(key);
+    
     BucketItem* node;
     result = BucketItem_CreateMoveKey(&node,
       hash,
       &stemp,
       data);
 
-    String_Destroy(&stemp);
+    Free(stemp);
 
     if (result == true)
     {

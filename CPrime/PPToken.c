@@ -7,7 +7,7 @@
 
 void PPToken_Destroy(struct  PPToken * p) /*@default*/
 {
-    String_Destroy(&p->Lexeme);
+    Free((void*)p->Lexeme);
     TokenSet_Destroy(&p->HiddenSet);
 }
 
@@ -33,7 +33,7 @@ struct PPToken* PPToken_Create(const char* s, enum PPTokenType token)
 	{
         struct PPToken t = TOKEN_INIT;
 		*p = t;
-		String_Set(&p->Lexeme, s);
+		p->Lexeme = StrDup(s);
 		p->Token = token;
 	}
   else

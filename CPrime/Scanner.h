@@ -10,8 +10,8 @@
 
 typedef struct
 {
-  String FullPath;
-  String IncludePath;
+  String * /*@auto*/ FullPath;
+  String * /*@auto*/ IncludePath;
   int FileIndex;
   bool PragmaOnce;
   bool bDirectInclude;

@@ -14,7 +14,7 @@ static void SymbolMap_KeyValue_Delete(SymbolMapItem* p)
 {
     if (p)
     {
-        String_Destroy(&p->Key);
+        Free(p->Key);
         Free(p);
     }
 }
@@ -245,7 +245,7 @@ int SymbolMap_SetAt(SymbolMap* pMap,
             pKeyValue = (SymbolMapItem*)Malloc(sizeof(SymbolMapItem) * 1);
             pKeyValue->HashValue = HashValue;
             pKeyValue->pValue = newValue;
-            String_InitWith(&pKeyValue->Key, Key);
+            pKeyValue->Key =  StrDup(Key);
             pKeyValue->pNext = pMap->pHashTable[nHashBucket];
             pMap->pHashTable[nHashBucket] = pKeyValue;
             pMap->nCount++;
@@ -256,7 +256,7 @@ int SymbolMap_SetAt(SymbolMap* pMap,
         //{
         //    result = 1;
         //    pKeyValue->pValue = newValue;
-        //    String_Set(&pKeyValue->Key, Key);
+        //    strset(pKeyValue->Key, Key);
         //}
     }
 

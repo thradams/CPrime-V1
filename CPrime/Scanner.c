@@ -182,8 +182,8 @@ TFile* TFile_Create() /*@default*/
     TFile *p = (TFile*) Malloc(sizeof * p);
     if (p != NULL)
     {
-        String_Init(&p->FullPath);
-        String_Init(&p->IncludePath);
+        p->FullPath = NULL;
+        p->IncludePath = NULL;
         p->FileIndex = 0;
         p->PragmaOnce = false;
         p->bDirectInclude = false;
@@ -194,8 +194,8 @@ TFile* TFile_Create() /*@default*/
 
 void TFile_Destroy(TFile* p) /*@default*/
 {
-    String_Destroy(&p->FullPath);
-    String_Destroy(&p->IncludePath);
+    Free((void*)p->FullPath);
+    Free((void*)p->IncludePath);
 }
 
 void TFile_Delete(TFile* p) /*@default*/
@@ -269,7 +269,7 @@ bool TFileMap_Set(TFileMap* map, const char* key, TFile* pFile)
     // Ajusta o file index de acordo com a entrada dele no mapa
     pFile->FileIndex = map->Size;
     bool result = Map_Set(map, key, pFile);
-    String_Set(&pFile->FullPath, key);
+    PTR_STRING_REPLACE(pFile->FullPath, key);
     return result;
 }
 
@@ -432,7 +432,7 @@ static bool AddStandardMacro(Scanner * pScanner, const char* name,
     const char* value)
 {
     Macro* pDefine1 = Macro_Create();
-    String_Set(&pDefine1->Name, name);
+    PTR_STRING_REPLACE(pDefine1->Name, name);
     // TODO tipo do token
     TokenArray_PushBack(&pDefine1->TokenSequence,
         PPToken_Create(value, PPTokenType_Other));
@@ -522,7 +522,7 @@ bool PushExpandedMacro(Scanner * pScanner,
 }
 
 bool Scanner_GetFullPath(Scanner * pScanner, const char* fileName,
-    bool bQuotedForm, String * fullPathOut)
+    bool bQuotedForm, String * /*@auto*/ * fullPathOut)
 {
     if (pScanner->bError)
     {
@@ -545,15 +545,15 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char* fileName,
     */
     if (bQuotedForm)
     {
-        // String s = STRING_INIT;
+        // String s = NULL;
         // GetFullPath(fileName, &s);
-        // String_Destroy(&s);
+        // Free(s);
         if (IsFullPath(fileName))
         {
             // Se ja vier com fullpath?? este caso esta cobrindo
             // mas deve ter uma maneira melhor de verificar se eh um fullpath ja
             bFullPathFound = true;
-            String_Set(fullPathOut, fileName);
+            PTR_STRING_REPLACE(*fullPathOut, fileName);
         }
         else
         {
@@ -584,18 +584,18 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char* fileName,
             else
             {
                 // nao abriu nenhum, faz o full path do nome do arquivo
-                String fullPath;
-                String_InitWith(&fullPath, NULL);
+                String * /*@auto*/ fullPath = NULL;
+                
                 GetFullPath(fileName, &fullPath);
                 bool bFileExists = FileExists(fullPath);
 
                 if (bFileExists)
                 {
-                    String_Swap(&fullPath, fullPathOut);
+                    PTR_SWAP(fullPath, *fullPathOut);
                     bFullPathFound = true;
                 }
 
-                String_Destroy(&fullPath);
+                Free(fullPath);
             }
         }
     }
@@ -626,7 +626,7 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char* fileName,
 
             if (bFileExists)
             {
-                String_Set(fullPathOut, path.c_str);
+                PTR_STRING_REPLACE(*fullPathOut, path.c_str);
                 bFullPathFound = true;
                 break;
             }
@@ -648,8 +648,8 @@ void Scanner_IncludeFile(Scanner * pScanner, const char* includeFileName,
 
     bool bDirectInclude = false;
 
-    String fullPath = STRING_INIT;
-    String_InitWith(&fullPath, "");
+    String * /*@auto*/ fullPath = NULL;
+    
     // Faz a procura nos diretorios como se tivesse adicinando o include
     // seguindo as mesmas regras. Caso o include seja possivel ele retorna o path
     // completo  este path completo que eh usado para efeitos do pragma once.
@@ -665,7 +665,7 @@ void Scanner_IncludeFile(Scanner * pScanner, const char* includeFileName,
         break;
 
     case FileIncludeTypeFullPath:
-        String_Set(&fullPath, includeFileName);
+        PTR_STRING_REPLACE(fullPath, includeFileName);
         bHasFullPath = true;
         break;
     };
@@ -688,7 +688,7 @@ void Scanner_IncludeFile(Scanner * pScanner, const char* includeFileName,
                 pFile->bDirectInclude = bDirectInclude;
                 pFile->bSystemLikeInclude =
                     (fileIncludeType == FileIncludeTypeIncludes);
-                String_Set(&pFile->IncludePath, includeFileName);
+                PTR_STRING_REPLACE(pFile->IncludePath, includeFileName);
                 TFileMap_Set(&pScanner->FilesIncluded, fullPath, pFile); // pfile Moved
             }
 
@@ -724,7 +724,7 @@ void Scanner_IncludeFile(Scanner * pScanner, const char* includeFileName,
         Scanner_SetError(pScanner, "Cannot open include file: '%s': No such file or directory", includeFileName);
     }
 
-    String_Destroy(&fullPath);
+    Free(fullPath);
 }
 
 const char* Scanner_GetStreamName(Scanner * pScanner)
@@ -1214,7 +1214,7 @@ void ParsePreDefinev2(Scanner * pScanner, StrBuilder * strBuilder)
     Tokens token = pBasicScanner->currentItem.token;
     const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
-    String_Set(&pNewMacro->Name, lexeme);
+    PTR_STRING_REPLACE(pNewMacro->Name, lexeme);
     StrBuilder_Append(strBuilder, lexeme);
 
     // Match nome da macro
@@ -1722,8 +1722,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
                 if (token == TK_STRING_LITERAL)
                 {
-                    String fileName;
-                    String_InitWith(&fileName, lexeme + 1);
+                    String * /*@auto*/ fileName;
+                    fileName = StrDup(lexeme + 1);
 
                     StrBuilder_Append(&strBuilder, lexeme);
                     BasicScanner_Match(pBasicScanner);
@@ -1735,7 +1735,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
                     Scanner_PushToken(pScanner, TK_PRE_INCLUDE, strBuilder.c_str, true);
                     Scanner_IncludeFile(pScanner, fileName, FileIncludeTypeQuoted, true);
-                    String_Destroy(&fileName);
+                    Free(fileName);
                     // break;
                 }
                 else if (token == TK_LESS_THAN_SIGN)
@@ -1840,12 +1840,14 @@ void Scanner_BuyTokens(Scanner * pScanner)
                     BasicScanner_Match(pBasicScanner);
                     Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
                     lexeme = pBasicScanner->currentItem.lexeme.c_str;
-                    String fileName;
-                    String_InitWith(&fileName, lexeme + 1);
+                    
+                    String * /*@auto*/ fileName;
+                    fileName = StrDup(lexeme + 1);
+
                     Scanner_Match(pScanner);
                     fileName[strlen(fileName) - 1] = 0;
                     StrArray_Push(&pScanner->IncludeDir, fileName);
-                    String_Destroy(&fileName);
+                    Free(fileName);
                     //
                     IgnorePreProcessorv2(pBasicScanner, &strBuilder);
                     Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
@@ -1857,12 +1859,13 @@ void Scanner_BuyTokens(Scanner * pScanner)
                     BasicScanner_Match(pBasicScanner);
                     Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
                     lexeme = pBasicScanner->currentItem.lexeme.c_str;
-                    String fileName;
-                    String_InitWith(&fileName, lexeme + 1);
+                    String * /*@auto*/ fileName;
+                    fileName = StrDup(lexeme + 1);
+
                     Scanner_Match(pScanner);
                     fileName[strlen(fileName) - 1] = 0;
                     StrArray_Push(&pScanner->Sources, fileName);
-                    String_Destroy(&fileName);
+                    Free(fileName);
                     //
                     IgnorePreProcessorv2(pBasicScanner, &strBuilder);
                     Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
@@ -2264,7 +2267,7 @@ void PrintPreprocessedToFileCore(FILE * fp, Scanner * scanner)
 
 void PrintPreprocessedToFile(const char* fileIn, const char* configFileName)
 {
-    String fullFileNamePath = STRING_INIT;
+    String * /*@auto*/ fullFileNamePath = NULL;
     GetFullPath(fileIn, &fullFileNamePath);
 
     Scanner scanner;
@@ -2275,14 +2278,14 @@ void PrintPreprocessedToFile(const char* fileIn, const char* configFileName)
 
     if (configFileName != NULL)
     {
-        String configFullPath = STRING_INIT;
+        String * /*@auto*/ configFullPath = NULL;
         GetFullPath(configFileName, &configFullPath);
 
         Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath,
             true);
         Scanner_Match(&scanner);
 
-        String_Destroy(&configFullPath);
+        Free(configFullPath);
     }
 
     ///
@@ -2301,7 +2304,7 @@ void PrintPreprocessedToFile(const char* fileIn, const char* configFileName)
 
     fclose(fp);
     Scanner_Destroy(&scanner);
-    String_Destroy(&fullFileNamePath);
+    Free(fullFileNamePath);
 }
 
 void PrintPreprocessedToStringCore2(StrBuilder * fp, Scanner * scanner)
@@ -2367,14 +2370,14 @@ void PrintPreprocessedToString2(StrBuilder * fp, const char* input, const char* 
 
     if (configFileName != NULL)
     {
-        String configFullPath = STRING_INIT;
+        String * /*@auto*/ configFullPath = NULL;
         GetFullPath(configFileName, &configFullPath);
 
         Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath,
             true);
         Scanner_Match(&scanner);
 
-        String_Destroy(&configFullPath);
+        Free(configFullPath);
     }
 
 
@@ -2386,7 +2389,7 @@ void PrintPreprocessedToString2(StrBuilder * fp, const char* input, const char* 
 
 void GetSources(const char* fileIn, struct StrArray* sources)
 {
-    String fullFileNamePath = STRING_INIT;
+    String * /*@auto*/ fullFileNamePath = NULL;
     GetFullPath(fileIn, &fullFileNamePath);
     Scanner scanner;
     Scanner_Init(&scanner);
@@ -2402,13 +2405,13 @@ void GetSources(const char* fileIn, struct StrArray* sources)
     StrArray_Swap(sources, &scanner.Sources);
 
     Scanner_Destroy(&scanner);
-    String_Destroy(&fullFileNamePath);
+    Free(fullFileNamePath);
 }
 
 void PrintPreprocessedToConsole(const char* fileIn,
     const char* configFileName)
 {
-    String fullFileNamePath = STRING_INIT;
+    String * /*@auto*/ fullFileNamePath = NULL;
     GetFullPath(fileIn, &fullFileNamePath);
 
     Scanner scanner;
@@ -2419,20 +2422,20 @@ void PrintPreprocessedToConsole(const char* fileIn,
 
     if (configFileName != NULL)
     {
-        String configFullPath = STRING_INIT;
+        String * /*@auto*/ configFullPath = NULL;
         GetFullPath(configFileName, &configFullPath);
 
         Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath,
             true);
         Scanner_Match(&scanner);
 
-        String_Destroy(&configFullPath);
+        Free(configFullPath);
     }
 
     PrintPreprocessedToFileCore(stdout, &scanner);
 
     Scanner_Destroy(&scanner);
-    String_Destroy(&fullFileNamePath);
+    Free(fullFileNamePath);
 }
 
 int Scanner_GetNumberOfScannerItems(Scanner * pScanner)

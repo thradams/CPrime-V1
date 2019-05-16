@@ -20,7 +20,7 @@ Macro* Macro_Create(void) /*@default*/
     Macro *p = (Macro*) Malloc(sizeof * p);
     if (p != NULL)
     {
-        String_Init(&p->Name);
+        p->Name = NULL;
         p->bIsFunction = false;
         TokenArray_Init(&p->TokenSequence);
         TokenArray_Init(&p->FormalArguments);
@@ -29,14 +29,14 @@ Macro* Macro_Create(void) /*@default*/
     return p;
 }
 
-void Macro_Destroy(Macro * p) /*@default*/
+void Macro_Destroy(Macro* p) /*@default*/
 {
-    String_Destroy(&p->Name);
+    Free((void*)p->Name);
     TokenArray_Destroy(&p->TokenSequence);
     TokenArray_Destroy(&p->FormalArguments);
 }
 
-void Macro_Delete(Macro * p) /*@default*/
+void Macro_Delete(Macro* p) /*@default*/
 {
     if (p != NULL)
     {
@@ -47,24 +47,24 @@ void Macro_Delete(Macro * p) /*@default*/
 
 
 bool FillIn(TokenArray* ts,
-            bool get_more,
-            TokenArray* removed);
+  bool get_more,
+  TokenArray* removed);
 
 void Glue(const TokenArray* lsI,
-          const TokenArray* rsI,
-          TokenArray* out);
+  const TokenArray* rsI,
+  TokenArray* out);
 
 // Return a new token sequence with hs added to the hide set of every element of ts
 void HidenSetAdd(const TokenSet* hs,
-                 const TokenArray* ts,
-                 TokenArray* pOut)
+  const TokenArray* ts,
+  TokenArray* pOut)
 {
   TokenArray_Clear(pOut);
 
 
   for (int i = 0; i < ts->Size; i++)
   {
-      struct PPToken* t = ts->pItems[i];
+    struct PPToken* t = ts->pItems[i];
 
     for (int k = 0; k < hs->Size; k++)
     {
@@ -80,12 +80,12 @@ void HidenSetAdd(const TokenSet* hs,
 }
 
 void ExpandMacro(const TokenArray* pTokenSequence,
-                 const MacroMap* macros,
-                 bool get_more,
-                 bool skip_defined,
-    bool evalmode,
-                 Macro* caller,
-                 TokenArray* pOutputSequence);
+  const MacroMap* macros,
+  bool get_more,
+  bool skip_defined,
+  bool evalmode,
+  Macro* caller,
+  TokenArray* pOutputSequence);
 
 /*
 Retorna o indice do primeiro token que não for espaço
@@ -110,19 +110,19 @@ int FindNoSpaceIndex(const TokenArray* pArray, int start)
 
 // Return s with all \ and " characters \ escaped
 void AppendEscaped(StrBuilder* strBuilder,
-                   const char* source)
+  const char* source)
 {
   while (*source)
   {
     switch (*source)
     {
-      case '\\':
-      case '"':
-        StrBuilder_AppendChar(strBuilder, '\\');
+    case '\\':
+    case '"':
+      StrBuilder_AppendChar(strBuilder, '\\');
 
       // FALTHROUGH
-      default:
-        StrBuilder_AppendChar(strBuilder, *source);
+    default:
+      StrBuilder_AppendChar(strBuilder, *source);
     }
 
     source++;
@@ -153,7 +153,7 @@ void AppendStringize(StrBuilder* strBuilder, const TokenArray* ts)
 
   for (int i = 0; i < ts->Size; i++)
   {
-      struct PPToken* pToken = ts->pItems[i];
+    struct PPToken* pToken = ts->pItems[i];
 
     if (PPToken_IsSpace(pToken))
     {
@@ -201,15 +201,15 @@ void AppendStringize(StrBuilder* strBuilder, const TokenArray* ts)
 * Result is created in the output sequence os and finally has the specified
 * hide set added to it, before getting returned.
 */
-void SubstituteArgs(Macro *pMacro,
-                    const MacroMap* macros,
-                    const TokenArray* isOriginal,   //macro
-                    const TokenArrayMap *args,
-                    TokenSet* hs,
-                    bool skip_defined,
-    bool evalmode,
-                    Macro *pCaller,
-                    TokenArray* pOutputSequence)
+void SubstituteArgs(Macro* pMacro,
+  const MacroMap* macros,
+  const TokenArray* isOriginal,   //macro
+  const TokenArrayMap* args,
+  TokenSet* hs,
+  bool skip_defined,
+  bool evalmode,
+  Macro* pCaller,
+  TokenArray* pOutputSequence)
 {
   TokenArray_Clear(pOutputSequence);
 
@@ -245,8 +245,8 @@ void SubstituteArgs(Macro *pMacro,
       TokenArray* aseq;
 
       if (idx != -1 &&
-          args != NULL &&
-          TokenArrayMap_Lookup(args, is.pItems[idx]->Lexeme, &aseq))
+        args != NULL &&
+        TokenArrayMap_Lookup(args, is.pItems[idx]->Lexeme, &aseq))
       {
         /*
         If, in the replacement list, a parameter is immediately
@@ -262,7 +262,7 @@ void SubstituteArgs(Macro *pMacro,
         //TODO token tipo?
         TokenArray_PushBack(&os, PPToken_Create(strBuilder.c_str, PPTokenType_Other));
         StrBuilder_Destroy(&strBuilder);
-        
+
         PPToken_Delete(head);
         head = NULL;
         continue;
@@ -324,7 +324,7 @@ void SubstituteArgs(Macro *pMacro,
       int idx = FindNoSpaceIndex(&is, 0);
 
       if (idx != -1 &&
-          PPToken_IsConcatOp(is.pItems[idx]))
+        PPToken_IsConcatOp(is.pItems[idx]))
       {
         /*
         * Implement the following gcc extension:
@@ -353,8 +353,8 @@ void SubstituteArgs(Macro *pMacro,
           }
           */
           // Non-formal arguments don't deserve special treatment
-            TokenArray_PushBack(&os, head);
-            head = NULL; //moved
+          TokenArray_PushBack(&os, head);
+          head = NULL; //moved
         }
         else
         {
@@ -402,7 +402,7 @@ void SubstituteArgs(Macro *pMacro,
       TokenArray* argseq = NULL;
 
       if (args != NULL &&
-          TokenArrayMap_Lookup(args, head->Lexeme, &argseq))
+        TokenArrayMap_Lookup(args, head->Lexeme, &argseq))
       {
         //expand head
         TokenArray expanded = TOKENARRAY_INIT;
@@ -439,12 +439,12 @@ void SubstituteArgs(Macro *pMacro,
 * Leave in tokens the first token not gathered.
 * If want_space is true return spaces, otherwise discard them
 */
-void ArgToken(TokenArray* tokens,
-              bool get_more,
-              bool want_space,
-    struct PPToken* token)
+void ArgToken(TokenArray * tokens,
+  bool get_more,
+  bool want_space,
+  struct PPToken* token)
 {
-    struct PPToken *pToken = TokenArray_PopFront(tokens);
+  struct PPToken* pToken = TokenArray_PopFront(tokens);
   PPToken_Swap(pToken, token);
   PPToken_Delete(pToken);
   pToken = NULL;
@@ -521,22 +521,22 @@ from pdtoken.getnext_noexpand.
 * Return true if ok, false on error.
 */
 bool GatherArgs(const char* name,
-                TokenArray* tokens,
-                const TokenArray* formal_args,
-                TokenArrayMap* args,
-                bool get_more,
-                bool is_vararg,
-    struct PPToken* close)
+  TokenArray * tokens,
+  const TokenArray * formal_args,
+  TokenArrayMap * args,
+  bool get_more,
+  bool is_vararg,
+  struct PPToken* close)
 {
-    struct PPToken t = TOKEN_INIT;
+  struct PPToken t = TOKEN_INIT;
 
   for (int i = 0; i < formal_args->Size; i++)
   {
     TokenArray* pV = TokenArray_Create();
 
     TokenArrayMap_SetAt(args,
-                         formal_args->pItems[i]->Lexeme,
-                         pV);
+      formal_args->pItems[i]->Lexeme,
+      pV);
 
     char terminate;
 
@@ -567,8 +567,8 @@ bool GatherArgs(const char* name,
       //printf("\n");
 
       if (bracket == 0 && (
-            (terminate == '.' && (PPToken_IsChar(&t, ',') || PPToken_IsChar(&t, ')'))) ||
-            (terminate != '.' && PPToken_IsChar(&t, terminate))))
+        (terminate == '.' && (PPToken_IsChar(&t, ',') || PPToken_IsChar(&t, ')'))) ||
+        (terminate != '.' && PPToken_IsChar(&t, terminate))))
       {
         break;
       }
@@ -613,16 +613,16 @@ bool GatherArgs(const char* name,
       TokenArray* pV2 = TokenArray_Create();
 
       TokenArrayMap_SetAt(args,
-                           formal_args->pItems[i]->Lexeme,
-                           pV2);
+        formal_args->pItems[i]->Lexeme,
+        pV2);
 
       // Instantiate argument with an empty value list
       //args[(*i).get_val()];
       break;
     }
 
-    String_Set(&close->Lexeme, t.Lexeme);
-    //close = t;
+    Free(close->Lexeme);
+    close->Lexeme = StrDup(t.Lexeme);
   }
 
   if (formal_args->Size == 0)
@@ -641,7 +641,7 @@ bool GatherArgs(const char* name,
     }
   }
 
-  
+
   PPToken_Destroy(&t);
 
   return (true);
@@ -652,9 +652,9 @@ bool GatherArgs(const char* name,
 * operator, * such as "defined X" or "defined(X)"
 * This is the rule when processing #if #elif expressions
 */
-void GatherDefinedOperator(TokenArray* tokens,
-                           const MacroMap* macros,
-                           TokenArray* result)
+void GatherDefinedOperator(TokenArray * tokens,
+  const MacroMap * macros,
+  TokenArray * result)
 {
   //TokenArray tokens = TOKENARRAY_INIT;
   //TokenArray_AppendCopy(&tokens, tokensIn);
@@ -662,7 +662,7 @@ void GatherDefinedOperator(TokenArray* tokens,
   // Skip leading space
   while (PPToken_IsSpace(tokens->pItems[0]))
   {
-            struct PPToken* pp = TokenArray_PopFront(tokens);
+    struct PPToken* pp = TokenArray_PopFront(tokens);
     TokenArray_PushBack(result, pp);
   }
 
@@ -671,15 +671,21 @@ void GatherDefinedOperator(TokenArray* tokens,
     // defined X form
     if (MacroMap_Find(macros, tokens->pItems[0]->Lexeme) != NULL)
     {
-                struct PPToken* pp0 = TokenArray_PopFront(tokens);
-      String_Set(&pp0->Lexeme, "1");
+      struct PPToken* pp0 = TokenArray_PopFront(tokens);
+
+      Free(pp0->Lexeme);
+      pp0->Lexeme = StrDup("1");
+
+
       TokenArray_PushBack(result, pp0);
     }
 
     else
     {
-        struct PPToken* pp0 = TokenArray_PopFront(tokens);
-      String_Set(&pp0->Lexeme, "0");
+      struct PPToken* pp0 = TokenArray_PopFront(tokens);
+      Free(pp0->Lexeme);
+      pp0->Lexeme = StrDup("0");
+      
       TokenArray_PushBack(result, pp0);
     }
 
@@ -699,7 +705,7 @@ void GatherDefinedOperator(TokenArray* tokens,
     // Skip spaces
     while (PPToken_IsSpace(tokens->pItems[0]))
     {
-        struct PPToken* pp = TokenArray_PopFront(tokens);
+      struct PPToken* pp = TokenArray_PopFront(tokens);
       TokenArray_PushBack(result, pp);
     }
 
@@ -710,15 +716,21 @@ void GatherDefinedOperator(TokenArray* tokens,
 
     if (MacroMap_Find(macros, tokens->pItems[0]->Lexeme) != NULL)
     {
-        struct PPToken* pp0 = TokenArray_PopFront(tokens);
-      String_Set(&pp0->Lexeme, "1");
+      struct PPToken* pp0 = TokenArray_PopFront(tokens);
+      
+      Free(pp0->Lexeme);
+      pp0->Lexeme = StrDup("1");
+      
       TokenArray_PushBack(result, pp0);
     }
 
     else
     {
-        struct PPToken* pp0 = TokenArray_PopFront(tokens);
-      String_Set(&pp0->Lexeme, "0");
+      struct PPToken* pp0 = TokenArray_PopFront(tokens);
+      
+      Free(pp0->Lexeme);
+      pp0->Lexeme = StrDup("0");
+      
       TokenArray_PushBack(result, pp0);
     }
 
@@ -728,7 +740,7 @@ void GatherDefinedOperator(TokenArray* tokens,
     // Skip spaces
     while (PPToken_IsSpace(tokens->pItems[0]))
     {
-        struct PPToken* pp = TokenArray_PopFront(tokens);
+      struct PPToken* pp = TokenArray_PopFront(tokens);
       TokenArray_PushBack(result, pp);
     }
 
@@ -749,13 +761,13 @@ void GatherDefinedOperator(TokenArray* tokens,
 }
 
 
-void ExpandMacro(const TokenArray* tsOriginal,
-                 const MacroMap* macros,
-                 bool get_more,
-                 bool skip_defined,
-    bool evalmode,
-                 Macro* caller,
-                 TokenArray* pOutputSequence2)
+void ExpandMacro(const TokenArray * tsOriginal,
+  const MacroMap * macros,
+  bool get_more,
+  bool skip_defined,
+  bool evalmode,
+  Macro * caller,
+  TokenArray * pOutputSequence2)
 {
   TokenArray_Clear(pOutputSequence2);
 
@@ -787,8 +799,8 @@ void ExpandMacro(const TokenArray* tsOriginal,
     }
 
     if (skip_defined &&
-        PPToken_IsIdentifier(pHead) &&
-        PPToken_IsLexeme(pHead, "defined"))
+      PPToken_IsIdentifier(pHead) &&
+      PPToken_IsLexeme(pHead, "defined"))
     {
       TokenArray result = TOKENARRAY_INIT;
       GatherDefinedOperator(&ts, macros, &result);
@@ -800,18 +812,19 @@ void ExpandMacro(const TokenArray* tsOriginal,
       TokenArray_Destroy(&result);
       continue;
     }
-   
-    Macro * pMacro = MacroMap_Find(macros, pHead->Lexeme);
 
-    if (pMacro == NULL) 
+    Macro* pMacro = MacroMap_Find(macros, pHead->Lexeme);
+
+    if (pMacro == NULL)
     {
       //if eval mode se nao achar a macro
       //ela vira zero
-        if (evalmode)
-        {
-            String_Set(&pHead->Lexeme, "0");
-            pHead->Token = PPTokenType_Number;
-        }
+      if (evalmode)
+      {
+        Free(pHead->Lexeme);
+        pHead->Lexeme = StrDup("0");        
+        pHead->Token = PPTokenType_Number;
+      }
       // Nothing to do if the identifier is not a macro
       TokenArray_PushBack(&r, pHead);
       pHead = NULL; //moved
@@ -844,21 +857,21 @@ void ExpandMacro(const TokenArray* tsOriginal,
       TokenSet hiddenSet = TOKENSET_INIT;
       TokenSetAppendCopy(&hiddenSet, &pHead->HiddenSet);
       TokenSet_PushBack(&hiddenSet, PPToken_Create(pHead->Lexeme, pHead->Token));
-      
+
       PPToken_Delete(pHead);
       pHead = NULL; //usado deletado
 
       TokenArray s = TOKENARRAY_INIT;
 
       SubstituteArgs(pMacro,
-                     macros,
-                     &pMacro->TokenSequence,
-                     NULL, //empty args
-                     &hiddenSet,
-                     skip_defined,
-          evalmode,
-                     caller,
-                     &s);
+        macros,
+        &pMacro->TokenSequence,
+        NULL, //empty args
+        &hiddenSet,
+        skip_defined,
+        evalmode,
+        caller,
+        &s);
 
       TokenArray_AppendMove(&s, &ts);
       TokenArray_Swap(&s, &ts);
@@ -870,31 +883,31 @@ void ExpandMacro(const TokenArray* tsOriginal,
     }
 
     else if (FillIn(&ts, get_more, &removed_spaces) &&
-             PPToken_IsOpenPar(ts.pItems[0]))
+      PPToken_IsOpenPar(ts.pItems[0]))
     {
       //printf("Application of a function-like macro\n");
 
       // Map from formal name to value
       TokenArrayMap args = TOKENARRAYMAP_INIT;
 
-      PPToken_Delete(TokenArray_PopFront(&ts));      
+      PPToken_Delete(TokenArray_PopFront(&ts));
 
       struct PPToken close = TOKEN_INIT;
 
       if (!GatherArgs(pHead->Lexeme,
-                      &ts,
-                      &pMacro->FormalArguments,
-                      &args,
-                      get_more,
-                      false, /*m.is_vararg,*/
-                      &close))
+        &ts,
+        &pMacro->FormalArguments,
+        &args,
+        get_more,
+        false, /*m.is_vararg,*/
+        &close))
       {
         PPToken_Destroy(&close);
         PPToken_Delete(pHead);
         pHead = NULL;//deletado
         continue; // Attempt to bail-out on error
       }
-      
+
 
       /*
       After the arguments for the invocation of a function-like
@@ -905,8 +918,8 @@ void ExpandMacro(const TokenArray* tsOriginal,
 
       //merge head and close
       SetIntersection(&pHead->HiddenSet,
-                      &close.HiddenSet,
-                      &hs);
+        &close.HiddenSet,
+        &hs);
       TokenSet_PushBack(&hs, PPToken_Create(pMacro->Name, PPTokenType_Identifier));
 
       PPToken_Delete(pHead);
@@ -915,14 +928,14 @@ void ExpandMacro(const TokenArray* tsOriginal,
       TokenArray s = TOKENARRAY_INIT;
 
       SubstituteArgs(pMacro,
-                     macros,
-                     &pMacro->TokenSequence,
-                     &args,
-                     &hs,
-                     skip_defined,
-          evalmode,
-                     caller,
-                     &s);
+        macros,
+        &pMacro->TokenSequence,
+        &args,
+        &hs,
+        skip_defined,
+        evalmode,
+        caller,
+        &s);
 
       TokenArray_AppendMove(&s, &ts);
       TokenArray_Swap(&s, &ts);
@@ -965,10 +978,10 @@ void ExpandMacro(const TokenArray* tsOriginal,
 * Return true if this is the case
 * Return any discarded space tokens in removed
 */
-bool FillIn(TokenArray* ts, bool get_more, TokenArray* removed)
+bool FillIn(TokenArray * ts, bool get_more, TokenArray * removed)
 {
   while (ts->Size > 0 &&
-         PPToken_IsSpace(ts->pItems[0]))
+    PPToken_IsSpace(ts->pItems[0]))
   {
     TokenArray_PushBack(removed, TokenArray_PopFront(ts));
   }
@@ -1008,9 +1021,9 @@ bool FillIn(TokenArray* ts, bool get_more, TokenArray* removed)
 
 // Paste last of left side with first of right side
 
-void Glue(const TokenArray* lsI,
-          const TokenArray* rsI,
-          TokenArray* out)
+void Glue(const TokenArray * lsI,
+  const TokenArray * rsI,
+  TokenArray * out)
 {
   TokenArray ls = TOKENARRAY_INIT;
   TokenArray_AppendCopy(&ls, lsI);
@@ -1029,20 +1042,20 @@ void Glue(const TokenArray* lsI,
   {
 
     while (ls.Size > 0 &&
-           PPToken_IsSpace(ls.pItems[ls.Size - 1]))
+      PPToken_IsSpace(ls.pItems[ls.Size - 1]))
     {
       TokenArray_Pop(&ls);
     }
 
     while (rs.Size > 0 && PPToken_IsSpace(rs.pItems[0]))
     {
-        struct PPToken* tk = TokenArray_PopFront(&rs);
+      struct PPToken* tk = TokenArray_PopFront(&rs);
       PPToken_Delete(tk);
       tk = NULL;
     }
 
     if (ls.Size == 0 &&
-        rs.Size == 0)
+      rs.Size == 0)
     {
       TokenArray_Swap(out, &ls);
     }
@@ -1090,24 +1103,24 @@ void Glue(const TokenArray* lsI,
   TokenArray_Destroy(&rs);
 }
 
-void ExpandMacroToText(const TokenArray* pTokenSequence,
-                       const MacroMap* macros,
-                       bool get_more,
-                       bool skip_defined,
-    bool evalmode,
-                       Macro* caller,
-                       StrBuilder* strBuilder)
+void ExpandMacroToText(const TokenArray * pTokenSequence,
+  const MacroMap * macros,
+  bool get_more,
+  bool skip_defined,
+  bool evalmode,
+  Macro * caller,
+  StrBuilder * strBuilder)
 {
   StrBuilder_Clear(strBuilder);
   TokenArray tks = TOKENARRAY_INIT;
   ExpandMacro(pTokenSequence,
-              macros,
-              get_more,
-              skip_defined,
-      evalmode,
-              caller,
- 
-              &tks);
+    macros,
+    get_more,
+    skip_defined,
+    evalmode,
+    caller,
+
+    &tks);
 
   for (int i = 0; i < tks.Size; i++)
   {
@@ -1119,7 +1132,7 @@ void ExpandMacroToText(const TokenArray* pTokenSequence,
     {
       StrBuilder_Append(strBuilder, tks.pItems[i]->Lexeme);
     }
-    
+
   }
 
   TokenArray_Destroy(&tks);
@@ -1128,39 +1141,39 @@ void ExpandMacroToText(const TokenArray* pTokenSequence,
 
 
 
-int MacroMap_SetAt(MacroMap* pMap,
-                    const char* Key,
-                    Macro* newValue)
+int MacroMap_SetAt(MacroMap * pMap,
+  const char* Key,
+  Macro * newValue)
 {
-  void *pPrevious;
+  void* pPrevious;
   int r = Map2_SetAt((Map2*)pMap, Key, newValue, &pPrevious);
   Macro_Delete((Macro*)pPrevious);
   return r;
 }
 
-bool MacroMap_Lookup(const MacroMap* pMap,
-                      const char*  Key,
-                      Macro** rValue)
+bool MacroMap_Lookup(const MacroMap * pMap,
+  const char* Key,
+  Macro * *rValue)
 {
   return Map2_Lookup((Map2*)pMap,
-                     Key,
-                     (void**)rValue);
+    Key,
+    (void**)rValue);
 }
 
-Macro* MacroMap_Find(const MacroMap* pMap, const char*  Key)
+Macro* MacroMap_Find(const MacroMap * pMap, const char* Key)
 {
   void* p = NULL;
   Map2_Lookup((Map2*)pMap,
-              Key,
-              &p);
+    Key,
+    &p);
   return (Macro*)p;
 }
 
 
-bool MacroMap_RemoveKey(MacroMap* pMap, const char*  Key)
+bool MacroMap_RemoveKey(MacroMap * pMap, const char* Key)
 {
-  Macro *pItem;
-  bool r = Map2_RemoveKey((Map2*)pMap, Key, (void**)&pItem);
+  Macro* pItem;
+  bool r = Map2_RemoveKey((Map2*)pMap, Key, (void**)& pItem);
 
   if (r)
   {
@@ -1170,18 +1183,18 @@ bool MacroMap_RemoveKey(MacroMap* pMap, const char*  Key)
   return r;
 }
 
-void MacroMap_Init(MacroMap* p)
+void MacroMap_Init(MacroMap * p)
 {
   MacroMap t = MACROMAP_INIT;
   *p = t;
 }
 
-static void Macro_DeleteVoid(void *p)
+static void Macro_DeleteVoid(void* p)
 {
-    Macro_Delete((Macro*)p);
+  Macro_Delete((Macro*)p);
 }
 
-void MacroMap_Destroy(MacroMap* p)
+void MacroMap_Destroy(MacroMap * p)
 {
   Map2_Destroy((Map2*)p, Macro_DeleteVoid);
 }

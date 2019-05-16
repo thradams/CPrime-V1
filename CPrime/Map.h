@@ -8,11 +8,11 @@
 
 typedef struct
 {
-    String key;
+    String * /*@auto*/ key;
     void *data;
     uint32_t hash;
 } BucketItem;
-#define BUCKET_ITEM_INIT { STRING_INIT, NULL, 0 }
+#define BUCKET_ITEM_INIT { NULL, NULL, 0 }
 
 typedef struct
 {
@@ -48,7 +48,7 @@ void Map_Delete(Map *map, void(*pfDestroyData)(void*));
 bool Map_Create(Map **map, int nBuckets);
 
 bool Map_Set(Map *map, const char*key, void *data);
-bool Map_SetMoveKey(Map* map, String* key, void* data);
+bool Map_SetMoveKey(Map* map, String** key, void* data);
 
 bool Map_Find(Map* map, const char* key, void** pp);
 void* Map_Find2(Map* map, const char* key);

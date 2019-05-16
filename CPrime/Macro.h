@@ -7,7 +7,7 @@
 
 typedef struct
 {
-  String Name;
+  String * /*@auto*/ Name;
   bool bIsFunction;
   TokenArray TokenSequence;
   TokenArray FormalArguments;
@@ -21,7 +21,7 @@ typedef struct MacroMapItem
 {
   struct MapItem2* pNext;
   unsigned int HashValue;
-  String Key;
+  String * /*@auto*/Key;
   Macro* pValue;
 } MacroMapItem;
 

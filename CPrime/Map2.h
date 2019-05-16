@@ -7,7 +7,7 @@ typedef struct MapItem2
 {
 	struct MapItem2* pNext;
 	unsigned int HashValue;
-	String Key;
+	String * /*@auto*/ Key;
 	void* pValue;
 } MapItem2;
 

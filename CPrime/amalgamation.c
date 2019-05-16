@@ -7,12 +7,8 @@
 #include "Mem.h"
 #include <string.h>
 #include <ctype.h>
+#include "StringEx.h"
 
- static char *strdup2(const char *s) {
-  char *d = (char*)Malloc(strlen(s) + 1);
-  if (d != NULL) strcpy(d, s);
-  return d;
-}
 
 struct Header
 {
@@ -27,7 +23,7 @@ void MarkAsIncluded(const char* filename)
 {
   
   struct Header* pNew = (struct Header*)Malloc(sizeof * pNew);
-  pNew->fileName = strdup2(filename);
+  pNew->fileName = StrDup(filename);
   pNew->pNext = 0;
 
   if (s_included == NULL)
@@ -86,7 +82,7 @@ WriteResult Write(char* fileNameRelative, bool bIsSystemHeader, FILE* out)
 {
 
   WriteResult result = NOT_FOUND;
-  String fullPath = STRING_INIT;
+  char* fullPath = NULL;
 
   if (bIsSystemHeader)
   {
@@ -95,11 +91,11 @@ WriteResult Write(char* fileNameRelative, bool bIsSystemHeader, FILE* out)
   }
   else
   {
-    String_Set(&fullPath, fileNameRelative);
+    fullPath = StrDup(fileNameRelative);
   }
   
 
-  String fullDir = STRING_INIT;
+  char* fullDir = NULL;
   GetFullDir(fileNameRelative, &fullDir);
 
   if (IsAlreadyIncluded(fullPath))
@@ -239,9 +235,9 @@ WriteResult Write(char* fileNameRelative, bool bIsSystemHeader, FILE* out)
     //fprintf(out, "//%s }\n", fullPath);
   }
 
-  String_Destroy(&fullPath);
-  String_Destroy(&fullDir);
-  fullPath = 0;
+  Free(fullPath);
+  Free(fullDir);
+  
 
   return result;
 }
