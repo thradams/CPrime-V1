@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Amalgamation.c" />
     <ClCompile Include="Array.c" />
     <ClCompile Include="Ast.c" />
     <ClCompile Include="AstPrint.c" />
@@ -31,6 +30,7 @@
     <ClCompile Include="Map.c" />
     <ClCompile Include="Map2.c" />
     <ClCompile Include="Mem.c" />
+    <ClCompile Include="Options.c" />
     <ClCompile Include="Parser.c" />
     <ClCompile Include="Path.c" />
     <ClCompile Include="PPToken.c" />
@@ -42,7 +42,6 @@
     <ClCompile Include="TokenArray.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Amalgamation.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="Ast.h" />
     <ClInclude Include="AstPrint.h" />
@@ -54,6 +53,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Map2.h" />
     <ClInclude Include="Mem.h" />
+    <ClInclude Include="Options.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="PPToken.h" />
@@ -137,6 +137,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DisableSpecificWarnings>4068</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,6 +153,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DisableSpecificWarnings>4068</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -169,6 +171,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DisableSpecificWarnings>4068</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -188,6 +191,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DisableSpecificWarnings>4068</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

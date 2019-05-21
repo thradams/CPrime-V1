@@ -1,4 +1,6 @@
 #pragma once
+#pragma source
+
 #include <stdbool.h>
 #include "StrBuilder.h"
 #include "Stream.h"

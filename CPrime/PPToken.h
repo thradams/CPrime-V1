@@ -1,4 +1,6 @@
 #pragma once
+#pragma source
+
 #include "StringEx.h"
 #include  "TokenArray.h"
 

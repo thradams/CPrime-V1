@@ -1,10 +1,11 @@
 #pragma once
+#pragma source
+
 #include "StringEx.h"
 #include <stdio.h>
 #include <wchar.h>
 #include <stdbool.h>
 
-#define ptr * /*@auto*/
 
 struct Stream
 {

@@ -7,11 +7,8 @@
 #include "Parser.h"
 #include "CodePrint.h"
 #include "Path.h"
-
-
-#include "Amalgamation.h"
 #include "Mem.h"
-
+#include "Options.h"
 
 int Compile(const char* configFileName,
     const char* inputFileName,
@@ -26,7 +23,7 @@ int Compile(const char* configFileName,
     clock_t tstart = clock();
 
     printf("Parsing...\n");
-    if (GetAST(inputFileName, configFileName, &program))
+    if (GetAST(inputFileName, configFileName, options, &program))
     {
         bSuccess = 1;
 
@@ -88,9 +85,8 @@ void PrintHelp()
     printf("          cprime -P hello.c\n");
     printf("          cprime -A hello.c\n");
     printf("\n");
-    printf("Options:\n");
-    printf("-config FILE                          Configuration file.\n");
-    printf("-build FILE                           Build file.\n");
+    printf("PrintCodeOptions:\n");
+    printf("-config FILE                          Configuration file.\n");    
     printf("-outDir                               Directory for output.\n");
     printf("-help                                 Print this message.\n");
     printf("-o FILE                               Sets ouput file name.\n");
@@ -98,6 +94,8 @@ void PrintHelp()
     printf("-P                                    Preprocess to file.\n");
     printf("-A                                    Output AST to file.\n");
     printf("-r                                    Reverts generation.\n");
+    printf("--removeComments                      Remove comments from output\n");
+    printf("-build FILE                           Compile each file separatelly to outDir\n");
 
 }
 
@@ -132,8 +130,6 @@ char* CompileText(int type, char* input)
 
 int main(int argc, char* argv[])
 {
-
-
     printf("\n");
     printf("C' Version " __DATE__ "\n");
     printf("https://github.com/thradams/CPrime\n\n");
@@ -150,7 +146,7 @@ int main(int argc, char* argv[])
     const char* outputFileName = NULL;
     const char* configFileName = NULL;
     const char* outputDir = NULL;
-    struct StrArray sources = STRARRAY_INIT;
+    
 
     String * /*@auto*/ outputFullPath = NULL;
     String * /*@auto*/ inputFullPath = NULL;
@@ -164,6 +160,7 @@ int main(int argc, char* argv[])
     bool bPrintASTFile = false;
 
     clock_t tstart = clock();
+    struct FileNodeList sources = { 0 };
 
     int numberOfFiles = 0;
     //a primeira fase é para recolher opcoes
@@ -191,6 +188,10 @@ int main(int argc, char* argv[])
             {
                 bPrintASTFile = true;
             }
+            else if (strcmp(option, "-a") == 0)
+            {              
+              options.bAmalgamate = true;
+            }            
             else if (strcmp(option, "-help") == 0)
             {
                 if (fase == 1)
@@ -198,32 +199,15 @@ int main(int argc, char* argv[])
                     PrintHelp();
                 }
             }
-            else if (strcmp(option, "-cx") == 0)
-            {
-                options.Target = CompilerTarget_CXX;
-            }            
-            else if (strcmp(option, "-ca") == 0)
-            {
-                options.Target = CompilerTarget_Annotated;
-            }
-            else if (strcmp(option, "-pr") == 0)
-            {
-                options.Target = CompilerTarget_Preprocessed;
-            }
             else if (strcmp(option, "-build") == 0)
             {
                 if (fase == 0)
                 {
                     if (i + 1 < argc)
                     {
-
                         const char* buildFileName = argv[i + 1];
-
-
                         GetFullDir(buildFileName, &buildFileFullPath);
-
-
-                        GetSources(buildFileName, &sources);
+                        GetSources(NULL, buildFileName, &sources);
                     }
                     else
                     {
@@ -233,6 +217,22 @@ int main(int argc, char* argv[])
                 }
                 i++;
 
+            }
+            else if (strcmp(option, "-cx") == 0)
+            {
+                options.Target = CompilerTarget_CXX;
+            }            
+            else if (strcmp(option, "-ca") == 0)
+            {
+                options.Target = CompilerTarget_Annotated;
+            }
+            else if (strcmp(option, "--removeComments") == 0)
+            {
+                options.bIncludeComments = false;
+            }
+            else if (strcmp(option, "-pr") == 0)
+            {
+                options.Target = CompilerTarget_Preprocessed;
             }
             else if (strcmp(option, "-outDir") == 0)
             {
@@ -309,7 +309,8 @@ int main(int argc, char* argv[])
         }
     }
 
-    if (sources.size > 0)
+    
+    if (sources.pHead != NULL)
     {
         char inputItemPath[2000] = { 0 };
         char outputItemPath[2000] = { 0 };
@@ -321,11 +322,13 @@ int main(int argc, char* argv[])
 
         MkDir(outputItemPath);
 
-        for (int i = 0; i < sources.size; i++)
+      
+        struct FileNode* pCurrent = sources.pHead;
+        while (pCurrent != NULL)
         {
             inputItemPath[0] = 0;
             strcat(inputItemPath, buildFileFullPath);
-            strcat(inputItemPath, sources.pItems[i]);
+            strcat(inputItemPath, pCurrent->Key);
 
             outputItemPath[0] = 0;
             if (outputDir)
@@ -334,59 +337,22 @@ int main(int argc, char* argv[])
                 strcat(outputItemPath, buildFileFullPath);
                 strcat(outputItemPath, outputDir);
                 strcat(outputItemPath, "\\");
-                strcat(outputItemPath, sources.pItems[i]);
+                strcat(outputItemPath, pCurrent->Key);
             }
 
             if (!Compile(configFileName, inputItemPath, outputItemPath, &options, bPrintASTFile))
             {
                 break;
             }
+        
+            pCurrent = pCurrent->pNext;
         }
-    }
-
-    //Se tem buid.h e -o entao gera um amalgamation
-    if (sources.size > 0 && outputFileName)
-    {
-        char outputItemPath[2000] = { 0 };
-        strcat(outputItemPath, buildFileFullPath);
-        strcat(outputItemPath, outputDir);
-        strcat(outputItemPath, "\\");
-        strcat(outputItemPath, outputFileName);
-        FreeList();
-        FILE* out = fopen(outputItemPath, "w");
-        if (out)
-        {
-            //Write(argv[1], out);
-
-
-            for (int i = 0; i < sources.size; i++)
-            {
-                outputItemPath[0] = 0;
-                if (outputDir)
-                {
-                    //output eh relativo ao build.c
-                    strcat(outputItemPath, buildFileFullPath);
-                    if (outputDir[0] != '\0')
-                    {
-                        strcat(outputItemPath, outputDir);
-                        strcat(outputItemPath, "\\");
-                    }
-                    strcat(outputItemPath, sources.pItems[i]);
-                }
-                Write(outputItemPath, false, out);
-            }
-
-            fclose(out);
-            FreeList();
-        }
-
-
     }
 
     clock_t tend = clock();
     printf("Total %d files in = %d seconds\n", numberOfFiles, (int)((tend - tstart) / CLOCKS_PER_SEC));
 
-    StrArray_Destroy(&sources);
+    FileNodeList_Destroy(&sources);
     Free(outputFullPath);
     Free(inputFullPath);
     Free(buildFileFullPath);

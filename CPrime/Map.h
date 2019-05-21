@@ -1,6 +1,6 @@
 #pragma once
+#pragma source
 
-#pragma once
 
 #include <inttypes.h>
 #include <stdbool.h>

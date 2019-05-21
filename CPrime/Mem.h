@@ -1,4 +1,6 @@
 #pragma once
+#pragma source
+
 #include <stdlib.h>
 
 #if _DEBUG

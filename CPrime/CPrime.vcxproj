@@ -75,7 +75,6 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="Amalgamation.c" />
     <ClCompile Include="Array.c" />
     <ClCompile Include="Ast.c" />
     <ClCompile Include="AstPrint.c" />
@@ -98,7 +97,6 @@
     <ClCompile Include="TokenArray.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Amalgamation.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="Ast.h" />
     <ClInclude Include="AstPrint.h" />

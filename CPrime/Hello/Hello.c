@@ -1,37 +1,20 @@
+#include <stdbool.h>
 
-struct StrArray
-{
-    const char* /*@auto*/ * /*@auto*/ /*@[Size]*/ data;
-    int Size;
-    int Capacity;
-};
 
-void StrArray_Destroy(struct StrArray* p) /*@default*/
+void F2();
+
+
+int main()
 {
-    for (int i = 0; i < p->Size; i++)
-    {
-        free((void*)p->data[i]);
-    }
-    free((void*)p->data);
+  F2();
 }
 
-void StrArray_PushBack(struct StrArray* p, const char* s) /*@default*/
+void F();
+void F2()
 {
-    if (p->Size + 1 > p->Capacity)
-    {
-        int n = p->Capacity * 2;
-        if (n == 0)
-        {
-            n = 1;
-        }
-        const char** pnew = p->data;
-        pnew = (const char**)realloc(pnew, n * sizeof(const char*));
-        if (pnew)
-        {
-            p->data = pnew;
-            p->Capacity = n;
-        }
-    }
-    p->data[p->Size] = s;
-    p->Size++;
+  F();
+}
+
+void F()
+{
 }

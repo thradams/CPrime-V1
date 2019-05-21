@@ -1,10 +1,12 @@
 
 #pragma once
+#pragma source
 
 #include "Map.h"
 #include "StrBuilder.h"
 #include "Ast.h"
 #include "Scanner.h"
+#include "CodePrint.h"
 
 #define SYMBOL_BUCKETS_SIZE 1000
 
@@ -38,7 +40,7 @@ bool Parser_HasError(Parser *pParser);
 const char *GetCompletationMessage(Parser *parser);
 
 bool GetAST(const char *filename, const char *configFileName,
-
+            Options* options,
             TProgram *pProgram);
 
 void ConstantExpression(Parser *ctx, TExpression **ppExpression);

@@ -8,20 +8,65 @@
 #include <assert.h>
 #include "Path.h"
 
-static int global_lambda_counter = 0;
-static const char* GetReallocStr(TProgram* program);
 
-void Options_Destroy(Options* options) /*@default*/
+void IntegerStack_Init(struct IntegerStack* pItems) /*@default*/
 {
+    pItems->pData = 0;
+    pItems->Size = 0;
+    pItems->Capacity = 0;
+}
+
+void IntegerStack_PushBack(struct IntegerStack* pItems, int i) /*@default*/
+{
+    if (pItems->Size + 1 > pItems->Capacity)
+    {
+        int n = pItems->Capacity * 2;
+        if (n == 0)
+        {
+            n = 1;
+        }
+        int* pnew = pItems->pData;
+        pnew = (int*)realloc(pnew, n * sizeof(int));
+        if (pnew)
+        {
+            pItems->pData = pnew;
+            pItems->Capacity = n;
+        }
+    }
+    pItems->pData[pItems->Size] = i;
+    pItems->Size++;
+}
+
+void IntegerStack_Pop(struct IntegerStack* pItems)
+{
+    if (pItems->Size > 0)
+        pItems->Size--;
+    //else
+      //assert(false);
 }
 
 
-void TSpecifierQualifierList_CodePrint(TProgram* program, Options* options, TSpecifierQualifierList* pDeclarationSpecifiers, StrBuilder* fp);
 
-void TTypeName_CodePrint(TProgram* program, Options* options, TTypeName* p, StrBuilder* fp);
+void IntegerStack_Destroy(struct IntegerStack* pItems) /*@default*/
+{
+    free((void*)pItems->pData);
+}
+
+static int global_lambda_counter = 0;
+static const char* GetReallocStr(TProgram* program);
+
+void PrintCodeOptions_Destroy(PrintCodeOptions* options) /*@default*/
+{
+    IntegerStack_Destroy(&options->Stack);
+}
+
+
+void TSpecifierQualifierList_CodePrint(TProgram* program, PrintCodeOptions* options, TSpecifierQualifierList* pDeclarationSpecifiers, StrBuilder* fp);
+
+void TTypeName_CodePrint(TProgram* program, PrintCodeOptions* options, TTypeName* p, StrBuilder* fp);
 
 static void TInitializer_CodePrint(TProgram* program,
-    Options* options,
+    PrintCodeOptions* options,
     TDeclarator* pDeclarator,
     TDeclarationSpecifiers* pDeclarationSpecifiers,
     TInitializer* pTInitializer,
@@ -29,7 +74,7 @@ static void TInitializer_CodePrint(TProgram* program,
     StrBuilder* fp);
 
 static void TInitializerList_CodePrint(TProgram* program,
-    Options* options,
+    PrintCodeOptions* options,
     TDeclarationSpecifiers* pDeclarationSpecifiers,
     TDeclarator* pDeclarator,
     TInitializerList* p,
@@ -38,7 +83,7 @@ static void TInitializerList_CodePrint(TProgram* program,
 
 
 static void TInitializerListItem_CodePrint(TProgram* program,
-    Options* options,
+    PrintCodeOptions* options,
     TDeclarator* pDeclarator,
     TDeclarationSpecifiers* pDeclarationSpecifiers,
     TInitializerListItem* p,
@@ -46,32 +91,42 @@ static void TInitializerListItem_CodePrint(TProgram* program,
     StrBuilder* fp);
 
 
-static void TTypeQualifierList_CodePrint(TProgram* program, Options* options, TTypeQualifierList* p, StrBuilder* fp);
+static void TTypeQualifierList_CodePrint(TProgram* program, PrintCodeOptions* options, TTypeQualifierList* p, StrBuilder* fp);
 
-static void TAnyDeclaration_CodePrint(TProgram* program, Options* options, TAnyDeclaration* pDeclaration, StrBuilder* fp);
+static void TAnyDeclaration_CodePrint(TProgram* program, PrintCodeOptions* options, TAnyDeclaration* pDeclaration, StrBuilder* fp);
 
-static void TAnyStructDeclaration_CodePrint(TProgram* program, Options* options, TAnyStructDeclaration* p, StrBuilder* fp);
-static void TTypeQualifier_CodePrint(TProgram* program, Options* options, TTypeQualifier* p, StrBuilder* fp);
-static void TDeclaration_CodePrint(TProgram* program, Options* options, TDeclaration* p, StrBuilder* fp);
-static void TExpression_CodePrint(TProgram* program, Options* options, TExpression* p, const char* name, StrBuilder* fp);
-static void TStatement_CodePrint(TProgram* program, Options* options, TStatement* p, StrBuilder* fp);
-static void TBlockItem_CodePrint(TProgram* program, Options* options, TBlockItem* p, StrBuilder* fp);
+static void TAnyStructDeclaration_CodePrint(TProgram* program, PrintCodeOptions* options, TAnyStructDeclaration* p, StrBuilder* fp);
+static void TTypeQualifier_CodePrint(TProgram* program, PrintCodeOptions* options, TTypeQualifier* p, StrBuilder* fp);
+static void TDeclaration_CodePrint(TProgram* program, PrintCodeOptions* options, TDeclaration* p, StrBuilder* fp);
+static void TExpression_CodePrint(TProgram* program, PrintCodeOptions* options, TExpression* p, const char* name, StrBuilder* fp);
+static void TStatement_CodePrint(TProgram* program, PrintCodeOptions* options, TStatement* p, StrBuilder* fp);
+static void TBlockItem_CodePrint(TProgram* program, PrintCodeOptions* options, TBlockItem* p, StrBuilder* fp);
 
-static void TPointer_CodePrint(TProgram* program, Options* options, TPointer* pPointer, StrBuilder* fp);
-static void TParameter_CodePrint(TProgram* program, Options* options, TParameter* p, StrBuilder* fp);
+static void TPointer_CodePrint(TProgram* program, PrintCodeOptions* options, TPointer* pPointer, StrBuilder* fp);
+static void TParameter_CodePrint(TProgram* program, PrintCodeOptions* options, TParameter* p, StrBuilder* fp);
 
 void Output_Append(StrBuilder* p,
-    Options* options,
+    PrintCodeOptions* options,
     const char* source)
 {
-    if (options->bInclude && options->IncludeLevel == 0)
-        StrBuilder_Append(p, source);
+    if (options->bInclude)
+    {
+        if (options->Stack.Size == 0 ||
+            options->Stack.pData[options->Stack.Size - 1] == 1)
+        {
+            StrBuilder_Append(p, source);
+        }
+    }
+    else
+    {
+        //nao eh p include
+    }
 }
 
-static void TNodeClueList_CodePrint(Options * options, TScannerItemList * list,
-    StrBuilder * fp)
+static void TNodeClueList_CodePrint(PrintCodeOptions* options, TScannerItemList* list,
+    StrBuilder* fp)
 {
-    if (options->bCannonical)
+    if (options->Options.bCannonical)
     {
         // no modo cannonical quem coloca os espacos
         //eh a funcao especializada
@@ -84,19 +139,54 @@ static void TNodeClueList_CodePrint(Options * options, TScannerItemList * list,
         switch (pNodeClue->token)
         {
         case TK_PRE_INCLUDE:
+        {
+            bool bIncludeFile = true;
 
-            Output_Append(fp, options, pNodeClue->lexeme.c_str);
-            Output_Append(fp, options, "\n");
-            //if (pNodeClue->bActive)
+            if (options->Stack.Size > 0 &&
+                options->Stack.pData[options->Stack.Size - 1] == 0)
+            {
+                bIncludeFile = false;
+            }
+            else
+            {
+                if (options->Options.bAmalgamate)
+                {
+                    if (strstr(pNodeClue->lexeme.c_str, "<") != NULL)
+                    {
+                        bIncludeFile = false;
+                    }
+                }
+                else
+                {
+                    bIncludeFile = false;
+                }
+            }
 
-            options->IncludeLevel++;
-            //}
-            break;
+
+            if (bIncludeFile)
+            {
+                IntegerStack_PushBack(&options->Stack, bIncludeFile);
+            }
+            else
+            {
+                Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                Output_Append(fp, options, "\n");
+                IntegerStack_PushBack(&options->Stack, bIncludeFile);
+            }
+
+        }
+        break;
 
         case TK_FILE_EOF:
-            options->IncludeLevel--;
+            IntegerStack_Pop(&options->Stack);
+            //options->IncludeLevel--;
             ////assert(IncludeLevel > 0);
             //bInclude = true;
+            if (options->Options.bAmalgamate)
+            {
+                Output_Append(fp, options, "\n");
+            }
+
             break;
         case TK_PRE_DEFINE:
             //TODO gerar macros como init
@@ -104,8 +194,20 @@ static void TNodeClueList_CodePrint(Options * options, TScannerItemList * list,
             Output_Append(fp, options, "\n");
             break;
 
-        case TK_PRE_UNDEF:
         case TK_PRE_PRAGMA:
+            if (options->Options.bAmalgamate)
+            {
+                //pragma once nao eh p incluir
+            }
+            else
+            {
+                Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                Output_Append(fp, options, "\n");
+            }
+            
+            break;
+        case TK_PRE_UNDEF:
+
         case TK_PRE_IF:
         case TK_PRE_ENDIF:
         case TK_PRE_ELSE:
@@ -122,7 +224,7 @@ static void TNodeClueList_CodePrint(Options * options, TScannerItemList * list,
             break;
 
         case TK_COMMENT:
-            if (options->bIncludeComments)
+            if (options->Options.bIncludeComments)
             {
                 Output_Append(fp, options, pNodeClue->lexeme.c_str);
             }
@@ -134,7 +236,7 @@ static void TNodeClueList_CodePrint(Options * options, TScannerItemList * list,
             break;
 
         case TK_LINE_COMMENT:
-            if (options->bIncludeComments)
+            if (options->Options.bIncludeComments)
             {
                 Output_Append(fp, options, pNodeClue->lexeme.c_str);
             }
@@ -150,7 +252,7 @@ static void TNodeClueList_CodePrint(Options * options, TScannerItemList * list,
             break;
 
         case TK_MACRO_CALL:
-            if (options->bExpandMacros)
+            if (options->Options.bExpandMacros)
             {
 
             }
@@ -163,7 +265,7 @@ static void TNodeClueList_CodePrint(Options * options, TScannerItemList * list,
 
 
         case TK_MACRO_EOF:
-            if (options->bExpandMacros)
+            if (options->Options.bExpandMacros)
             {
 
             }
@@ -188,11 +290,11 @@ static void TNodeClueList_CodePrint(Options * options, TScannerItemList * list,
 
 }
 
-static void TCompoundStatement_CodePrint(TProgram * program,
-    Options * options,
-    TCompoundStatement * p,
+static void TCompoundStatement_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TCompoundStatement* p,
 
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "{");
@@ -209,7 +311,7 @@ static void TCompoundStatement_CodePrint(TProgram * program,
 }
 
 
-static void TLabeledStatement_CodePrint(TProgram * program, Options * options, TLabeledStatement * p, StrBuilder * fp)
+static void TLabeledStatement_CodePrint(TProgram* program, PrintCodeOptions* options, TLabeledStatement* p, StrBuilder* fp)
 {
 
 
@@ -253,7 +355,7 @@ static void TLabeledStatement_CodePrint(TProgram * program, Options * options, T
 
 }
 
-static void TForStatement_CodePrint(TProgram * program, Options * options, TForStatement * p, StrBuilder * fp)
+static void TForStatement_CodePrint(TProgram* program, PrintCodeOptions* options, TForStatement* p, StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -292,7 +394,7 @@ static void TForStatement_CodePrint(TProgram * program, Options * options, TForS
 }
 
 
-static void TWhileStatement_CodePrint(TProgram * program, Options * options, TWhileStatement * p, StrBuilder * fp)
+static void TWhileStatement_CodePrint(TProgram* program, PrintCodeOptions* options, TWhileStatement* p, StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -308,7 +410,7 @@ static void TWhileStatement_CodePrint(TProgram * program, Options * options, TWh
 
 
 
-static void TDoStatement_CodePrint(TProgram * program, Options * options, TDoStatement * p, StrBuilder * fp)
+static void TDoStatement_CodePrint(TProgram* program, PrintCodeOptions* options, TDoStatement* p, StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -330,7 +432,7 @@ static void TDoStatement_CodePrint(TProgram * program, Options * options, TDoSta
 }
 
 
-static void TExpressionStatement_CodePrint(TProgram * program, Options * options, TExpressionStatement * p, StrBuilder * fp)
+static void TExpressionStatement_CodePrint(TProgram* program, PrintCodeOptions* options, TExpressionStatement* p, StrBuilder* fp)
 {
     TExpression_CodePrint(program, options, p->pExpression, "", fp);
 
@@ -341,7 +443,7 @@ static void TExpressionStatement_CodePrint(TProgram * program, Options * options
 }
 
 
-static void TJumpStatement_CodePrint(TProgram * program, Options * options, TJumpStatement * p, StrBuilder * fp)
+static void TJumpStatement_CodePrint(TProgram* program, PrintCodeOptions* options, TJumpStatement* p, StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
@@ -376,13 +478,13 @@ static void TJumpStatement_CodePrint(TProgram * program, Options * options, TJum
 
 }
 
-static void TAsmStatement_CodePrint(TProgram * program, Options * options, TAsmStatement * p, StrBuilder * fp)
+static void TAsmStatement_CodePrint(TProgram* program, PrintCodeOptions* options, TAsmStatement* p, StrBuilder* fp)
 {
     Output_Append(fp, options, "\"type\":\"asm-statement\"");
 
 }
 
-static void TSwitchStatement_CodePrint(TProgram * program, Options * options, TSwitchStatement * p, StrBuilder * fp)
+static void TSwitchStatement_CodePrint(TProgram* program, PrintCodeOptions* options, TSwitchStatement* p, StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -401,7 +503,7 @@ static void TSwitchStatement_CodePrint(TProgram * program, Options * options, TS
 }
 
 
-static void TIfStatement_CodePrint(TProgram * program, Options * options, TIfStatement * p, StrBuilder * fp)
+static void TIfStatement_CodePrint(TProgram* program, PrintCodeOptions* options, TIfStatement* p, StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -434,7 +536,7 @@ static void TIfStatement_CodePrint(TProgram * program, Options * options, TIfSta
 
 }
 
-static void TStatement_CodePrint(TProgram * program, Options * options, TStatement * p, StrBuilder * fp)
+static void TStatement_CodePrint(TProgram* program, PrintCodeOptions* options, TStatement* p, StrBuilder* fp)
 {
     if (p == NULL)
     {
@@ -487,7 +589,7 @@ static void TStatement_CodePrint(TProgram * program, Options * options, TStateme
 
 }
 
-static void TBlockItem_CodePrint(TProgram * program, Options * options, TBlockItem * p, StrBuilder * fp)
+static void TBlockItem_CodePrint(TProgram* program, PrintCodeOptions* options, TBlockItem* p, StrBuilder* fp)
 {
     if (p == NULL)
     {
@@ -579,7 +681,7 @@ static void TBlockItem_CodePrint(TProgram * program, Options * options, TBlockIt
 
 
 bool GetType(const char* source,
-    StrBuilder * strBuilderType)
+    StrBuilder* strBuilderType)
 {
 
     while (*source &&
@@ -595,8 +697,8 @@ bool GetType(const char* source,
 
 
 bool GetTypeAndFunction(const char* source,
-    StrBuilder * strBuilderType,
-    StrBuilder * strBuilderFunc)
+    StrBuilder* strBuilderType,
+    StrBuilder* strBuilderFunc)
 {
 
     while (*source &&
@@ -615,13 +717,13 @@ bool GetTypeAndFunction(const char* source,
     return *source == '_';
 }
 
-static void TParameterTypeList_CodePrint(TProgram * program, Options * options, TParameterTypeList * p, StrBuilder * fp);
+static void TParameterTypeList_CodePrint(TProgram* program, PrintCodeOptions* options, TParameterTypeList* p, StrBuilder* fp);
 
 
-static void TPrimaryExpressionLambda_CodePrint(TProgram * program,
-    Options * options,
-    TPrimaryExpressionLambda * p,
-    StrBuilder * fp)
+static void TPrimaryExpressionLambda_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TPrimaryExpressionLambda* p,
+    StrBuilder* fp)
 {
 
     //Output_Append(fp, options, "l1");
@@ -679,11 +781,11 @@ static void TPrimaryExpressionLambda_CodePrint(TProgram * program,
 
 }
 
-static void TPostfixExpressionCore_CodePrint(TProgram * program,
-    Options * options,
-    TPostfixExpressionCore * p,
+static void TPostfixExpressionCore_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TPostfixExpressionCore* p,
 
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
 
 
@@ -782,10 +884,10 @@ static void TPostfixExpressionCore_CodePrint(TProgram * program,
 
 }
 
-static void TExpression_CodePrint(TProgram * program, Options * options, TExpression * p,
+static void TExpression_CodePrint(TProgram* program, PrintCodeOptions* options, TExpression* p,
     const char* name,
 
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     if (p == NULL)
     {
@@ -947,7 +1049,7 @@ static void TExpression_CodePrint(TProgram * program, Options * options, TExpres
 
 
 
-static   void TEnumerator_CodePrint(TProgram * program, Options * options, TEnumerator * pTEnumerator, StrBuilder * fp)
+static   void TEnumerator_CodePrint(TProgram* program, PrintCodeOptions* options, TEnumerator* pTEnumerator, StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &pTEnumerator->ClueList0, fp);
@@ -976,7 +1078,7 @@ static   void TEnumerator_CodePrint(TProgram * program, Options * options, TEnum
 
 }
 
-static void TEnumSpecifier_CodePrint(TProgram * program, Options * options, TEnumSpecifier * p, StrBuilder * fp)
+static void TEnumSpecifier_CodePrint(TProgram* program, PrintCodeOptions* options, TEnumSpecifier* p, StrBuilder* fp)
 {
     //true;
 
@@ -1004,7 +1106,7 @@ static void TEnumSpecifier_CodePrint(TProgram * program, Options * options, TEnu
 
 }
 
-static void TUnionSetItem_CodePrint(TProgram * program, Options * options, TUnionSetItem * p, StrBuilder * fp)
+static void TUnionSetItem_CodePrint(TProgram* program, PrintCodeOptions* options, TUnionSetItem* p, StrBuilder* fp)
 {
     if (p->Token == TK_STRUCT)
     {
@@ -1027,11 +1129,11 @@ static void TUnionSetItem_CodePrint(TProgram * program, Options * options, TUnio
     }
 }
 
-static void TUnionSet_CodePrint(TProgram * program, Options * options, TUnionSet * p, StrBuilder * fp)
+static void TUnionSet_CodePrint(TProgram* program, PrintCodeOptions* options, TUnionSet* p, StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
-    if (options->Target == CompilerTarget_Annotated)
+    if (options->Options.Target == CompilerTarget_Annotated)
     {
         Output_Append(fp, options, "/*@");
     }
@@ -1048,16 +1150,16 @@ static void TUnionSet_CodePrint(TProgram * program, Options * options, TUnionSet
     TNodeClueList_CodePrint(options, &p->ClueList1, fp);
     Output_Append(fp, options, ">");
 
-    if (options->Target == CompilerTarget_Annotated)
+    if (options->Options.Target == CompilerTarget_Annotated)
     {
         Output_Append(fp, options, "*/");
     }
 
 }
 
-static void TStructUnionSpecifier_CodePrint(TProgram * program, Options * options, TStructUnionSpecifier * p, StrBuilder * fp)
+static void TStructUnionSpecifier_CodePrint(TProgram* program, PrintCodeOptions* options, TStructUnionSpecifier* p, StrBuilder* fp)
 {
-    if (options->bCannonical)
+    if (options->Options.bCannonical)
     {
     }
     else
@@ -1078,7 +1180,7 @@ static void TStructUnionSpecifier_CodePrint(TProgram * program, Options * option
             Output_Append(fp, options, "union");
         }
 
-        if (options->bCannonical)
+        if (options->Options.bCannonical)
         {
             Output_Append(fp, options, " ");
         }
@@ -1102,7 +1204,7 @@ static void TStructUnionSpecifier_CodePrint(TProgram * program, Options * option
             Output_Append(fp, options, "union");
         }
 
-        if (options->bCannonical)
+        if (options->Options.bCannonical)
         {
             Output_Append(fp, options, " ");
         }
@@ -1113,7 +1215,7 @@ static void TStructUnionSpecifier_CodePrint(TProgram * program, Options * option
         }
     }
 
-    if (options->bCannonical)
+    if (options->Options.bCannonical)
     {
     }
     else
@@ -1142,7 +1244,7 @@ static void TStructUnionSpecifier_CodePrint(TProgram * program, Options * option
 
 }
 
-static void TSingleTypeSpecifier_CodePrint(TProgram * program, Options * options, TSingleTypeSpecifier * p, StrBuilder * fp)
+static void TSingleTypeSpecifier_CodePrint(TProgram* program, PrintCodeOptions* options, TSingleTypeSpecifier* p, StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -1194,7 +1296,7 @@ static void TSingleTypeSpecifier_CodePrint(TProgram * program, Options * options
 
 }
 
-static void TDesignator_CodePrint(TProgram * program, Options * options, TDesignator * p, StrBuilder * fp)
+static void TDesignator_CodePrint(TProgram* program, PrintCodeOptions* options, TDesignator* p, StrBuilder* fp)
 {
     //    if (b)
     //      Output_Append(fp, options,  ",");
@@ -1228,19 +1330,19 @@ static void TDesignator_CodePrint(TProgram * program, Options * options, TDesign
 #define List_Back(pList) \
   ((pList)->pTail)
 
-static void TInitializerList_CodePrint(TProgram * program,
-    Options * options,
-    TDeclarationSpecifiers * pDeclarationSpecifiers, //<- usadao para construir {}
-    TDeclarator * pDeclatator,                        //<-dupla para entender o tipo
-    TInitializerList * p,
+static void TInitializerList_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TDeclarationSpecifiers* pDeclarationSpecifiers, //<- usadao para construir {}
+    TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
+    TInitializerList* p,
 
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     if (List_HasOneItem(p) &&
         List_Back(p)->pInitializer == NULL/* &&
                   pSpecifierQualifierList != NULL*/)
     {
-        if (options->Target == CompilerTarget_Annotated)
+        if (options->Options.Target == CompilerTarget_Annotated)
         {
             //Output_Append(fp, options, COMMENT_KEYWORD_DEFAULT);
         }
@@ -1289,12 +1391,12 @@ static void TInitializerList_CodePrint(TProgram * program,
     }
 }
 
-static void TInitializerListType_CodePrint(TProgram * program,
-    Options * options,
-    TDeclarator * pDeclarator,
-    TDeclarationSpecifiers * pDeclarationSpecifiers,
-    TInitializerListType * p,
-    StrBuilder * fp)
+static void TInitializerListType_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TDeclarator* pDeclarator,
+    TDeclarationSpecifiers* pDeclarationSpecifiers,
+    TInitializerListType* p,
+    StrBuilder* fp)
 {
 
     /*
@@ -1309,7 +1411,7 @@ static void TInitializerListType_CodePrint(TProgram * program,
         //p->InitializerList.pHead->pInitializer : NULL;
 
 
-        if (options->Target == CompilerTarget_CXX)
+        if (options->Options.Target == CompilerTarget_CXX)
         {
             TNodeClueList_CodePrint(options, &p->ClueList1, fp);
             Output_Append(fp, options, "{");
@@ -1317,11 +1419,11 @@ static void TInitializerListType_CodePrint(TProgram * program,
             TNodeClueList_CodePrint(options, &p->ClueList2, fp);
             Output_Append(fp, options, "}");
         }
-        else  if (options->Target == CompilerTarget_Annotated)
+        else  if (options->Options.Target == CompilerTarget_Annotated)
         {
             TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
-            if (options->Target == CompilerTarget_Annotated)
+            if (options->Options.Target == CompilerTarget_Annotated)
             {
                 Output_Append(fp, options, "/*@");
             }
@@ -1330,7 +1432,7 @@ static void TInitializerListType_CodePrint(TProgram * program,
             Output_Append(fp, options, "default");
 
 
-            if (options->Target == CompilerTarget_Annotated)
+            if (options->Options.Target == CompilerTarget_Annotated)
             {
                 Output_Append(fp, options, "*/");
             }
@@ -1389,13 +1491,13 @@ static void TInitializerListType_CodePrint(TProgram * program,
 }
 
 
-static void TInitializer_CodePrint(TProgram * program,
-    Options * options,
-    TDeclarator * pDeclarator,
-    TDeclarationSpecifiers * pDeclarationSpecifiers,
-    TInitializer * pTInitializer,
+static void TInitializer_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TDeclarator* pDeclarator,
+    TDeclarationSpecifiers* pDeclarationSpecifiers,
+    TInitializer* pTInitializer,
 
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     if (pTInitializer == NULL)
     {
@@ -1419,7 +1521,7 @@ static void TInitializer_CodePrint(TProgram * program,
 
 
 
-static void TPointerList_CodePrint(TProgram * program, Options * options, TPointerList * p, StrBuilder * fp)
+static void TPointerList_CodePrint(TProgram* program, PrintCodeOptions* options, TPointerList* p, StrBuilder* fp)
 {
     ForEachListItem(TPointer, pItem, p)
     {
@@ -1427,7 +1529,7 @@ static void TPointerList_CodePrint(TProgram * program, Options * options, TPoint
     }
 }
 
-static void TParameterList_CodePrint(TProgram * program, Options * options, TParameterList * p, StrBuilder * fp)
+static void TParameterList_CodePrint(TProgram* program, PrintCodeOptions* options, TParameterList* p, StrBuilder* fp)
 {
 
 
@@ -1447,7 +1549,7 @@ static void TParameterList_CodePrint(TProgram * program, Options * options, TPar
 
 }
 
-static void TParameterTypeList_CodePrint(TProgram * program, Options * options, TParameterTypeList * p, StrBuilder * fp)
+static void TParameterTypeList_CodePrint(TProgram* program, PrintCodeOptions* options, TParameterTypeList* p, StrBuilder* fp)
 {
     //Output_Append(fp, options,  "(");
     TParameterList_CodePrint(program, options, &p->ParameterList, fp);
@@ -1463,12 +1565,12 @@ static void TParameterTypeList_CodePrint(TProgram * program, Options * options, 
     //Output_Append(fp, options,  ")");
 
 }
-static void TDeclarator_CodePrint(TProgram * program, Options * options, TDeclarator * p, bool bPrintName, StrBuilder * fp);
+static void TDeclarator_CodePrint(TProgram* program, PrintCodeOptions* options, TDeclarator* p, bool bPrintName, StrBuilder* fp);
 
-static void TDirectDeclarator_CodePrint(TProgram * program, Options * options, TDirectDeclarator * pDirectDeclarator,
+static void TDirectDeclarator_CodePrint(TProgram* program, PrintCodeOptions* options, TDirectDeclarator* pDirectDeclarator,
 
     bool bPrintName,
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     if (pDirectDeclarator == NULL)
     {
@@ -1538,7 +1640,7 @@ static void TDirectDeclarator_CodePrint(TProgram * program, Options * options, T
 
 }
 
-static void TDeclarator_CodePrint(TProgram * program, Options * options, TDeclarator * p, bool bPrintName, StrBuilder * fp)
+static void TDeclarator_CodePrint(TProgram* program, PrintCodeOptions* options, TDeclarator* p, bool bPrintName, StrBuilder* fp)
 {
     TPointerList_CodePrint(program, options, &p->PointerList, fp);
     TDirectDeclarator_CodePrint(program, options, p->pDirectDeclarator, bPrintName, fp);
@@ -1546,17 +1648,17 @@ static void TDeclarator_CodePrint(TProgram * program, Options * options, TDeclar
 }
 
 //void TInitDeclarator_CodePrint(TProgram* program, 
-//Options * options, 
+//PrintCodeOptions * options, 
 //TI/nitDeclarator* p,    
 //StrBuilder* fp);
 
 
 
-void TStructDeclarator_CodePrint(TProgram * program,
-    Options * options,
-    TSpecifierQualifierList * pSpecifierQualifierList,
-    TStructDeclarator * p,
-    StrBuilder * fp)
+void TStructDeclarator_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TSpecifierQualifierList* pSpecifierQualifierList,
+    TStructDeclarator* p,
+    StrBuilder* fp)
 {
 
     TDeclarator_CodePrint(program, options, p->pDeclarator, true/*bPrintName*/, fp);
@@ -1564,16 +1666,16 @@ void TStructDeclarator_CodePrint(TProgram * program,
     {
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
 
-        if (options->Target == CompilerTarget_Annotated)
+        if (options->Options.Target == CompilerTarget_Annotated)
         {
             Output_Append(fp, options, "/*@");
         }
 
         Output_Append(fp, options, "=");
 
-        Options options2 = *options;
-        options2.bExpandMacros = true;
-        options2.bIncludeComments = false;
+        PrintCodeOptions options2 = *options;
+        options2.Options.bExpandMacros = true;
+        options2.Options.bIncludeComments = false;
 
 
         TInitializer_CodePrint(program,
@@ -1583,7 +1685,7 @@ void TStructDeclarator_CodePrint(TProgram * program,
             p->pInitializer,
             fp);
 
-        if (options->Target == CompilerTarget_Annotated)
+        if (options->Options.Target == CompilerTarget_Annotated)
         {
             Output_Append(fp, options, "*/");
         }
@@ -1592,11 +1694,11 @@ void TStructDeclarator_CodePrint(TProgram * program,
 
 }
 
-static void TStructDeclaratorList_CodePrint(TProgram * program,
-    Options * options,
-    TSpecifierQualifierList * pSpecifierQualifierList,
-    TStructDeclaratorList * p,
-    StrBuilder * fp)
+static void TStructDeclaratorList_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TSpecifierQualifierList* pSpecifierQualifierList,
+    TStructDeclaratorList* p,
+    StrBuilder* fp)
 {
 
 
@@ -1616,10 +1718,10 @@ static void TStructDeclaratorList_CodePrint(TProgram * program,
 
 }
 
-static void TStructDeclaration_CodePrint(TProgram * program,
-    Options * options,
-    TStructDeclaration * p,
-    StrBuilder * fp)
+static void TStructDeclaration_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TStructDeclaration* p,
+    StrBuilder* fp)
 {
     TSpecifierQualifierList_CodePrint(program, options, &p->SpecifierQualifierList, fp);
     TStructDeclaratorList_CodePrint(program,
@@ -1634,7 +1736,7 @@ static void TStructDeclaration_CodePrint(TProgram * program,
 
 }
 
-static void TAnyStructDeclaration_CodePrint(TProgram * program, Options * options, TAnyStructDeclaration * p, StrBuilder * fp)
+static void TAnyStructDeclaration_CodePrint(TProgram* program, PrintCodeOptions* options, TAnyStructDeclaration* p, StrBuilder* fp)
 {
     switch (p->Type)
     {
@@ -1650,20 +1752,20 @@ static void TAnyStructDeclaration_CodePrint(TProgram * program, Options * option
 
 }
 
-static void StorageSpecifier_CodePrint(TProgram * program, Options * options, TStorageSpecifier * p, StrBuilder * fp)
+static void StorageSpecifier_CodePrint(TProgram* program, PrintCodeOptions* options, TStorageSpecifier* p, StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, TokenToString(p->Token));
 }
 
-static void TFunctionSpecifier_CodePrint(TProgram * program, Options * options, TFunctionSpecifier * p, StrBuilder * fp)
+static void TFunctionSpecifier_CodePrint(TProgram* program, PrintCodeOptions* options, TFunctionSpecifier* p, StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, TokenToString(p->Token));
 }
 
 
-static void TTypeQualifier_CodePrint(TProgram * program, Options * options, TTypeQualifier * p, StrBuilder * fp)
+static void TTypeQualifier_CodePrint(TProgram* program, PrintCodeOptions* options, TTypeQualifier* p, StrBuilder* fp)
 {
     //TODO nao pode colocr isso se veio de comentario
 
@@ -1671,21 +1773,21 @@ static void TTypeQualifier_CodePrint(TProgram * program, Options * options, TTyp
 
     if (p->Token == TK_AUTO)
     {
-        if (options->Target == CompilerTarget_Annotated)
+        if (options->Options.Target == CompilerTarget_Annotated)
         {
             Output_Append(fp, options, "/*@");
         }
 
         Output_Append(fp, options, "auto");
 
-        if (options->Target == CompilerTarget_Annotated)
+        if (options->Options.Target == CompilerTarget_Annotated)
         {
             Output_Append(fp, options, "*/");
         }
     }
     else if (p->Token == TK_LEFT_SQUARE_BRACKET)
     {
-        if (options->Target == CompilerTarget_Annotated)
+        if (options->Options.Target == CompilerTarget_Annotated)
         {
             Output_Append(fp, options, "/*@");
         }
@@ -1694,7 +1796,7 @@ static void TTypeQualifier_CodePrint(TProgram * program, Options * options, TTyp
         Output_Append(fp, options, p->SizeIdentifier);
         Output_Append(fp, options, "]");
 
-        if (options->Target == CompilerTarget_Annotated)
+        if (options->Options.Target == CompilerTarget_Annotated)
         {
             Output_Append(fp, options, "*/");
         }
@@ -1714,7 +1816,7 @@ static void TTypeQualifier_CodePrint(TProgram * program, Options * options, TTyp
         //Output_Append(fp, options, p->SizeIdentifier);
         //Output_Append(fp, options, ")");
 
-        if (options->Target == CompilerTarget_Annotated)
+        if (options->Options.Target == CompilerTarget_Annotated)
         {
             //Output_Append(fp, options, "@*/");
         }
@@ -1722,7 +1824,7 @@ static void TTypeQualifier_CodePrint(TProgram * program, Options * options, TTyp
 #endif
 }
 
-static void TTypeQualifierList_CodePrint(TProgram * program, Options * options, TTypeQualifierList * p, StrBuilder * fp)
+static void TTypeQualifierList_CodePrint(TProgram* program, PrintCodeOptions* options, TTypeQualifierList* p, StrBuilder* fp)
 {
     for (int i = 0; i < p->Size; i++)
     {
@@ -1731,21 +1833,21 @@ static void TTypeQualifierList_CodePrint(TProgram * program, Options * options, 
     }
 
 }
-static void TPointer_CodePrint(TProgram * program, Options * options, TPointer * pPointer, StrBuilder * fp)
+static void TPointer_CodePrint(TProgram* program, PrintCodeOptions* options, TPointer* pPointer, StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &pPointer->ClueList0, fp);
     Output_Append(fp, options, "*");
     TTypeQualifierList_CodePrint(program, options, &pPointer->Qualifier, fp);
 }
 
-void TSpecifierQualifierList_CodePrint(TProgram * program,
-    Options * options,
-    TSpecifierQualifierList * pDeclarationSpecifiers,
-    StrBuilder * fp)
+void TSpecifierQualifierList_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TSpecifierQualifierList* pDeclarationSpecifiers,
+    StrBuilder* fp)
 {
     for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
     {
-        if (i > 0 && options->bCannonical)
+        if (i > 0 && options->Options.bCannonical)
         {
             //gerar espaco entre eles para nao grudar no modo cannonico
             Output_Append(fp, options, " ");
@@ -1789,7 +1891,7 @@ void TSpecifierQualifierList_CodePrint(TProgram * program,
 
 }
 
-void TDeclarationSpecifiers_CodePrint(TProgram * program, Options * options, TDeclarationSpecifiers * pDeclarationSpecifiers, StrBuilder * fp)
+void TDeclarationSpecifiers_CodePrint(TProgram* program, PrintCodeOptions* options, TDeclarationSpecifiers* pDeclarationSpecifiers, StrBuilder* fp)
 {
 
     for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
@@ -1837,12 +1939,12 @@ void TDeclarationSpecifiers_CodePrint(TProgram * program, Options * options, TDe
 
 }
 
-void TInitDeclarator_CodePrint(TProgram * program,
-    Options * options,
-    TDeclarator * pDeclarator,
-    TDeclarationSpecifiers * pDeclarationSpecifiers,
-    TInitDeclarator * p,
-    StrBuilder * fp)
+void TInitDeclarator_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TDeclarator* pDeclarator,
+    TDeclarationSpecifiers* pDeclarationSpecifiers,
+    TInitDeclarator* p,
+    StrBuilder* fp)
 {
     TDeclarator_CodePrint(program, options, p->pDeclarator, true/*bPrintName*/, fp);
 
@@ -1863,13 +1965,13 @@ void TInitDeclarator_CodePrint(TProgram * program,
 
 
 
-void TInitDeclaratorList_CodePrint(TProgram * program,
-    Options * options,
+void TInitDeclaratorList_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
 
-    TDeclarationSpecifiers * pDeclarationSpecifiers,
-    TInitDeclaratorList * p,
+    TDeclarationSpecifiers* pDeclarationSpecifiers,
+    TInitDeclaratorList* p,
 
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
 
     //fprintf(fp, "[");
@@ -1893,15 +1995,15 @@ void TInitDeclaratorList_CodePrint(TProgram * program,
 
 
 
-TStructUnionSpecifier* GetStructSpecifier(TProgram * program, TDeclarationSpecifiers * specifiers);
+TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifiers* specifiers);
 
 
-static bool FindListStructPattern(TProgram * program,
-    TParameter * pParameter,
+static bool FindListStructPattern(TProgram* program,
+    TParameter* pParameter,
     bool* pbItemIsPointer,
     bool* pbItemIsAutoPointer,
-    StrBuilder * itemTypeName,
-    StrBuilder * arrayName)
+    StrBuilder* itemTypeName,
+    StrBuilder* arrayName)
 {
     //Esta funcao analisa a struct e ve se ela eh compativel com o tipo vector.
     //ter size, capacity e um vector de items
@@ -1961,12 +2063,12 @@ static bool FindListStructPattern(TProgram * program,
     return bHasHead && bHasTail;
 }
 
-static bool FindVectorStructPattern(TProgram * program,
-    TParameter * pParameter,
+static bool FindVectorStructPattern(TProgram* program,
+    TParameter* pParameter,
     bool* pbItemIsPointer,
     bool* pbItemIsAutoPointer,
-    StrBuilder * itemTypeName,
-    StrBuilder * arrayName)
+    StrBuilder* itemTypeName,
+    StrBuilder* arrayName)
 {
     //Esta funcao analisa a struct e ve se ela eh compativel com o tipo vector.
     //ter size, capacity e um vector de items
@@ -2027,8 +2129,8 @@ static bool FindVectorStructPattern(TProgram * program,
                         //pStructDeclaration->SpecifierQualifierList
                         // StrBuilder itemTypeStr = STRBUILDER_INIT;
                         TTypeName* pTypeName = NULL;
-                        Options  options = OPTIONS_INIT;
-                        options.bCannonical = true;
+                        PrintCodeOptions  options = CODE_PRINT_OPTIONS_INIT;
+                        options.Options.bCannonical = true;
                         TSpecifierQualifierList_CodePrint(program, &options, &pStructDeclaration->SpecifierQualifierList, itemTypeName);
                         //StrBuilder_Destroy(&itemTypeStr);
                     }
@@ -2073,7 +2175,7 @@ const char* FindValue(const char* name, int namesize, struct TemplateVar* args, 
     return "?";
 }
 
-void StrBuilder_Template(StrBuilder * p,
+void StrBuilder_Template(StrBuilder* p,
     const char* tmpt,
     struct TemplateVar* vars,
     int size,
@@ -2174,7 +2276,7 @@ void StrBuilder_Template(StrBuilder * p,
     }
 }
 
-void GetPrefixSuffix(const char* psz, StrBuilder * prefix, StrBuilder * suffix)
+void GetPrefixSuffix(const char* psz, StrBuilder* prefix, StrBuilder* suffix)
 {
     while (*psz && *psz != '_')
     {
@@ -2192,9 +2294,9 @@ void GetPrefixSuffix(const char* psz, StrBuilder * prefix, StrBuilder * suffix)
     }
 }
 
-static int FindRuntimeID(TProgram * program,
+static int FindRuntimeID(TProgram* program,
     const char* structOrTypeName,
-    StrBuilder * idname)
+    StrBuilder* idname)
 {
     ////////////
     TDeclaration* pFinalDecl =
@@ -2253,9 +2355,9 @@ static int FindRuntimeID(TProgram * program,
 }
 
 
-static int FindIDValue(TProgram * program,
+static int FindIDValue(TProgram* program,
     const char* structOrTypeName,
-    StrBuilder * idname)
+    StrBuilder* idname)
 {
     ////////////
     TDeclaration* pFinalDecl =
@@ -2303,7 +2405,7 @@ static int FindIDValue(TProgram * program,
                         TDeclarator_GetName(pStructDeclarator->pDeclarator);
                     //if (TSpecifierQualifierList_IsAnyInteger(&pStructDeclaration->SpecifierQualifierList))
                     {
-                        Options options2 = OPTIONS_INIT;
+                        PrintCodeOptions options2 = CODE_PRINT_OPTIONS_INIT;
                         TInitializer_CodePrint(program, &options2, pStructDeclarator->pDeclarator,
                             (TDeclarationSpecifiers*)& pStructDeclaration->SpecifierQualifierList,
                             pStructDeclarator->pInitializer, idname);
@@ -2318,9 +2420,9 @@ static int FindIDValue(TProgram * program,
 }
 
 
-void FindUnionSetOf(TProgram * program,
+void FindUnionSetOf(TProgram* program,
     const char* structOrTypeName,
-    Map2 * map)
+    Map2* map)
 {
     TDeclaration* pFinalDecl =
         TProgram_GetFinalTypeDeclaration(program, structOrTypeName);
@@ -2366,19 +2468,19 @@ void FindUnionSetOf(TProgram * program,
     }
 }
 
-void UnionTypeDefault(TProgram * program,
-    Options * options,
+void UnionTypeDefault(TProgram* program,
+    PrintCodeOptions* options,
     const char* structName,
-    TParameterTypeList * pArgsOpt, //parametros
+    TParameterTypeList* pArgsOpt, //parametros
     const char* parameterName,
     const char* functionSuffix,
-    StrBuilder * fp);
-static const char* GetNullStr(TProgram * program);
+    StrBuilder* fp);
+static const char* GetNullStr(TProgram* program);
 
-static void DefaultFunctionDefinition_CodePrint(TProgram * program,
-    Options * options,
-    TDeclaration * p,
-    StrBuilder * fp)
+static void DefaultFunctionDefinition_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TDeclaration* p,
+    StrBuilder* fp)
 {
 
     //Retorno da funcao
@@ -2703,11 +2805,11 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
 
 }
 
-static void TDeclaration_CodePrint(TProgram * program,
-    Options * options,
-    TDeclaration * p,
+static void TDeclaration_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TDeclaration* p,
 
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     TDeclarationSpecifiers_CodePrint(program, options, &p->Specifiers, fp);
 
@@ -2728,16 +2830,16 @@ static void TDeclaration_CodePrint(TProgram * program,
         {
             TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
-            if (options->Target == CompilerTarget_Annotated)
+            if (options->Options.Target == CompilerTarget_Annotated)
             {
-                if (options->Target == CompilerTarget_Annotated)
+                if (options->Options.Target == CompilerTarget_Annotated)
                 {
                     StrBuilder_Append(fp, "/*@");
                 }
 
                 StrBuilder_Append(fp, "default");
 
-                if (options->Target == CompilerTarget_Annotated)
+                if (options->Options.Target == CompilerTarget_Annotated)
                 {
                     StrBuilder_Append(fp, "*/");
                 }
@@ -2754,7 +2856,7 @@ static void TDeclaration_CodePrint(TProgram * program,
 
                 Output_Append(fp, options, "}");
             }
-            else if (options->Target == CompilerTarget_CXX)
+            else if (options->Options.Target == CompilerTarget_CXX)
             {
                 StrBuilder_Append(fp, "default;");
             }
@@ -2781,17 +2883,17 @@ static void TDeclaration_CodePrint(TProgram * program,
         if (p->bDefault)
         {
 
-            if (options->Target == CompilerTarget_Annotated)
+            if (options->Options.Target == CompilerTarget_Annotated)
             {
                 TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
-                if (options->Target == CompilerTarget_Annotated)
+                if (options->Options.Target == CompilerTarget_Annotated)
                 {
                     StrBuilder_Append(fp, "/*@");
                 }
                 StrBuilder_Append(fp, "default");
 
-                if (options->Target == CompilerTarget_Annotated)
+                if (options->Options.Target == CompilerTarget_Annotated)
                 {
                     StrBuilder_Append(fp, "*/");
                 }
@@ -2807,7 +2909,7 @@ static void TDeclaration_CodePrint(TProgram * program,
 
                 Output_Append(fp, options, "}");
             }
-            else if (options->Target == CompilerTarget_CXX)
+            else if (options->Options.Target == CompilerTarget_CXX)
             {
                 TNodeClueList_CodePrint(options, &p->ClueList1, fp);
                 StrBuilder_Append(fp, " default");
@@ -2830,7 +2932,7 @@ static void TDeclaration_CodePrint(TProgram * program,
     return;
 }
 
-void TTypeName_CodePrint(TProgram * program, Options * options, TTypeName * p, StrBuilder * fp)
+void TTypeName_CodePrint(TProgram* program, PrintCodeOptions* options, TTypeName* p, StrBuilder* fp)
 {
 
     TSpecifierQualifierList_CodePrint(program, options, &p->SpecifierQualifierList, fp);
@@ -2840,11 +2942,11 @@ void TTypeName_CodePrint(TProgram * program, Options * options, TTypeName * p, S
 
 }
 
-static void TParameter_CodePrint(TProgram * program,
-    Options * options,
-    TParameter * p,
+static void TParameter_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TParameter* p,
 
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     TDeclarationSpecifiers_CodePrint(program, options, &p->Specifiers, fp);
     TDeclarator_CodePrint(program, options, &p->Declarator, true/*bPrintName*/, fp);
@@ -2858,20 +2960,20 @@ static void TParameter_CodePrint(TProgram * program,
 
 }
 
-static void TEofDeclaration_CodePrint(TProgram * program,
-    Options * options,
-    TEofDeclaration * p,
+static void TEofDeclaration_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TEofDeclaration* p,
 
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 }
 
-static void TStaticAssertDeclaration_CodePrint(TProgram * program,
-    Options * options,
-    TStaticAssertDeclaration * p,
+static void TStaticAssertDeclaration_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TStaticAssertDeclaration* p,
 
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "_StaticAssert");
@@ -2892,7 +2994,7 @@ static void TStaticAssertDeclaration_CodePrint(TProgram * program,
 
 }
 
-static void TGroupDeclaration_CodePrint(TProgram * program, Options * options, TGroupDeclaration * p, StrBuilder * fp)
+static void TGroupDeclaration_CodePrint(TProgram* program, PrintCodeOptions* options, TGroupDeclaration* p, StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "#pragma region cprime");
@@ -3003,7 +3105,7 @@ static void TGroupDeclaration_CodePrint(TProgram * program, Options * options, T
     Output_Append(fp, options, "#pragma endregion cprime\n");
 }
 
-static void TAnyDeclaration_CodePrint(TProgram * program, Options * options, TAnyDeclaration * pDeclaration, StrBuilder * fp)
+static void TAnyDeclaration_CodePrint(TProgram* program, PrintCodeOptions* options, TAnyDeclaration* pDeclaration, StrBuilder* fp)
 {
     switch (pDeclaration->Type)
     {
@@ -3031,7 +3133,7 @@ static void TAnyDeclaration_CodePrint(TProgram * program, Options * options, TAn
 
 }
 
-static void TDesignatorList_CodePrint(TProgram * program, Options * options, TDesignatorList * p, StrBuilder * fp)
+static void TDesignatorList_CodePrint(TProgram* program, PrintCodeOptions* options, TDesignatorList* p, StrBuilder* fp)
 {
 
 
@@ -3050,13 +3152,13 @@ static void TDesignatorList_CodePrint(TProgram * program, Options * options, TDe
 }
 
 
-static void TInitializerListItem_CodePrint(TProgram * program,
-    Options * options,
-    TDeclarator * pDeclarator,
-    TDeclarationSpecifiers * pDeclarationSpecifiers,
-    TInitializerListItem * p,
+static void TInitializerListItem_CodePrint(TProgram* program,
+    PrintCodeOptions* options,
+    TDeclarator* pDeclarator,
+    TDeclarationSpecifiers* pDeclarationSpecifiers,
+    TInitializerListItem* p,
 
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     if (p->DesignatorList.pHead != NULL)
     {
@@ -3075,11 +3177,14 @@ static void TInitializerListItem_CodePrint(TProgram * program,
 
 
 
-void TProgram_PrintCodeToFile(TProgram * pProgram,
-    Options * options,
+void TProgram_PrintCodeToFile(TProgram* pProgram,
+    Options* options0,
     const char* outFileName,
     const char* inputFileName)
 {
+    PrintCodeOptions options = CODE_PRINT_OPTIONS_INIT;
+    options.Options = *options0;
+
     global_lambda_counter = 0;
 
     FILE* fp = fopen(outFileName, "w");
@@ -3110,7 +3215,7 @@ void TProgram_PrintCodeToFile(TProgram * pProgram,
         StrBuilder_Clear(&pProgram->sbPreDeclaration);
 
         StrBuilder sbDeclaration = STRBUILDER_INIT;
-        TAnyDeclaration_CodePrint(pProgram, options, pItem, &sbDeclaration);
+        TAnyDeclaration_CodePrint(pProgram, &options, pItem, &sbDeclaration);
 
         StrBuilder_Append(&sb, pProgram->sbPreDeclaration.c_str);
         StrBuilder_Append(&sb, sbDeclaration.c_str);
@@ -3128,11 +3233,12 @@ void TProgram_PrintCodeToFile(TProgram * pProgram,
     fclose(fp);
 }
 
-void TProgram_PrintCodeToString(TProgram * pProgram,
-    Options * options,
-    StrBuilder * output)
+void TProgram_PrintCodeToString(TProgram* pProgram,
+    Options* options0,
+    StrBuilder* output)
 {
-
+    PrintCodeOptions options = CODE_PRINT_OPTIONS_INIT;
+    options.Options = *options0;
     global_lambda_counter = 0;
     int k = 0;
 
@@ -3147,7 +3253,7 @@ void TProgram_PrintCodeToString(TProgram * pProgram,
         StrBuilder_Clear(&pProgram->sbPreDeclaration);
 
         StrBuilder sbDeclaration = STRBUILDER_INIT;
-        TAnyDeclaration_CodePrint(pProgram, options, pItem, &sbDeclaration);
+        TAnyDeclaration_CodePrint(pProgram, &options, pItem, &sbDeclaration);
 
         StrBuilder_Append(&sb, pProgram->sbPreDeclaration.c_str);
         StrBuilder_Append(&sb, sbDeclaration.c_str);
@@ -3165,7 +3271,7 @@ void TProgram_PrintCodeToString(TProgram * pProgram,
 }
 
 
-static const char* GetFreeStr(TProgram * program)
+static const char* GetFreeStr(TProgram* program)
 {
     bool bCustomFree =
         SymbolMap_FindFunction(&program->GlobalScope, "Free") != NULL ||
@@ -3174,7 +3280,7 @@ static const char* GetFreeStr(TProgram * program)
     return bCustomFree ? "Free" : "free";
 }
 
-static const char* GetMallocStr(TProgram * program)
+static const char* GetMallocStr(TProgram* program)
 {
     bool bCustomMalloc =
         SymbolMap_FindFunction(&program->GlobalScope, "Malloc") != NULL ||
@@ -3183,7 +3289,7 @@ static const char* GetMallocStr(TProgram * program)
     return bCustomMalloc ? "Malloc" : "malloc";
 }
 
-static const char* GetReallocStr(TProgram * program)
+static const char* GetReallocStr(TProgram* program)
 {
     bool bCustomMalloc =
         SymbolMap_FindFunction(&program->GlobalScope, "Realloc") != NULL ||
@@ -3193,7 +3299,7 @@ static const char* GetReallocStr(TProgram * program)
 }
 
 
-static const char* GetFalseStr(TProgram * program)
+static const char* GetFalseStr(TProgram* program)
 {
     bool bHasFalse =
         MacroMap_Find(&program->Defines, "false") != NULL;
@@ -3201,7 +3307,7 @@ static const char* GetFalseStr(TProgram * program)
     return bHasFalse ? "false" : "0";
 }
 
-static const char* GetNullStr(TProgram * program)
+static const char* GetNullStr(TProgram* program)
 {
     bool bHasFalse =
         MacroMap_Find(&program->Defines, "NULL") != NULL;
@@ -3211,10 +3317,10 @@ static const char* GetNullStr(TProgram * program)
 
 
 
-static void PrintIfNotNullLn(TProgram * program,
-    Options * options,
+static void PrintIfNotNullLn(TProgram* program,
+    PrintCodeOptions* options,
     const char* pInitExpressionText, //(x->p->i = 0)    
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     bool bHasNULL =
         MacroMap_Find(&program->Defines, "NULL") != NULL;
@@ -3234,18 +3340,18 @@ static void PrintIfNotNullLn(TProgram * program,
 }
 
 
-static bool FindHighLevelFunction(TProgram * program,
-    Options * options,
-    TSpecifierQualifierList * pSpecifierQualifierList,//<-dupla para entender o tipo
-    TDeclarator * pDeclatator,                        //<-dupla para entender o tipo
-    TParameterTypeList * pArgsOpt, //parametros do create /init
-    TInitializer * pInitializerOpt,
+static bool FindHighLevelFunction(TProgram* program,
+    PrintCodeOptions* options,
+    TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
+    TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
+    TParameterTypeList* pArgsOpt, //parametros do create /init
+    TInitializer* pInitializerOpt,
     const char* pInitExpressionText, //(x->p->i = 0)    
     const char* pszAutoPointerLenExpressionOpt,
     const Action action,
     Search search,
     const char* nameToFind,
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     if (nameToFind == NULL)
     {
@@ -3717,7 +3823,7 @@ static bool FindHighLevelFunction(TProgram * program,
         if (pInitializerOpt)
         {
             StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "/*%s=*/", pInitExpressionText);
-            Options options2 = *options;
+            PrintCodeOptions options2 = *options;
             TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
             bComplete = true;
         }
@@ -3734,7 +3840,7 @@ static bool FindHighLevelFunction(TProgram * program,
 
 
 //Verifica se tem "cara" de ser o vector
-static bool IsVector(TStructUnionSpecifier * pStructUnionSpecifier)
+static bool IsVector(TStructUnionSpecifier* pStructUnionSpecifier)
 {
     bool bHasVector = false;
     bool bHasSize = false;
@@ -3789,13 +3895,13 @@ static bool IsVector(TStructUnionSpecifier * pStructUnionSpecifier)
     return bHasSize && bHasCapacity&& bHasVector;
 }
 
-void UnionTypeDefault(TProgram * program,
-    Options * options,
+void UnionTypeDefault(TProgram* program,
+    PrintCodeOptions* options,
     const char* structName,
-    TParameterTypeList * pArgsOpt, //parametros
+    TParameterTypeList* pArgsOpt, //parametros
     const char* parameterName0,
     const char* functionSuffix,
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     Map2 map = MAPSTRINGTOPTR_INIT;
     FindUnionSetOf(program, structName, &map);
@@ -3885,19 +3991,19 @@ void UnionTypeDefault(TProgram * program,
     Map2_Destroy(&map, NULL); //LEAK?
 }
 
-void InstanciateDestroy2(TProgram * program,
-    Options * options,
-    TSpecifierQualifierList * pSpecifierQualifierList,//<-dupla para entender o tipo
-    TDeclarator * pDeclatator,                        //<-dupla para entender o tipo
-    TInitializer * pInitializerOpt, //usado para inicializacao estatica
-    TParameterTypeList * pArgsOpt, //parametros do create /init
+void InstanciateDestroy2(TProgram* program,
+    PrintCodeOptions* options,
+    TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
+    TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
+    TInitializer* pInitializerOpt, //usado para inicializacao estatica
+    TParameterTypeList* pArgsOpt, //parametros do create /init
     const char* pInitExpressionText, //(x->p->i = 0)    
     const char* pszAutoPointerLenExpressionOpt, //expressao usada para definir o tamanho de um spaw de auto pointers
                 //se passar null eh pq nao interessa
     const Action action,
     Search search,
     bool* pbHasInitializers,
-    StrBuilder * fp)
+    StrBuilder* fp)
 {
     if (pInitializerOpt && pbHasInitializers)
     {
@@ -4518,7 +4624,7 @@ void InstanciateDestroy2(TProgram * program,
                 if (pInitializerOpt)
                 {
                     StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "%s = ", pInitExpressionText);
-                    Options options2 = *options;
+                    PrintCodeOptions options2 = *options;
                     TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
                     StrBuilder_Append(fp, ";\n");
                 }
@@ -4549,7 +4655,7 @@ void InstanciateDestroy2(TProgram * program,
                 if (pInitializerOpt)
                 {
                     StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "/*%s=*/", pInitExpressionText);
-                    Options options2 = *options;
+                    PrintCodeOptions options2 = *options;
                     TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
                 }
                 else
@@ -5003,7 +5109,7 @@ void InstanciateDestroy2(TProgram * program,
             if (pInitializerOpt)
             {
                 StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "%s = ", pInitExpressionText);
-                Options options2 = *options;
+                PrintCodeOptions options2 = *options;
                 TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
                 StrBuilder_Append(fp, ";\n");
             }
@@ -5030,7 +5136,7 @@ void InstanciateDestroy2(TProgram * program,
             if (pInitializerOpt)
             {
                 StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "%s = ", pInitExpressionText);
-                Options options2 = *options;
+                PrintCodeOptions options2 = *options;
                 TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
                 StrBuilder_Append(fp, ";");
             }
@@ -5057,7 +5163,7 @@ void InstanciateDestroy2(TProgram * program,
             if (pInitializerOpt)
             {
                 StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "%s = ", pInitExpressionText);
-                Options options2 = *options;
+                PrintCodeOptions options2 = *options;
                 TInitializer_CodePrint(program, &options2, pDeclatator, (TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
             }
             else
@@ -5104,7 +5210,7 @@ bool IsSuffix(const char* s, const char* suffix)
 
 }
 
-TStructUnionSpecifier* GetStructSpecifier(TProgram * program, TDeclarationSpecifiers * specifiers)
+TStructUnionSpecifier* GetStructSpecifier(TProgram* program, TDeclarationSpecifiers* specifiers)
 {
     if (specifiers == NULL)
         return NULL;

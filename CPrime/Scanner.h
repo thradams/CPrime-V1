@@ -1,12 +1,13 @@
 
 #pragma once
+#pragma source
 
 #include "Array.h"
 #include "BasicScanner.h"
 #include "Map.h"
 #include "List.h"
 #include "Macro.h"
-
+#include "Options.h"
 
 typedef struct
 {
@@ -55,6 +56,40 @@ void TScannerItemList_Swap(TScannerItemList* a, TScannerItemList* b);
 void TScannerItemList_Clear(TScannerItemList* p);
 void TScannerItemList_PopFront(TScannerItemList* p);
 
+struct FileNode
+{
+  char* /*@auto*/ Key;
+  struct FileNode* /*@auto*/ pNext;
+};
+
+
+struct FileNode* FileNode_Create(const char* key);
+
+void FileNode_Delete(struct FileNode* p);
+struct FileNodeMap
+{
+  int Capacity;
+  struct FileNode* /*@auto*/* /*@auto*/ /*@[Capacity]*/ pNodes;
+};
+
+void FileNodeMap_Destroy(struct FileNodeMap* p);
+
+
+struct FileNode* FileNodeMap_Lookup(struct FileNodeMap* t, const char* key);
+
+void FileNodeMap_Insert(struct FileNodeMap* t, struct FileNode* pNewNode);
+
+struct FileNodeList
+{
+  struct FileNode* /*@auto*/ pHead, * pTail;
+};
+void FileNodeList_Swap(struct FileNodeList* a, struct FileNodeList* b);
+void FileNodeList_Destroy(struct FileNodeList* pItems);
+void FileNodeList_PushItem(struct FileNodeList* pItems,
+    struct FileNode* pItem);
+void FileNodeList_PushBack(struct FileNodeList* pItems,
+  const char* fileName);
+
 typedef enum
 {
     NONE, // inclui
@@ -92,7 +127,7 @@ typedef struct
   struct StrArray IncludeDir;
 
   //Lista de diretorios de include
-  struct StrArray Sources;
+  struct FileNodeList Sources;
 
   //string para debug
   StrBuilder DebugString;
@@ -105,6 +140,8 @@ typedef struct
   bool bError;
 
   TScannerItemList AcumulatedTokens;
+
+  Options* pOptions;
   ///////////////////////////////////////////////////
 } Scanner;
 
@@ -142,7 +179,7 @@ int EvalExpression(const char* s, Scanner* pScanner);
 void Scanner_PrintDebug(Scanner* pScanner);
 void Scanner_GetError(Scanner* pScanner, StrBuilder* str);
 
-void GetSources(const char* fileIn, struct StrArray* sources);
+void GetSources(const char* configFile, const char* fileIn, struct FileNodeList* sources);
 void PrintPreprocessedToFile(const char* fileIn,
   const char* configFileName);
 

@@ -1,4 +1,5 @@
 #pragma once
+#pragma source
 
 #include "StringEx.h"
 #include "StrBuilder.h"

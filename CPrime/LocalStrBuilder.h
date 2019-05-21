@@ -1,4 +1,5 @@
 #pragma once
+#pragma source
 
 #include <stdlib.h>
 

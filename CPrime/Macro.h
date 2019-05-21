@@ -1,4 +1,6 @@
 #pragma once
+#pragma source
+
 #include <stdbool.h>
 #include "PPToken.h"
 #include "TokenArray.h"

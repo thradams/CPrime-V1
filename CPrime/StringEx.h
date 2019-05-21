@@ -1,5 +1,7 @@
 
 #pragma once
+#pragma source
+
 #include "Mem.h"
 
 #include <string.h>

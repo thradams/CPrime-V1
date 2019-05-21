@@ -30,3 +30,9 @@
 /CPrime/Tests/ScannerTest/x64/Debug
 /CPrime/Tests/StreamTest/x64/Debug
 /CPrime/x64/Debug
+/CPrime/obj/x86/Release
+/CPrime/Hello/Release
+/CPrime/Tests/BasicScannerTest/Release
+/CPrime/Tests/ParserTest/Release
+/CPrime/Tests/ScannerTest/Release
+/CPrime/Tests/StreamTest/Release

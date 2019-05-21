@@ -41,8 +41,7 @@
 #pragma source "SymbolMap.c"
 #pragma source "TokenArray.h"
 #pragma source "TokenArray.c"
-#pragma source "Amalgamation.h"
-#pragma source "Amalgamation.c"
+
 
 //#if UNIT_TEST
 //#pragma source "UnitTest.c"

@@ -1,4 +1,5 @@
 #pragma once
+#pragma source
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -6,9 +7,18 @@
 #include "StrBuilder.h"
 #include "Macro.h"
 #include "Map.h"
+#include "Options.h"
 
 
+struct IntegerStack
+{
+  int* /*@auto*/ /*@[Size]*/ pData;
+  int Size;
+  int Capacity;
+};
 
+
+#define INTEGER_STACK_INIT {0,0,0}
 typedef enum
 {
   SearchNone,
@@ -18,34 +28,23 @@ typedef enum
   SearchDelete,
 } Search;
 
-enum CompilerTarget
-{
-  CompilerTarget_Annotated,
-  CompilerTarget_Preprocessed,
-  CompilerTarget_CXX  
-};
 
-typedef struct Options
+typedef struct PrintCodeOptions
 {
+  Options Options;
+
   ///////////
   //controle interno
+  struct IntegerStack Stack;// = 0;
   bool bInclude;// = true;
-  int IncludeLevel;// = 0;
-  ////////////
-  bool bExpandMacros;
-  bool bIncludeComments /*@=1*/;
-
-  enum CompilerTarget Target;
-
   int IdentationLevel;
+  //
   
-  //imprime na forma para declarar um tipo, remove o resto
-  bool bCannonical;
-} Options;
+} PrintCodeOptions;
 
-#define OPTIONS_INIT {true, 0,  false, true, CompilerTarget_Annotated,  0, false}
+#define CODE_PRINT_OPTIONS_INIT {OPTIONS_INIT, INTEGER_STACK_INIT, true, 0}
 
-void Options_Destroy(Options* options);
+void PrintCodeOptions_Destroy(PrintCodeOptions* options);
 
 void TProgram_PrintCodeToFile(TProgram* pProgram,
   Options* options,
@@ -53,22 +52,22 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
   const char* userpath);
 
 void TProgram_PrintCodeToString(TProgram* pProgram,
-  Options* options,
+    Options* options,
   StrBuilder* output);
 
 
-void TTypeName_CodePrint(TProgram* program, Options* options, TTypeName* p, StrBuilder* fp);
+void TTypeName_CodePrint(TProgram* program, PrintCodeOptions* options, TTypeName* p, StrBuilder* fp);
 
 
 bool IsSuffix(const char* s, const char* suffix);
 void TSpecifierQualifierList_CodePrint(TProgram* program,
-  Options* options,
+  PrintCodeOptions* options,
   TSpecifierQualifierList* pDeclarationSpecifiers,
 
   StrBuilder* fp);
 
 
-void TDeclarationSpecifiers_CodePrint(TProgram* program, Options* options, TDeclarationSpecifiers* pDeclarationSpecifiers, StrBuilder* fp);
+void TDeclarationSpecifiers_CodePrint(TProgram* program, PrintCodeOptions* options, TDeclarationSpecifiers* pDeclarationSpecifiers, StrBuilder* fp);
 
 typedef enum
 {
@@ -82,7 +81,7 @@ typedef enum
 } Action;
 
 void InstanciateDestroy2(TProgram* program,
-  Options* options,
+  PrintCodeOptions* options,
   TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
   TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
   TInitializer* pInitializer,
