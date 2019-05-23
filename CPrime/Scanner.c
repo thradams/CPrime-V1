@@ -28,7 +28,7 @@ struct FileNode* FileNode_Create(const char* key)
 
 void FileNode_Delete(struct FileNode* p) /*@default*/
 {
-    if (p)
+    if (p != NULL)
     {
         Free((void*)p->Key);
         FileNode_Delete(p->pNext);
@@ -44,7 +44,7 @@ void FileNodeMap_Destroy(struct FileNodeMap* p) /*@default*/
     {
         FileNode_Delete(p->pNodes[i]);
     }
-    free((void*)p->pNodes);
+    Free((void*)p->pNodes);
 }
 
 static unsigned int HashCode(const char* Key)
@@ -93,7 +93,7 @@ void FileNodeMap_Insert(struct FileNodeMap* t, struct FileNode* pNewNode)
             capacity = 100;
         }
 
-        t->pNodes = (struct FileNode**)malloc(sizeof(struct FileNode*) * capacity);
+        t->pNodes = (struct FileNode**)Malloc(sizeof(struct FileNode*) * capacity);
         if (t->pNodes != NULL)
         {
             memset(t->pNodes, 0, sizeof(struct FileNode*) * capacity);
@@ -150,7 +150,7 @@ void FileNodeList_PushBack(struct FileNodeList* pItems,
 
 void FileNodeList_PushItem(struct FileNodeList* pItems,
     struct FileNode* pItem)
-{    
+{
     if (pItems->pHead == 0)
     {
         pItems->pHead = pItem;
@@ -335,7 +335,7 @@ enum PPTokenType TokenToPPToken(Tokens token)
 
 TFile* TFile_Create() /*@default*/
 {
-    TFile* p = (TFile*)Malloc(sizeof * p);
+    TFile *p = (TFile*) Malloc(sizeof * p);
     if (p != NULL)
     {
         p->FullPath = NULL;
@@ -393,7 +393,7 @@ void TFileArray_Reserve(TFileArray * p, int n) /*@default*/
     if (n > p->Capacity)
     {
         TFile** pnew = p->pItems;
-        pnew = (TFile * *)Realloc(pnew, n * sizeof(TFile*));
+        pnew = (TFile**)Realloc(pnew, n * sizeof(TFile*));
         if (pnew)
         {
             p->pItems = pnew;
@@ -2092,19 +2092,18 @@ void Scanner_BuyTokens(Scanner * pScanner)
                     Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
 
                     String* /*@auto*/ fileName = NULL;
-                    
+
                     if (pBasicScanner->currentItem.token == TK_STRING_LITERAL)
                     {
                         lexeme = pBasicScanner->currentItem.lexeme.c_str;
                         fileName = StrDup(lexeme + 1);
                         fileName[strlen(fileName) - 1] = 0;
 
-                        //bool bHasFullPath = false;
-                        //String* fullPath=0;
-                        //bHasFullPath = Scanner_GetFullPath(pScanner, fileName, true, &fullPath);
-                        
-                        //Free(fileName);
-                        //fileName = fullPath;//moved
+                        bool bHasFullPath = false;
+                        String* fullPath=0;
+                        bHasFullPath = Scanner_GetFullPath(pScanner, fileName, true, &fullPath);
+                        Free(fileName);
+                        fileName = fullPath;//moved
                         BasicScanner_Match(pBasicScanner);
                     }
                     else
@@ -2113,8 +2112,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
                         fileName[strlen(pScanner->stack->stream.NameOrFullPath) - 1] = 'c';
                     }
 
-                    
-                    
+
+
 
                     FileNodeList_PushBack(&pScanner->Sources, fileName);
 
@@ -2639,28 +2638,33 @@ void PrintPreprocessedToString2(StrBuilder * fp, const char* input, const char* 
     Scanner_Destroy(&scanner);
 }
 
-void GetSources(const char* configFile, 
+
+
+void GetSources(const char* configFile,
     const char* fileIn,
+    bool bRecursiveSearch,
     struct FileNodeList* pFileNodeList)
 {
+    
     String* /*@auto*/ fullFileNamePath = NULL;
     GetFullPath(fileIn, &fullFileNamePath);
     Scanner scanner;
-    
+
     Scanner_Init(&scanner);
     Options options = OPTIONS_INIT;
     options.bAmalgamate = true;
     scanner.pOptions = &options;
-    
+
     Scanner_IncludeFile(&scanner, fullFileNamePath, FileIncludeTypeFullPath,
         false);
-    
+
     if (configFile != NULL)
     {
         Scanner_IncludeFile(&scanner, configFile, FileIncludeTypeFullPath,
             false);
+        TFileMap_DeleteItem(&scanner.FilesIncluded, configFile);
     }
-    
+
 
     while (Scanner_TokenAt(&scanner, 0) != TK_EOF)
     {
@@ -2668,53 +2672,79 @@ void GetSources(const char* configFile,
     }
 
     struct FileNodeMap map = { 0 };
-    for (;;)
+    if (bRecursiveSearch)
     {
-        struct FileNode* pSources = scanner.Sources.pHead;
-        scanner.Sources.pHead = NULL;
-        scanner.Sources.pTail = NULL;
-        struct FileNode* pCurrent = pSources;
-        while (pCurrent)
+        for (;;)
         {
-            struct FileNode* pNext = pCurrent->pNext;
-            if (FileNodeMap_Lookup(&map, pCurrent->Key) == 0)
+            struct FileNode* pSources = scanner.Sources.pHead;
+            scanner.Sources.pHead = NULL;
+            scanner.Sources.pTail = NULL;
+            struct FileNode* pCurrent = pSources;
+            while (pCurrent)
             {
-                FileNodeMap_Insert(&map, pCurrent);
-                Scanner_IncludeFile(&scanner,
-                    pCurrent->Key,
-                    FileIncludeTypeFullPath,
-                    false);
-            }
-            else
-            {
-                FileNode_Delete(pCurrent);
-            }
+                struct FileNode* pNext = pCurrent->pNext;
+                if (FileNodeMap_Lookup(&map, pCurrent->Key) == 0)
+                {
+                    FileNodeMap_Insert(&map, pCurrent);
+                    Scanner_IncludeFile(&scanner,
+                        pCurrent->Key,
+                        FileIncludeTypeFullPath,
+                        false);
+                }
+                else
+                {
+                    FileNode_Delete(pCurrent);
+                }
 
-            pCurrent = pNext;
+                pCurrent = pNext;
+            }
+            //TODO Nao esta recursivo!
+            //tem que criar um novo scanner e passar o filemap p ele.
+            if (scanner.Sources.pHead == NULL)
+                break;
         }
-        if (scanner.Sources.pHead == NULL)
-            break;
+
+
+        for (int j = 0; j < scanner.FilesIncluded.buckets.size; j++)
+        {
+            Bucket* pBucket = scanner.FilesIncluded.buckets.data[j];
+            if (pBucket)
+            {
+                for (int i = 0; i < pBucket->size; i++)
+                {
+                    TFile* pFile = (TFile*)pBucket->data[i];
+                    
+                    bool bIncludeDir = false;
+                    for (int k = 0; k < scanner.IncludeDir.size; k++)
+                    {
+                        if (strstr(pFile->FullPath, scanner.IncludeDir.pItems[k]) != 0)
+                        {
+                            bIncludeDir = true;
+                            break;
+                        }
+                    }
+
+                    if (!bIncludeDir)
+                    {
+                        
+                        FileNodeList_PushBack(pFileNodeList, pFile->FullPath);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        FileNodeList_Swap(pFileNodeList, &scanner.Sources);
     }
 
-    for (int i = 0; i < map.Capacity; i++)
-    {
-        struct FileNode* pCurrent = map.pNodes[i];
-        while (pCurrent != NULL)
-        {
-            struct FileNode* pNext = pCurrent->pNext;
-            pCurrent->pNext = NULL;
-            FileNodeList_PushItem(pFileNodeList, pCurrent);
-            map.pNodes[i] = 0;
-            pCurrent = pNext;
-        }
-    }
-    //FileNodeList_Swap(pFileNodeList, &scanner.Sources);
 
+
+
+    FileNodeMap_Destroy(&map);
     Scanner_Destroy(&scanner);
     Free(fullFileNamePath);
 }
-
-
 
 void PrintPreprocessedToConsole(const char* fileIn,
     const char* configFileName)

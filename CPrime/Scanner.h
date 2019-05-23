@@ -179,7 +179,7 @@ int EvalExpression(const char* s, Scanner* pScanner);
 void Scanner_PrintDebug(Scanner* pScanner);
 void Scanner_GetError(Scanner* pScanner, StrBuilder* str);
 
-void GetSources(const char* configFile, const char* fileIn, struct FileNodeList* sources);
+void GetSources(const char* configFile, const char* fileIn, bool bRecursiveSearch, struct FileNodeList* sources);
 void PrintPreprocessedToFile(const char* fileIn,
   const char* configFileName);
 

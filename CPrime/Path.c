@@ -198,6 +198,33 @@ bool FileExists(const char* fullPath)
     return bFileExists;
 }
 
+void GetFullDirS(const char* fileName, char* out, int len)
+{
+    char buffer[CPRIME_MAX_PATH];
+
+#if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
+
+    _fullpath(
+        buffer,
+        fileName,
+        CPRIME_MAX_PATH);
+
+
+#else
+    realpath(fileName, buffer);
+#endif
+
+    char drive[CPRIME_MAX_DRIVE];
+    char dir[CPRIME_MAX_DIR];
+    char fname[CPRIME_MAX_FNAME];
+    char ext[CPRIME_MAX_EXT];
+    SplitPath(buffer, drive, dir, fname, ext); // C4996
+    
+    
+    strcpy(out, drive);
+    strcat(out, dir);
+}
+
 
 void GetFullDir(const char* fileName, char** out)
 {
@@ -260,3 +287,33 @@ void GetFullPath(const char* fileName, char** out)
     *out = StrBuilder_Release(&s);
     StrBuilder_Destroy(&s);
 }
+
+void GetFullPathS(const char* fileName, char* out)
+{
+    char buffer[CPRIME_MAX_PATH];
+
+#if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
+
+
+    _fullpath(
+        buffer,
+        fileName,
+        CPRIME_MAX_PATH);
+
+#else
+    realpath(fileName, buffer);
+#endif
+
+    char drive[CPRIME_MAX_DRIVE];
+    char dir[CPRIME_MAX_DIR];
+    char fname[CPRIME_MAX_FNAME];
+    char ext[CPRIME_MAX_EXT];
+    SplitPath(buffer, drive, dir, fname, ext); // C4996
+
+    strcpy(out, drive);
+    strcat(out, dir);
+    strcat(out, fname);
+    strcat(out, ext);
+    
+}
+

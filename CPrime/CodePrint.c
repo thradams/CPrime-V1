@@ -11,7 +11,7 @@
 
 void IntegerStack_Init(struct IntegerStack* pItems) /*@default*/
 {
-    pItems->pData = 0;
+    pItems->pData = NULL;
     pItems->Size = 0;
     pItems->Capacity = 0;
 }
@@ -26,7 +26,7 @@ void IntegerStack_PushBack(struct IntegerStack* pItems, int i) /*@default*/
             n = 1;
         }
         int* pnew = pItems->pData;
-        pnew = (int*)realloc(pnew, n * sizeof(int));
+        pnew = (int*)Realloc(pnew, n * sizeof(int));
         if (pnew)
         {
             pItems->pData = pnew;
@@ -49,7 +49,7 @@ void IntegerStack_Pop(struct IntegerStack* pItems)
 
 void IntegerStack_Destroy(struct IntegerStack* pItems) /*@default*/
 {
-    free((void*)pItems->pData);
+    Free((void*)pItems->pData);
 }
 
 static int global_lambda_counter = 0;
@@ -57,6 +57,7 @@ static const char* GetReallocStr(TProgram* program);
 
 void PrintCodeOptions_Destroy(PrintCodeOptions* options) /*@default*/
 {
+    Options_Destroy(&options->Options);
     IntegerStack_Destroy(&options->Stack);
 }
 

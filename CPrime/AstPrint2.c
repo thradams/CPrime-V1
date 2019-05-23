@@ -129,6 +129,153 @@ void TScannerItemList_PrintXML(TScannerItemList* list,
     }
 }
 
+void TBinaryExpression_PrintXML(TBinaryExpression* p, struct PrintXMLContext* ctx)
+{
+}
+
+void TPrimaryExpressionLambda_PrintXML(TPrimaryExpressionLambda* p, struct PrintXMLContext* ctx)
+{
+}
+void TUnaryExpressionOperator_PrintXML(TUnaryExpressionOperator* p, struct PrintXMLContext* ctx)
+{
+}
+void TCastExpressionType_PrintXML(TCastExpressionType* p, struct PrintXMLContext* ctx)
+{
+}
+void TPrimaryExpressionValue_PrintXML(TPrimaryExpressionValue* p, struct PrintXMLContext* ctx)
+{
+}
+
+void TPostfixExpressionCore_PrintXML(TPostfixExpressionCore* p, struct PrintXMLContext* ctx)
+{
+}
+
+void TPrimaryExpressionLiteral_PrintXML(TPrimaryExpressionLiteral* p, struct PrintXMLContext* ctx)
+{
+}
+
+void TTernaryExpression_PrintXML(TTernaryExpression* p, struct PrintXMLContext* ctx)
+{
+}
+
+void TExpression_PrintXML(TExpression* p, struct PrintXMLContext* ctx) /*@default*/
+{
+    switch (p->Type)
+    {
+    case TBinaryExpression_ID:
+        TBinaryExpression_PrintXML((TBinaryExpression*)p, ctx);
+        break;
+    case TPrimaryExpressionLambda_ID:
+        TPrimaryExpressionLambda_PrintXML((TPrimaryExpressionLambda*)p, ctx);
+        break;
+    case TUnaryExpressionOperator_ID:
+        TUnaryExpressionOperator_PrintXML((TUnaryExpressionOperator*)p, ctx);
+        break;
+    case TCastExpressionType_ID:
+        TCastExpressionType_PrintXML((TCastExpressionType*)p, ctx);
+        break;
+    case TPrimaryExpressionValue_ID:
+        TPrimaryExpressionValue_PrintXML((TPrimaryExpressionValue*)p, ctx);
+        break;
+    case TPostfixExpressionCore_ID:
+        TPostfixExpressionCore_PrintXML((TPostfixExpressionCore*)p, ctx);
+        break;
+    case TPrimaryExpressionLiteral_ID:
+        TPrimaryExpressionLiteral_PrintXML((TPrimaryExpressionLiteral*)p, ctx);
+        break;
+    case TTernaryExpression_ID:
+        TTernaryExpression_PrintXML((TTernaryExpression*)p, ctx);
+        break;
+    default:
+        break;
+    }
+}
+
+void TForStatement_PrintXML(TForStatement* p, struct PrintXMLContext* ctx)
+{
+}
+
+void TJumpStatement_PrintXML(TJumpStatement* p, struct PrintXMLContext* ctx)
+{
+}
+
+
+void TExpressionStatement_PrintXML(TExpressionStatement* p, struct PrintXMLContext* ctx)
+{
+}
+
+
+void TIfStatement_PrintXML(TIfStatement* p, struct PrintXMLContext* ctx)
+{
+}
+
+
+void TWhileStatement_PrintXML(TWhileStatement* p, struct PrintXMLContext* ctx)
+{
+}
+
+
+void TSwitchStatement_PrintXML(TSwitchStatement* p, struct PrintXMLContext* ctx)
+{
+}
+
+
+void TAsmStatement_PrintXML(TAsmStatement* p, struct PrintXMLContext* ctx)
+{
+}
+
+
+void TDoStatement_PrintXML(TDoStatement* p, struct PrintXMLContext* ctx)
+{
+}
+
+
+void TLabeledStatement_PrintXML(TLabeledStatement* p, struct PrintXMLContext* ctx)
+{
+}
+
+void TCompoundStatement_PrintXML(TCompoundStatement* p, struct PrintXMLContext* ctx)
+{
+}
+
+void TStatement_PrintXML(TStatement* p, struct PrintXMLContext* ctx) /*@default*/
+{
+    switch (p->Type)
+    {
+    case TForStatement_ID:
+        TForStatement_PrintXML((TForStatement*)p, ctx);
+        break;
+    case TJumpStatement_ID:
+        TJumpStatement_PrintXML((TJumpStatement*)p, ctx);
+        break;
+    case TExpressionStatement_ID:
+        TExpressionStatement_PrintXML((TExpressionStatement*)p, ctx);
+        break;
+    case TIfStatement_ID:
+        TIfStatement_PrintXML((TIfStatement*)p, ctx);
+        break;
+    case TWhileStatement_ID:
+        TWhileStatement_PrintXML((TWhileStatement*)p, ctx);
+        break;
+    case TSwitchStatement_ID:
+        TSwitchStatement_PrintXML((TSwitchStatement*)p, ctx);
+        break;
+    case TAsmStatement_ID:
+        TAsmStatement_PrintXML((TAsmStatement*)p, ctx);
+        break;
+    case TDoStatement_ID:
+        TDoStatement_PrintXML((TDoStatement*)p, ctx);
+        break;
+    case TLabeledStatement_ID:
+        TLabeledStatement_PrintXML((TLabeledStatement*)p, ctx);
+        break;
+    case TCompoundStatement_ID:
+        TCompoundStatement_PrintXML((TCompoundStatement*)p, ctx);
+        break;
+    default:
+        break;
+    }
+}
 
 void TGroupDeclaration_PrintXML(TGroupDeclaration* p,
     struct PrintXMLContext* ctx)
@@ -386,8 +533,7 @@ void TTypeSpecifier_PrintXML(TTypeSpecifier* p, struct PrintXMLContext* ctx) /*@
     }
 }
 
-void TDeclarationSpecifier_PrintXML(TDeclarationSpecifier* p,
-    struct PrintXMLContext* ctx) /*@default*/
+void TDeclarationSpecifier_PrintXML(TDeclarationSpecifier* p, struct PrintXMLContext* ctx) /*@default*/
 {
     switch (p->Type)
     {

@@ -5,7 +5,7 @@
 #include "StrBuilder.h"
 #include "Stream.h"
 #include "Mem.h"
-#include "Scanner.h"
+#include "BasicScanner.h"
 
 wchar_t BasicScanner_MatchChar(BasicScanner* scanner);
 
@@ -306,9 +306,9 @@ void ScannerItem_Init(ScannerItem* scannerItem) /*@default*/
 {
     LocalStrBuilder_Init(&scannerItem->lexeme);
     scannerItem->token = TK_NONE;
-    scannerItem->Line = -1;
-    scannerItem->FileIndex = -1;
-    scannerItem->bActive = 1;
+    scannerItem->Line =  -1;
+    scannerItem->FileIndex =  -1;
+    scannerItem->bActive =  1;
     scannerItem->pNext = NULL;
 }
 

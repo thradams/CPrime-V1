@@ -90,16 +90,20 @@ void PrintHelp()
     printf("          cprime -A hello.c\n");
     printf("\n");
     printf("PrintCodeOptions:\n");
-    printf("-config FILE                          Configuration fp.\n");    
-    printf("-outDir                               Directory for output.\n");
+    printf("-config FILE                          Configuration fp.\n");
+    printf("-outDir                               Set the directory for output.\n");
     printf("-help                                 Print this message.\n");
     printf("-o FILE                               Sets ouput file name.\n");
     printf("-E                                    Preprocess to console.\n");
     printf("-P                                    Preprocess to file.\n");
     printf("-A                                    Output AST to file.\n");
-    printf("-r                                    Reverts generation.\n");
+    printf("-a                                    Output almagamation of input file\n");
+    printf("-cx                                   Generate CX.\n");
+    printf("-ca                                   Generated C annotated\n");
     printf("--removeComments                      Remove comments from output\n");
-    printf("-build FILE                           Compile each file separatelly to outDir\n");
+    printf("-build                                Compile all sources defined in inputfile\n");
+    printf("-rbuild                               Build of all sources of input\n");
+    printf("-sources                              Prints all sources used\n");
 
 }
 
@@ -146,15 +150,28 @@ int main(int argc, char* argv[])
         PrintHelp();
         return 1;
     }
-
-    const char* outputFileName = NULL;
-    const char* configFileName = NULL;
-    const char* outputDir = NULL;
     
+    char outputDirFullPath[CPRIME_MAX_PATH] = { 0 };
 
-    String * /*@auto*/ outputFullPath = NULL;
-    String * /*@auto*/ inputFullPath = NULL;
-    String * /*@auto*/ buildFileFullPath = NULL;
+    char cxconfigFileFullPath[CPRIME_MAX_PATH];
+    GetFullDirS(argv[0], cxconfigFileFullPath, CPRIME_MAX_PATH);
+    strcat(cxconfigFileFullPath, "cxconfig.h");
+
+
+    if (FileExists(cxconfigFileFullPath))
+    {
+        printf("using config file %s\n", cxconfigFileFullPath);
+       // configFileName = cxconfigFileFullPath;
+    }
+    else
+    {
+        cxconfigFileFullPath[0] = 0;
+    }
+
+
+    char outputFileFullPath[CPRIME_MAX_PATH] = { 0 };
+    char inputFileFullPath[CPRIME_MAX_PATH] = {0};
+
 
     Options options = OPTIONS_INIT;
     options.Target = CompilerTarget_Annotated;
@@ -162,204 +179,204 @@ int main(int argc, char* argv[])
     bool bPrintPreprocessedToFile = false;
     bool bPrintPreprocessedToConsole = false;
     bool bPrintASTFile = false;
+    bool bBuild = false;
+    bool bRecursiveBuild = false;
+    bool bSources = false;
 
     clock_t tstart = clock();
     struct FileNodeList sources = { 0 };
 
-    int numberOfFiles = 0;
-    //a primeira fase é para recolher opcoes
-    //a segunda eh para processar arquivos
-    for (int fase = 0; fase < 2; fase++)
-    {
-        for (int i = 1; i < argc; i++)
-        {
-            const char* option = argv[i];
-            if (strcmp(option, "-P") == 0)
-            {
-                options.Target = CompilerTarget_Preprocessed;
-                bPrintPreprocessedToFile = true;
-            }
-            else if (strcmp(option, "-E") == 0)
-            {
-                options.Target = CompilerTarget_Preprocessed;
-                bPrintPreprocessedToConsole = true;
-            }
-            else if (strcmp(option, "-r") == 0)
-            {
-                bPrintPreprocessedToConsole = true;
-            }
-            else if (strcmp(option, "-A") == 0)
-            {
-                bPrintASTFile = true;
-            }
-            else if (strcmp(option, "-a") == 0)
-            {              
-              options.bAmalgamate = true;
-            }            
-            else if (strcmp(option, "-help") == 0)
-            {
-                if (fase == 1)
-                {
-                    PrintHelp();
-                }
-            }
-            else if (strcmp(option, "-build") == 0)
-            {
-                if (fase == 0)
-                {
-                    if (i + 1 < argc)
-                    {
-                        const char* buildFileName = argv[i + 1];
-                        GetFullDir(buildFileName, &buildFileFullPath);
-                        GetSources(NULL, buildFileName, &sources);
-                    }
-                    else
-                    {
-                        printf("missing file\n");
-                        break;
-                    }
-                }
-                i++;
 
-            }
-            else if (strcmp(option, "-cx") == 0)
+    for (int i = 1; i < argc; i++)
+    {
+        const char* option = argv[i];
+        if (strcmp(option, "-P") == 0)
+        {
+            options.Target = CompilerTarget_Preprocessed;
+            bPrintPreprocessedToFile = true;
+        }
+        else if (strcmp(option, "-E") == 0)
+        {
+            options.Target = CompilerTarget_Preprocessed;
+            bPrintPreprocessedToConsole = true;
+        }
+        else if (strcmp(option, "-r") == 0)
+        {
+            bPrintPreprocessedToConsole = true;
+        }
+        else if (strcmp(option, "-A") == 0)
+        {
+            bPrintASTFile = true;
+        }
+        else if (strcmp(option, "-a") == 0)
+        {
+            options.bAmalgamate = true;
+        }
+        else if (strcmp(option, "-help") == 0)
+        {
+            PrintHelp();
+            return;
+        }
+        else if (strcmp(option, "-build") == 0)
+        {
+            bBuild = true;
+        }
+        else if (strcmp(option, "-rbuild") == 0)
+        {
+            bRecursiveBuild = true;
+        }
+        else if (strcmp(option, "-sources") == 0)
+        {
+            bSources = true;
+        }
+        else if (strcmp(option, "-cx") == 0)
+        {
+            options.Target = CompilerTarget_CXX;
+        }
+        else if (strcmp(option, "-ca") == 0)
+        {
+            options.Target = CompilerTarget_Annotated;
+        }
+        else if (strcmp(option, "--removeComments") == 0)
+        {
+            options.bIncludeComments = false;
+        }
+        else if (strcmp(option, "-pr") == 0)
+        {
+            options.Target = CompilerTarget_Preprocessed;
+        }
+        else if (strcmp(option, "-outDir") == 0)
+        {
+            if (i + 1 < argc)
             {
-                options.Target = CompilerTarget_CXX;
-            }            
-            else if (strcmp(option, "-ca") == 0)
-            {
-                options.Target = CompilerTarget_Annotated;
-            }
-            else if (strcmp(option, "--removeComments") == 0)
-            {
-                options.bIncludeComments = false;
-            }
-            else if (strcmp(option, "-pr") == 0)
-            {
-                options.Target = CompilerTarget_Preprocessed;
-            }
-            else if (strcmp(option, "-outDir") == 0)
-            {
-                if (fase == 0)
-                {
-                    if (i + 1 < argc)
-                    {
-                        outputDir = argv[i + 1];
-                    }
-                    else
-                    {
-                        printf("missing file\n");
-                        break;
-                    }
-                }
+                GetFullPathS(argv[i + 1], outputDirFullPath);                
                 i++;
-            }
-            else if (strcmp(option, "-config") == 0)
-            {
-                if (fase == 0)
-                {
-                    if (i + 1 < argc)
-                    {
-                        configFileName = argv[i + 1];
-                    }
-                    else
-                    {
-                        printf("missing file\n");
-                        break;
-                    }
-                }
-                i++;
-            }
-            else if (strcmp(option, "-o") == 0)
-            {
-                if (i + 1 < argc)
-                {
-                    outputFileName = argv[i + 1];
-                    GetFullPath(argv[i + 1], &outputFullPath);
-                    i++;
-                }
-                else
-                {
-                    printf("missing file\n");
-                }
             }
             else
             {
-                if (fase == 1)
-                {
-                    //const char* inputFileName = option;
-                    //String inputFullPath = NULL;
-                    GetFullPath(option, &inputFullPath);
+                printf("missing file\n");
+                break;
+            }
+        }
+        else if (strcmp(option, "-config") == 0)
+        {
 
-                    if (bPrintPreprocessedToFile)
-                    {
-                        PrintPreprocessedToFile(inputFullPath, configFileName);
-                    }
-                    else if (bPrintPreprocessedToConsole)
-                    {
-                        PrintPreprocessedToConsole(inputFullPath, configFileName);
-                    }
-                    else
-                    {
-                        Compile(configFileName, inputFullPath, outputFullPath, &options, bPrintASTFile);
-                    }
+            if (i + 1 < argc)
+            {
+                GetFullPathS(argv[i + 1], cxconfigFileFullPath);                
+                i++;
+            }
+            else
+            {
+                printf("missing file\n");
+                break;
+            }
+        }
+        else if (strcmp(option, "-o") == 0)
+        {
+            if (i + 1 < argc)
+            {                
+                GetFullPathS(argv[i + 1], outputFileFullPath);
+                i++;
+            }
+            else
+            {
+                printf("missing file\n");
+            }
+        }
+        else
+        {            
+            GetFullPathS(argv[i], inputFileFullPath);
+        }
+    }
+
+
+    int numberOfFiles = 1;
+
+    if (bBuild || bRecursiveBuild)
+    {
+        printf("Output dir : %s\n", outputDirFullPath);
+        if (bRecursiveBuild)
+        {
+            GetSources(NULL, inputFileFullPath, false, &sources);
+        }
+        else
+        {
+            GetSources(cxconfigFileFullPath, inputFileFullPath, true, &sources);
+        }
+        if (sources.pHead != NULL)
+        {
+            char inputFileFullDir[CPRIME_MAX_PATH];
+            GetFullDirS(inputFileFullPath, inputFileFullDir, CPRIME_MAX_PATH);
+            const int inputFullDirLength = strlen(inputFileFullDir);
+
+            //Cria o diretorio de ouput
+            if (outputDirFullPath[0] != '\0')
+            {
+                MkDir(outputDirFullPath);
+            }
+
+            char outputItemPath[2000] = { 0 };
+            struct FileNode* pCurrent = sources.pHead;
+            while (pCurrent != NULL)
+            {
+                outputItemPath[0] = 0;
+                if (outputDirFullPath[0] != '\0')
+                {
+                    strcat(outputItemPath, outputDirFullPath);
+                    strcat(outputItemPath, "\\");
+                }
+                strcat(outputItemPath, pCurrent->Key + inputFullDirLength);
+
+                if (!Compile(cxconfigFileFullPath, pCurrent->Key, outputItemPath, &options, bPrintASTFile))
+                {
+                    numberOfFiles++;
+                    break;
                 }
                 else
                 {
-                    numberOfFiles++;
                 }
-            }
 
+                pCurrent = pCurrent->pNext;
+            }
         }
     }
-
-    
-    if (sources.pHead != NULL)
+    else if (bSources)
     {
-        char inputItemPath[2000] = { 0 };
-        char outputItemPath[2000] = { 0 };
-
-        //criar o diretorio de output se nao existe
-        strcat(outputItemPath, buildFileFullPath);
-        strcat(outputItemPath, outputDir);
-        strcat(outputItemPath, "\\");
-
-        MkDir(outputItemPath);
-
-      
+        GetSources(cxconfigFileFullPath, inputFileFullPath, true, &sources);
+        int fileCount = 0;
         struct FileNode* pCurrent = sources.pHead;
         while (pCurrent != NULL)
         {
-            inputItemPath[0] = 0;
-            strcat(inputItemPath, buildFileFullPath);
-            strcat(inputItemPath, pCurrent->Key);
-
-            outputItemPath[0] = 0;
-            if (outputDir)
-            {
-                //output eh relativo ao build.c
-                strcat(outputItemPath, buildFileFullPath);
-                strcat(outputItemPath, outputDir);
-                strcat(outputItemPath, "\\");
-                strcat(outputItemPath, pCurrent->Key);
-            }
-
-            if (!Compile(configFileName, inputItemPath, outputItemPath, &options, bPrintASTFile))
-            {
-                break;
-            }
-        
+            fileCount++;
+            printf("%d: %s\n", fileCount, pCurrent->Key);
             pCurrent = pCurrent->pNext;
         }
     }
+    else
+    {
+        if (bPrintPreprocessedToFile)
+        {
+            PrintPreprocessedToFile(inputFileFullPath, cxconfigFileFullPath);
+        }
+        else if (bPrintPreprocessedToConsole)
+        {
+            PrintPreprocessedToConsole(inputFileFullPath, cxconfigFileFullPath);
+        }
+        else
+        {
+            Compile(cxconfigFileFullPath, inputFileFullPath, outputFileFullPath, &options, bPrintASTFile);
+            numberOfFiles++;
+        }
+    }
+
+
 
     clock_t tend = clock();
     printf("Total %d files in = %d seconds\n", numberOfFiles, (int)((tend - tstart) / CLOCKS_PER_SEC));
 
     FileNodeList_Destroy(&sources);
-    Free(outputFullPath);
-    Free(inputFullPath);
-    Free(buildFileFullPath);
+    
 
     PrintMemory();
     return 0;

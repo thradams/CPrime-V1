@@ -5149,7 +5149,7 @@ bool GetAST(const char* filename,
 
                     Parser_PushFile(&parser, pCurrent->Key);
 
-                    printf("source %s\n", pCurrent->Key);
+                    //printf("source %s\n", pCurrent->Key);
 
 
                     Parser_Main(&parser, &pProgram->Declarations);
