@@ -9,6 +9,7 @@
 #include "Path.h"
 #include "Mem.h"
 #include "Options.h"
+#include "AstPrint2.h"
 
 int Compile(const char* configFileName,
     const char* inputFileName,
@@ -40,7 +41,8 @@ int Compile(const char* configFileName,
         {
             if (bPrintASTFile)
             {
-                TProgram_PrintAstToFile(&program, outputFileName, inputFileName);
+                //TProgram_PrintAstToFile(&program, outputFileName, inputFileName);
+                TProgram_PrintAstToXML(&program, outputFileName, inputFileName);
             }
             else
             {
@@ -54,8 +56,10 @@ int Compile(const char* configFileName,
             if (bPrintASTFile)
             {
                 //faz um  arquivo com extensao json
-                MakePath(outc, drive, dir, fname, ".json");
-                TProgram_PrintAstToFile(&program, outc, inputFileName);
+                //MakePath(outc, drive, dir, fname, ".json");
+                //TProgram_PrintAstToFile(&program, outc, inputFileName);
+                MakePath(outc, drive, dir, fname, ".xml");
+                TProgram_PrintAstToXML(&program, outc, inputFileName);
             }
             else
             {
@@ -86,7 +90,7 @@ void PrintHelp()
     printf("          cprime -A hello.c\n");
     printf("\n");
     printf("PrintCodeOptions:\n");
-    printf("-config FILE                          Configuration file.\n");    
+    printf("-config FILE                          Configuration fp.\n");    
     printf("-outDir                               Directory for output.\n");
     printf("-help                                 Print this message.\n");
     printf("-o FILE                               Sets ouput file name.\n");
