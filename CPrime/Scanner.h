@@ -66,6 +66,8 @@ struct FileNode
 struct FileNode* FileNode_Create(const char* key);
 
 void FileNode_Delete(struct FileNode* p);
+void FileNode_Free(struct FileNode* p);
+
 struct FileNodeMap
 {
   int Capacity;
@@ -85,6 +87,7 @@ struct FileNodeList
 };
 void FileNodeList_Swap(struct FileNodeList* a, struct FileNodeList* b);
 void FileNodeList_Destroy(struct FileNodeList* pItems);
+void FileNodeList_Init(struct FileNodeList* pItems);
 void FileNodeList_PushItem(struct FileNodeList* pItems,
     struct FileNode* pItem);
 void FileNodeList_PushBack(struct FileNodeList* pItems,
@@ -172,7 +175,7 @@ void Scanner_IncludeFile(Scanner* pScanner,
 
 
 void Scanner_Destroy(Scanner* pScanner);
-
+void Scanner_Reset(Scanner* pScanner);
 //int Scanner_GetFileIndex(Scanner * pScanner);
 
 int EvalExpression(const char* s, Scanner* pScanner);

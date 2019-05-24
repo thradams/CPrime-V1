@@ -2613,6 +2613,38 @@ bool TAnyDeclaration_Is_StructOrUnionDeclaration(TAnyDeclaration* pAnyDeclaratio
 	return false;
 }
 
+bool TDeclarationSpecifiers_IsStatic(TDeclarationSpecifiers* pDeclarationSpecifiers)
+{
+    bool bResult = false;
+    for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
+    {
+        TDeclarationSpecifier* pItem = pDeclarationSpecifiers->pData[i];
+        switch (pItem->Type)
+        {
+            CASE(TStorageSpecifier) :
+            {
+                TStorageSpecifier* pStorageSpecifier =
+                    (TStorageSpecifier*)pItem;
+
+                if (pStorageSpecifier->Token == TK_STATIC)
+                {
+                    bResult = true;
+                }
+            }
+
+            break;
+        default:
+            //assert(false);
+            break;
+        }
+
+        if (bResult)
+        {
+            break;
+        }
+    }
+    return bResult;
+}
 
 bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecifiers)
 {

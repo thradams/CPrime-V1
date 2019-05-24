@@ -5119,6 +5119,11 @@ bool GetAST(const char* filename,
     if (options->bAmalgamate)
     {
         struct FileNodeMap map = { 0 };
+
+        //Inserts the initial file
+        FileNodeMap_Insert(&map, FileNode_Create(fullFileNamePath));
+
+        
         for (;;)
         {
 
@@ -5149,14 +5154,14 @@ bool GetAST(const char* filename,
 
                     Parser_PushFile(&parser, pCurrent->Key);
 
-                    //printf("source %s\n", pCurrent->Key);
+                    printf("source %s\n", pCurrent->Key);
 
 
                     Parser_Main(&parser, &pProgram->Declarations);
                 }
                 else
                 {
-                    FileNode_Delete(pCurrent);
+                    FileNode_Free(pCurrent); //nao pode deletar os proximos
                 }
 
                 pCurrent = pNext;

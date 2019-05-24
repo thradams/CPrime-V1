@@ -1296,6 +1296,7 @@ TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration * p);
 TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name);
 
 bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecifiers);
+bool TDeclarationSpecifiers_IsStatic(TDeclarationSpecifiers* pDeclarationSpecifiers);
 
 
 

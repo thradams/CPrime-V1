@@ -1755,7 +1755,7 @@ static void TAnyStructDeclaration_CodePrint(TProgram* program, PrintCodeOptions*
 
 static void StorageSpecifier_CodePrint(TProgram* program, PrintCodeOptions* options, TStorageSpecifier* p, StrBuilder* fp)
 {
-    TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+    TNodeClueList_CodePrint(options, &p->ClueList0, fp);    
     Output_Append(fp, options, TokenToString(p->Token));
 }
 
@@ -1894,7 +1894,7 @@ void TSpecifierQualifierList_CodePrint(TProgram* program,
 
 void TDeclarationSpecifiers_CodePrint(TProgram* program, PrintCodeOptions* options, TDeclarationSpecifiers* pDeclarationSpecifiers, StrBuilder* fp)
 {
-
+    
     for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
     {
         TDeclarationSpecifier* pItem = pDeclarationSpecifiers->pData[i];

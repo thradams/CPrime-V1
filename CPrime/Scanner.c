@@ -26,6 +26,15 @@ struct FileNode* FileNode_Create(const char* key)
     return p;
 }
 
+void FileNode_Free(struct FileNode* p) 
+{
+    //so delete esta item e nao todos os proximos
+    if (p != NULL)
+    {
+        Free((void*)p->Key);        
+        Free((void*)p);
+    }
+}
 void FileNode_Delete(struct FileNode* p) /*@default*/
 {
     if (p != NULL)
@@ -127,6 +136,7 @@ void FileNodeList_Swap(struct FileNodeList* a, struct FileNodeList* b)
     *a = *b;
     *b = t;
 }
+
 
 void FileNodeList_Destroy(struct FileNodeList* pItems) /*@default*/
 {
@@ -954,6 +964,46 @@ void Scanner_Destroy(Scanner * pScanner) /*@default*/
     StrBuilder_Destroy(&pScanner->DebugString);
     StrBuilder_Destroy(&pScanner->ErrorString);
     TScannerItemList_Destroy(&pScanner->AcumulatedTokens);
+}
+
+void Scanner_Reset(Scanner* pScanner)
+{
+    //Basically this function was created to allow
+    //inclusion of new file Scanner_IncludeFile
+    //after scanner reach EOF  (See GetSources)
+    //After eof we need to Reset. The reset
+    //is not general.
+    //A better aprouch would be just make this work
+    //correclty without reset.
+
+    BasicScannerStack_Destroy(&pScanner->stack);
+    BasicScannerStack_Init(&pScanner->stack);
+
+    //mantem
+    //MacroMap_Destroy(&pScanner->Defines2);
+
+    StackInts_Destroy(&pScanner->StackIfDef);
+    StackInts_Init(&pScanner->StackIfDef);
+
+    //mantem
+    //TFileMap_Destroy(&pScanner->FilesIncluded);
+    
+    //mantem
+    //StrArray_Destroy(&pScanner->IncludeDir);
+
+    //FileNodeList_Destroy(&pScanner->Sources);
+    //FileNodeList_Init(&pScanner->Sources);
+    
+    StrBuilder_Destroy(&pScanner->DebugString);
+    StrBuilder_Init(&pScanner->DebugString);
+
+    StrBuilder_Destroy(&pScanner->ErrorString);
+    StrBuilder_Init(&pScanner->ErrorString);
+
+    TScannerItemList_Destroy(&pScanner->AcumulatedTokens);
+    TScannerItemList_Init(&pScanner->AcumulatedTokens);
+
+    pScanner->bError = false;
 }
 
 /*int Scanner_GetCurrentLine(Scanner* pScanner)
@@ -2671,6 +2721,10 @@ void GetSources(const char* configFile,
         Scanner_Match(&scanner);
     }
 
+    
+    Scanner_Reset(&scanner);
+    
+
     struct FileNodeMap map = { 0 };
     if (bRecursiveSearch)
     {
@@ -2698,8 +2752,14 @@ void GetSources(const char* configFile,
 
                 pCurrent = pNext;
             }
-            //TODO Nao esta recursivo!
-            //tem que criar um novo scanner e passar o filemap p ele.
+            
+            while (Scanner_TokenAt(&scanner, 0) != TK_EOF)
+            {
+                Scanner_Match(&scanner);
+            }
+
+            Scanner_Reset(&scanner);
+
             if (scanner.Sources.pHead == NULL)
                 break;
         }
