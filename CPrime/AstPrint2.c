@@ -66,6 +66,8 @@ void TDeclarationSpecifiers_PrintXML(TDeclarationSpecifiers* p,
 void TStructDeclaration_PrintXML(TStructDeclaration* p, struct PrintXMLContext* ctx);
 
 void TAnyStructDeclaration_PrintXML(TAnyStructDeclaration* p, struct PrintXMLContext* ctx);
+void TTypeQualifier_PrintXML(TTypeQualifier* p, struct PrintXMLContext* ctx);
+
 
 int HasItemsToPrint(TScannerItemList* list)
 {
@@ -350,11 +352,53 @@ void TDirectDeclarator_PrintXML(TDirectDeclarator* p,
     PrintLn(ctx, "</direct-declarator>");
 }
 
+
+
+void TTypeQualifierList_PrintXML(TTypeQualifierList* p,
+    struct PrintXMLContext* ctx)
+{
+    if (p->Size)
+    {
+        PrintLn(ctx, "<qualifiers>");
+        for (int i = 0; i < p->Size; i++)
+        {
+            TTypeQualifier_PrintXML(p->Data[i], ctx);
+        }
+        PrintLn(ctx, "</qualifiers>");
+    }
+}
+
+void TPointer_PrintXML(TPointer* p,
+    struct PrintXMLContext* ctx)
+{
+    PrintLn(ctx, "<pointer>");
+    
+    TTypeQualifierList_PrintXML(&p->Qualifier, ctx);
+
+    PrintLn(ctx, "</pointer>");
+}
+void TPointerList_PrintXML(TPointerList* p,
+    struct PrintXMLContext* ctx)
+{
+    TPointer* pCurrent = p->pHead;
+    if (pCurrent)
+    {
+        PrintLn(ctx, "<pointer-list>");
+        while (pCurrent)
+        {
+            TPointer_PrintXML(pCurrent, ctx);
+            pCurrent = pCurrent->pNext;
+        }
+        PrintLn(ctx, "</pointer-list>");
+    }
+}
+
 void TDeclarator_PrintXML(TDeclarator* p,
     struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<declarator>");
-    TDirectDeclarator_PrintXML(p->pDirectDeclarator, ctx);
+    TDirectDeclarator_PrintXML(p->pDirectDeclarator, ctx);    
+    TPointerList_PrintXML(&p->PointerList, ctx);
     PrintLn(ctx, "</declarator>");
 }
 
