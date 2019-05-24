@@ -296,7 +296,7 @@ int main(int argc, char* argv[])
     if (bBuild || bRecursiveBuild)
     {
         printf("Output dir : %s\n", outputDirFullPath);
-        if (bRecursiveBuild)
+        if (bBuild)
         {
             GetSources(NULL, inputFileFullPath, false, &sources);
         }
