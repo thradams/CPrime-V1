@@ -37,7 +37,7 @@ int Compile(const char* configFileName,
 
 
         printf("Generating code for %s...\n", inputFileName);
-        if (outputFileName)
+        if (outputFileName[0] != '\0')
         {
             if (bPrintASTFile)
             {
