@@ -3374,13 +3374,13 @@ void Struct_Or_Union_Specifier(Parser* ctx,
     if (token == TK_IDENTIFIER)
     {
         //ANNOTATED AQUI TEM O COMENTARIO /*Box | Circle*/ antes nome da struct
-        PTR_STRING_REPLACE(pStructUnionSpecifier->Name, lexeme);
+        PTR_STRING_REPLACE(pStructUnionSpecifier->TagName, lexeme);
         Parser_Match(ctx, &pStructUnionSpecifier->ClueList1);
     }
 
-    if (pStructUnionSpecifier->Name != NULL)
+    if (pStructUnionSpecifier->TagName != NULL)
     {
-        SymbolMap_SetAt(ctx->pCurrentScope, pStructUnionSpecifier->Name, (TTypePointer*)pStructUnionSpecifier);
+        SymbolMap_SetAt(ctx->pCurrentScope, pStructUnionSpecifier->TagName, (TTypePointer*)pStructUnionSpecifier);
     }
 
     token = Parser_CurrentToken(ctx);
@@ -4885,7 +4885,17 @@ bool  Declaration(Parser * ctx,
 
                     //ctx->
                 }
-
+#if 0
+                if (token == TK_COLON)
+                {
+                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList0);
+                    token = Parser_CurrentToken(ctx);
+                    const char * opName = Lexeme(ctx);
+                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList1);
+                    token = Parser_CurrentToken(ctx);
+                    //fazer o set deste nome com a operacao da struct
+                }
+#endif
                 //
                 if (token == TK_DEFAULT)
                 {

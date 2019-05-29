@@ -1,20 +1,19 @@
-#include <stdbool.h>
-
-
-void F2();
-
-
-int main()
+struct X
 {
-  F2();
+    int x;
+};
+
+void X_Init(struct X * p) : init /*@default*/
+{
+    p->x = 0;
 }
 
-void F();
-void F2()
+struct Y
 {
-  F();
-}
+    struct X x;
+};
 
-void F()
+void Y_Init(struct Y * p) /*@default*/
 {
+    X_Init(&p->x);
 }

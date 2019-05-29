@@ -1224,7 +1224,7 @@ static void TStructUnionSpecifier_CodePrint(TProgram * program, PrintCodeOptions
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
     }
 
-    Output_Append(fp, options, p->Name);
+    Output_Append(fp, options, p->TagName);
 
 
     if (p->StructDeclarationList.Size > 0)
@@ -2311,11 +2311,11 @@ static int FindRuntimeID(TProgram * program,
         {
             pStructUnionSpecifier =
                 TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
-            if (pStructUnionSpecifier->Name)
+            if (pStructUnionSpecifier->TagName)
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Name);
+                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
             }
         }
     }
@@ -2372,11 +2372,11 @@ static int FindIDValue(TProgram * program,
         {
             pStructUnionSpecifier =
                 TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
-            if (pStructUnionSpecifier->Name)
+            if (pStructUnionSpecifier->TagName)
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Name);
+                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
             }
         }
     }
@@ -2436,11 +2436,11 @@ void FindUnionSetOf(TProgram * program,
         {
             pStructUnionSpecifier =
                 TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
-            if (pStructUnionSpecifier->Name)
+            if (pStructUnionSpecifier->TagName)
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Name);
+                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
             }
         }
     }
@@ -2504,6 +2504,31 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
 
     TParameter * pFirstParameter =
         TParameterTypeList_GetParameterByIndex(pArgs, 0);
+#if 0
+
+    //TODO descobre se esta func eh alguma das especiais do tipo
+    if (pFirstParameter)
+    {
+        TDeclarationSpecifier * pFirstArgSpecifier = 
+            TSpecifierQualifierList_GetMainSpecifier(&pFirstParameter->Specifiers);
+        if (pFirstArgSpecifier)
+        {
+            TStructUnionSpecifier* pStructUnionSpecifier = 
+                TDeclarationSpecifier_As_TStructUnionSpecifier(pFirstArgSpecifier);
+            if (pStructUnionSpecifier)
+            {
+                
+               pStructUnionSpecifier = 
+                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
+
+               if (pStructUnionSpecifier)
+               {
+                   int r = TStructUnionSpecifier_GetSpecialMemberType(pStructUnionSpecifier, funcName);                  
+               }
+            }
+        }
+    }
+#endif
 
     TParameter * pSecondParameter =
         TParameterTypeList_GetParameterByIndex(pArgs, 1);
@@ -2790,7 +2815,7 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
                     options->IdentationLevel++;
                     UnionTypeDefault(program,
                                      options,
-                                     pStructUnionSpecifier->Name,
+                                     pStructUnionSpecifier->TagName,
                                      pArgs,
                                      TParameter_GetName(pFirstParameter),
                                      functionSuffix.c_str,
@@ -3716,6 +3741,10 @@ static bool FindHighLevelFunction(TProgram * program,
             if (search == SearchAll ||
                 search == SearchInit)
             {
+                //pega o nome
+                //const char * TStructUnionSpecifier_GetSpecialMemberName(TStructUnionSpecifier * p, enum SpecialMemberType type)
+
+
                 TDeclaration * pDeclarationInit =
                     SymbolMap_FindObjFunction(&program->GlobalScope,
                                               nameToFind,
@@ -4267,8 +4296,8 @@ void InstanciateDestroy2(TProgram * program,
 
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                "struct %s* p = (struct %s*) %s(sizeof * p);",
-                                               pStructUnionSpecifier->Name,
-                                               pStructUnionSpecifier->Name,
+                                               pStructUnionSpecifier->TagName,
+                                               pStructUnionSpecifier->TagName,
                                                GetMallocStr(program));
 
                         PrintIfNotNullLn(program, options, pInitExpressionText, fp);
@@ -4288,7 +4317,7 @@ void InstanciateDestroy2(TProgram * program,
                             options->IdentationLevel++;
                             UnionTypeDefault(program,
                                              options,
-                                             pStructUnionSpecifier->Name,
+                                             pStructUnionSpecifier->TagName,
                                              NULL, /*args*/
                                              pInitExpressionText,
                                              "Delete",
@@ -4301,7 +4330,7 @@ void InstanciateDestroy2(TProgram * program,
                             options->IdentationLevel++;
                             UnionTypeDefault(program,
                                              options,
-                                             pStructUnionSpecifier->Name,
+                                             pStructUnionSpecifier->TagName,
                                              NULL, /*args*/
                                              pInitExpressionText,
                                              "Destroy",
@@ -4692,7 +4721,7 @@ void InstanciateDestroy2(TProgram * program,
                                           pszAutoPointerLenExpressionOpt,
                                           action,
                                           search,
-                                          pStructUnionSpecifier->Name,
+                                          pStructUnionSpecifier->TagName,
                                           fp);
 
         //Exemplos
@@ -4703,12 +4732,12 @@ void InstanciateDestroy2(TProgram * program,
         if (!bComplete) //se for para entrar na struct
         {
             if (pStructUnionSpecifier &&
-                pStructUnionSpecifier->Name != NULL)
+                pStructUnionSpecifier->TagName != NULL)
             {
                 //se nao eh completa tenta achar
                 //vou procurar a definicao completa da struct
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Name);
+                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
             }
 
             bool bIsUnionTypes = pStructUnionSpecifier &&
@@ -4761,8 +4790,8 @@ void InstanciateDestroy2(TProgram * program,
 
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                            "struct %s* p = (struct %s*) %s(sizeof * p);",
-                                           pStructUnionSpecifier->Name,
-                                           pStructUnionSpecifier->Name,
+                                           pStructUnionSpecifier->TagName,
+                                           pStructUnionSpecifier->TagName,
                                            GetMallocStr(program));
 
                     PrintIfNotNullLn(program, options, pInitExpressionText, fp);
@@ -4789,7 +4818,7 @@ void InstanciateDestroy2(TProgram * program,
                         options->IdentationLevel++;
                         UnionTypeDefault(program,
                                          options,
-                                         pStructUnionSpecifier->Name,
+                                         pStructUnionSpecifier->TagName,
                                          NULL, /*args*/
                                          pInitExpressionText,
                                          "Delete",
@@ -4802,7 +4831,7 @@ void InstanciateDestroy2(TProgram * program,
                         options->IdentationLevel++;
                         UnionTypeDefault(program,
                                          options,
-                                         pStructUnionSpecifier->Name,
+                                         pStructUnionSpecifier->TagName,
                                          NULL, /*args*/
                                          pInitExpressionText,
                                          "Destroy",
@@ -5243,10 +5272,10 @@ TStructUnionSpecifier * GetStructSpecifier(TProgram * program, TDeclarationSpeci
 
     //Procura pela definicao completa da struct
     if (pTStructUnionSpecifier &&
-        pTStructUnionSpecifier->Name != NULL)
+        pTStructUnionSpecifier->TagName != NULL)
     {
         pTStructUnionSpecifier =
-            SymbolMap_FindStructUnion(&program->GlobalScope, pTStructUnionSpecifier->Name);
+            SymbolMap_FindStructUnion(&program->GlobalScope, pTStructUnionSpecifier->TagName);
     }
     else  if (pSingleTypeSpecifier != NULL &&
               pSingleTypeSpecifier->Token2 == TK_STRUCT)

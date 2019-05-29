@@ -1083,7 +1083,7 @@ typedef struct TStructUnionSpecifier
 
     EType Type  /*@=TStructUnionSpecifier_ID*/;
     TStructDeclarationList StructDeclarationList;
-    String * /*@auto*/ Name;
+    String * /*@auto*/ TagName;
 
     Tokens Token;
 
@@ -1099,6 +1099,15 @@ typedef struct TStructUnionSpecifier
 TStructUnionSpecifier * TStructUnionSpecifier_Create();
 void TStructUnionSpecifier_Delete(TStructUnionSpecifier * p);
 
+enum SpecialMemberType
+{
+    SpecialMemberType_Init,
+    SpecialMemberType_Destroy,
+    SpecialMemberType_Create,
+    SpecialMemberType_Delete
+};
+enum SpecialMemberType TStructUnionSpecifier_GetSpecialMemberType(TStructUnionSpecifier * p, const char * funcName);
+const char* TStructUnionSpecifier_GetSpecialMemberName(TStructUnionSpecifier * p, enum SpecialMemberType type);
 
 struct TAtomicTypeSpecifier;
 typedef struct TAtomicTypeSpecifier TAtomicTypeSpecifier;

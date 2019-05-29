@@ -651,7 +651,7 @@ bool TStructUnionSpecifier_Print(TStructUnionSpecifier * p, bool b, FILE * fp)
     else if (p->Token == TK_UNION)
         fprintf(fp, "\"type:\":\"union-specifier\",");
 
-    fprintf(fp, "\"name\":\"%s\",", p->Name);
+    fprintf(fp, "\"name\":\"%s\",", p->TagName);
 
     fprintf(fp, "\"struct-declaration-list\":[");
 

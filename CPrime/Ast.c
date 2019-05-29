@@ -1007,7 +1007,7 @@ TStructUnionSpecifier * TStructUnionSpecifier_Create() /*@default*/
     {
         p->Type = TStructUnionSpecifier_ID;
         TStructDeclarationList_Init(&p->StructDeclarationList);
-        p->Name = NULL;
+        p->TagName = NULL;
         p->Token = TK_NONE;
         TUnionSet_Init(&p->UnionSet);
         TScannerItemList_Init(&p->ClueList0);
@@ -1022,7 +1022,7 @@ void TStructUnionSpecifier_Delete(TStructUnionSpecifier * p) /*@default*/
     if (p != NULL)
     {
         TStructDeclarationList_Destroy(&p->StructDeclarationList);
-        Free((void *)p->Name);
+        Free((void *)p->TagName);
         TUnionSet_Destroy(&p->UnionSet);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
@@ -1030,6 +1030,30 @@ void TStructUnionSpecifier_Delete(TStructUnionSpecifier * p) /*@default*/
         TScannerItemList_Destroy(&p->ClueList3);
         Free((void *)p);
     }
+}
+
+int TStructUnionSpecifier_GetSpecialMemberType(TStructUnionSpecifier * p, const char* funcName)
+{
+  //if (strcomp funcName)
+    return 0;
+}
+
+const char * TStructUnionSpecifier_GetSpecialMemberName(TStructUnionSpecifier * p, enum SpecialMemberType type)
+{
+    switch (type)
+    {
+        case SpecialMemberType_Init:
+            break;
+        case SpecialMemberType_Destroy:
+            break;
+        case SpecialMemberType_Create:
+            break;
+        case SpecialMemberType_Delete:
+            break;
+        default:
+            break;
+    }
+    return "";
 }
 
 
@@ -2210,8 +2234,8 @@ bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers * pDeclaratio
         if (pTStructUnionSpecifier)
         {
             //ja tem uma struct
-            if (pTStructUnionSpecifier->Name &&
-                strcmp(pTStructUnionSpecifier->Name, lexeme) == 0)
+            if (pTStructUnionSpecifier->TagName &&
+                strcmp(pTStructUnionSpecifier->TagName, lexeme) == 0)
             {
                 //typedef struct X X;
             }
