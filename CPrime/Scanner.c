@@ -452,9 +452,9 @@ bool TFileMap_DeleteItem(TFileMap * map, const char* key)
 
 
 
-bool IsIncludeState(State e)
+bool IsIncludeState(enum PPState e)
 {
-    return e == NONE || e == I1 || e == E1;
+    return e == PPState_NONE || e == PPState_I1 || e == PPState_E1;
 }
 
 void StackInts_Init(StackInts * p) /*@default*/
@@ -480,8 +480,8 @@ void StackInts_Reserve(StackInts * p, int n) /*@default*/
 {
     if (n > p->Capacity)
     {
-        State* pnew = p->pItems;
-        pnew = (State*)Realloc(pnew, n * sizeof(State));
+        enum PPState* pnew = p->pItems;
+        pnew = (enum PPState*)Realloc(pnew, n * sizeof(enum PPState));
         if (pnew)
         {
             p->pItems = pnew;
@@ -490,7 +490,7 @@ void StackInts_Reserve(StackInts * p, int n) /*@default*/
     }
 }
 
-void StackInts_PushBack(StackInts * p, State e) /*@default*/
+void StackInts_PushBack(StackInts * p, enum PPState e) /*@default*/
 {
     if (p->Size + 1 > p->Capacity)
     {
@@ -505,15 +505,15 @@ void StackInts_PushBack(StackInts * p, State e) /*@default*/
     p->Size++;
 }
 
-State StateTop(Scanner * pScanner)
+enum PPState StateTop(Scanner * pScanner)
 {
     if (pScanner->StackIfDef.Size == 0)
-        return NONE;
+        return PPState_NONE;
 
     return pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1];
 }
 
-void StatePush(Scanner * pScanner, State s)
+void StatePush(Scanner * pScanner, enum PPState s)
 {
     StackInts_PushBack(&pScanner->StackIfDef, s);
 }
@@ -1609,7 +1609,7 @@ static void Scanner_PushToken(Scanner * pScanner, Tokens token,
 //
 void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
 {
-    State state = StateTop(pScanner);
+    enum PPState state = StateTop(pScanner);
     BasicScanner* pBasicScanner = Scanner_Top(pScanner);
     //assert(pBasicScanner != NULL);
 
@@ -1938,7 +1938,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
     StrBuilder strBuilder = STRBUILDER_INIT;
 
-    State state = StateTop(pScanner);
+    enum PPState state = StateTop(pScanner);
     bool bActive0 = IsIncludeState(state);
 
     if (token == TK_PREPROCESSOR)
@@ -2244,9 +2244,9 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
             switch (state)
             {
-            case NONE:
-            case I1:
-            case E1:
+            case PPState_NONE:
+            case PPState_I1:
+            case PPState_E1:
             {
                 int iRes = 0;
 
@@ -2270,21 +2270,21 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
                 if (iRes != 0)
                 {
-                    StatePush(pScanner, I1);
+                    StatePush(pScanner, PPState_I1);
                 }
                 else
                 {
-                    StatePush(pScanner, I0);
+                    StatePush(pScanner, PPState_I0);
                 }
             }
             break;
 
-            case I0:
-                StatePush(pScanner, I0);
+            case PPState_I0:
+                StatePush(pScanner, PPState_I0);
                 break;
 
-            case E0:
-                StatePush(pScanner, E0);
+            case PPState_E0:
+                StatePush(pScanner, PPState_E0);
                 break;
             }
 
@@ -2304,25 +2304,25 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
             switch (state)
             {
-            case NONE:
-            case I1:
-                pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = E0;
+            case PPState_NONE:
+            case PPState_I1:
+                pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = PPState_E0;
                 break;
 
-            case I0:
+            case PPState_I0:
             {
                 int iRes = EvalPre(pScanner, &strBuilder);
 
                 if (pScanner->StackIfDef.Size >= 2)
                 {
                     if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
-                        I1 ||
+                        PPState_I1 ||
                         pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
-                        E1))
+                        PPState_E1))
                     {
                         if (iRes)
                         {
-                            pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = I1;
+                            pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = PPState_I1;
                         }
                     }
                 }
@@ -2330,16 +2330,16 @@ void Scanner_BuyTokens(Scanner * pScanner)
                 {
                     if (iRes)
                     {
-                        pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = I1;
+                        pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = PPState_I1;
                     }
                 }
             }
             break;
 
-            case E0:
+            case PPState_E0:
                 break;
 
-            case E1:
+            case PPState_E1:
                 //assert(0);
                 break;
             }
@@ -2375,36 +2375,36 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
             switch (state)
             {
-            case NONE:
+            case PPState_NONE:
                 //assert(0);
                 break;
 
-            case I1:
-                pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = E0;
+            case PPState_I1:
+                pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = PPState_E0;
                 break;
 
-            case I0:
+            case PPState_I0:
                 if (pScanner->StackIfDef.Size >= 2)
                 {
                     if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
-                        I1 ||
+                        PPState_I1 ||
                         pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
-                        E1))
+                        PPState_E1))
                     {
-                        pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = E1;
+                        pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = PPState_E1;
                     }
                 }
                 else
                 {
-                    pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = E1;
+                    pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = PPState_E1;
                 }
 
                 break;
 
-            case E0:
+            case PPState_E0:
                 break;
 
-            case E1:
+            case PPState_E1:
                 //assert(false);
                 break;
             }

@@ -93,18 +93,18 @@ void FileNodeList_PushItem(struct FileNodeList* pItems,
 void FileNodeList_PushBack(struct FileNodeList* pItems,
   const char* fileName);
 
-typedef enum
+enum PPState
 {
-    NONE, // inclui
-    I1,   // inclui
-    I0,
-    E0,
-    E1, // inclui
-} State;
+    PPState_NONE, // inclui
+    PPState_I1,   // inclui
+    PPState_I0,
+    PPState_E0,
+    PPState_E1, // inclui
+};
 
 typedef struct
 {
-    State* /*@auto*/ /*@[Size]*/pItems;
+    enum PPState* /*@auto*/ /*@[Size]*/pItems;
     int Size;
     int Capacity;
 } StackInts;

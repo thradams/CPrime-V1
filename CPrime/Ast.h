@@ -458,7 +458,8 @@ bool TPointerList_IsAutoPointerToPointer(TPointerList* pPointerlist);
 bool TPointerList_IsPointer(TPointerList* pPointerlist);
 void TPointerList_Swap(TPointerList* a, TPointerList* b);
 bool TPointerList_IsAutoPointerSizeToObject(TPointerList* pPointerlist);
-
+bool TPointerList_IsPointerN(TPointerList* pPointerlist, int n);
+const char* TPointerList_GetSize(TPointerList* pPointerlist);
 
 typedef struct
 {
