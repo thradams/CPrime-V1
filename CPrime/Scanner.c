@@ -8,9 +8,9 @@
 
 
 
-struct FileNode* FileNode_Create(const char* key)
+struct FileNode * FileNode_Create(const char * key)
 {
-    struct FileNode* p = (struct FileNode*) Malloc(sizeof * p);
+    struct FileNode * p = (struct FileNode *) Malloc(sizeof * p);
     if (p)
     {
         int len = strlen(key);
@@ -26,37 +26,37 @@ struct FileNode* FileNode_Create(const char* key)
     return p;
 }
 
-void FileNode_Free(struct FileNode* p) 
+void FileNode_Free(struct FileNode * p)
 {
     //so delete esta item e nao todos os proximos
     if (p != NULL)
     {
-        Free((void*)p->Key);        
-        Free((void*)p);
+        Free((void *)p->Key);
+        Free((void *)p);
     }
 }
-void FileNode_Delete(struct FileNode* p) /*@default*/
+void FileNode_Delete(struct FileNode * p) /*@default*/
 {
     if (p != NULL)
     {
-        Free((void*)p->Key);
+        Free((void *)p->Key);
         FileNode_Delete(p->pNext);
-        Free((void*)p);
+        Free((void *)p);
     }
 }
 
 
 
-void FileNodeMap_Destroy(struct FileNodeMap* p) /*@default*/
+void FileNodeMap_Destroy(struct FileNodeMap * p) /*@default*/
 {
     for (int i = 0; i < p->Capacity; i++)
     {
         FileNode_Delete(p->pNodes[i]);
     }
-    Free((void*)p->pNodes);
+    Free((void *)p->pNodes);
 }
 
-static unsigned int HashCode(const char* Key)
+static unsigned int HashCode(const char * Key)
 {
     // hash key to unsigned int value by pseudorandomizing transform
     // (algorithm copied from STL string hash in xfunctional)
@@ -74,12 +74,12 @@ static unsigned int HashCode(const char* Key)
 }
 
 
-struct FileNode* FileNodeMap_Lookup(struct FileNodeMap* t, const char* key)
+struct FileNode * FileNodeMap_Lookup(struct FileNodeMap * t, const char * key)
 {
     if (t->pNodes == NULL)
         return NULL;
     unsigned int pos = HashCode(key) % t->Capacity;
-    struct FileNode* temp = t->pNodes[pos];
+    struct FileNode * temp = t->pNodes[pos];
     while (temp)
     {
         if (strcmp(temp->Key, key) == 0)
@@ -92,7 +92,7 @@ struct FileNode* FileNodeMap_Lookup(struct FileNodeMap* t, const char* key)
 
 }
 
-void FileNodeMap_Insert(struct FileNodeMap* t, struct FileNode* pNewNode)
+void FileNodeMap_Insert(struct FileNodeMap * t, struct FileNode * pNewNode)
 {
     if (t->pNodes == NULL)
     {
@@ -102,10 +102,10 @@ void FileNodeMap_Insert(struct FileNodeMap* t, struct FileNode* pNewNode)
             capacity = 100;
         }
 
-        t->pNodes = (struct FileNode**)Malloc(sizeof(struct FileNode*) * capacity);
+        t->pNodes = (struct FileNode **)Malloc(sizeof(struct FileNode *) * capacity);
         if (t->pNodes != NULL)
         {
-            memset(t->pNodes, 0, sizeof(struct FileNode*) * capacity);
+            memset(t->pNodes, 0, sizeof(struct FileNode *) * capacity);
             t->Capacity = capacity;
         }
         else
@@ -118,19 +118,19 @@ void FileNodeMap_Insert(struct FileNodeMap* t, struct FileNode* pNewNode)
     assert(FileNodeMap_Lookup(t, pNewNode->Key) == NULL);
 
     int pos = HashCode(pNewNode->Key) % t->Capacity;
-    struct FileNode* pList = t->pNodes[pos];
-    struct FileNode* pTemp = pList;
+    struct FileNode * pList = t->pNodes[pos];
+    struct FileNode * pTemp = pList;
     pNewNode->pNext = pList;
     t->pNodes[pos] = pNewNode;
 }
 
-void FileNodeList_Init(struct FileNodeList* pItems)
+void FileNodeList_Init(struct FileNodeList * pItems)
 {
     pItems->pHead = 0;
     pItems->pTail = 0;
 }
 
-void FileNodeList_Swap(struct FileNodeList* a, struct FileNodeList* b)
+void FileNodeList_Swap(struct FileNodeList * a, struct FileNodeList * b)
 {
     struct FileNodeList t = *a;
     *a = *b;
@@ -138,15 +138,15 @@ void FileNodeList_Swap(struct FileNodeList* a, struct FileNodeList* b)
 }
 
 
-void FileNodeList_Destroy(struct FileNodeList* pItems) /*@default*/
+void FileNodeList_Destroy(struct FileNodeList * pItems) /*@default*/
 {
     FileNode_Delete(pItems->pHead);
 }
 
-void FileNodeList_PushBack(struct FileNodeList* pItems,
-    const char* fileName)
+void FileNodeList_PushBack(struct FileNodeList * pItems,
+    const char * fileName)
 {
-    struct FileNode* pItem = FileNode_Create(fileName);
+    struct FileNode * pItem = FileNode_Create(fileName);
     if (pItems->pHead == 0)
     {
         pItems->pHead = pItem;
@@ -158,8 +158,8 @@ void FileNodeList_PushBack(struct FileNodeList* pItems,
     pItems->pTail = pItem;
 }
 
-void FileNodeList_PushItem(struct FileNodeList* pItems,
-    struct FileNode* pItem)
+void FileNodeList_PushItem(struct FileNodeList * pItems,
+    struct FileNode * pItem)
 {
     if (pItems->pHead == 0)
     {
@@ -172,7 +172,7 @@ void FileNodeList_PushItem(struct FileNodeList* pItems,
     pItems->pTail = pItem;
 }
 
-BasicScanner* Scanner_Top(Scanner * pScanner);
+BasicScanner * Scanner_Top(Scanner * pScanner);
 
 void Scanner_MatchDontExpand(Scanner * pScanner);
 
@@ -182,159 +182,159 @@ enum PPTokenType TokenToPPToken(Tokens token)
 
     switch (token)
     {
-    case TK_AUTO:
+        case TK_AUTO:
 
-    case TK_BREAK:
-    case TK_CASE:
-    case TK_CHAR:
-    case TK_CONST:
-    case TK_CONTINUE:
-    case TK_DEFAULT:
+        case TK_BREAK:
+        case TK_CASE:
+        case TK_CHAR:
+        case TK_CONST:
+        case TK_CONTINUE:
+        case TK_DEFAULT:
 
-    case TK_DO:
-    case TK_DOUBLE:
-    case TK_ELSE:
-    case TK_ENUM:
-    case TK_EXTERN:
-    case TK_FLOAT:
-    case TK_FOR:
-    case TK_GOTO:
-    case TK_IF:
-    case TK_INT:
-    case TK_LONG:
+        case TK_DO:
+        case TK_DOUBLE:
+        case TK_ELSE:
+        case TK_ENUM:
+        case TK_EXTERN:
+        case TK_FLOAT:
+        case TK_FOR:
+        case TK_GOTO:
+        case TK_IF:
+        case TK_INT:
+        case TK_LONG:
         ////////////////
         //Microsoft - specific
-    case TK__INT8:
-    case TK__INT16:
-    case TK__INT32:
-    case TK__INT64:
-    case TK__WCHAR_T:
+        case TK__INT8:
+        case TK__INT16:
+        case TK__INT32:
+        case TK__INT64:
+        case TK__WCHAR_T:
         ////////////////
-    case TK_REGISTER:
-    case TK_RETURN:
-    case TK_SHORT:
-    case TK_SIGNED:
-    case TK_SIZEOF:
-    case TK_STATIC:
-    case TK_STRUCT:
-    case TK_SWITCH:
-    case TK_TYPEDEF:
-    case  TK_UNION:
-    case TK_UNSIGNED:
-    case TK_VOID:
-    case TK_VOLATILE:
-    case TK_WHILE:
-    case TK__THREAD_LOCAL:
-    case TK__BOOL:
-    case TK__COMPLEX:
-    case TK__ATOMIC:
-    case TK_RESTRICT:
-    case TK__STATIC_ASSERT:
-    case TK_INLINE:
-    case TK__INLINE://ms
-    case TK__FORCEINLINE: //ms
-    case TK__NORETURN:
-    case TK__ALIGNAS:
-    case TK__GENERIC:
-    case  TK__IMAGINARY:
-    case TK__ALINGOF:
-    case TK_IDENTIFIER:
+        case TK_REGISTER:
+        case TK_RETURN:
+        case TK_SHORT:
+        case TK_SIGNED:
+        case TK_SIZEOF:
+        case TK_STATIC:
+        case TK_STRUCT:
+        case TK_SWITCH:
+        case TK_TYPEDEF:
+        case  TK_UNION:
+        case TK_UNSIGNED:
+        case TK_VOID:
+        case TK_VOLATILE:
+        case TK_WHILE:
+        case TK__THREAD_LOCAL:
+        case TK__BOOL:
+        case TK__COMPLEX:
+        case TK__ATOMIC:
+        case TK_RESTRICT:
+        case TK__STATIC_ASSERT:
+        case TK_INLINE:
+        case TK__INLINE://ms
+        case TK__FORCEINLINE: //ms
+        case TK__NORETURN:
+        case TK__ALIGNAS:
+        case TK__GENERIC:
+        case  TK__IMAGINARY:
+        case TK__ALINGOF:
+        case TK_IDENTIFIER:
         result = PPTokenType_Identifier;
         break;
 
-    case TK_LINE_COMMENT:
-    case TK_COMMENT:
-    case TK_OPEN_COMMENT:
-    case TK_CLOSE_COMMENT:
-    case TK_SPACES:
+        case TK_LINE_COMMENT:
+        case TK_COMMENT:
+        case TK_OPEN_COMMENT:
+        case TK_CLOSE_COMMENT:
+        case TK_SPACES:
         result = PPTokenType_Spaces;
         break;
 
-    case TK_HEX_INTEGER:
-    case TK_DECIMAL_INTEGER:
-    case TK_FLOAT_NUMBER:
+        case TK_HEX_INTEGER:
+        case TK_DECIMAL_INTEGER:
+        case TK_FLOAT_NUMBER:
         result = PPTokenType_Number;
         break;
 
-    case TK_CHAR_LITERAL:
+        case TK_CHAR_LITERAL:
         result = PPTokenType_CharConstant;
         break;
 
-    case TK_STRING_LITERAL:
+        case TK_STRING_LITERAL:
         result = PPTokenType_StringLiteral;
         break;
 
-    case TK_ARROW:
-    case TK_PLUSPLUS:
-    case TK_MINUSMINUS:
-    case TK_LESSLESS:
-    case TK_GREATERGREATER:
-    case TK_LESSEQUAL:
-    case TK_GREATEREQUAL:
-    case TK_EQUALEQUAL:
-    case TK_NOTEQUAL:
-    case TK_ANDAND:
-    case TK_OROR:
-    case TK_MULTIEQUAL:
-    case TK_DIVEQUAL:
-    case TK_PERCENT_EQUAL:
-    case TK_PLUSEQUAL:
-    case TK_MINUS_EQUAL:
-    case TK_ANDEQUAL:
-    case TK_CARETEQUAL:
-    case TK_OREQUAL:
-    case TK_NUMBERNUMBER:
-    case TK_LESSCOLON:
-    case TK_COLONGREATER:
-    case TK_LESSPERCENT:
-    case TK_PERCENTGREATER:
-    case TK_PERCENTCOLON:
-    case TK_DOTDOTDOT:
-    case TK_GREATERGREATEREQUAL:
-    case TK_LESSLESSEQUAL:
-    case TK_PERCENTCOLONPERCENTCOLON:
+        case TK_ARROW:
+        case TK_PLUSPLUS:
+        case TK_MINUSMINUS:
+        case TK_LESSLESS:
+        case TK_GREATERGREATER:
+        case TK_LESSEQUAL:
+        case TK_GREATEREQUAL:
+        case TK_EQUALEQUAL:
+        case TK_NOTEQUAL:
+        case TK_ANDAND:
+        case TK_OROR:
+        case TK_MULTIEQUAL:
+        case TK_DIVEQUAL:
+        case TK_PERCENT_EQUAL:
+        case TK_PLUSEQUAL:
+        case TK_MINUS_EQUAL:
+        case TK_ANDEQUAL:
+        case TK_CARETEQUAL:
+        case TK_OREQUAL:
+        case TK_NUMBERNUMBER:
+        case TK_LESSCOLON:
+        case TK_COLONGREATER:
+        case TK_LESSPERCENT:
+        case TK_PERCENTGREATER:
+        case TK_PERCENTCOLON:
+        case TK_DOTDOTDOT:
+        case TK_GREATERGREATEREQUAL:
+        case TK_LESSLESSEQUAL:
+        case TK_PERCENTCOLONPERCENTCOLON:
 
-    case     TK_EXCLAMATION_MARK:// = '!';
-    case    TK_QUOTATION_MARK:// = '\"';
-    case    TK_NUMBER_SIGN:// = '#';
+        case     TK_EXCLAMATION_MARK:// = '!';
+        case    TK_QUOTATION_MARK:// = '\"';
+        case    TK_NUMBER_SIGN:// = '#';
 
-    case    TK_DOLLAR_SIGN:// = '$';
-    case     TK_PERCENT_SIGN:// = '%';
-    case    TK_AMPERSAND:// = '&';
-    case     TK_APOSTROPHE:// = '\'';
-    case    TK_LEFT_PARENTHESIS:// = '(';
-    case    TK_RIGHT_PARENTHESIS:// = ')';
-    case    TK_ASTERISK:// = '*';
-    case    TK_PLUS_SIGN:// = '+';
-    case    TK_COMMA:// = ':';
-    case    TK_HYPHEN_MINUS:// = '-';
-    case    TK_HYPHEN_MINUS_NEG:// = '-'; //nao retorna no basic string mas eh usado para saber se eh - unario
-    case    TK_FULL_STOP:// = '.';
-    case    TK_SOLIDUS:// = '/';
+        case    TK_DOLLAR_SIGN:// = '$';
+        case     TK_PERCENT_SIGN:// = '%';
+        case    TK_AMPERSAND:// = '&';
+        case     TK_APOSTROPHE:// = '\'';
+        case    TK_LEFT_PARENTHESIS:// = '(';
+        case    TK_RIGHT_PARENTHESIS:// = ')';
+        case    TK_ASTERISK:// = '*';
+        case    TK_PLUS_SIGN:// = '+';
+        case    TK_COMMA:// = ':';
+        case    TK_HYPHEN_MINUS:// = '-';
+        case    TK_HYPHEN_MINUS_NEG:// = '-'; //nao retorna no basic string mas eh usado para saber se eh - unario
+        case    TK_FULL_STOP:// = '.';
+        case    TK_SOLIDUS:// = '/';
 
-    case    TK_COLON:// = ':';
-    case    TK_SEMICOLON:// = ';';
-    case    TK_LESS_THAN_SIGN:// = '<';
-    case    TK_EQUALS_SIGN:// = '=';
-    case    TK_GREATER_THAN_SIGN:// = '>';
-    case    TK_QUESTION_MARK:// = '\?';
-    case    TK_COMMERCIAL_AT:// = '@';
+        case    TK_COLON:// = ':';
+        case    TK_SEMICOLON:// = ';';
+        case    TK_LESS_THAN_SIGN:// = '<';
+        case    TK_EQUALS_SIGN:// = '=';
+        case    TK_GREATER_THAN_SIGN:// = '>';
+        case    TK_QUESTION_MARK:// = '\?';
+        case    TK_COMMERCIAL_AT:// = '@';
 
-    case     TK_LEFT_SQUARE_BRACKET:// = '[';
-    case    REVERSE_SOLIDUS:// = '\\';
-    case     TK_RIGHT_SQUARE_BRACKET:// = ']';
-    case    TK_CIRCUMFLEX_ACCENT:// = '^';
-    case    TK_LOW_LINE:// = '_';
-    case    TK_GRAVE_ACCENT:// = '`';
+        case     TK_LEFT_SQUARE_BRACKET:// = '[';
+        case    REVERSE_SOLIDUS:// = '\\';
+        case     TK_RIGHT_SQUARE_BRACKET:// = ']';
+        case    TK_CIRCUMFLEX_ACCENT:// = '^';
+        case    TK_LOW_LINE:// = '_';
+        case    TK_GRAVE_ACCENT:// = '`';
 
-    case    TK_LEFT_CURLY_BRACKET:// = '{';
-    case    TK_VERTICAL_LINE:// = '|';
-    case    TK_RIGHT_CURLY_BRACKET:// = '}';
-    case    TK_TILDE: // ~
+        case    TK_LEFT_CURLY_BRACKET:// = '{';
+        case    TK_VERTICAL_LINE:// = '|';
+        case    TK_RIGHT_CURLY_BRACKET:// = '}';
+        case    TK_TILDE: // ~
 
         result = PPTokenType_Punctuator;
         break;
-    default:
+        default:
         //assert(false);
         result = PPTokenType_Punctuator;
         break;
@@ -343,9 +343,9 @@ enum PPTokenType TokenToPPToken(Tokens token)
     return result;
 }
 
-TFile* TFile_Create() /*@default*/
+TFile * TFile_Create() /*@default*/
 {
-    TFile *p = (TFile*) Malloc(sizeof * p);
+    TFile * p = (TFile *)Malloc(sizeof * p);
     if (p != NULL)
     {
         p->FullPath = NULL;
@@ -360,8 +360,8 @@ TFile* TFile_Create() /*@default*/
 
 void TFile_Destroy(TFile * p) /*@default*/
 {
-    Free((void*)p->FullPath);
-    Free((void*)p->IncludePath);
+    Free((void *)p->FullPath);
+    Free((void *)p->IncludePath);
 }
 
 void TFile_Delete(TFile * p) /*@default*/
@@ -369,13 +369,13 @@ void TFile_Delete(TFile * p) /*@default*/
     if (p != NULL)
     {
         TFile_Destroy(p);
-        Free((void*)p);
+        Free((void *)p);
     }
 }
 
-void TFile_DeleteVoid(void* p)
+void TFile_DeleteVoid(void * p)
 {
-    TFile_Delete((TFile*)p);
+    TFile_Delete((TFile *)p);
 }
 
 void TFileMap_Destroy(TFileMap * p)
@@ -395,15 +395,15 @@ void TFileArray_Destroy(TFileArray * p) /*@default*/
     {
         TFile_Delete(p->pItems[i]);
     }
-    Free((void*)p->pItems);
+    Free((void *)p->pItems);
 }
 
 void TFileArray_Reserve(TFileArray * p, int n) /*@default*/
 {
     if (n > p->Capacity)
     {
-        TFile** pnew = p->pItems;
-        pnew = (TFile**)Realloc(pnew, n * sizeof(TFile*));
+        TFile ** pnew = p->pItems;
+        pnew = (TFile * *)Realloc(pnew, n * sizeof(TFile *));
         if (pnew)
         {
             p->pItems = pnew;
@@ -427,7 +427,7 @@ void TFileArray_PushBack(TFileArray * p, TFile * pItem) /*@default*/
     p->Size++;
 }
 
-bool TFileMap_Set(TFileMap * map, const char* key, TFile * pFile)
+bool TFileMap_Set(TFileMap * map, const char * key, TFile * pFile)
 {
     // tem que ser case insensitive!
     //assert(IsFullPath(key));
@@ -439,13 +439,13 @@ bool TFileMap_Set(TFileMap * map, const char* key, TFile * pFile)
     return result;
 }
 
-TFile* TFileMap_Find(TFileMap * map, const char* key)
+TFile * TFileMap_Find(TFileMap * map, const char * key)
 {
     // tem que ser case insensitive!
-    return (TFile*)Map_Find2(map, key);
+    return (TFile *)Map_Find2(map, key);
 }
 
-bool TFileMap_DeleteItem(TFileMap * map, const char* key)
+bool TFileMap_DeleteItem(TFileMap * map, const char * key)
 {
     return Map_DeleteItem(map, key, TFile_DeleteVoid);
 }
@@ -480,8 +480,8 @@ void StackInts_Reserve(StackInts * p, int n) /*@default*/
 {
     if (n > p->Capacity)
     {
-        enum PPState* pnew = p->pItems;
-        pnew = (enum PPState*)Realloc(pnew, n * sizeof(enum PPState));
+        enum PPState * pnew = p->pItems;
+        pnew = (enum PPState *)Realloc(pnew, n * sizeof(enum PPState));
         if (pnew)
         {
             p->pItems = pnew;
@@ -539,7 +539,7 @@ void Scanner_GetError(Scanner * pScanner, StrBuilder * str)
 
 void Scanner_GetFilePositionString(Scanner * pScanner, StrBuilder * sb)
 {
-    BasicScanner* pScannerTop = Scanner_Top(pScanner);
+    BasicScanner * pScannerTop = Scanner_Top(pScanner);
 
     if (pScannerTop != NULL)
     {
@@ -557,7 +557,7 @@ void Scanner_GetFilePositionString(Scanner * pScanner, StrBuilder * sb)
     }
 }
 
-void Scanner_SetError(Scanner * pScanner, const char* fmt, ...)
+void Scanner_SetError(Scanner * pScanner, const char * fmt, ...)
 {
     if (!pScanner->bError)
     {
@@ -594,10 +594,10 @@ void Scanner_PrintDebug(Scanner * pScanner)
     printf("---\n");
 }
 
-static bool AddStandardMacro(Scanner * pScanner, const char* name,
-    const char* value)
+static bool AddStandardMacro(Scanner * pScanner, const char * name,
+    const char * value)
 {
-    Macro* pDefine1 = Macro_Create();
+    Macro * pDefine1 = Macro_Create();
     PTR_STRING_REPLACE(pDefine1->Name, name);
     // TODO tipo do token
     TokenArray_PushBack(&pDefine1->TokenSequence,
@@ -607,7 +607,7 @@ static bool AddStandardMacro(Scanner * pScanner, const char* name,
     return true;
 }
 static void Scanner_PushToken(Scanner * pScanner, Tokens token,
-    const char* lexeme, bool bActive);
+    const char * lexeme, bool bActive);
 
 static bool Scanner_InitCore(Scanner * pScanner)
 {
@@ -652,12 +652,12 @@ static bool Scanner_InitCore(Scanner * pScanner)
     return true;
 }
 
-bool Scanner_InitString(Scanner * pScanner, const char* name,
-    const char* Text)
+bool Scanner_InitString(Scanner * pScanner, const char * name,
+    const char * Text)
 {
     Scanner_InitCore(pScanner);
 
-    BasicScanner* pNewScanner;
+    BasicScanner * pNewScanner;
     bool result =
         BasicScanner_Create(&pNewScanner, name, Text, BasicScannerType_Macro);
     BasicScannerStack_Push(&pScanner->stack, pNewScanner);
@@ -666,15 +666,15 @@ bool Scanner_InitString(Scanner * pScanner, const char* name,
 
 bool PushExpandedMacro(Scanner * pScanner,
 
-    const char* callString,
-    const char* defineContent)
+    const char * callString,
+    const char * defineContent)
 {
     if (pScanner->bError)
     {
         return false;
     }
 
-    BasicScanner* pNewScanner;
+    BasicScanner * pNewScanner;
     bool result = BasicScanner_Create(&pNewScanner, callString, /*defineName*/
         defineContent, BasicScannerType_Macro);
 
@@ -688,7 +688,7 @@ bool PushExpandedMacro(Scanner * pScanner,
     return result;
 }
 
-bool Scanner_GetFullPath(Scanner * pScanner, const char* fileName,
+bool Scanner_GetFullPath(Scanner * pScanner, const char * fileName,
     bool bQuotedForm, String * /*@auto*/ *fullPathOut)
 {
     if (pScanner->bError)
@@ -751,7 +751,7 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char* fileName,
             else
             {
                 // nao abriu nenhum, faz o full path do nome do arquivo
-                String* /*@auto*/ fullPath = NULL;
+                String * /*@auto*/ fullPath = NULL;
 
                 GetFullPath(fileName, &fullPath);
                 bool bFileExists = FileExists(fullPath);
@@ -781,7 +781,7 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char* fileName,
 
         for (int i = 0; i < pScanner->IncludeDir.size; i++)
         {
-            const char* pItem = pScanner->IncludeDir.pItems[i];
+            const char * pItem = pScanner->IncludeDir.pItems[i];
             StrBuilder_Set(&path, pItem);
 
             //barra para o outro lado funciona
@@ -806,23 +806,23 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char* fileName,
 }
 
 bool Scanner_IsAlreadyIncluded(Scanner * pScanner,
-    const char* includeFileName,
+    const char * includeFileName,
     FileIncludeType fileIncludeType)
 {
     bool bResult = false;
-    String* /*@auto*/ fullPath = NULL;
+    String * /*@auto*/ fullPath = NULL;
     bool bHasFullPath = false;
 
     switch (fileIncludeType)
     {
-    case FileIncludeTypeQuoted:
-    case FileIncludeTypeIncludes:
+        case FileIncludeTypeQuoted:
+        case FileIncludeTypeIncludes:
         bHasFullPath = Scanner_GetFullPath(pScanner, includeFileName,
             fileIncludeType == FileIncludeTypeQuoted,
             &fullPath);
         break;
 
-    case FileIncludeTypeFullPath:
+        case FileIncludeTypeFullPath:
         PTR_STRING_REPLACE(fullPath, includeFileName);
         bHasFullPath = true;
         break;
@@ -830,7 +830,7 @@ bool Scanner_IsAlreadyIncluded(Scanner * pScanner,
 
     if (bHasFullPath)
     {
-        TFile* pFile = TFileMap_Find(&pScanner->FilesIncluded, fullPath);
+        TFile * pFile = TFileMap_Find(&pScanner->FilesIncluded, fullPath);
 
         if (pFile != NULL)
         {
@@ -842,7 +842,7 @@ bool Scanner_IsAlreadyIncluded(Scanner * pScanner,
 }
 
 void Scanner_IncludeFile(Scanner * pScanner,
-    const char* includeFileName,
+    const char * includeFileName,
     FileIncludeType fileIncludeType,
     bool bSkipBof)
 {
@@ -853,7 +853,7 @@ void Scanner_IncludeFile(Scanner * pScanner,
 
     bool bDirectInclude = false;
 
-    String* /*@auto*/ fullPath = NULL;
+    String * /*@auto*/ fullPath = NULL;
 
     // Faz a procura nos diretorios como se tivesse adicinando o include
     // seguindo as mesmas regras. Caso o include seja possivel ele retorna o path
@@ -862,14 +862,14 @@ void Scanner_IncludeFile(Scanner * pScanner,
 
     switch (fileIncludeType)
     {
-    case FileIncludeTypeQuoted:
-    case FileIncludeTypeIncludes:
+        case FileIncludeTypeQuoted:
+        case FileIncludeTypeIncludes:
         bHasFullPath = Scanner_GetFullPath(pScanner, includeFileName,
             fileIncludeType == FileIncludeTypeQuoted,
             &fullPath);
         break;
 
-    case FileIncludeTypeFullPath:
+        case FileIncludeTypeFullPath:
         PTR_STRING_REPLACE(fullPath, includeFileName);
         bHasFullPath = true;
         break;
@@ -877,7 +877,7 @@ void Scanner_IncludeFile(Scanner * pScanner,
 
     if (bHasFullPath)
     {
-        TFile* pFile = TFileMap_Find(&pScanner->FilesIncluded, fullPath);
+        TFile * pFile = TFileMap_Find(&pScanner->FilesIncluded, fullPath);
 
         if (pFile != NULL && pFile->PragmaOnce)
         {
@@ -938,11 +938,11 @@ void Scanner_IncludeFile(Scanner * pScanner,
     Free(fullPath);
 }
 
-const char* Scanner_GetStreamName(Scanner * pScanner)
+const char * Scanner_GetStreamName(Scanner * pScanner)
 {
-    const char* streamName = NULL;
+    const char * streamName = NULL;
 
-    BasicScanner* p = Scanner_Top(pScanner);
+    BasicScanner * p = Scanner_Top(pScanner);
     streamName = p ? p->stream.NameOrFullPath : NULL;
 
     return streamName;
@@ -966,7 +966,7 @@ void Scanner_Destroy(Scanner * pScanner) /*@default*/
     TScannerItemList_Destroy(&pScanner->AcumulatedTokens);
 }
 
-void Scanner_Reset(Scanner* pScanner)
+void Scanner_Reset(Scanner * pScanner)
 {
     //Basically this function was created to allow
     //inclusion of new file Scanner_IncludeFile
@@ -987,13 +987,13 @@ void Scanner_Reset(Scanner* pScanner)
 
     //mantem
     //TFileMap_Destroy(&pScanner->FilesIncluded);
-    
+
     //mantem
     //StrArray_Destroy(&pScanner->IncludeDir);
 
     //FileNodeList_Destroy(&pScanner->Sources);
     //FileNodeList_Init(&pScanner->Sources);
-    
+
     StrBuilder_Destroy(&pScanner->DebugString);
     StrBuilder_Init(&pScanner->DebugString);
 
@@ -1074,7 +1074,7 @@ int Scanner_GetFileIndex(Scanner * pScanner)
     }
 }*/
 
-BasicScanner* Scanner_Top(Scanner * pScanner)
+BasicScanner * Scanner_Top(Scanner * pScanner)
 {
     return pScanner->stack;
 }
@@ -1143,13 +1143,13 @@ void GetDefineString(Scanner * pScanner, StrBuilder * strBuilder)
     }
 }
 
-Macro* Scanner_FindPreprocessorItem2(Scanner * pScanner, const char* key)
+Macro * Scanner_FindPreprocessorItem2(Scanner * pScanner, const char * key)
 {
-    Macro* pMacro = MacroMap_Find(&pScanner->Defines2, key);
+    Macro * pMacro = MacroMap_Find(&pScanner->Defines2, key);
     return pMacro;
 }
 
-bool Scanner_IsLexeme(Scanner * pScanner, const char* psz)
+bool Scanner_IsLexeme(Scanner * pScanner, const char * psz)
 {
     return BasicScanner_IsLexeme(Scanner_Top(pScanner), psz);
 }
@@ -1157,7 +1157,7 @@ bool Scanner_IsLexeme(Scanner * pScanner, const char* psz)
 int PreprocessorExpression(Parser * parser)
 {
     // Faz o parser da expressão
-    TExpression* pExpression = NULL;
+    TExpression * pExpression = NULL;
     ConstantExpression(parser, &pExpression);
     //..a partir da arvore da expressão
     // calcula o valor
@@ -1172,9 +1172,9 @@ int PreprocessorExpression(Parser * parser)
     return r;
 }
 
-int EvalExpression(const char* s, Scanner * pScanner)
+int EvalExpression(const char * s, Scanner * pScanner)
 {
-    MacroMap* pDefines = &pScanner->Defines2;
+    MacroMap * pDefines = &pScanner->Defines2;
     // printf("%s = ", s);
     // TODO avaliador de expressoes para pre processador
     // https://gcc.gnu.org/onlinedocs/gcc-3.0.2/cpp_4.html#SEC38
@@ -1212,12 +1212,12 @@ int EvalExpression(const char* s, Scanner * pScanner)
 }
 
 static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
-    Macro * pMacro, TokenArray * ppTokenArray,
+    Macro * pMacro, struct TokenArray * ppTokenArray,
     StrBuilder * strBuilder)
 {
     // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
     // TODO aqui nao pode ser o current
-    const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
+    const char * lexeme = pBasicScanner->currentItem.lexeme.c_str;
     Tokens token = pBasicScanner->currentItem.token;
 
     // verificar se tem parametros
@@ -1229,11 +1229,11 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
     if (token == TK_LEFT_PARENTHESIS)
     {
         // Adiciona o nome da macro
-        struct PPToken* ppTokenName = PPToken_Create(pMacro->Name, PPTokenType_Identifier);
+        struct PPToken * ppTokenName = PPToken_Create(pMacro->Name, PPTokenType_Identifier);
         TokenArray_PushBack(ppTokenArray, ppTokenName);
 
         // Match do (
-        struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+        struct PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
         TokenArray_PushBack(ppTokenArray, ppToken);
 
         StrBuilder_Append(strBuilder, lexeme);
@@ -1251,7 +1251,7 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
             if (token == TK_LEFT_PARENTHESIS)
             {
 
-                struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+                struct PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
 
                 TokenArray_PushBack(ppTokenArray, ppToken);
 
@@ -1267,7 +1267,7 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
             {
                 if (iInsideParentesis == 1)
                 {
-                    struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+                    struct PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
                     TokenArray_PushBack(ppTokenArray, ppToken);
 
                     StrBuilder_Append(strBuilder, lexeme);
@@ -1281,7 +1281,7 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
 
                 iInsideParentesis--;
 
-                struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+                struct PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
                 TokenArray_PushBack(ppTokenArray, ppToken);
 
                 StrBuilder_Append(strBuilder, lexeme);
@@ -1302,7 +1302,7 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
                 }
 
                 // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
-                struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+                struct PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
                 TokenArray_PushBack(ppTokenArray, ppToken);
 
                 StrBuilder_Append(strBuilder, lexeme);
@@ -1313,7 +1313,7 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
             else
             {
                 // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
-                struct PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+                struct PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
                 TokenArray_PushBack(ppTokenArray, ppToken);
 
                 StrBuilder_Append(strBuilder, lexeme);
@@ -1355,7 +1355,7 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
     // return false;
 }
 
-Tokens FindPreToken(const char* lexeme)
+Tokens FindPreToken(const char * lexeme)
 {
     Tokens token = TK_NONE;
     if (strcmp(lexeme, "include") == 0)
@@ -1409,11 +1409,11 @@ Tokens FindPreToken(const char* lexeme)
     return token;
 }
 
-void GetPPTokens(BasicScanner * pBasicScanner, TokenArray * pptokens,
+void GetPPTokens(BasicScanner * pBasicScanner, struct TokenArray * pptokens,
     StrBuilder * strBuilder)
 {
     Tokens token = pBasicScanner->currentItem.token;
-    const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
+    const char * lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
     // Corpo da macro
     while (token != TK_BREAKLINE && token != TK_EOF && token != TK_FILE_EOF)
@@ -1423,7 +1423,7 @@ void GetPPTokens(BasicScanner * pBasicScanner, TokenArray * pptokens,
         if (token != TK_BACKSLASHBREAKLINE)
         {
             // TODO comentarios entram como espaco
-            struct       PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+            struct       PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
             TokenArray_PushBack(pptokens, ppToken);
         }
         BasicScanner_Match(pBasicScanner);
@@ -1457,13 +1457,13 @@ static void Scanner_MatchAllPreprocessorSpaces(BasicScanner * pBasicScanner,
 
 void ParsePreDefinev2(Scanner * pScanner, StrBuilder * strBuilder)
 {
-    BasicScanner* pBasicScanner = Scanner_Top(pScanner);
+    BasicScanner * pBasicScanner = Scanner_Top(pScanner);
 
     // objetivo eh montar a macro e colocar no mapa
-    Macro* pNewMacro = Macro_Create();
+    Macro * pNewMacro = Macro_Create();
 
     Tokens token = pBasicScanner->currentItem.token;
-    const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
+    const char * lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
     PTR_STRING_REPLACE(pNewMacro->Name, lexeme);
     StrBuilder_Append(strBuilder, lexeme);
@@ -1508,7 +1508,7 @@ void ParsePreDefinev2(Scanner * pScanner, StrBuilder * strBuilder)
             token = pBasicScanner->currentItem.token;
             lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
-            struct       PPToken* ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
+            struct       PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
             TokenArray_PushBack(&pNewMacro->FormalArguments, ppToken);
 
             StrBuilder_Append(strBuilder, lexeme);
@@ -1552,9 +1552,9 @@ int EvalPre(Scanner * pScanner, StrBuilder * sb)
     // pega todos os tokens ate o final da linha expande e
     // avalia
     // usado no #if #elif etc.
-    BasicScanner* pBasicScanner = Scanner_Top(pScanner);
+    BasicScanner * pBasicScanner = Scanner_Top(pScanner);
 
-    TokenArray pptokens = TOKENARRAY_INIT;
+    struct TokenArray pptokens = TOKENARRAY_INIT;
     GetPPTokens(pBasicScanner, &pptokens, sb);
 
 
@@ -1586,14 +1586,14 @@ int EvalPre(Scanner * pScanner, StrBuilder * sb)
 }
 
 static void Scanner_PushToken(Scanner * pScanner, Tokens token,
-    const char* lexeme, bool bActive)
+    const char * lexeme, bool bActive)
 {
     if (pScanner->bError)
     {
         return;
     }
 
-    ScannerItem* pNew = ScannerItem_Create();
+    ScannerItem * pNew = ScannerItem_Create();
     LocalStrBuilder_Set(&pNew->lexeme, lexeme);
     pNew->token = token;
     pNew->bActive = bActive; //;
@@ -1610,16 +1610,16 @@ static void Scanner_PushToken(Scanner * pScanner, Tokens token,
 void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
 {
     enum PPState state = StateTop(pScanner);
-    BasicScanner* pBasicScanner = Scanner_Top(pScanner);
+    BasicScanner * pBasicScanner = Scanner_Top(pScanner);
     //assert(pBasicScanner != NULL);
 
     Tokens token = pBasicScanner->currentItem.token;
-    const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
+    const char * lexeme = pBasicScanner->currentItem.lexeme.c_str;
     //assert(token == TK_IDENTIFIER);
 
     if (!IsIncludeState(state))
     {
-        ScannerItem* pNew = ScannerItem_Create();
+        ScannerItem * pNew = ScannerItem_Create();
         LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
         pNew->token = pBasicScanner->currentItem.token;
         pNew->bActive = false;
@@ -1630,11 +1630,11 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
         return;
     }
 
-    Macro* pMacro2 = Scanner_FindPreprocessorItem2(pScanner, lexeme);
+    Macro * pMacro2 = Scanner_FindPreprocessorItem2(pScanner, lexeme);
     if (pMacro2 == NULL)
     {
         // nao eh macro
-        ScannerItem* pNew = ScannerItem_Create();
+        ScannerItem * pNew = ScannerItem_Create();
         LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
         pNew->token = pBasicScanner->currentItem.token;
         pNew->bActive = true;
@@ -1650,7 +1650,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
     {
         // ja estou expandindo esta mesma macro
         // nao eh macro
-        ScannerItem* pNew = ScannerItem_Create();
+        ScannerItem * pNew = ScannerItem_Create();
         LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
         pNew->token = pBasicScanner->currentItem.token;
         pNew->bActive = true;
@@ -1661,7 +1661,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
         return;
     }
 
-    Macro* pFirstMacro = pMacro2;
+    Macro * pFirstMacro = pMacro2;
 
     // Match do identificador do nome da macro funcao
     BasicScanner_Match(pBasicScanner);
@@ -1672,9 +1672,9 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
     {
         if (!pMacro2->bIsFunction)
         {
-            TokenArray ppTokenArray = TOKENARRAY_INIT;
+            struct TokenArray ppTokenArray = TOKENARRAY_INIT;
             // o nome eh a propria expansao
-            struct       PPToken* ppTokenName =
+            struct       PPToken * ppTokenName =
                 PPToken_Create(pMacro2->Name, TokenToPPToken(TK_IDENTIFIER));
             TokenArray_PushBack(&ppTokenArray, ppTokenName);
 
@@ -1685,7 +1685,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
 
             // se expandir para identificador e ele for uma macro do tipo funcao
             // pode ser tetris
-            Macro* pMacro3 = NULL;
+            Macro * pMacro3 = NULL;
 
             if (strExpanded.size > 0)
             {
@@ -1740,7 +1740,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                 // StrBuilder_Append(strBuilder, lexeme);
 
                 /////////////
-                ScannerItem* pNew = ScannerItem_Create();
+                ScannerItem * pNew = ScannerItem_Create();
                 LocalStrBuilder_Set(&pNew->lexeme, lexeme);
                 pNew->token = token;
                 pNew->bActive = true;
@@ -1756,7 +1756,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
             {
                 StrBuilder strCallString = STRBUILDER_INIT;
                 StrBuilder strExpanded = STRBUILDER_INIT;
-                TokenArray ppTokenArray = TOKENARRAY_INIT;
+                struct TokenArray ppTokenArray = TOKENARRAY_INIT;
 
                 StrBuilder_Set(&strCallString, pFirstMacro->Name);
                 // eh uma chamada da macro funcao
@@ -1778,7 +1778,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                 /////////////////////////////////
                 // se expandir para identificador e ele for uma macro do tipo funcao
                 // pode ser tetris
-                Macro* pMacro3 = NULL;
+                Macro * pMacro3 = NULL;
                 if (strExpanded.size > 0)
                 {
                     pMacro3 = Scanner_FindPreprocessorItem2(pScanner, strExpanded.c_str);
@@ -1823,14 +1823,14 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                 if (pFirstMacro != pMacro2)
                 {
                     // nao era uma chamada da macro funcao
-                    ScannerItem* pNew = ScannerItem_Create();
+                    ScannerItem * pNew = ScannerItem_Create();
                     LocalStrBuilder_Append(&pNew->lexeme, pFirstMacro->Name);
                     pNew->token = TK_MACRO_CALL;
                     pNew->bActive = true;
                     TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
                 }
 
-                ScannerItem* pNew0 = ScannerItem_Create();
+                ScannerItem * pNew0 = ScannerItem_Create();
                 LocalStrBuilder_Append(&pNew0->lexeme, pMacro2->Name);
                 pNew0->token = TK_IDENTIFIER;
                 pNew0->bActive = true;
@@ -1838,7 +1838,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
 
                 if (pFirstMacro != pMacro2)
                 {
-                    ScannerItem* pNew2 = ScannerItem_Create();
+                    ScannerItem * pNew2 = ScannerItem_Create();
                     pNew2->token = TK_MACRO_EOF;
                     pNew2->bActive = true;
                     TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew2);
@@ -1879,7 +1879,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
         return;
     }
 
-    BasicScanner* pBasicScanner = Scanner_Top(pScanner);
+    BasicScanner * pBasicScanner = Scanner_Top(pScanner);
     if (pBasicScanner == NULL)
     {
         // acabaram todos os montes de tokens (cartas do baralho)
@@ -1887,7 +1887,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
     }
 
     Tokens token = pBasicScanner->currentItem.token;
-    const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
+    const char * lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
     if (token == TK_BOF)
     {
@@ -1928,7 +1928,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
     if (token == TK_EOF)
     {
         // não sobrou nenhum baralho nao tem o que comprar
-        ScannerItem* pNew = ScannerItem_Create();
+        ScannerItem * pNew = ScannerItem_Create();
         pNew->token = TK_EOF;
         pNew->bActive = true;
         TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
@@ -1974,7 +1974,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
                 if (token == TK_STRING_LITERAL)
                 {
-                    String* /*@auto*/ fileName;
+                    String * /*@auto*/ fileName;
                     fileName = StrDup(lexeme + 1);
 
                     StrBuilder_Append(&strBuilder, lexeme);
@@ -2081,8 +2081,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
                 if (BasicScanner_IsLexeme(pBasicScanner, "once"))
                 {
-                    const char* fullPath = Scanner_Top(pScanner)->stream.NameOrFullPath;
-                    TFile* pFile = TFileMap_Find(&pScanner->FilesIncluded, fullPath);
+                    const char * fullPath = Scanner_Top(pScanner)->stream.NameOrFullPath;
+                    TFile * pFile = TFileMap_Find(&pScanner->FilesIncluded, fullPath);
 
                     if (pFile == NULL)
                     {
@@ -2123,7 +2123,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
                     Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
                     lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
-                    String* /*@auto*/ fileName;
+                    String * /*@auto*/ fileName;
                     fileName = StrDup(lexeme + 1);
 
                     Scanner_Match(pScanner);
@@ -2141,7 +2141,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
                     BasicScanner_Match(pBasicScanner);
                     Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
 
-                    String* /*@auto*/ fileName = NULL;
+                    String * /*@auto*/ fileName = NULL;
 
                     if (pBasicScanner->currentItem.token == TK_STRING_LITERAL)
                     {
@@ -2150,7 +2150,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
                         fileName[strlen(fileName) - 1] = 0;
 
                         bool bHasFullPath = false;
-                        String* fullPath=0;
+                        String * fullPath = 0;
                         bHasFullPath = Scanner_GetFullPath(pScanner, fileName, true, &fullPath);
                         Free(fileName);
                         fileName = fullPath;//moved
@@ -2244,46 +2244,46 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
             switch (state)
             {
-            case PPState_NONE:
-            case PPState_I1:
-            case PPState_E1:
-            {
-                int iRes = 0;
-
-                if (preToken == TK_PRE_IF)
+                case PPState_NONE:
+                case PPState_I1:
+                case PPState_E1:
                 {
-                    iRes = EvalPre(pScanner, &strBuilder);
-                }
-                else
-                {
-                    bool bFound = Scanner_FindPreprocessorItem2(pScanner, lexeme) != NULL;
+                    int iRes = 0;
 
-                    if (preToken == TK_PRE_IFDEF)
+                    if (preToken == TK_PRE_IF)
                     {
-                        iRes = bFound ? 1 : 0;
+                        iRes = EvalPre(pScanner, &strBuilder);
                     }
-                    else // if (preToken == TK_PRE_IFNDEF)
+                    else
                     {
-                        iRes = !bFound ? 1 : 0;
+                        bool bFound = Scanner_FindPreprocessorItem2(pScanner, lexeme) != NULL;
+
+                        if (preToken == TK_PRE_IFDEF)
+                        {
+                            iRes = bFound ? 1 : 0;
+                        }
+                        else // if (preToken == TK_PRE_IFNDEF)
+                        {
+                            iRes = !bFound ? 1 : 0;
+                        }
+                    }
+
+                    if (iRes != 0)
+                    {
+                        StatePush(pScanner, PPState_I1);
+                    }
+                    else
+                    {
+                        StatePush(pScanner, PPState_I0);
                     }
                 }
+                break;
 
-                if (iRes != 0)
-                {
-                    StatePush(pScanner, PPState_I1);
-                }
-                else
-                {
-                    StatePush(pScanner, PPState_I0);
-                }
-            }
-            break;
-
-            case PPState_I0:
+                case PPState_I0:
                 StatePush(pScanner, PPState_I0);
                 break;
 
-            case PPState_E0:
+                case PPState_E0:
                 StatePush(pScanner, PPState_E0);
                 break;
             }
@@ -2304,21 +2304,29 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
             switch (state)
             {
-            case PPState_NONE:
-            case PPState_I1:
+                case PPState_NONE:
+                case PPState_I1:
                 pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = PPState_E0;
                 break;
 
-            case PPState_I0:
-            {
-                int iRes = EvalPre(pScanner, &strBuilder);
-
-                if (pScanner->StackIfDef.Size >= 2)
+                case PPState_I0:
                 {
-                    if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
-                        PPState_I1 ||
-                        pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
-                        PPState_E1))
+                    int iRes = EvalPre(pScanner, &strBuilder);
+
+                    if (pScanner->StackIfDef.Size >= 2)
+                    {
+                        if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
+                            PPState_I1 ||
+                            pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
+                            PPState_E1))
+                        {
+                            if (iRes)
+                            {
+                                pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = PPState_I1;
+                            }
+                        }
+                    }
+                    else
                     {
                         if (iRes)
                         {
@@ -2326,20 +2334,12 @@ void Scanner_BuyTokens(Scanner * pScanner)
                         }
                     }
                 }
-                else
-                {
-                    if (iRes)
-                    {
-                        pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = PPState_I1;
-                    }
-                }
-            }
-            break;
-
-            case PPState_E0:
                 break;
 
-            case PPState_E1:
+                case PPState_E0:
+                break;
+
+                case PPState_E1:
                 //assert(0);
                 break;
             }
@@ -2375,15 +2375,15 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
             switch (state)
             {
-            case PPState_NONE:
+                case PPState_NONE:
                 //assert(0);
                 break;
 
-            case PPState_I1:
+                case PPState_I1:
                 pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 1] = PPState_E0;
                 break;
 
-            case PPState_I0:
+                case PPState_I0:
                 if (pScanner->StackIfDef.Size >= 2)
                 {
                     if ((pScanner->StackIfDef.pItems[pScanner->StackIfDef.Size - 2] ==
@@ -2401,10 +2401,10 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
                 break;
 
-            case PPState_E0:
+                case PPState_E0:
                 break;
 
-            case PPState_E1:
+                case PPState_E1:
                 //assert(false);
                 break;
             }
@@ -2500,7 +2500,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
     }
     else
     {
-        ScannerItem* pNew = ScannerItem_Create();
+        ScannerItem * pNew = ScannerItem_Create();
         LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
         pNew->token = pBasicScanner->currentItem.token;
         pNew->bActive = bActive0;
@@ -2520,44 +2520,44 @@ void PrintPreprocessedToFileCore(FILE * fp, Scanner * scanner)
     while (Scanner_TokenAt(scanner, 0) != TK_EOF)
     {
         Tokens token = Scanner_TokenAt(scanner, 0);
-        const char* lexeme = Scanner_LexemeAt(scanner, 0);
+        const char * lexeme = Scanner_LexemeAt(scanner, 0);
         if (Scanner_IsActiveAt(scanner, 0))
         {
             switch (token)
             {
                 // Tokens para linhas do pre processador
-            case TK_PRE_INCLUDE:
-            case TK_PRE_PRAGMA:
-            case TK_PRE_IF:
-            case TK_PRE_ELIF:
-            case TK_PRE_IFNDEF:
-            case TK_PRE_IFDEF:
-            case TK_PRE_ENDIF:
-            case TK_PRE_ELSE:
-            case TK_PRE_ERROR:
-            case TK_PRE_LINE:
-            case TK_PRE_UNDEF:
-            case TK_PRE_DEFINE:
+                case TK_PRE_INCLUDE:
+                case TK_PRE_PRAGMA:
+                case TK_PRE_IF:
+                case TK_PRE_ELIF:
+                case TK_PRE_IFNDEF:
+                case TK_PRE_IFDEF:
+                case TK_PRE_ENDIF:
+                case TK_PRE_ELSE:
+                case TK_PRE_ERROR:
+                case TK_PRE_LINE:
+                case TK_PRE_UNDEF:
+                case TK_PRE_DEFINE:
                 fprintf(fp, "\n");
                 break;
 
                 // fim tokens preprocessador
-            case TK_LINE_COMMENT:
-            case TK_COMMENT:
-            case TK_OPEN_COMMENT:
-            case TK_CLOSE_COMMENT:
+                case TK_LINE_COMMENT:
+                case TK_COMMENT:
+                case TK_OPEN_COMMENT:
+                case TK_CLOSE_COMMENT:
                 fprintf(fp, " ");
                 break;
 
-            case TK_BOF:
+                case TK_BOF:
                 break;
 
-            case TK_MACRO_CALL:
-            case TK_MACRO_EOF:
-            case TK_FILE_EOF:
+                case TK_MACRO_CALL:
+                case TK_MACRO_EOF:
+                case TK_FILE_EOF:
                 break;
 
-            default:
+                default:
                 fprintf(fp, "%s", lexeme);
                 break;
             }
@@ -2567,9 +2567,9 @@ void PrintPreprocessedToFileCore(FILE * fp, Scanner * scanner)
     }
 }
 
-void PrintPreprocessedToFile(const char* fileIn, const char* configFileName)
+void PrintPreprocessedToFile(const char * fileIn, const char * configFileName)
 {
-    String* /*@auto*/ fullFileNamePath = NULL;
+    String * /*@auto*/ fullFileNamePath = NULL;
     GetFullPath(fileIn, &fullFileNamePath);
 
     Scanner scanner;
@@ -2580,7 +2580,7 @@ void PrintPreprocessedToFile(const char* fileIn, const char* configFileName)
 
     if (configFileName != NULL)
     {
-        String* /*@auto*/ configFullPath = NULL;
+        String * /*@auto*/ configFullPath = NULL;
         GetFullPath(configFileName, &configFullPath);
 
         Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath,
@@ -2601,7 +2601,7 @@ void PrintPreprocessedToFile(const char* fileIn, const char* configFileName)
     strcat(fname, "_pre");
     MakePath(fileNameOut, drive, dir, fname, ".c");
 
-    FILE* fp = fopen(fileNameOut, "w");
+    FILE * fp = fopen(fileNameOut, "w");
     PrintPreprocessedToFileCore(fp, &scanner);
 
     fclose(fp);
@@ -2614,46 +2614,46 @@ void PrintPreprocessedToStringCore2(StrBuilder * fp, Scanner * scanner)
     while (Scanner_TokenAt(scanner, 0) != TK_EOF)
     {
         Tokens token = Scanner_TokenAt(scanner, 0);
-        const char* lexeme = Scanner_LexemeAt(scanner, 0);
+        const char * lexeme = Scanner_LexemeAt(scanner, 0);
         if (Scanner_IsActiveAt(scanner, 0))
         {
             switch (token)
             {
                 // Tokens para linhas do pre processador
-            case TK_PRE_INCLUDE:
-            case TK_PRE_PRAGMA:
-            case TK_PRE_IF:
-            case TK_PRE_ELIF:
-            case TK_PRE_IFNDEF:
-            case TK_PRE_IFDEF:
-            case TK_PRE_ENDIF:
-            case TK_PRE_ELSE:
-            case TK_PRE_ERROR:
-            case TK_PRE_LINE:
-            case TK_PRE_UNDEF:
-            case TK_PRE_DEFINE:
+                case TK_PRE_INCLUDE:
+                case TK_PRE_PRAGMA:
+                case TK_PRE_IF:
+                case TK_PRE_ELIF:
+                case TK_PRE_IFNDEF:
+                case TK_PRE_IFDEF:
+                case TK_PRE_ENDIF:
+                case TK_PRE_ELSE:
+                case TK_PRE_ERROR:
+                case TK_PRE_LINE:
+                case TK_PRE_UNDEF:
+                case TK_PRE_DEFINE:
                 StrBuilder_Append(fp, "\n");
                 break;
 
                 // fim tokens preprocessador
-            case TK_LINE_COMMENT:
-            case TK_COMMENT:
+                case TK_LINE_COMMENT:
+                case TK_COMMENT:
 
-            case TK_OPEN_COMMENT:
-            case TK_CLOSE_COMMENT:
+                case TK_OPEN_COMMENT:
+                case TK_CLOSE_COMMENT:
 
                 StrBuilder_Append(fp, " ");
                 break;
 
-            case TK_BOF:
+                case TK_BOF:
                 break;
 
-            case TK_MACRO_CALL:
-            case TK_MACRO_EOF:
-            case TK_FILE_EOF:
+                case TK_MACRO_CALL:
+                case TK_MACRO_EOF:
+                case TK_FILE_EOF:
                 break;
 
-            default:
+                default:
                 StrBuilder_Append(fp, lexeme);
                 break;
             }
@@ -2663,7 +2663,7 @@ void PrintPreprocessedToStringCore2(StrBuilder * fp, Scanner * scanner)
     }
 }
 
-void PrintPreprocessedToString2(StrBuilder * fp, const char* input, const char* configFileName)
+void PrintPreprocessedToString2(StrBuilder * fp, const char * input, const char * configFileName)
 {
 
     Scanner scanner;
@@ -2672,7 +2672,7 @@ void PrintPreprocessedToString2(StrBuilder * fp, const char* input, const char* 
 
     if (configFileName != NULL)
     {
-        String* /*@auto*/ configFullPath = NULL;
+        String * /*@auto*/ configFullPath = NULL;
         GetFullPath(configFileName, &configFullPath);
 
         Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath,
@@ -2690,13 +2690,13 @@ void PrintPreprocessedToString2(StrBuilder * fp, const char* input, const char* 
 
 
 
-void GetSources(const char* configFile,
-    const char* fileIn,
+void GetSources(const char * configFile,
+    const char * fileIn,
     bool bRecursiveSearch,
-    struct FileNodeList* pFileNodeList)
+    struct FileNodeList * pFileNodeList)
 {
-    
-    String* /*@auto*/ fullFileNamePath = NULL;
+
+    String * /*@auto*/ fullFileNamePath = NULL;
     GetFullPath(fileIn, &fullFileNamePath);
     Scanner scanner;
 
@@ -2721,22 +2721,22 @@ void GetSources(const char* configFile,
         Scanner_Match(&scanner);
     }
 
-    
+
     Scanner_Reset(&scanner);
-    
+
 
     struct FileNodeMap map = { 0 };
     if (bRecursiveSearch)
     {
         for (;;)
         {
-            struct FileNode* pSources = scanner.Sources.pHead;
+            struct FileNode * pSources = scanner.Sources.pHead;
             scanner.Sources.pHead = NULL;
             scanner.Sources.pTail = NULL;
-            struct FileNode* pCurrent = pSources;
+            struct FileNode * pCurrent = pSources;
             while (pCurrent)
             {
-                struct FileNode* pNext = pCurrent->pNext;
+                struct FileNode * pNext = pCurrent->pNext;
                 if (FileNodeMap_Lookup(&map, pCurrent->Key) == 0)
                 {
                     FileNodeMap_Insert(&map, pCurrent);
@@ -2752,7 +2752,7 @@ void GetSources(const char* configFile,
 
                 pCurrent = pNext;
             }
-            
+
             while (Scanner_TokenAt(&scanner, 0) != TK_EOF)
             {
                 Scanner_Match(&scanner);
@@ -2767,13 +2767,13 @@ void GetSources(const char* configFile,
 
         for (int j = 0; j < scanner.FilesIncluded.buckets.size; j++)
         {
-            Bucket* pBucket = scanner.FilesIncluded.buckets.data[j];
+            Bucket * pBucket = scanner.FilesIncluded.buckets.data[j];
             if (pBucket)
             {
                 for (int i = 0; i < pBucket->size; i++)
                 {
-                    TFile* pFile = (TFile*)pBucket->data[i];
-                    
+                    TFile * pFile = (TFile *)pBucket->data[i];
+
                     bool bIncludeDir = false;
                     for (int k = 0; k < scanner.IncludeDir.size; k++)
                     {
@@ -2786,7 +2786,7 @@ void GetSources(const char* configFile,
 
                     if (!bIncludeDir)
                     {
-                        
+
                         FileNodeList_PushBack(pFileNodeList, pFile->FullPath);
                     }
                 }
@@ -2806,10 +2806,10 @@ void GetSources(const char* configFile,
     Free(fullFileNamePath);
 }
 
-void PrintPreprocessedToConsole(const char* fileIn,
-    const char* configFileName)
+void PrintPreprocessedToConsole(const char * fileIn,
+    const char * configFileName)
 {
-    String* /*@auto*/ fullFileNamePath = NULL;
+    String * /*@auto*/ fullFileNamePath = NULL;
     GetFullPath(fileIn, &fullFileNamePath);
 
     Scanner scanner;
@@ -2820,7 +2820,7 @@ void PrintPreprocessedToConsole(const char* fileIn,
 
     if (configFileName != NULL)
     {
-        String* /*@auto*/ configFullPath = NULL;
+        String * /*@auto*/ configFullPath = NULL;
         GetFullPath(configFileName, &configFullPath);
 
         Scanner_IncludeFile(&scanner, configFullPath, FileIncludeTypeFullPath,
@@ -2846,14 +2846,14 @@ int Scanner_GetNumberOfScannerItems(Scanner * pScanner)
     return nCount;
 }
 
-ScannerItem* Scanner_ScannerItemAt(Scanner * pScanner, int index)
+ScannerItem * Scanner_ScannerItemAt(Scanner * pScanner, int index)
 {
 
     // item0 item1 ..itemN
     //^
     // posicao atual
 
-    ScannerItem* pScannerItem = NULL;
+    ScannerItem * pScannerItem = NULL;
 
     if (!pScanner->bError)
     {
@@ -2900,7 +2900,7 @@ void Scanner_PrintItems(Scanner * pScanner)
     int n = Scanner_GetNumberOfScannerItems(pScanner);
     for (int i = 0; i < n; i++)
     {
-        ScannerItem* pItem = Scanner_ScannerItemAt(pScanner, i);
+        ScannerItem * pItem = Scanner_ScannerItemAt(pScanner, i);
         printf("%d : %s %s\n", i, pItem->lexeme.c_str, TokenToString(pItem->token));
     }
     printf("-----\n");
@@ -2908,7 +2908,7 @@ void Scanner_PrintItems(Scanner * pScanner)
 
 int Scanner_FileIndexAt(Scanner * pScanner, int index)
 {
-    ScannerItem* pScannerItem = Scanner_ScannerItemAt(pScanner, index);
+    ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
     if (pScannerItem)
     {
         return pScannerItem->FileIndex;
@@ -2918,7 +2918,7 @@ int Scanner_FileIndexAt(Scanner * pScanner, int index)
 
 int Scanner_LineAt(Scanner * pScanner, int index)
 {
-    ScannerItem* pScannerItem = Scanner_ScannerItemAt(pScanner, index);
+    ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
     if (pScannerItem)
     {
         return pScannerItem->Line;
@@ -2928,7 +2928,7 @@ int Scanner_LineAt(Scanner * pScanner, int index)
 
 bool Scanner_IsActiveAt(Scanner * pScanner, int index)
 {
-    ScannerItem* pScannerItem = Scanner_ScannerItemAt(pScanner, index);
+    ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
     if (pScannerItem)
     {
         return pScannerItem->bActive;
@@ -2938,7 +2938,7 @@ bool Scanner_IsActiveAt(Scanner * pScanner, int index)
 
 Tokens Scanner_TokenAt(Scanner * pScanner, int index)
 {
-    ScannerItem* pScannerItem = Scanner_ScannerItemAt(pScanner, index);
+    ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
     if (pScannerItem)
     {
         return pScannerItem->token;
@@ -2947,9 +2947,9 @@ Tokens Scanner_TokenAt(Scanner * pScanner, int index)
     return TK_EOF;
 }
 
-const char* Scanner_LexemeAt(Scanner * pScanner, int index)
+const char * Scanner_LexemeAt(Scanner * pScanner, int index)
 {
-    ScannerItem* pScannerItem = Scanner_ScannerItemAt(pScanner, index);
+    ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
     if (pScannerItem)
     {
         return pScannerItem->lexeme.c_str;
@@ -2969,7 +2969,7 @@ void Scanner_MatchDontExpand(Scanner * pScanner)
         }
         else
         {
-            BasicScanner* pTopScanner = Scanner_Top(pScanner);
+            BasicScanner * pTopScanner = Scanner_Top(pScanner);
             if (pTopScanner == NULL)
             {
                 return;
@@ -3016,10 +3016,10 @@ bool Scanner_MatchToken(Scanner * pScanner, Tokens token, bool bActive)
 
 void TScannerItemList_Destroy(TScannerItemList * p)
 {
-    ScannerItem* pCurrent = p->pHead;
+    ScannerItem * pCurrent = p->pHead;
     while (pCurrent)
     {
-        ScannerItem* pItem = pCurrent;
+        ScannerItem * pItem = pCurrent;
         pCurrent = pCurrent->pNext;
         ScannerItem_Delete(pItem);
     }
@@ -3047,7 +3047,7 @@ void TScannerItemList_Swap(TScannerItemList * a, TScannerItemList * b)
 
 void TScannerItemList_PopFront(TScannerItemList * pList)
 {
-    ScannerItem* p = pList->pHead;
+    ScannerItem * p = pList->pHead;
     pList->pHead = pList->pHead->pNext;
     ScannerItem_Delete(p);
 }

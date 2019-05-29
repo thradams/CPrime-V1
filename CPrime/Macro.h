@@ -11,8 +11,8 @@ typedef struct
 {
   String * /*@auto*/ Name;
   bool bIsFunction;
-  TokenArray TokenSequence;
-  TokenArray FormalArguments;
+  struct TokenArray TokenSequence;
+  struct TokenArray FormalArguments;
   int FileIndex;
 } Macro;
 
@@ -57,15 +57,15 @@ Macro* MacroMap_Find(const MacroMap* pMap, const char*  Key);
 
 
 
-void ExpandMacro(const TokenArray* tsOriginal,
+void ExpandMacro(const struct TokenArray* tsOriginal,
                  const MacroMap* macros,
                  bool get_more,
                  bool skip_defined,
     bool evalmode,
                  Macro* caller,
-                 TokenArray* pOutputSequence);
+                 struct TokenArray* pOutputSequence);
 
-void ExpandMacroToText(const TokenArray* pTokenSequence,
+void ExpandMacroToText(const struct TokenArray* pTokenSequence,
                        const MacroMap* macros,
                        bool get_more,
                        bool skip_defined,

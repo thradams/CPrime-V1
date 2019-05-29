@@ -5,19 +5,19 @@
 #include "LocalStrBuilder.h"
 #include "Mem.h"
 
-void LocalStrBuilder_Init(LocalStrBuilder* p)
+void LocalStrBuilder_Init(struct LocalStrBuilder* p)
 {
   p->capacity = LOCALSTRBUILDER_NCHARS;
   p->size = 0;
   p->c_str = p->chars;
 }
 
-void LocalStrBuilder_Swap(LocalStrBuilder* pA, LocalStrBuilder* pB)
+void LocalStrBuilder_Swap(struct LocalStrBuilder* pA, struct LocalStrBuilder* pB)
 {
   int bA = (pA->c_str == pA->chars);
   int bB = (pB->c_str == pB->chars);
 
-  LocalStrBuilder temp = *pA;
+  struct LocalStrBuilder temp = *pA;
   *pA = *pB;
   *pB = temp;
 
@@ -31,7 +31,7 @@ void LocalStrBuilder_Swap(LocalStrBuilder* pA, LocalStrBuilder* pB)
   }
 }
 
-void LocalStrBuilder_Destroy(LocalStrBuilder* p)
+void LocalStrBuilder_Destroy(struct LocalStrBuilder* p)
 {
   if (p->c_str != p->chars)
   {
@@ -39,7 +39,7 @@ void LocalStrBuilder_Destroy(LocalStrBuilder* p)
   }
 }
 
-void LocalStrBuilder_Reserve(LocalStrBuilder* p, int nelements)
+void LocalStrBuilder_Reserve(struct LocalStrBuilder* p, int nelements)
 {
   if (nelements > p->capacity)
   {
@@ -73,7 +73,7 @@ void LocalStrBuilder_Reserve(LocalStrBuilder* p, int nelements)
   }
 }
 
-void LocalStrBuilder_Print(LocalStrBuilder* p)
+void LocalStrBuilder_Print(struct LocalStrBuilder* p)
 {
   printf("size = %d, capacity = %d, c_str = '%s', internal buffer = %s \n",
     (int)p->size,
@@ -82,7 +82,7 @@ void LocalStrBuilder_Print(LocalStrBuilder* p)
     (p->c_str == p->chars ? "yes" : "no"));
 }
 
-void LocalStrBuilder_Clear(LocalStrBuilder* p)
+void LocalStrBuilder_Clear(struct LocalStrBuilder* p)
 {
   if (p->c_str)
   {
@@ -91,7 +91,7 @@ void LocalStrBuilder_Clear(LocalStrBuilder* p)
   p->size = 0;
 }
 
-void LocalStrBuilder_Grow(LocalStrBuilder* p, int nelements)
+void LocalStrBuilder_Grow(struct LocalStrBuilder* p, int nelements)
 {
   if (nelements > p->capacity)
   {
@@ -106,7 +106,7 @@ void LocalStrBuilder_Grow(LocalStrBuilder* p, int nelements)
   }
 }
 
-void LocalStrBuilder_Append(LocalStrBuilder* p, const char* source)
+void LocalStrBuilder_Append(struct LocalStrBuilder* p, const char* source)
 {
   while (*source)
   {
@@ -116,7 +116,7 @@ void LocalStrBuilder_Append(LocalStrBuilder* p, const char* source)
 }
 
 
-void LocalStrBuilder_Set(LocalStrBuilder* p, const char* source)
+void LocalStrBuilder_Set(struct LocalStrBuilder* p, const char* source)
 {
   LocalStrBuilder_Clear(p);
   while (*source)
@@ -128,7 +128,7 @@ void LocalStrBuilder_Set(LocalStrBuilder* p, const char* source)
 
 
 
-void LocalStrBuilder_AppendChar(LocalStrBuilder* p, char ch)
+void LocalStrBuilder_AppendChar(struct LocalStrBuilder* p, char ch)
 {
   LocalStrBuilder_Grow(p, p->size + 1);
 

@@ -193,7 +193,7 @@ typedef enum
 
 typedef struct ScannerItem
 {
-    LocalStrBuilder lexeme;
+    struct LocalStrBuilder lexeme;
     Tokens token;
     int Line /*@= -1*/;
     int FileIndex /*@= -1*/ ;

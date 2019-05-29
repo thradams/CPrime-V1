@@ -7,285 +7,285 @@
 #include "Mem.h"
 #include "BasicScanner.h"
 
-wchar_t BasicScanner_MatchChar(BasicScanner* scanner);
+wchar_t BasicScanner_MatchChar(BasicScanner * scanner);
 
-const char* TokenToString(Tokens tk)
+const char * TokenToString(Tokens tk)
 {
     switch (tk)
     {
-    case TK_NONE:
-        return "None";
+        case TK_NONE:
+            return "None";
 
-    case TK_BOF:
-        return "Bof";
-    case TK_EOF:
-        return "Eof";
-    case TK_LINE_COMMENT:
-        return "LINE_COMMENT";
-    case TK_COMMENT:
-        return "COMMENT";
-    case TK_CLOSE_COMMENT:
-        return "CLOSE_COMMENT";
-    case TK_OPEN_COMMENT:
-        return "OPEN_COMMENT";
-    case TK_STRING_LITERAL:
-        return "LITERALSTR";
-    case TK_IDENTIFIER:
-        return "IDENTIFIER";
-    case TK_SPACES:
-        return "SPACES";
-    case TK_DECIMAL_INTEGER:
-        return "TK_DECIMAL_INTEGER";
-    case TK_HEX_INTEGER:
-        return "TK_HEX_INTEGER";
-    case TK_FLOAT_NUMBER:
-        return "TK_FLOAT_NUMBER";
-    case TK_BREAKLINE:
-        return "BREAKLINE";
-    case TK_BACKSLASHBREAKLINE:
-        return "TK_BACKSLASHBREAKLINE";
-    case TK_PREPROCESSOR:
-        return "PREPROCESSOR";
-    case CHARACTER_TABULATION:
-        return "CHARACTER_TABULATION";
-    case TK_EXCLAMATION_MARK:
-        return "!";// = '!';
-    case TK_QUOTATION_MARK:
-        return "\"";//,// = '\"';
-    case TK_NUMBER_SIGN:
-        return "#";//,// = '#';
-    case TK_DOLLAR_SIGN:
-        return "$";//,// = '$';
-    case TK_PERCENT_SIGN:
-        return "%";//,// = '%';
-    case TK_AMPERSAND:
-        return "&";//,// = '&';
-    case TK_APOSTROPHE:
-        return "'";//,// = '\'';
-    case TK_LEFT_PARENTHESIS:
-        return "(";//,// = '(';
-    case TK_RIGHT_PARENTHESIS:
-        return ")";//,// = ')';
-    case TK_ASTERISK:
-        return "*";//,// = '*';
-    case TK_PLUS_SIGN:
-        return "+";//,// = '+';
-    case TK_COMMA:
-        return ",";//,// = ',';
-    case TK_HYPHEN_MINUS:
-        return "-";//,// = '-';
-    case TK_FULL_STOP:
-        return ".";//,// = '.';
-    case TK_SOLIDUS:
-        return "/";//,// = '/';
-    case TK_COLON:
-        return ":";//,// = ':';
-    case TK_SEMICOLON:
-        return ";";//,// = ';';
-    case TK_LESS_THAN_SIGN:
-        return "<";//,// = '<';
-    case TK_EQUALS_SIGN:
-        return "=";//,// = '=';
-    case TK_GREATER_THAN_SIGN:
-        return ">";//,// = '>';
-    case TK_QUESTION_MARK:
-        return "?";//,// = '\?';
-    case TK_COMMERCIAL_AT:
-        return "@";//,// = '@';
-    case TK_LEFT_SQUARE_BRACKET:
-        return "[";//,// = '[';
-    case REVERSE_SOLIDUS:
-        return "\\";//,// = '\\';
-    case TK_RIGHT_SQUARE_BRACKET:
-        return "]";//,// = ']';
-    case TK_CIRCUMFLEX_ACCENT:
-        return "^";// = '^';
-    case TK_LOW_LINE:
-        return "_";//,// = '_';
-    case TK_GRAVE_ACCENT:
-        return "`";//,// = '`';
-    case TK_LEFT_CURLY_BRACKET:
-        return "{";//,// = '{';
-    case TK_VERTICAL_LINE:
-        return "|";//,// = '|';
-    case TK_RIGHT_CURLY_BRACKET:
-        return "}";//,// = '}';
+        case TK_BOF:
+            return "Bof";
+        case TK_EOF:
+            return "Eof";
+        case TK_LINE_COMMENT:
+            return "LINE_COMMENT";
+        case TK_COMMENT:
+            return "COMMENT";
+        case TK_CLOSE_COMMENT:
+            return "CLOSE_COMMENT";
+        case TK_OPEN_COMMENT:
+            return "OPEN_COMMENT";
+        case TK_STRING_LITERAL:
+            return "LITERALSTR";
+        case TK_IDENTIFIER:
+            return "IDENTIFIER";
+        case TK_SPACES:
+            return "SPACES";
+        case TK_DECIMAL_INTEGER:
+            return "TK_DECIMAL_INTEGER";
+        case TK_HEX_INTEGER:
+            return "TK_HEX_INTEGER";
+        case TK_FLOAT_NUMBER:
+            return "TK_FLOAT_NUMBER";
+        case TK_BREAKLINE:
+            return "BREAKLINE";
+        case TK_BACKSLASHBREAKLINE:
+            return "TK_BACKSLASHBREAKLINE";
+        case TK_PREPROCESSOR:
+            return "PREPROCESSOR";
+        case CHARACTER_TABULATION:
+            return "CHARACTER_TABULATION";
+        case TK_EXCLAMATION_MARK:
+            return "!";// = '!';
+        case TK_QUOTATION_MARK:
+            return "\"";//,// = '\"';
+        case TK_NUMBER_SIGN:
+            return "#";//,// = '#';
+        case TK_DOLLAR_SIGN:
+            return "$";//,// = '$';
+        case TK_PERCENT_SIGN:
+            return "%";//,// = '%';
+        case TK_AMPERSAND:
+            return "&";//,// = '&';
+        case TK_APOSTROPHE:
+            return "'";//,// = '\'';
+        case TK_LEFT_PARENTHESIS:
+            return "(";//,// = '(';
+        case TK_RIGHT_PARENTHESIS:
+            return ")";//,// = ')';
+        case TK_ASTERISK:
+            return "*";//,// = '*';
+        case TK_PLUS_SIGN:
+            return "+";//,// = '+';
+        case TK_COMMA:
+            return ",";//,// = ',';
+        case TK_HYPHEN_MINUS:
+            return "-";//,// = '-';
+        case TK_FULL_STOP:
+            return ".";//,// = '.';
+        case TK_SOLIDUS:
+            return "/";//,// = '/';
+        case TK_COLON:
+            return ":";//,// = ':';
+        case TK_SEMICOLON:
+            return ";";//,// = ';';
+        case TK_LESS_THAN_SIGN:
+            return "<";//,// = '<';
+        case TK_EQUALS_SIGN:
+            return "=";//,// = '=';
+        case TK_GREATER_THAN_SIGN:
+            return ">";//,// = '>';
+        case TK_QUESTION_MARK:
+            return "?";//,// = '\?';
+        case TK_COMMERCIAL_AT:
+            return "@";//,// = '@';
+        case TK_LEFT_SQUARE_BRACKET:
+            return "[";//,// = '[';
+        case REVERSE_SOLIDUS:
+            return "\\";//,// = '\\';
+        case TK_RIGHT_SQUARE_BRACKET:
+            return "]";//,// = ']';
+        case TK_CIRCUMFLEX_ACCENT:
+            return "^";// = '^';
+        case TK_LOW_LINE:
+            return "_";//,// = '_';
+        case TK_GRAVE_ACCENT:
+            return "`";//,// = '`';
+        case TK_LEFT_CURLY_BRACKET:
+            return "{";//,// = '{';
+        case TK_VERTICAL_LINE:
+            return "|";//,// = '|';
+        case TK_RIGHT_CURLY_BRACKET:
+            return "}";//,// = '}';
 
-    case TK_TILDE:
-        return "~";//,// = '~';
-        break;
-    case TK_AUTO:
-        return "auto";
+        case TK_TILDE:
+            return "~";//,// = '~';
+            break;
+        case TK_AUTO:
+            return "auto";
 
-    case TK_BREAK:
-        return "break";
-    case TK_CASE:
-        return "case";
-    case TK_CHAR:
-        return "char";
-    case TK_CONST:
-        return "const";
-    case TK_CONTINUE:
-        return "continue";
-    case TK_DEFAULT:
-        return "default";
+        case TK_BREAK:
+            return "break";
+        case TK_CASE:
+            return "case";
+        case TK_CHAR:
+            return "char";
+        case TK_CONST:
+            return "const";
+        case TK_CONTINUE:
+            return "continue";
+        case TK_DEFAULT:
+            return "default";
 
-    case TK_DO:
-        return "do";
-    case TK_DOUBLE:
-        return "double";
-    case TK_ELSE:
-        return "else";
-    case TK_ENUM:
-        return "enum";
-    case TK_EXTERN:
-        return "extern";
-    case TK_FLOAT:
-        return "float";
-    case TK_FOR:
-        return "for";
-    case TK_GOTO:
-        return "goto";
-    case TK_IF:
-        return "if";
-    case TK_INT:
-        return "int";
-    case TK_LONG:
-        return "long";
-    case TK__INT8:
-        return "__int8";
-    case TK__INT16:
-        return "__int16";
-    case TK__INT32:
-        return "__int32";
-    case TK__INT64:
-        return "__int64";
-    case TK__WCHAR_T:
-        return "__wchar_t";
+        case TK_DO:
+            return "do";
+        case TK_DOUBLE:
+            return "double";
+        case TK_ELSE:
+            return "else";
+        case TK_ENUM:
+            return "enum";
+        case TK_EXTERN:
+            return "extern";
+        case TK_FLOAT:
+            return "float";
+        case TK_FOR:
+            return "for";
+        case TK_GOTO:
+            return "goto";
+        case TK_IF:
+            return "if";
+        case TK_INT:
+            return "int";
+        case TK_LONG:
+            return "long";
+        case TK__INT8:
+            return "__int8";
+        case TK__INT16:
+            return "__int16";
+        case TK__INT32:
+            return "__int32";
+        case TK__INT64:
+            return "__int64";
+        case TK__WCHAR_T:
+            return "__wchar_t";
 
-    case TK_REGISTER:
-        return "register";
-    case TK_RETURN:
-        return "return";
-    case TK_SHORT:
-        return "short";
-    case TK_SIGNED:
-        return "signed";
-    case TK_SIZEOF:
-        return "sizeof";
-    case TK_STATIC:
-        return "static";
-    case TK_STRUCT:
-        return "struct";
-    case TK_SWITCH:
-        return "switch";
-    case TK_TYPEDEF:
-        return "typedef";
-    case TK_UNION:
-        return "union";
+        case TK_REGISTER:
+            return "register";
+        case TK_RETURN:
+            return "return";
+        case TK_SHORT:
+            return "short";
+        case TK_SIGNED:
+            return "signed";
+        case TK_SIZEOF:
+            return "sizeof";
+        case TK_STATIC:
+            return "static";
+        case TK_STRUCT:
+            return "struct";
+        case TK_SWITCH:
+            return "switch";
+        case TK_TYPEDEF:
+            return "typedef";
+        case TK_UNION:
+            return "union";
 
-    case TK_UNSIGNED:
-        return "unsigned";
-    case TK_VOID:
-        return "void";
-    case TK__BOOL:
-        return "_Bool";
-        break;
-    case TK_VOLATILE:
-        return "volatile";
-    case TK_WHILE:
-        return "while";
-    case TK_ARROW:
-        return "->";
+        case TK_UNSIGNED:
+            return "unsigned";
+        case TK_VOID:
+            return "void";
+        case TK__BOOL:
+            return "_Bool";
+            break;
+        case TK_VOLATILE:
+            return "volatile";
+        case TK_WHILE:
+            return "while";
+        case TK_ARROW:
+            return "->";
 
-    case TK_PLUSPLUS:
-        return "++";
+        case TK_PLUSPLUS:
+            return "++";
 
-    case TK_MINUSMINUS:
-        return "--";
+        case TK_MINUSMINUS:
+            return "--";
 
-    case TK_EQUALEQUAL:
-        return "==";
-    case TK_NOTEQUAL:
-        return "!=";
+        case TK_EQUALEQUAL:
+            return "==";
+        case TK_NOTEQUAL:
+            return "!=";
 
-    case TK_LESSLESS:
-        return "<<";
+        case TK_LESSLESS:
+            return "<<";
 
-    case TK_GREATERGREATER:
-        return ">>";
+        case TK_GREATERGREATER:
+            return ">>";
 
 
-    case TK_LESSEQUAL:
-        return "<=";
-    case TK_GREATEREQUAL:
-        return ">=";
+        case TK_LESSEQUAL:
+            return "<=";
+        case TK_GREATEREQUAL:
+            return ">=";
 
-    case TK_ANDAND:
-        return "&&";
-    case TK_OROR:
-        return "||";
-    case TK_MULTIEQUAL:
-        return "*=";
-    case TK_DIVEQUAL:
-        return "/=";
-    case TK_PERCENT_EQUAL:
-        return "/%=";
-    case TK_PLUSEQUAL:
-        return "+=";
-    case TK_MINUS_EQUAL:
-        return "-=";
-    case TK_ANDEQUAL:
-        return "!=";
-    case TK_CARETEQUAL:
-        return "^=";
-    case TK_OREQUAL:
-        return "|=";
-    case TK_NUMBERNUMBER:
-        return "##";
-    case TK_LESSCOLON:
-        return "<:";
-    case TK_COLONGREATER:
-        return ":>";
-    case TK_LESSPERCENT:
-        return "<%";
-    case TK_PERCENTGREATER:
-        return "%>";
-    case TK_PERCENTCOLON:
-        return "%:";
-    case TK_DOTDOTDOT:
-        return "...";
-    case TK_GREATERGREATEREQUAL:
-        return ">>=";
-    case TK_LESSLESSEQUAL:
-        return "<<=";
-    case TK_PERCENTCOLONPERCENTCOLON:
-        return "/%:/%:";
+        case TK_ANDAND:
+            return "&&";
+        case TK_OROR:
+            return "||";
+        case TK_MULTIEQUAL:
+            return "*=";
+        case TK_DIVEQUAL:
+            return "/=";
+        case TK_PERCENT_EQUAL:
+            return "/%=";
+        case TK_PLUSEQUAL:
+            return "+=";
+        case TK_MINUS_EQUAL:
+            return "-=";
+        case TK_ANDEQUAL:
+            return "!=";
+        case TK_CARETEQUAL:
+            return "^=";
+        case TK_OREQUAL:
+            return "|=";
+        case TK_NUMBERNUMBER:
+            return "##";
+        case TK_LESSCOLON:
+            return "<:";
+        case TK_COLONGREATER:
+            return ":>";
+        case TK_LESSPERCENT:
+            return "<%";
+        case TK_PERCENTGREATER:
+            return "%>";
+        case TK_PERCENTCOLON:
+            return "%:";
+        case TK_DOTDOTDOT:
+            return "...";
+        case TK_GREATERGREATEREQUAL:
+            return ">>=";
+        case TK_LESSLESSEQUAL:
+            return "<<=";
+        case TK_PERCENTCOLONPERCENTCOLON:
+            return "/%:/%:";
 
-    case TK_PRE_INCLUDE:
-        return "TK_PRE_INCLUDE";
+        case TK_PRE_INCLUDE:
+            return "TK_PRE_INCLUDE";
 
-    case TK_PRE_DEFINE:
-        return "TK_PRE_DEFINE";
-        //
-    case TK_MACRO_CALL:
-        return "TK_MACRO_CALL";
+        case TK_PRE_DEFINE:
+            return "TK_PRE_DEFINE";
+            //
+        case TK_MACRO_CALL:
+            return "TK_MACRO_CALL";
 
-    case TK_MACRO_EOF:
-        return "TK_MACRO_EOF";
+        case TK_MACRO_EOF:
+            return "TK_MACRO_EOF";
 
-    case TK_FILE_EOF:
-        return "TK_FILE_EOF";
-    default:
-        //assert(false);
-        break;
+        case TK_FILE_EOF:
+            return "TK_FILE_EOF";
+        default:
+            //assert(false);
+            break;
     }
     return "???";
 }
 
-ScannerItem* ScannerItem_Create(void) /*@default*/
+ScannerItem * ScannerItem_Create(void) /*@default*/
 {
-    ScannerItem *p = (ScannerItem*) Malloc(sizeof * p);
+    ScannerItem * p = (ScannerItem *)Malloc(sizeof * p);
     if (p != NULL)
     {
         ScannerItem_Init(p);
@@ -293,40 +293,40 @@ ScannerItem* ScannerItem_Create(void) /*@default*/
     return p;
 }
 
-void ScannerItem_Delete(ScannerItem* pScannerItem) /*@default*/
+void ScannerItem_Delete(ScannerItem * pScannerItem) /*@default*/
 {
     if (pScannerItem != NULL)
     {
         ScannerItem_Destroy(pScannerItem);
-        Free((void*)pScannerItem);
+        Free((void *)pScannerItem);
     }
 }
 
-void ScannerItem_Init(ScannerItem* scannerItem) /*@default*/
+void ScannerItem_Init(ScannerItem * scannerItem) /*@default*/
 {
     LocalStrBuilder_Init(&scannerItem->lexeme);
     scannerItem->token = TK_NONE;
-    scannerItem->Line =  -1;
-    scannerItem->FileIndex =  -1;
-    scannerItem->bActive =  1;
+    scannerItem->Line = -1;
+    scannerItem->FileIndex = -1;
+    scannerItem->bActive = 1;
     scannerItem->pNext = NULL;
 }
 
-void ScannerItem_Reset(ScannerItem* scannerItem)
+void ScannerItem_Reset(ScannerItem * scannerItem)
 {
     LocalStrBuilder_Clear(&scannerItem->lexeme);
     scannerItem->token = TK_ERROR;
 }
 
-void ScannerItem_Copy(ScannerItem* scannerItem,
-    ScannerItem* other)
+void ScannerItem_Copy(ScannerItem * scannerItem,
+                      ScannerItem * other)
 {
     scannerItem->token = other->token;
     LocalStrBuilder_Set(&scannerItem->lexeme, other->lexeme.c_str);
 }
 
-void ScannerItem_Swap(ScannerItem* scannerItem,
-    ScannerItem* other)
+void ScannerItem_Swap(ScannerItem * scannerItem,
+                      ScannerItem * other)
 {
     Tokens tk = other->token;
     other->token = scannerItem->token;
@@ -334,13 +334,13 @@ void ScannerItem_Swap(ScannerItem* scannerItem,
     LocalStrBuilder_Swap(&scannerItem->lexeme, &other->lexeme);
 }
 
-void ScannerItem_Destroy(ScannerItem* scannerItem) /*@default*/
+void ScannerItem_Destroy(ScannerItem * scannerItem) /*@default*/
 {
     LocalStrBuilder_Destroy(&scannerItem->lexeme);
 }
 
-void BasicScanner_InitCore(BasicScanner* pBasicScanner,
-    BasicScannerType Type)
+void BasicScanner_InitCore(BasicScanner * pBasicScanner,
+                           BasicScannerType Type)
 {
     pBasicScanner->m_Token = TK_BOF;
     pBasicScanner->Type = Type;
@@ -352,18 +352,18 @@ void BasicScanner_InitCore(BasicScanner* pBasicScanner,
     pBasicScanner->currentItem.token = TK_BOF;
 }
 
-bool BasicScanner_Init(BasicScanner* pBasicScanner,
-    const char* name,
-    const char* Text,
-    BasicScannerType type)
+bool BasicScanner_Init(BasicScanner * pBasicScanner,
+                       const char * name,
+                       const char * Text,
+                       BasicScannerType type)
 {
     BasicScanner_InitCore(pBasicScanner, type);
     bool b = Stream_Init(&pBasicScanner->stream, name, Text);
     return b ? true : false;
 }
 
-bool BasicScanner_InitFile(BasicScanner* pBasicScanner,
-    const char* fileName)
+bool BasicScanner_InitFile(BasicScanner * pBasicScanner,
+                           const char * fileName)
 {
     BasicScanner_InitCore(pBasicScanner, BasicScannerType_File);
 
@@ -371,13 +371,13 @@ bool BasicScanner_InitFile(BasicScanner* pBasicScanner,
     return b ? true : false;
 }
 
-bool BasicScanner_Create(BasicScanner** pp,
-    const char* name,
-    const char* Text,
-    BasicScannerType Type)
+bool BasicScanner_Create(BasicScanner ** pp,
+                         const char * name,
+                         const char * Text,
+                         BasicScannerType Type)
 {
     bool result = false /*nomem*/;
-    BasicScanner* p = (BasicScanner*)Malloc(sizeof(BasicScanner));
+    BasicScanner * p = (BasicScanner *)Malloc(sizeof(BasicScanner));
     if (p)
     {
         result = BasicScanner_Init(p, name, Text, Type);
@@ -393,10 +393,10 @@ bool BasicScanner_Create(BasicScanner** pp,
     return result;
 }
 
-bool BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
+bool BasicScanner_CreateFile(const char * fileName, BasicScanner ** pp)
 {
     bool result = false /*nomem*/;
-    BasicScanner* p = (BasicScanner*)Malloc(sizeof(BasicScanner));
+    BasicScanner * p = (BasicScanner *)Malloc(sizeof(BasicScanner));
     if (p)
     {
         result = BasicScanner_InitFile(p, fileName);
@@ -413,24 +413,24 @@ bool BasicScanner_CreateFile(const char* fileName, BasicScanner** pp)
 }
 
 
-void BasicScanner_Destroy(BasicScanner* pBasicScanner) /*@default*/
+void BasicScanner_Destroy(BasicScanner * pBasicScanner) /*@default*/
 {
     Stream_Destroy(&pBasicScanner->stream);
     ScannerItem_Destroy(&pBasicScanner->currentItem);
 }
 
-void BasicScanner_Delete(BasicScanner* pBasicScanner) /*@default*/
+void BasicScanner_Delete(BasicScanner * pBasicScanner) /*@default*/
 {
     if (pBasicScanner != NULL)
     {
         BasicScanner_Destroy(pBasicScanner);
-        Free((void*)pBasicScanner);
+        Free((void *)pBasicScanner);
     }
 }
 
 struct TkPair
 {
-    const char* lexeme;
+    const char * lexeme;
     Tokens token;
 };
 
@@ -545,7 +545,7 @@ static struct TkPair keywords[] =
     { "switch", TK_SWITCH },
     { "typedef", TK_TYPEDEF },
     { "union", TK_UNION },
- 
+
     { "unsigned", TK_UNSIGNED },
     { "void", TK_VOID },
     { "volatile", TK_VOLATILE },
@@ -565,13 +565,13 @@ static struct TkPair keywords[] =
     { "__asm", TK__ASM } //visual studio
 
 };
-void BasicScanner_Next(BasicScanner* scanner);
-void BasicScanner_Match(BasicScanner* scanner)
+void BasicScanner_Next(BasicScanner * scanner);
+void BasicScanner_Match(BasicScanner * scanner)
 {
     BasicScanner_Next(scanner);
 }
 
-bool BasicScanner_MatchToken(BasicScanner* scanner, Tokens token)
+bool BasicScanner_MatchToken(BasicScanner * scanner, Tokens token)
 {
     bool b = false;
     if (scanner->currentItem.token == token)
@@ -583,7 +583,7 @@ bool BasicScanner_MatchToken(BasicScanner* scanner, Tokens token)
 }
 
 
-void BasicScanner_Next(BasicScanner* scanner)
+void BasicScanner_Next(BasicScanner * scanner)
 {
     if (scanner->Type == BasicScannerType_Token)
     {
@@ -592,7 +592,7 @@ void BasicScanner_Next(BasicScanner* scanner)
             ScannerItem_Reset(&scanner->currentItem);
             scanner->currentItem.token = scanner->m_Token;
             LocalStrBuilder_Set(&scanner->currentItem.lexeme,
-                scanner->stream.Text);
+                                scanner->stream.Text);
             scanner->bLineStart = false;
         }
         else
@@ -648,9 +648,9 @@ void BasicScanner_Next(BasicScanner* scanner)
     if (ch == '*' && ch1 == '/')
     {
         scanner->currentItem.token = TK_CLOSE_COMMENT;
-        ch = BasicScanner_MatchChar(scanner); 
         ch = BasicScanner_MatchChar(scanner);
-        
+        ch = BasicScanner_MatchChar(scanner);
+
         return;
     }
 
@@ -740,8 +740,8 @@ void BasicScanner_Next(BasicScanner* scanner)
         ch = BasicScanner_MatchChar(scanner);
         while ((ch >= 'a' && ch <= 'z') ||
             (ch >= 'A' && ch <= 'Z') ||
-            (ch >= '0' && ch <= '9') ||
-            ch == '_')
+               (ch >= '0' && ch <= '9') ||
+               ch == '_')
         {
             ch = BasicScanner_MatchChar(scanner);
         }
@@ -762,7 +762,7 @@ void BasicScanner_Next(BasicScanner* scanner)
 
     //TODO binarios
 
-    if (ch == '0' && 
+    if (ch == '0' &&
         (
         (ch1 == 'x' || ch1 == 'X') || //hex 
         (ch1 >= '0' && ch1 <= '9')) //octal
@@ -782,11 +782,11 @@ void BasicScanner_Next(BasicScanner* scanner)
             assert(false);
         }
         ch = BasicScanner_MatchChar(scanner);
-        
-        
+
+
         while ((ch >= '0' && ch <= '9') ||
             (ch >= 'A' && ch <= 'F') ||
-            (ch >= 'a' && ch <= 'f'))
+               (ch >= 'a' && ch <= 'f'))
         {
             ch = BasicScanner_MatchChar(scanner);
         }
@@ -934,7 +934,7 @@ void BasicScanner_Next(BasicScanner* scanner)
                 ch = BasicScanner_MatchChar(scanner);
             }
         }
-        else 
+        else
         {
             if (ch == '.')
             {
@@ -1053,8 +1053,8 @@ void BasicScanner_Next(BasicScanner* scanner)
             ch = BasicScanner_MatchChar(scanner);
             ch = BasicScanner_MatchChar(scanner);
             while (ch != '\r' &&
-                ch != '\n' &&
-                ch != '\0')
+                   ch != '\n' &&
+                   ch != '\0')
             {
                 ch = BasicScanner_MatchChar(scanner);
             }
@@ -1105,7 +1105,7 @@ void BasicScanner_Next(BasicScanner* scanner)
                     }
                 }
             }
-           
+
 
 
             return;
@@ -1178,22 +1178,22 @@ void BasicScanner_Next(BasicScanner* scanner)
 }
 
 
-Tokens BasicScanner_Token(BasicScanner* scanner)
+Tokens BasicScanner_Token(BasicScanner * scanner)
 {
     return scanner->currentItem.token;
 }
 
-const char* BasicScanner_Lexeme(BasicScanner* scanner)
+const char * BasicScanner_Lexeme(BasicScanner * scanner)
 {
     return scanner->currentItem.lexeme.c_str;
 }
 
-bool BasicScanner_IsLexeme(BasicScanner* scanner, const char* psz)
+bool BasicScanner_IsLexeme(BasicScanner * scanner, const char * psz)
 {
     return strcmp(BasicScanner_Lexeme(scanner), psz) == 0;
 }
 
-wchar_t BasicScanner_MatchChar(BasicScanner* scanner)
+wchar_t BasicScanner_MatchChar(BasicScanner * scanner)
 {
     LocalStrBuilder_AppendChar(&scanner->currentItem.lexeme,
         (char)scanner->stream.Character);
@@ -1205,12 +1205,12 @@ wchar_t BasicScanner_MatchChar(BasicScanner* scanner)
 
 
 
-void BasicScannerStack_Init(BasicScannerStack* stack)
+void BasicScannerStack_Init(BasicScannerStack * stack)
 {
     *stack = NULL;
 }
 
-void BasicScannerStack_Push(BasicScannerStack* stack, BasicScanner* pItem)
+void BasicScannerStack_Push(BasicScannerStack * stack, BasicScanner * pItem)
 {
     if (*stack == NULL)
     {
@@ -1223,9 +1223,9 @@ void BasicScannerStack_Push(BasicScannerStack* stack, BasicScanner* pItem)
     }
 }
 
-BasicScanner* BasicScannerStack_PopGet(BasicScannerStack* stack)
+BasicScanner * BasicScannerStack_PopGet(BasicScannerStack * stack)
 {
-    BasicScanner* pItem = NULL;
+    BasicScanner * pItem = NULL;
     if (*stack != NULL)
     {
         pItem = *stack;
@@ -1234,7 +1234,7 @@ BasicScanner* BasicScannerStack_PopGet(BasicScannerStack* stack)
     return pItem;
 }
 
-void BasicScannerStack_PopIfNotLast(BasicScannerStack* stack)
+void BasicScannerStack_PopIfNotLast(BasicScannerStack * stack)
 {
     //assert(*stack != NULL);
     if ((*stack)->pPrevious != NULL)
@@ -1243,17 +1243,17 @@ void BasicScannerStack_PopIfNotLast(BasicScannerStack* stack)
     }
 }
 
-void BasicScannerStack_Pop(BasicScannerStack* stack)
+void BasicScannerStack_Pop(BasicScannerStack * stack)
 {
     BasicScanner_Delete(BasicScannerStack_PopGet(stack));
 }
 
-void BasicScannerStack_Destroy(BasicScannerStack* stack)
+void BasicScannerStack_Destroy(BasicScannerStack * stack)
 {
-    BasicScanner* pItem = *stack;
+    BasicScanner * pItem = *stack;
     while (pItem)
     {
-        BasicScanner* p = pItem;
+        BasicScanner * p = pItem;
         pItem = pItem->pPrevious;
         BasicScanner_Delete(p);
     }

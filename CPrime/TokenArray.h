@@ -5,38 +5,38 @@
 #include "StrBuilder.h"
 
 
-typedef struct
+struct TokenArray
 {
     struct PPToken* /*@auto*/* /*@auto*/ /*@[Size]*/ pItems;
     int Size;
     int Capacity;
-} TokenArray;
+};
 
 #define TOKENARRAY_INIT {0, 0, 0}
 
-void      TokenArray_Reserve(TokenArray* p, int nelements);
-int      TokenArray_Grow(TokenArray* p, int nelements);
-void     TokenArray_Pop(TokenArray* p);
+void      TokenArray_Reserve(struct TokenArray* p, int nelements);
+int      TokenArray_Grow(struct TokenArray* p, int nelements);
+void     TokenArray_Pop(struct TokenArray* p);
 
-struct PPToken* TokenArray_PopFront(TokenArray* p);
+struct PPToken* TokenArray_PopFront(struct TokenArray* p);
 
-struct PPToken* TokenArray_Top(TokenArray* p);
-void      TokenArray_PushBack(TokenArray* p, struct PPToken* pItem);
-void     TokenArray_Clear(TokenArray* p);
-void     TokenArray_Init(TokenArray* p);
-TokenArray* TokenArray_Create(void);
-void     TokenArray_Destroy(TokenArray* st);
-void     TokenArray_Delete(TokenArray* st);
-void     TokenArray_Swap(TokenArray* p1, TokenArray* p2);
+struct PPToken* TokenArray_Top(struct TokenArray* p);
+void      TokenArray_PushBack(struct TokenArray* p, struct PPToken* pItem);
+void     TokenArray_Clear(struct TokenArray* p);
+void     TokenArray_Init(struct TokenArray* p);
+struct TokenArray* TokenArray_Create(void);
+void     TokenArray_Destroy(struct TokenArray* st);
+void     TokenArray_Delete(struct TokenArray* st);
+void     TokenArray_Swap(struct TokenArray* p1, struct TokenArray* p2);
 
 
-void TokenArray_AppendCopy(TokenArray* pArrayTo, const TokenArray* pArrayFrom);
-void TokenArray_AppendMove(TokenArray* pArrayTo, TokenArray* pArrayFrom);
-void TokenArray_Print(const TokenArray* tokens);
-void TokenArray_ToStrBuilder(const TokenArray* tokens, StrBuilder* strBuidler);
+void TokenArray_AppendCopy(struct TokenArray* pArrayTo, const struct TokenArray* pArrayFrom);
+void TokenArray_AppendMove(struct TokenArray* pArrayTo, struct TokenArray* pArrayFrom);
+void TokenArray_Print(const struct TokenArray* tokens);
+void TokenArray_ToStrBuilder(const struct TokenArray* tokens, StrBuilder* strBuidler);
 
-struct PPToken* TokenArray_Find(const TokenArray* pArray, const char* lexeme);
-void TokenArray_Erase(TokenArray* pArray, int begin, int end);
+struct PPToken* TokenArray_Find(const struct TokenArray* pArray, const char* lexeme);
+void TokenArray_Erase(struct TokenArray* pArray, int begin, int end);
 
 
 ///////////////////////////////
@@ -47,7 +47,7 @@ typedef struct TokenArrayMapItem
     struct MapItem2* pNext;
     unsigned int HashValue;
     String * /*@auto*/ Key;
-    TokenArray* pValue;
+    struct TokenArray* pValue;
 } TokenArrayMapItem;
 
 typedef struct
@@ -62,11 +62,11 @@ typedef struct
 
 int TokenArrayMap_SetAt(TokenArrayMap* pMap,
     const char* Key,
-    TokenArray* newValue);
+    struct TokenArray* newValue);
 
 bool TokenArrayMap_Lookup(const TokenArrayMap* pMap,
     const char* Key,
-    TokenArray** rValue);
+    struct TokenArray** rValue);
 
 bool TokenArrayMap_RemoveKey(TokenArrayMap* pMap,
     const char* Key);
