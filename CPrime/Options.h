@@ -9,7 +9,7 @@ enum CompilerTarget
     CompilerTarget_CXX
 };
 
-typedef struct Options
+struct Options
 {
     bool bExpandMacros;
     bool bIncludeComments /*@=1*/;
@@ -21,7 +21,7 @@ typedef struct Options
 
     bool bAmalgamate;
 
-} Options;
+};
 
 #define OPTIONS_INIT {false, true, CompilerTarget_Annotated,  false, false}
-void Options_Destroy(Options* options);
+void Options_Destroy(struct Options* options);

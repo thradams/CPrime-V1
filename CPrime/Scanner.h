@@ -144,7 +144,7 @@ typedef struct
 
   TScannerItemList AcumulatedTokens;
 
-  Options* pOptions;
+  struct Options* pOptions;
   ///////////////////////////////////////////////////
 } Scanner;
 

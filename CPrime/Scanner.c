@@ -2701,7 +2701,7 @@ void GetSources(const char * configFile,
     Scanner scanner;
 
     Scanner_Init(&scanner);
-    Options options = OPTIONS_INIT;
+    struct Options options = OPTIONS_INIT;
     options.bAmalgamate = true;
     scanner.pOptions = &options;
 

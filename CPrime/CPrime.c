@@ -14,7 +14,7 @@
 int Compile(const char* configFileName,
     const char* inputFileName,
     const char* outputFileName,
-    Options* options,
+    struct Options* options,
     bool bPrintASTFile)
 {
     int bSuccess = 0;
@@ -116,7 +116,7 @@ char* CompileText(int type, char* input)
     TProgram_Init(&program);
     if (GetASTFromString(input, &program))
     {
-        Options options2 = OPTIONS_INIT;
+        struct Options options2 = OPTIONS_INIT;
         options2.Target = (enum CompilerTarget) type;
 
 
@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
     char inputFileFullPath[CPRIME_MAX_PATH] = {0};
 
 
-    Options options = OPTIONS_INIT;
+    struct Options options = OPTIONS_INIT;
     options.Target = CompilerTarget_Annotated;
 
     bool bPrintPreprocessedToFile = false;

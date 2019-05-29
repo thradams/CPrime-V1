@@ -3179,7 +3179,7 @@ static void TInitializerListItem_CodePrint(TProgram* program,
 
 
 void TProgram_PrintCodeToFile(TProgram* pProgram,
-    Options* options0,
+    struct Options* options0,
     const char* outFileName,
     const char* inputFileName)
 {
@@ -3235,7 +3235,7 @@ void TProgram_PrintCodeToFile(TProgram* pProgram,
 }
 
 void TProgram_PrintCodeToString(TProgram* pProgram,
-    Options* options0,
+    struct Options* options0,
     StrBuilder* output)
 {
     PrintCodeOptions options = CODE_PRINT_OPTIONS_INIT;

@@ -40,7 +40,7 @@ bool Parser_HasError(Parser *pParser);
 const char *GetCompletationMessage(Parser *parser);
 
 bool GetAST(const char *filename, const char *configFileName,
-            Options* options,
+            struct Options* options,
             TProgram *pProgram);
 
 void ConstantExpression(Parser *ctx, TExpression **ppExpression);

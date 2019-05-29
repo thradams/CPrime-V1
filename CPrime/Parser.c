@@ -5068,7 +5068,7 @@ static void TFileMapToStrArray(TFileMap * map, TFileArray * arr)
 
 bool GetAST(const char* filename,
     const char* configFileName /*optional*/,
-    Options * options,
+    struct Options * options,
     TProgram * pProgram)
 {
     bool bResult = false;

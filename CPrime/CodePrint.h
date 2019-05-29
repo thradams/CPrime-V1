@@ -31,7 +31,7 @@ typedef enum
 
 typedef struct PrintCodeOptions
 {
-  Options Options;
+  struct Options Options;
 
   ///////////
   //controle interno
@@ -47,12 +47,12 @@ typedef struct PrintCodeOptions
 void PrintCodeOptions_Destroy(PrintCodeOptions* options);
 
 void TProgram_PrintCodeToFile(TProgram* pProgram,
-  Options* options,
+  struct Options* options,
   const char* fileName,
   const char* userpath);
 
 void TProgram_PrintCodeToString(TProgram* pProgram,
-    Options* options,
+    struct Options* options,
   StrBuilder* output);
 
 
