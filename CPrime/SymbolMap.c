@@ -20,7 +20,7 @@ static void SymbolMap_KeyValue_Delete(struct SymbolMapItem* p)
 }
 
 static struct SymbolMapItem* SymbolMap_GetAssocAt(
-    SymbolMap* pMap,
+    struct SymbolMap* pMap,
     const char* Key,
     unsigned int* nHashBucket,
     unsigned int* HashValue);
@@ -44,7 +44,7 @@ static unsigned int SymbolMap_String2_HashKey(const char*  Key)
 }
 
 
-void SymbolMap_RemoveAll(SymbolMap* pMap)
+void SymbolMap_RemoveAll(struct SymbolMap* pMap)
 {
     if (pMap->pHashTable != NULL)
     {
@@ -69,12 +69,12 @@ void SymbolMap_RemoveAll(SymbolMap* pMap)
     }
 }
 
-void SymbolMap_Destroy(SymbolMap* pMap)
+void SymbolMap_Destroy(struct SymbolMap* pMap)
 {
     SymbolMap_RemoveAll(pMap);
 }
 
-struct SymbolMapItem* SymbolMap_FindBucket(SymbolMap* pMap, const char*  Key)
+struct SymbolMapItem* SymbolMap_FindBucket(struct SymbolMap* pMap, const char*  Key)
 {
     if (pMap->pHashTable == NULL)
     {
@@ -92,7 +92,7 @@ struct SymbolMapItem* SymbolMap_FindBucket(SymbolMap* pMap, const char*  Key)
 }
 
 static struct SymbolMapItem* SymbolMap_GetAssocAt(
-    SymbolMap* pMap,
+    struct SymbolMap* pMap,
     const char* Key,
     unsigned int* nHashBucket,
     unsigned int* HashValue)
@@ -125,7 +125,7 @@ static struct SymbolMapItem* SymbolMap_GetAssocAt(
     return pResult;
 }
 
-TTypePointer* SymbolMap_Find(SymbolMap* pMap,
+TTypePointer* SymbolMap_Find(struct SymbolMap* pMap,
     const char*  Key)
 {
     TTypePointer* pTypePointer = NULL;
@@ -149,7 +149,7 @@ TTypePointer* SymbolMap_Find(SymbolMap* pMap,
     return pTypePointer;
 }
 
-bool SymbolMap_LookupKey(SymbolMap* pMap,
+bool SymbolMap_LookupKey(struct SymbolMap* pMap,
     const char*  Key,
     const char** rKey)
 {
@@ -170,7 +170,7 @@ bool SymbolMap_LookupKey(SymbolMap* pMap,
     return bResult;
 }
 
-bool SymbolMap_RemoveKey(SymbolMap* pMap,
+bool SymbolMap_RemoveKey(struct SymbolMap* pMap,
     const char*  Key,
     TTypePointer** ppValue)
 {
@@ -207,7 +207,7 @@ bool SymbolMap_RemoveKey(SymbolMap* pMap,
     return bResult;
 }
 
-int SymbolMap_SetAt(SymbolMap* pMap,
+int SymbolMap_SetAt(struct SymbolMap* pMap,
     const char* Key,
     TTypePointer* newValue)
 {
@@ -263,33 +263,33 @@ int SymbolMap_SetAt(SymbolMap* pMap,
     return result;
 }
 
-void SymbolMap_Init(SymbolMap * p)
+void SymbolMap_Init(struct SymbolMap * p)
 {
-    SymbolMap temp = SYMBOLMAP_INIT;
+    struct SymbolMap temp = SYMBOLMAP_INIT;
     *p = temp;
 }
 
-void SymbolMap_Swap(SymbolMap * pA, SymbolMap * pB)
+void SymbolMap_Swap(struct SymbolMap * pA, struct SymbolMap * pB)
 {
-    SymbolMap temp = *pA;
+    struct SymbolMap temp = *pA;
     *pA = *pB;
     *pB = temp;
 }
 
-SymbolMap* SymbolMap_Create()
+struct SymbolMap* SymbolMap_Create()
 {
-    SymbolMap* p = (SymbolMap*)Malloc(sizeof(SymbolMap));
+    struct SymbolMap* p = (struct SymbolMap*)Malloc(sizeof(struct SymbolMap));
 
     if (p != 0)
     {
-        SymbolMap t = SYMBOLMAP_INIT;
+        struct SymbolMap t = SYMBOLMAP_INIT;
         *p = t;
     }
 
     return p;
 }
 
-void SymbolMap_Delete(SymbolMap * p)
+void SymbolMap_Delete(struct SymbolMap * p)
 {
     if (p != 0)
     {
@@ -353,7 +353,7 @@ const char* PrintType(EType type)
     return "";
 }
 
-static void SymbolMap_PrintCore(SymbolMap* pMap, int* n)
+static void SymbolMap_PrintCore(struct SymbolMap* pMap, int* n)
 {
     if (pMap->pPrevious)
     {
@@ -381,7 +381,7 @@ static void SymbolMap_PrintCore(SymbolMap* pMap, int* n)
 }
 
 
-void SymbolMap_Print(SymbolMap* pMap)
+void SymbolMap_Print(struct SymbolMap* pMap)
 {
     int n = 0;
     SymbolMap_PrintCore(pMap, &n);
@@ -389,7 +389,7 @@ void SymbolMap_Print(SymbolMap* pMap)
 
 
 
-bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
+bool SymbolMap_IsTypeName(struct SymbolMap* pMap, const char* identifierName)
 {
     bool bIsTypeName = false;
     bool foundResult = false;
@@ -442,7 +442,7 @@ bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 }
 
 
-TDeclaration* SymbolMap_FindFunction(SymbolMap* pMap, const char* funcName)
+TDeclaration* SymbolMap_FindFunction(struct SymbolMap* pMap, const char* funcName)
 {
     TDeclaration* pDeclaration = NULL;
 
@@ -475,7 +475,7 @@ TDeclaration* SymbolMap_FindFunction(SymbolMap* pMap, const char* funcName)
     return pDeclaration;
 }
 
-TDeclaration* SymbolMap_FindObjFunction(SymbolMap* pMap,
+TDeclaration* SymbolMap_FindObjFunction(struct SymbolMap* pMap,
     const char* objName,
     const char* funcName)
 {
@@ -492,7 +492,7 @@ TDeclaration* SymbolMap_FindObjFunction(SymbolMap* pMap,
     return p;
 }
 
-TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* structTagName)
+TStructUnionSpecifier* SymbolMap_FindStructUnion(struct SymbolMap* pMap, const char* structTagName)
 {
     TStructUnionSpecifier* pStructUnionSpecifier = NULL;
 
@@ -532,7 +532,7 @@ TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* st
 }
 
 
-TEnumSpecifier* SymbolMap_FindEnum(SymbolMap* pMap, const char* enumTagName)
+TEnumSpecifier* SymbolMap_FindEnum(struct SymbolMap* pMap, const char* enumTagName)
 {
     TEnumSpecifier* pEnumSpecifier = NULL;
 
@@ -569,7 +569,7 @@ TEnumSpecifier* SymbolMap_FindEnum(SymbolMap* pMap, const char* enumTagName)
 }
 
 
-TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
+TDeclaration* SymbolMap_FindTypedefDeclarationTarget(struct SymbolMap* pMap,
     const char* typedefName)
 {
     TDeclaration* pDeclarationResult = NULL;
@@ -660,7 +660,7 @@ TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
 //e vai somando as partes dos declaratos
 //por exemplo no meio do caminho dos typedefs
 //pode ter ponteiros e depois const etc.
-TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
+TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(struct SymbolMap* pMap,
     const char* typedefName,
     TDeclarator* declarator)
 {
@@ -771,7 +771,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
 
 //Acha o primeiro typedef
 //somas as partes do declarator
-TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
+TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(struct SymbolMap* pMap,
     const char* typedefName,
     TDeclarator* declarator)
 {
@@ -891,7 +891,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
     return pSpecifiersResult;// &pDeclarationResult->Specifiers;
 
 }
-TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(SymbolMap* pMap,
+TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(struct SymbolMap* pMap,
     const char* typedefName)
 {
     /*Sample:

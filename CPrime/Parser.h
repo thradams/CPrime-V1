@@ -22,8 +22,8 @@ typedef struct {
 
   TScannerItemList ClueList;
 
-  SymbolMap GlobalScope;
-  SymbolMap* pCurrentScope;
+  struct SymbolMap GlobalScope;
+  struct SymbolMap* pCurrentScope;
   
   int IncludeLevel;
   bool bPreprocessorEvalFlag;

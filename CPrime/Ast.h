@@ -1236,7 +1236,7 @@ typedef struct
 
   //multimap dos simbolos
   //DeclarationsMap Symbols;
-  SymbolMap GlobalScope;
+  struct SymbolMap GlobalScope;
 
 
   //Defines

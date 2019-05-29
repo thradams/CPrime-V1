@@ -2944,7 +2944,7 @@ void Compound_Statement(Parser* ctx, TStatement** ppStatement)
     TCompoundStatement* pCompoundStatement = TCompoundStatement_Create();
     *ppStatement = (TStatement*)pCompoundStatement;
 
-    SymbolMap BlockScope = SYMBOLMAP_INIT;
+    struct SymbolMap BlockScope = SYMBOLMAP_INIT;
 
     BlockScope.pPrevious = ctx->pCurrentScope;
     ctx->pCurrentScope = &BlockScope;
@@ -4853,7 +4853,7 @@ bool  Declaration(Parser * ctx,
                 //                       p esta no contexto
                 // mas nao tem toda declaracao
 
-                SymbolMap BlockScope = SYMBOLMAP_INIT;
+                struct SymbolMap BlockScope = SYMBOLMAP_INIT;
 
                 BlockScope.pPrevious = ctx->pCurrentScope;
                 ctx->pCurrentScope = &BlockScope;
@@ -4906,7 +4906,7 @@ bool  Declaration(Parser * ctx,
 
                     //Ativa o escopo dos parametros
                     //Adiconar os parametros em um escopo um pouco a cima.
-                    SymbolMap BlockScope2 = SYMBOLMAP_INIT;
+                    struct SymbolMap BlockScope2 = SYMBOLMAP_INIT;
 
                     TInitDeclarator* pDeclarator3 =
                         pFuncVarDeclaration->InitDeclaratorList.pHead;
