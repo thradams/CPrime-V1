@@ -176,7 +176,6 @@ void Scanner_IncludeFile(Scanner* pScanner,
 
 void Scanner_Destroy(Scanner* pScanner);
 void Scanner_Reset(Scanner* pScanner);
-//int Scanner_GetFileIndex(Scanner * pScanner);
 
 int EvalExpression(const char* s, Scanner* pScanner);
 void Scanner_PrintDebug(Scanner* pScanner);

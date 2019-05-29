@@ -446,10 +446,10 @@ typedef struct TPointerList
 
 void TPointerList_PushBack(TPointerList* pList, TPointer* pItem);
 
-void TPointerList_Printf(TPointerList* p);
+
 void TPointerList_Destroy(TPointerList* p);
 bool TPointerList_IsPointer(TPointerList* pPointerlist);
-bool TPointerList_IsPointerN(TPointerList* pPointerlist, int n);
+
 bool TPointerList_IsAutoPointer(TPointerList* pPointerlist);
 bool TPointerList_IsAutoPointerToAutoPointer(TPointerList* pPointerlist);
 bool TPointerList_IsPointerToObject(TPointerList* pPointerlist);
@@ -459,7 +459,6 @@ bool TPointerList_IsPointer(TPointerList* pPointerlist);
 void TPointerList_Swap(TPointerList* a, TPointerList* b);
 bool TPointerList_IsAutoPointerSizeToObject(TPointerList* pPointerlist);
 
-const char * TPointerList_GetSize(TPointerList* pPointerlist);
 
 typedef struct
 {
@@ -662,11 +661,11 @@ typedef struct {
 
 void TSpecifierQualifierList_Destroy(TSpecifierQualifierList* pDeclarationSpecifiers);
 void TSpecifierQualifierList_PushBack(TSpecifierQualifierList* p, TSpecifierQualifier* pItem);
-bool TSpecifierQualifierList_IsTypedef(TSpecifierQualifierList* p);
+
 const char* TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList* p);
 TDeclarationSpecifier* TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList* p);
 bool TSpecifierQualifierList_IsTypedefQualifier(TSpecifierQualifierList* p);
-bool TSpecifierQualifierList_IsAutoPointer(TSpecifierQualifierList *pSpecifierQualifierList);
+
 
 bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList* p, Tokens token, const char* lexeme);
 bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList* p);
@@ -822,7 +821,7 @@ typedef struct TInitializerList
 
 void TInitializerList_Init(TInitializerList* p);
 void TInitializerList_Destroy(TInitializerList* p);
-void TInitializerList_Delete(TInitializerList* p);
+
 
 typedef struct
 {
@@ -1159,8 +1158,7 @@ int TDeclaration_GetNumberFuncArgs(TDeclaration* p);
 bool TDeclaration_Is_StructOrUnionDeclaration(TDeclaration* p);
 
 TCompoundStatement* TDeclaration_Is_FunctionDefinition(TDeclaration* p);
-const char* TDeclaration_GetFunctionThis(TDeclaration* p);
-bool TDeclaration_Is_EnumDeclaration(TDeclaration* p);
+
 TDeclarator* TDeclaration_FindDeclarator(TDeclaration* p, const char* name);
 const char* TDeclaration_GetFunctionName(TDeclaration* p);
 
@@ -1296,7 +1294,6 @@ TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration * p);
 TDeclaration* TProgram_FindFunctionDeclaration(TProgram* p, const char* name);
 
 bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers* pDeclarationSpecifiers);
-bool TDeclarationSpecifiers_IsStatic(TDeclarationSpecifiers* pDeclarationSpecifiers);
 
 
 
