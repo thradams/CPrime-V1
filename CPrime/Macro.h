@@ -7,16 +7,16 @@
 #include "StrBuilder.h"
 #include "Map2.h"
 
-typedef struct
+struct Macro
 {
   String * /*@auto*/ Name;
   bool bIsFunction;
   struct TokenArray TokenSequence;
   struct TokenArray FormalArguments;
   int FileIndex;
-} Macro;
+} ;
 
-Macro* Macro_Create(void);
+struct Macro* Macro_Create(void);
 
 
 typedef struct MacroMapItem
@@ -24,7 +24,7 @@ typedef struct MacroMapItem
   struct MapItem2* pNext;
   unsigned int HashValue;
   String * /*@auto*/Key;
-  Macro* pValue;
+  struct Macro* pValue;
 } MacroMapItem;
 
 typedef struct
@@ -39,11 +39,11 @@ typedef struct
 
 int MacroMap_SetAt(MacroMap* pMap,
                     const char* Key,
-                    Macro* newValue);
+                    struct Macro* newValue);
 
 bool MacroMap_Lookup(const MacroMap* pMap,
                       const char*  Key,
-                      Macro** rValue);
+                      struct Macro** rValue);
 
 bool MacroMap_RemoveKey(MacroMap* pMap,
                          const char*  Key);
@@ -53,7 +53,7 @@ void MacroMap_Destroy(MacroMap* p);
 
 void MacroMap_Swap(MacroMap * pA, MacroMap * pB);
 
-Macro* MacroMap_Find(const MacroMap* pMap, const char*  Key);
+struct Macro* MacroMap_Find(const MacroMap* pMap, const char*  Key);
 
 
 
@@ -62,7 +62,7 @@ void ExpandMacro(const struct TokenArray* tsOriginal,
                  bool get_more,
                  bool skip_defined,
     bool evalmode,
-                 Macro* caller,
+                 struct Macro* caller,
                  struct TokenArray* pOutputSequence);
 
 void ExpandMacroToText(const struct TokenArray* pTokenSequence,
@@ -70,6 +70,6 @@ void ExpandMacroToText(const struct TokenArray* pTokenSequence,
                        bool get_more,
                        bool skip_defined,
     bool evalmode,
-                       Macro* caller,
+                       struct Macro* caller,
                        StrBuilder* strBuilder);
 

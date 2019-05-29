@@ -15,9 +15,9 @@
 #include <stdio.h>
 #include "Mem.h"
 
-Macro * Macro_Create(void) /*@default*/
+struct Macro * Macro_Create(void) /*@default*/
 {
-    Macro * p = (Macro *)Malloc(sizeof * p);
+    struct Macro * p = (struct Macro *)Malloc(sizeof * p);
     if (p != NULL)
     {
         p->Name = NULL;
@@ -29,14 +29,14 @@ Macro * Macro_Create(void) /*@default*/
     return p;
 }
 
-void Macro_Destroy(Macro * p) /*@default*/
+void Macro_Destroy(struct Macro * p) /*@default*/
 {
     Free((void *)p->Name);
     TokenArray_Destroy(&p->TokenSequence);
     TokenArray_Destroy(&p->FormalArguments);
 }
 
-void Macro_Delete(Macro * p) /*@default*/
+void Macro_Delete(struct Macro * p) /*@default*/
 {
     if (p != NULL)
     {
@@ -84,7 +84,7 @@ void ExpandMacro(const struct TokenArray * pTokenSequence,
                  bool get_more,
                  bool skip_defined,
                  bool evalmode,
-                 Macro * caller,
+                 struct Macro * caller,
                  struct TokenArray * pOutputSequence);
 
 /*
@@ -201,14 +201,14 @@ void AppendStringize(StrBuilder * strBuilder, const struct TokenArray * ts)
 * Result is created in the output sequence os and finally has the specified
 * hide set added to it, before getting returned.
 */
-void SubstituteArgs(Macro * pMacro,
+void SubstituteArgs(struct Macro * pMacro,
                     const MacroMap * macros,
                     const struct TokenArray * isOriginal,   //macro
                     const TokenArrayMap * args,
                     TokenSet * hs,
                     bool skip_defined,
                     bool evalmode,
-                    Macro * pCaller,
+                    struct Macro * pCaller,
                     struct TokenArray * pOutputSequence)
 {
     TokenArray_Clear(pOutputSequence);
@@ -766,7 +766,7 @@ void ExpandMacro(const struct TokenArray * tsOriginal,
                  bool get_more,
                  bool skip_defined,
                  bool evalmode,
-                 Macro * caller,
+                 struct Macro * caller,
                  struct TokenArray * pOutputSequence2)
 {
     TokenArray_Clear(pOutputSequence2);
@@ -813,7 +813,7 @@ void ExpandMacro(const struct TokenArray * tsOriginal,
             continue;
         }
 
-        Macro * pMacro = MacroMap_Find(macros, pHead->Lexeme);
+        struct Macro * pMacro = MacroMap_Find(macros, pHead->Lexeme);
 
         if (pMacro == NULL)
         {
@@ -1108,7 +1108,7 @@ void ExpandMacroToText(const struct TokenArray * pTokenSequence,
                        bool get_more,
                        bool skip_defined,
                        bool evalmode,
-                       Macro * caller,
+                       struct Macro * caller,
                        StrBuilder * strBuilder)
 {
     StrBuilder_Clear(strBuilder);
@@ -1143,36 +1143,36 @@ void ExpandMacroToText(const struct TokenArray * pTokenSequence,
 
 int MacroMap_SetAt(MacroMap * pMap,
                    const char * Key,
-                   Macro * newValue)
+                   struct Macro * newValue)
 {
     void * pPrevious;
     int r = Map2_SetAt((Map2 *)pMap, Key, newValue, &pPrevious);
-    Macro_Delete((Macro *)pPrevious);
+    Macro_Delete((struct Macro *)pPrevious);
     return r;
 }
 
 bool MacroMap_Lookup(const MacroMap * pMap,
                      const char * Key,
-                     Macro * *rValue)
+                     struct Macro * *rValue)
 {
     return Map2_Lookup((Map2 *)pMap,
                        Key,
                        (void **)rValue);
 }
 
-Macro * MacroMap_Find(const MacroMap * pMap, const char * Key)
+struct Macro * MacroMap_Find(const MacroMap * pMap, const char * Key)
 {
     void * p = NULL;
     Map2_Lookup((Map2 *)pMap,
                 Key,
                 &p);
-    return (Macro *)p;
+    return (struct Macro *)p;
 }
 
 
 bool MacroMap_RemoveKey(MacroMap * pMap, const char * Key)
 {
-    Macro * pItem;
+    struct Macro * pItem;
     bool r = Map2_RemoveKey((Map2 *)pMap, Key, (void **)& pItem);
 
     if (r)
@@ -1191,7 +1191,7 @@ void MacroMap_Init(MacroMap * p)
 
 static void Macro_DeleteVoid(void * p)
 {
-    Macro_Delete((Macro *)p);
+    Macro_Delete((struct Macro *)p);
 }
 
 void MacroMap_Destroy(MacroMap * p)

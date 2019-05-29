@@ -597,7 +597,7 @@ void Scanner_PrintDebug(Scanner * pScanner)
 static bool AddStandardMacro(Scanner * pScanner, const char * name,
     const char * value)
 {
-    Macro * pDefine1 = Macro_Create();
+    struct Macro * pDefine1 = Macro_Create();
     PTR_STRING_REPLACE(pDefine1->Name, name);
     // TODO tipo do token
     TokenArray_PushBack(&pDefine1->TokenSequence,
@@ -1143,9 +1143,9 @@ void GetDefineString(Scanner * pScanner, StrBuilder * strBuilder)
     }
 }
 
-Macro * Scanner_FindPreprocessorItem2(Scanner * pScanner, const char * key)
+struct Macro * Scanner_FindPreprocessorItem2(Scanner * pScanner, const char * key)
 {
-    Macro * pMacro = MacroMap_Find(&pScanner->Defines2, key);
+    struct Macro * pMacro = MacroMap_Find(&pScanner->Defines2, key);
     return pMacro;
 }
 
@@ -1212,7 +1212,7 @@ int EvalExpression(const char * s, Scanner * pScanner)
 }
 
 static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
-    Macro * pMacro, struct TokenArray * ppTokenArray,
+    struct Macro * pMacro, struct TokenArray * ppTokenArray,
     StrBuilder * strBuilder)
 {
     // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
@@ -1460,7 +1460,7 @@ void ParsePreDefinev2(Scanner * pScanner, StrBuilder * strBuilder)
     BasicScanner * pBasicScanner = Scanner_Top(pScanner);
 
     // objetivo eh montar a macro e colocar no mapa
-    Macro * pNewMacro = Macro_Create();
+    struct Macro * pNewMacro = Macro_Create();
 
     Tokens token = pBasicScanner->currentItem.token;
     const char * lexeme = pBasicScanner->currentItem.lexeme.c_str;
@@ -1630,7 +1630,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
         return;
     }
 
-    Macro * pMacro2 = Scanner_FindPreprocessorItem2(pScanner, lexeme);
+    struct Macro * pMacro2 = Scanner_FindPreprocessorItem2(pScanner, lexeme);
     if (pMacro2 == NULL)
     {
         // nao eh macro
@@ -1661,7 +1661,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
         return;
     }
 
-    Macro * pFirstMacro = pMacro2;
+    struct Macro * pFirstMacro = pMacro2;
 
     // Match do identificador do nome da macro funcao
     BasicScanner_Match(pBasicScanner);
@@ -1685,7 +1685,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
 
             // se expandir para identificador e ele for uma macro do tipo funcao
             // pode ser tetris
-            Macro * pMacro3 = NULL;
+            struct Macro * pMacro3 = NULL;
 
             if (strExpanded.size > 0)
             {
@@ -1778,7 +1778,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                 /////////////////////////////////
                 // se expandir para identificador e ele for uma macro do tipo funcao
                 // pode ser tetris
-                Macro * pMacro3 = NULL;
+                struct Macro * pMacro3 = NULL;
                 if (strExpanded.size > 0)
                 {
                     pMacro3 = Scanner_FindPreprocessorItem2(pScanner, strExpanded.c_str);
