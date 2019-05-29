@@ -191,7 +191,7 @@ typedef enum
 } Tokens;
 
 
-typedef struct ScannerItem
+struct ScannerItem
 {
     struct LocalStrBuilder lexeme;
     Tokens token;
@@ -199,18 +199,18 @@ typedef struct ScannerItem
     int FileIndex /*@= -1*/ ;
     bool bActive /*@= 1*/;
     struct ScannerItem* pNext;
-} ScannerItem;
+};
 
 
 const char* TokenToString(Tokens tk);
 
-void ScannerItem_Init(ScannerItem* scannerItem);
-void ScannerItem_Reset(ScannerItem* scannerItem);
-void ScannerItem_Swap(ScannerItem* scannerItem, ScannerItem* other);
-void ScannerItem_Destroy(ScannerItem* scannerItem);
-void ScannerItem_Copy(ScannerItem* scannerItem, ScannerItem* other);
-ScannerItem* ScannerItem_Create(void);
-void ScannerItem_Delete(ScannerItem* scannerItem);
+void ScannerItem_Init(struct ScannerItem* scannerItem);
+void ScannerItem_Reset(struct ScannerItem* scannerItem);
+void ScannerItem_Swap(struct ScannerItem* scannerItem, struct ScannerItem* other);
+void ScannerItem_Destroy(struct ScannerItem* scannerItem);
+void ScannerItem_Copy(struct ScannerItem* scannerItem, struct ScannerItem* other);
+struct ScannerItem* ScannerItem_Create(void);
+void ScannerItem_Delete(struct ScannerItem* scannerItem);
 
 typedef enum 
 {
@@ -223,7 +223,7 @@ typedef struct BasicScanner
 {
     BasicScannerType Type;
     struct Stream stream;
-    ScannerItem currentItem;
+    struct ScannerItem currentItem;
 
     //true antes do 1 token de cada linha
     bool bLineStart;

@@ -1593,7 +1593,7 @@ static void Scanner_PushToken(Scanner * pScanner, Tokens token,
         return;
     }
 
-    ScannerItem * pNew = ScannerItem_Create();
+    struct ScannerItem * pNew = ScannerItem_Create();
     LocalStrBuilder_Set(&pNew->lexeme, lexeme);
     pNew->token = token;
     pNew->bActive = bActive; //;
@@ -1619,7 +1619,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
 
     if (!IsIncludeState(state))
     {
-        ScannerItem * pNew = ScannerItem_Create();
+        struct ScannerItem * pNew = ScannerItem_Create();
         LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
         pNew->token = pBasicScanner->currentItem.token;
         pNew->bActive = false;
@@ -1634,7 +1634,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
     if (pMacro2 == NULL)
     {
         // nao eh macro
-        ScannerItem * pNew = ScannerItem_Create();
+        struct ScannerItem * pNew = ScannerItem_Create();
         LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
         pNew->token = pBasicScanner->currentItem.token;
         pNew->bActive = true;
@@ -1650,7 +1650,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
     {
         // ja estou expandindo esta mesma macro
         // nao eh macro
-        ScannerItem * pNew = ScannerItem_Create();
+        struct ScannerItem * pNew = ScannerItem_Create();
         LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
         pNew->token = pBasicScanner->currentItem.token;
         pNew->bActive = true;
@@ -1740,7 +1740,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                 // StrBuilder_Append(strBuilder, lexeme);
 
                 /////////////
-                ScannerItem * pNew = ScannerItem_Create();
+                struct ScannerItem * pNew = ScannerItem_Create();
                 LocalStrBuilder_Set(&pNew->lexeme, lexeme);
                 pNew->token = token;
                 pNew->bActive = true;
@@ -1823,14 +1823,14 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                 if (pFirstMacro != pMacro2)
                 {
                     // nao era uma chamada da macro funcao
-                    ScannerItem * pNew = ScannerItem_Create();
+                    struct ScannerItem * pNew = ScannerItem_Create();
                     LocalStrBuilder_Append(&pNew->lexeme, pFirstMacro->Name);
                     pNew->token = TK_MACRO_CALL;
                     pNew->bActive = true;
                     TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
                 }
 
-                ScannerItem * pNew0 = ScannerItem_Create();
+                struct ScannerItem * pNew0 = ScannerItem_Create();
                 LocalStrBuilder_Append(&pNew0->lexeme, pMacro2->Name);
                 pNew0->token = TK_IDENTIFIER;
                 pNew0->bActive = true;
@@ -1838,7 +1838,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
 
                 if (pFirstMacro != pMacro2)
                 {
-                    ScannerItem * pNew2 = ScannerItem_Create();
+                    struct ScannerItem * pNew2 = ScannerItem_Create();
                     pNew2->token = TK_MACRO_EOF;
                     pNew2->bActive = true;
                     TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew2);
@@ -1928,7 +1928,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
     if (token == TK_EOF)
     {
         // não sobrou nenhum baralho nao tem o que comprar
-        ScannerItem * pNew = ScannerItem_Create();
+        struct ScannerItem * pNew = ScannerItem_Create();
         pNew->token = TK_EOF;
         pNew->bActive = true;
         TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
@@ -2500,7 +2500,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
     }
     else
     {
-        ScannerItem * pNew = ScannerItem_Create();
+        struct ScannerItem * pNew = ScannerItem_Create();
         LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
         pNew->token = pBasicScanner->currentItem.token;
         pNew->bActive = bActive0;
@@ -2839,27 +2839,27 @@ void PrintPreprocessedToConsole(const char * fileIn,
 int Scanner_GetNumberOfScannerItems(Scanner * pScanner)
 {
     int nCount = 1; // contando com o "normal"
-    ForEachListItem(ScannerItem, pItem, &pScanner->AcumulatedTokens)
+    ForEachListItem(struct ScannerItem, pItem, &pScanner->AcumulatedTokens)
     {
         nCount++;
     }
     return nCount;
 }
 
-ScannerItem * Scanner_ScannerItemAt(Scanner * pScanner, int index)
+struct ScannerItem * Scanner_ScannerItemAt(Scanner * pScanner, int index)
 {
 
     // item0 item1 ..itemN
     //^
     // posicao atual
 
-    ScannerItem * pScannerItem = NULL;
+    struct ScannerItem * pScannerItem = NULL;
 
     if (!pScanner->bError)
     {
         // conta o numero de itens empilhados
         int nCount = 0;
-        ForEachListItem(ScannerItem, pItem, &pScanner->AcumulatedTokens)
+        ForEachListItem(struct ScannerItem, pItem, &pScanner->AcumulatedTokens)
         {
             nCount++;
         }
@@ -2878,7 +2878,7 @@ ScannerItem * Scanner_ScannerItemAt(Scanner * pScanner, int index)
         {
             // nao precisa comprar eh so pegar
             int n = 0;
-            ForEachListItem(ScannerItem, pItem, &pScanner->AcumulatedTokens)
+            ForEachListItem(struct ScannerItem, pItem, &pScanner->AcumulatedTokens)
             {
                 if (n == index)
                 {
@@ -2900,7 +2900,7 @@ void Scanner_PrintItems(Scanner * pScanner)
     int n = Scanner_GetNumberOfScannerItems(pScanner);
     for (int i = 0; i < n; i++)
     {
-        ScannerItem * pItem = Scanner_ScannerItemAt(pScanner, i);
+        struct ScannerItem * pItem = Scanner_ScannerItemAt(pScanner, i);
         printf("%d : %s %s\n", i, pItem->lexeme.c_str, TokenToString(pItem->token));
     }
     printf("-----\n");
@@ -2908,7 +2908,7 @@ void Scanner_PrintItems(Scanner * pScanner)
 
 int Scanner_FileIndexAt(Scanner * pScanner, int index)
 {
-    ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
+    struct ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
     if (pScannerItem)
     {
         return pScannerItem->FileIndex;
@@ -2918,7 +2918,7 @@ int Scanner_FileIndexAt(Scanner * pScanner, int index)
 
 int Scanner_LineAt(Scanner * pScanner, int index)
 {
-    ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
+    struct ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
     if (pScannerItem)
     {
         return pScannerItem->Line;
@@ -2928,7 +2928,7 @@ int Scanner_LineAt(Scanner * pScanner, int index)
 
 bool Scanner_IsActiveAt(Scanner * pScanner, int index)
 {
-    ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
+    struct ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
     if (pScannerItem)
     {
         return pScannerItem->bActive;
@@ -2938,7 +2938,7 @@ bool Scanner_IsActiveAt(Scanner * pScanner, int index)
 
 Tokens Scanner_TokenAt(Scanner * pScanner, int index)
 {
-    ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
+    struct ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
     if (pScannerItem)
     {
         return pScannerItem->token;
@@ -2949,7 +2949,7 @@ Tokens Scanner_TokenAt(Scanner * pScanner, int index)
 
 const char * Scanner_LexemeAt(Scanner * pScanner, int index)
 {
-    ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
+    struct ScannerItem * pScannerItem = Scanner_ScannerItemAt(pScanner, index);
     if (pScannerItem)
     {
         return pScannerItem->lexeme.c_str;
@@ -3016,10 +3016,10 @@ bool Scanner_MatchToken(Scanner * pScanner, Tokens token, bool bActive)
 
 void TScannerItemList_Destroy(TScannerItemList * p)
 {
-    ScannerItem * pCurrent = p->pHead;
+    struct ScannerItem * pCurrent = p->pHead;
     while (pCurrent)
     {
-        ScannerItem * pItem = pCurrent;
+        struct ScannerItem * pItem = pCurrent;
         pCurrent = pCurrent->pNext;
         ScannerItem_Delete(pItem);
     }
@@ -3047,12 +3047,12 @@ void TScannerItemList_Swap(TScannerItemList * a, TScannerItemList * b)
 
 void TScannerItemList_PopFront(TScannerItemList * pList)
 {
-    ScannerItem * p = pList->pHead;
+    struct ScannerItem * p = pList->pHead;
     pList->pHead = pList->pHead->pNext;
     ScannerItem_Delete(p);
 }
 
-void TScannerItemList_PushBack(TScannerItemList * pList, ScannerItem * pItem)
+void TScannerItemList_PushBack(TScannerItemList * pList, struct ScannerItem * pItem)
 {
     if ((pList)->pHead == NULL)
     {

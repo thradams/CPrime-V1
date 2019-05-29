@@ -135,7 +135,7 @@ static void TNodeClueList_CodePrint(PrintCodeOptions* options, TScannerItemList*
         return;
     };
 
-    ForEachListItem(ScannerItem, pNodeClue, list)
+    ForEachListItem(struct ScannerItem, pNodeClue, list)
     {
         switch (pNodeClue->token)
         {

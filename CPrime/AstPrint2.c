@@ -96,7 +96,7 @@ void TScannerItemList_PrintXML(TScannerItemList* list,
     if (HasItemsToPrint(list))
     {
         PrintLn(ctx, "<pr>");
-        ScannerItem* pCurrent = list->pHead;
+        struct ScannerItem* pCurrent = list->pHead;
         while (pCurrent)
         {
             const char* name = TokenToString(pCurrent->token);

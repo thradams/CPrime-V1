@@ -283,9 +283,9 @@ const char * TokenToString(Tokens tk)
     return "???";
 }
 
-ScannerItem * ScannerItem_Create(void) /*@default*/
+struct ScannerItem * ScannerItem_Create(void) /*@default*/
 {
-    ScannerItem * p = (ScannerItem *)Malloc(sizeof * p);
+    struct ScannerItem * p = (struct ScannerItem *)Malloc(sizeof * p);
     if (p != NULL)
     {
         ScannerItem_Init(p);
@@ -293,7 +293,7 @@ ScannerItem * ScannerItem_Create(void) /*@default*/
     return p;
 }
 
-void ScannerItem_Delete(ScannerItem * pScannerItem) /*@default*/
+void ScannerItem_Delete(struct ScannerItem * pScannerItem) /*@default*/
 {
     if (pScannerItem != NULL)
     {
@@ -302,7 +302,7 @@ void ScannerItem_Delete(ScannerItem * pScannerItem) /*@default*/
     }
 }
 
-void ScannerItem_Init(ScannerItem * scannerItem) /*@default*/
+void ScannerItem_Init(struct ScannerItem * scannerItem) /*@default*/
 {
     LocalStrBuilder_Init(&scannerItem->lexeme);
     scannerItem->token = TK_NONE;
@@ -312,21 +312,21 @@ void ScannerItem_Init(ScannerItem * scannerItem) /*@default*/
     scannerItem->pNext = NULL;
 }
 
-void ScannerItem_Reset(ScannerItem * scannerItem)
+void ScannerItem_Reset(struct ScannerItem * scannerItem)
 {
     LocalStrBuilder_Clear(&scannerItem->lexeme);
     scannerItem->token = TK_ERROR;
 }
 
-void ScannerItem_Copy(ScannerItem * scannerItem,
-                      ScannerItem * other)
+void ScannerItem_Copy(struct ScannerItem * scannerItem,
+                      struct ScannerItem * other)
 {
     scannerItem->token = other->token;
     LocalStrBuilder_Set(&scannerItem->lexeme, other->lexeme.c_str);
 }
 
-void ScannerItem_Swap(ScannerItem * scannerItem,
-                      ScannerItem * other)
+void ScannerItem_Swap(struct ScannerItem * scannerItem,
+                      struct ScannerItem * other)
 {
     Tokens tk = other->token;
     other->token = scannerItem->token;
@@ -334,7 +334,7 @@ void ScannerItem_Swap(ScannerItem * scannerItem,
     LocalStrBuilder_Swap(&scannerItem->lexeme, &other->lexeme);
 }
 
-void ScannerItem_Destroy(ScannerItem * scannerItem) /*@default*/
+void ScannerItem_Destroy(struct ScannerItem * scannerItem) /*@default*/
 {
     LocalStrBuilder_Destroy(&scannerItem->lexeme);
 }

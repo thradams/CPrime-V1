@@ -325,7 +325,7 @@ Tokens Parser_MatchEx(Parser* parser, TScannerItemList* listOpt, bool bKeepComme
                 IsPreprocessorTokenPhase(token)))
         {
             //so adiciona os espacos no cara atual
-            ScannerItem* pNew = ScannerItem_Create();
+            struct ScannerItem* pNew = ScannerItem_Create();
             LocalStrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
             pNew->token = Scanner_TokenAt(&parser->Scanner, 0);
             TScannerItemList_PushBack(&parser->ClueList, pNew);
@@ -4768,7 +4768,7 @@ void PopBack(TScannerItemList * clueList)
 bool HasCommentedKeyword(TScannerItemList * clueList, const char* keyword)
 {
     bool bResult = false;
-    ScannerItem* pCurrent = clueList->pTail;
+    struct ScannerItem* pCurrent = clueList->pTail;
     if (pCurrent &&
         pCurrent->token == TK_COMMENT)
     {
@@ -5146,7 +5146,7 @@ bool GetAST(const char* filename,
                     TScannerItemList_Destroy(&parser.ClueList);
                     TScannerItemList_Init(&parser.ClueList);
 
-                    ScannerItem* pNew = ScannerItem_Create();
+                    struct ScannerItem* pNew = ScannerItem_Create();
                     pNew->token = TK_PRE_INCLUDE;
                     LocalStrBuilder_Append(&pNew->lexeme, "source");
                     TScannerItemList_PushBack(&parser.ClueList, pNew);
