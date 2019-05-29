@@ -28,7 +28,7 @@ typedef enum
     TK_FLOAT_NUMBER,
     TK_MACROPLACEHOLDER,
     TK_BREAKLINE,
-	TK_BACKSLASHBREAKLINE,
+    TK_BACKSLASHBREAKLINE,
     CHAR1, // '/' ,
     CHARACTER_TABULATION,// = '\t';
     TK_PREPROCESSOR,
@@ -108,7 +108,7 @@ typedef enum
     TK_CHAR_LITERAL,
 
     TK_AUTO,
-	
+
 
 
     TK_BREAK,
@@ -116,7 +116,7 @@ typedef enum
     TK_CHAR,
     TK_CONST,
     TK_CONTINUE,
-    TK_DEFAULT,	
+    TK_DEFAULT,
     TK_DO,
     TK_DOUBLE,
     TK_ELSE,
@@ -167,7 +167,7 @@ typedef enum
 
     ///
     TK__ASM, //visual c++    
-   
+
     //Tokens para linhas do pre processador
     TK_PRE_INCLUDE,
     TK_PRE_PRAGMA,
@@ -180,14 +180,14 @@ typedef enum
     TK_PRE_ERROR,
     TK_PRE_LINE,
     TK_PRE_UNDEF,
-    TK_PRE_DEFINE,    
+    TK_PRE_DEFINE,
     //fim tokens preprocessador
     TK_MACRO_CALL,
     TK_MACRO_EOF,
     TK_FILE_EOF,
 
-    
-    
+
+
 } Tokens;
 
 
@@ -196,27 +196,27 @@ struct ScannerItem
     struct LocalStrBuilder lexeme;
     Tokens token;
     int Line /*@= -1*/;
-    int FileIndex /*@= -1*/ ;
+    int FileIndex /*@= -1*/;
     bool bActive /*@= 1*/;
-    struct ScannerItem* pNext;
+    struct ScannerItem * pNext;
 };
 
 
-const char* TokenToString(Tokens tk);
+const char * TokenToString(Tokens tk);
 
-void ScannerItem_Init(struct ScannerItem* scannerItem);
-void ScannerItem_Reset(struct ScannerItem* scannerItem);
-void ScannerItem_Swap(struct ScannerItem* scannerItem, struct ScannerItem* other);
-void ScannerItem_Destroy(struct ScannerItem* scannerItem);
-void ScannerItem_Copy(struct ScannerItem* scannerItem, struct ScannerItem* other);
-struct ScannerItem* ScannerItem_Create(void);
-void ScannerItem_Delete(struct ScannerItem* scannerItem);
+void ScannerItem_Init(struct ScannerItem * scannerItem);
+void ScannerItem_Reset(struct ScannerItem * scannerItem);
+void ScannerItem_Swap(struct ScannerItem * scannerItem, struct ScannerItem * other);
+void ScannerItem_Destroy(struct ScannerItem * scannerItem);
+void ScannerItem_Copy(struct ScannerItem * scannerItem, struct ScannerItem * other);
+struct ScannerItem * ScannerItem_Create(void);
+void ScannerItem_Delete(struct ScannerItem * scannerItem);
 
-typedef enum 
+typedef enum
 {
-  BasicScannerType_Macro,
-  BasicScannerType_Token,
-  BasicScannerType_File,
+    BasicScannerType_Macro,
+    BasicScannerType_Token,
+    BasicScannerType_File,
 } BasicScannerType;
 
 typedef struct BasicScanner
@@ -230,42 +230,42 @@ typedef struct BasicScanner
     bool bMacroExpanded;
     int FileIndex;
     Tokens m_Token;
-    struct BasicScanner* pPrevious;
+    struct BasicScanner * pPrevious;
 
 } BasicScanner;
 
 
-const char* BasicScanner_Lexeme(BasicScanner* scanner);
-bool        BasicScanner_IsLexeme(BasicScanner* scanner, const char* psz);
+const char * BasicScanner_Lexeme(BasicScanner * scanner);
+bool        BasicScanner_IsLexeme(BasicScanner * scanner, const char * psz);
 //void        BasicScanner_Match(BasicScanner* scanner);
-void        BasicScanner_Match(BasicScanner* scanner);
-bool         BasicScanner_MatchToken(BasicScanner* scanner, Tokens token);
-bool      BasicScanner_InitFile(BasicScanner* pScanner, const char* fileName);
-bool      BasicScanner_CreateFile(const char* fileName, BasicScanner** pp);
-void        BasicScanner_Delete(BasicScanner* pScanner);
+void        BasicScanner_Match(BasicScanner * scanner);
+bool         BasicScanner_MatchToken(BasicScanner * scanner, Tokens token);
+bool      BasicScanner_InitFile(BasicScanner * pScanner, const char * fileName);
+bool      BasicScanner_CreateFile(const char * fileName, BasicScanner ** pp);
+void        BasicScanner_Delete(BasicScanner * pScanner);
 
-bool BasicScanner_Init(BasicScanner* pScanner,
-                         const char* name,
-                         const char* Text,
+bool BasicScanner_Init(BasicScanner * pScanner,
+                       const char * name,
+                       const char * Text,
+                       BasicScannerType Type);
+
+bool BasicScanner_Create(BasicScanner ** pp,
+                         const char * name,
+                         const char * Text,
                          BasicScannerType Type);
 
-bool BasicScanner_Create(BasicScanner** pp,
-                           const char* name, 
-                           const char* Text,
-                           BasicScannerType Type);
-
-void BasicScanner_Destroy(BasicScanner* pScanner);
+void BasicScanner_Destroy(BasicScanner * pScanner);
 
 
 
-typedef BasicScanner* BasicScannerStack;
+typedef BasicScanner * BasicScannerStack;
 #define ITEM_STACK_INIT NULL
-void BasicScannerStack_Init(BasicScannerStack* stack);
-void BasicScannerStack_Push(BasicScannerStack* stack, BasicScanner* pItem);
-BasicScanner* BasicScannerStack_PopGet(BasicScannerStack* stack);
-void BasicScannerStack_Pop(BasicScannerStack* stack);
-void BasicScannerStack_PopIfNotLast(BasicScannerStack* stack);
-void BasicScannerStack_Destroy(BasicScannerStack* stack);
+void BasicScannerStack_Init(BasicScannerStack * stack);
+void BasicScannerStack_Push(BasicScannerStack * stack, BasicScanner * pItem);
+BasicScanner * BasicScannerStack_PopGet(BasicScannerStack * stack);
+void BasicScannerStack_Pop(BasicScannerStack * stack);
+void BasicScannerStack_PopIfNotLast(BasicScannerStack * stack);
+void BasicScannerStack_Destroy(BasicScannerStack * stack);
 
 #define ForEachBasicScanner(pItem, stack)\
     for (BasicScanner* pItem = stack;\

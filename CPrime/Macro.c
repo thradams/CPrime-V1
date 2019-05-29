@@ -118,11 +118,11 @@ void AppendEscaped(StrBuilder * strBuilder,
         {
             case '\\':
             case '"':
-            StrBuilder_AppendChar(strBuilder, '\\');
+                StrBuilder_AppendChar(strBuilder, '\\');
 
-            // FALTHROUGH
+                // FALTHROUGH
             default:
-            StrBuilder_AppendChar(strBuilder, *source);
+                StrBuilder_AppendChar(strBuilder, *source);
         }
 
         source++;
@@ -1153,7 +1153,7 @@ int MacroMap_SetAt(struct MacroMap * pMap,
 
 bool MacroMap_Lookup(const struct MacroMap * pMap,
                      const char * Key,
-                     struct Macro * *rValue)
+                     struct Macro ** rValue)
 {
     return Map2_Lookup((Map2 *)pMap,
                        Key,

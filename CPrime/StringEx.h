@@ -9,7 +9,7 @@ typedef char String;
 
 
 
-String* StrDup(const char* p);
+String * StrDup(const char * p);
 
 #define PTR_STRING_REPLACE(a, b)\
 do\

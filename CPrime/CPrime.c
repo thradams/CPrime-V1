@@ -11,11 +11,11 @@
 #include "Options.h"
 #include "AstPrint2.h"
 
-int Compile(const char* configFileName,
-    const char* inputFileName,
-    const char* outputFileName,
-    struct Options* options,
-    bool bPrintASTFile)
+int Compile(const char * configFileName,
+            const char * inputFileName,
+            const char * outputFileName,
+            struct Options * options,
+            bool bPrintASTFile)
 {
     int bSuccess = 0;
     TProgram program;
@@ -109,9 +109,9 @@ void PrintHelp()
 
 
 
-char* CompileText(int type, char* input)
+char * CompileText(int type, char * input)
 {
-    char* output = NULL;
+    char * output = NULL;
     TProgram program;
     TProgram_Init(&program);
     if (GetASTFromString(input, &program))
@@ -136,7 +136,7 @@ char* CompileText(int type, char* input)
 }
 
 
-int main(int argc, char* argv[])
+int main(int argc, char * argv[])
 {
     printf("\n");
     printf("C' Version " __DATE__ "\n");
@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
         PrintHelp();
         return 1;
     }
-    
+
     char outputDirFullPath[CPRIME_MAX_PATH] = { 0 };
 
     char cxconfigFileFullPath[CPRIME_MAX_PATH];
@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
     if (FileExists(cxconfigFileFullPath))
     {
         printf("using config file %s\n", cxconfigFileFullPath);
-       // configFileName = cxconfigFileFullPath;
+        // configFileName = cxconfigFileFullPath;
     }
     else
     {
@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
 
 
     char outputFileFullPath[CPRIME_MAX_PATH] = { 0 };
-    char inputFileFullPath[CPRIME_MAX_PATH] = {0};
+    char inputFileFullPath[CPRIME_MAX_PATH] = { 0 };
 
 
     struct Options options = OPTIONS_INIT;
@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
 
     for (int i = 1; i < argc; i++)
     {
-        const char* option = argv[i];
+        const char * option = argv[i];
         if (strcmp(option, "-P") == 0)
         {
             options.Target = CompilerTarget_Preprocessed;
@@ -249,7 +249,7 @@ int main(int argc, char* argv[])
         {
             if (i + 1 < argc)
             {
-                GetFullPathS(argv[i + 1], outputDirFullPath);                
+                GetFullPathS(argv[i + 1], outputDirFullPath);
                 i++;
             }
             else
@@ -263,7 +263,7 @@ int main(int argc, char* argv[])
 
             if (i + 1 < argc)
             {
-                GetFullPathS(argv[i + 1], cxconfigFileFullPath);                
+                GetFullPathS(argv[i + 1], cxconfigFileFullPath);
                 i++;
             }
             else
@@ -275,7 +275,7 @@ int main(int argc, char* argv[])
         else if (strcmp(option, "-o") == 0)
         {
             if (i + 1 < argc)
-            {                
+            {
                 GetFullPathS(argv[i + 1], outputFileFullPath);
                 i++;
             }
@@ -285,7 +285,7 @@ int main(int argc, char* argv[])
             }
         }
         else
-        {            
+        {
             GetFullPathS(argv[i], inputFileFullPath);
         }
     }
@@ -317,7 +317,7 @@ int main(int argc, char* argv[])
             }
 
             char outputItemPath[2000] = { 0 };
-            struct FileNode* pCurrent = sources.pHead;
+            struct FileNode * pCurrent = sources.pHead;
             while (pCurrent != NULL)
             {
                 outputItemPath[0] = 0;
@@ -345,7 +345,7 @@ int main(int argc, char* argv[])
     {
         GetSources(cxconfigFileFullPath, inputFileFullPath, true, &sources);
         int fileCount = 0;
-        struct FileNode* pCurrent = sources.pHead;
+        struct FileNode * pCurrent = sources.pHead;
         while (pCurrent != NULL)
         {
             fileCount++;
@@ -376,7 +376,7 @@ int main(int argc, char* argv[])
     printf("Total %d files in = %d seconds\n", numberOfFiles, (int)((tend - tstart) / CLOCKS_PER_SEC));
 
     FileNodeList_Destroy(&sources);
-    
+
 
     PrintMemory();
     return 0;

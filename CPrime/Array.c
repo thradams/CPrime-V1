@@ -5,14 +5,14 @@
 #include "StringEx.h"
 #include "Mem.h"
 
-bool Array_Reserve(Array* p, int nelements)
+bool Array_Reserve(Array * p, int nelements)
 {
     bool result = true;
-    if(nelements > p->capacity)
+    if (nelements > p->capacity)
     {
-        void** pnew = p->pItems;
-        pnew = (void**)Realloc(pnew, nelements * sizeof(void*));
-        if(pnew)
+        void ** pnew = p->pItems;
+        pnew = (void **)Realloc(pnew, nelements * sizeof(void *));
+        if (pnew)
         {
             p->pItems = pnew;
             p->capacity = nelements;
@@ -26,13 +26,13 @@ bool Array_Reserve(Array* p, int nelements)
 }
 
 
-bool Array_Grow(Array* p, int nelements)
+bool Array_Grow(Array * p, int nelements)
 {
     bool result = true;
-    if(nelements > p->capacity)
+    if (nelements > p->capacity)
     {
         int new_nelements = p->capacity + p->capacity / 2;
-        if(new_nelements < nelements)
+        if (new_nelements < nelements)
         {
             new_nelements = nelements;
         }
@@ -42,41 +42,41 @@ bool Array_Grow(Array* p, int nelements)
 }
 
 
-void* Array_PopGet(Array* p)
+void * Array_PopGet(Array * p)
 {
-	void* pItem = 0;
-	if (p->size > 0)
-	{
-		pItem = p->pItems[p->size - 1];
-		p->pItems[p->size - 1] = NULL;
-		p->size--;		
-	}
-	else
-	{
-		//assert(false);
-	}
-	return pItem;
+    void * pItem = 0;
+    if (p->size > 0)
+    {
+        pItem = p->pItems[p->size - 1];
+        p->pItems[p->size - 1] = NULL;
+        p->size--;
+    }
+    else
+    {
+        //assert(false);
+    }
+    return pItem;
 }
 
-void Array_Pop(Array* p, void(*pfDestroyData)(void*))
+void Array_Pop(Array * p, void(*pfDestroyData)(void *))
 {
-	void* pItem = Array_PopGet(p);
-    if(pfDestroyData)
+    void * pItem = Array_PopGet(p);
+    if (pfDestroyData)
     {
-       pfDestroyData(pItem);
+        pfDestroyData(pItem);
     }
 }
 
-void* Array_Top(Array* p)
+void * Array_Top(Array * p)
 {
     //assert(p->size > 0);
     return p->pItems[p->size - 1];
 }
 
-bool Array_Push(Array* p, void* pItem)
+bool Array_Push(Array * p, void * pItem)
 {
     bool result = Array_Grow(p, p->size + 1);
-    if(result == true)
+    if (result == true)
     {
         p->pItems[p->size] = pItem;
         p->size++;
@@ -84,11 +84,11 @@ bool Array_Push(Array* p, void* pItem)
     return result;
 }
 
-void Array_Clear(Array* p, void(*pfDestroyData)(void*))
+void Array_Clear(Array * p, void(*pfDestroyData)(void *))
 {
-    for(int i = 0; i < p->size; i++)
+    for (int i = 0; i < p->size; i++)
     {
-        if(pfDestroyData)
+        if (pfDestroyData)
             pfDestroyData(p->pItems[i]);
     }
     Free(p->pItems);
@@ -98,23 +98,23 @@ void Array_Clear(Array* p, void(*pfDestroyData)(void*))
 }
 
 
-void Array_Init(Array* p)
+void Array_Init(Array * p)
 {
     p->capacity = 0;
     p->size = 0;
-    p->pItems = NULL;    
+    p->pItems = NULL;
 }
 
-void Array_Destroy(Array* st, void (*pfDestroyData)(void*))
+void Array_Destroy(Array * st, void (*pfDestroyData)(void *))
 {
     Array_Clear(st, pfDestroyData);
 }
 
-void Array_Swap(Array* p1, Array* p2)
+void Array_Swap(Array * p1, Array * p2)
 {
     int c = p1->capacity;
     int s = p1->size;
-    void** pp = p1->pItems;
+    void ** pp = p1->pItems;
     p1->capacity = p2->capacity;
     p1->size = p2->size;
     p1->pItems = p2->pItems;
@@ -124,18 +124,18 @@ void Array_Swap(Array* p1, Array* p2)
 }
 
 
-bool StrArray_Reserve(struct StrArray* p, int nelements)
+bool StrArray_Reserve(struct StrArray * p, int nelements)
 {
-    return Array_Reserve((Array*)p, nelements);
+    return Array_Reserve((Array *)p, nelements);
 }
 
-bool StrArray_Push(struct StrArray* p, const char* pItem)
+bool StrArray_Push(struct StrArray * p, const char * pItem)
 {
-    char* s = StrDup(pItem);
-    
+    char * s = StrDup(pItem);
+
     {
-        bool result = Array_Push((Array*)p, s);
-        if(result != true)
+        bool result = Array_Push((Array *)p, s);
+        if (result != true)
         {
             Free(s);
         }
@@ -143,50 +143,50 @@ bool StrArray_Push(struct StrArray* p, const char* pItem)
     return true;
 }
 
-static void Array_DeleteStrVoid(void* p)
+static void Array_DeleteStrVoid(void * p)
 {
-  Free(p);
+    Free(p);
     //String_Destroy((char**)(&p));
 }
 
-void StrArray_Clear(struct StrArray* p)
+void StrArray_Clear(struct StrArray * p)
 {
-    Array_Clear((Array*)p, Array_DeleteStrVoid);
+    Array_Clear((Array *)p, Array_DeleteStrVoid);
 }
 
-void StrArray_Init(struct StrArray* p)
+void StrArray_Init(struct StrArray * p)
 {
-    Array_Init((Array*)p);
+    Array_Init((Array *)p);
 }
 
-void StrArray_Destroy(struct StrArray* p)
+void StrArray_Destroy(struct StrArray * p)
 {
-    Array_Destroy((Array*)p, &Array_DeleteStrVoid);
+    Array_Destroy((Array *)p, &Array_DeleteStrVoid);
 }
 
-void StrArray_Swap(struct StrArray* p1, struct StrArray* p2)
+void StrArray_Swap(struct StrArray * p1, struct StrArray * p2)
 {
     struct StrArray temp = *p1;
-  *p1 = *p2;
-  *p2 = temp;
+    *p1 = *p2;
+    *p2 = temp;
 }
 
 
 
-void* Array_PopFront(Array* p)
+void * Array_PopFront(Array * p)
 {
-	void* pItem = NULL;
-	//assert(p->size > 0);
-	if (p->size > 0)
-	{
-		pItem = p->pItems[0];
-		if (p->size > 1)
-		{
-			memmove(p->pItems, p->pItems + 1, sizeof(void*) * (p->size - 1));
-		}
-		p->size--;
-	}
-	return pItem;
+    void * pItem = NULL;
+    //assert(p->size > 0);
+    if (p->size > 0)
+    {
+        pItem = p->pItems[0];
+        if (p->size > 1)
+        {
+            memmove(p->pItems, p->pItems + 1, sizeof(void *) * (p->size - 1));
+        }
+        p->size--;
+    }
+    return pItem;
 }
 
 

@@ -10,166 +10,166 @@
 #include "Path.h"
 #include "Mem.h"
 
-bool LoadFile(const char* filename, const char** out, int* szOut)
+bool LoadFile(const char * filename, const char ** out, int * szOut)
 {
-  bool result = false;
-  int lSize = 0;
-  FILE*  fp = (FILE* ) fopen(filename, "rb");
+    bool result = false;
+    int lSize = 0;
+    FILE * fp = (FILE *)fopen(filename, "rb");
 
-  if (fp)
-  {
-    fseek(fp, 0L, SEEK_END);
-    lSize = ftell(fp);
-    rewind(fp);
-    char*  buffer = (char*)Malloc(lSize + 1);
-
-    if (buffer)
+    if (fp)
     {
-      /*int fr =*/ fread(buffer, 1, lSize , fp);
+        fseek(fp, 0L, SEEK_END);
+        lSize = ftell(fp);
+        rewind(fp);
+        char * buffer = (char *)Malloc(lSize + 1);
 
-      if (feof(fp))
-      {
-        //ok leu tudo
-      }
+        if (buffer)
+        {
+            /*int fr =*/ fread(buffer, 1, lSize, fp);
 
-      if (!ferror(fp))
-      {
-        //ok
-        buffer[lSize] = '\0';
-        *out = buffer;
-        buffer = NULL;
-        result = true;
-        *szOut = lSize;
-      }
+            if (feof(fp))
+            {
+                //ok leu tudo
+            }
 
-      Free(buffer);
+            if (!ferror(fp))
+            {
+                //ok
+                buffer[lSize] = '\0';
+                *out = buffer;
+                buffer = NULL;
+                result = true;
+                *szOut = lSize;
+            }
+
+            Free(buffer);
+        }
+
+        fclose(fp);
     }
 
-    fclose(fp);
-  }
-
-  return result;
+    return result;
 }
 
 
-bool Stream_InitFile(struct Stream* pStream,
-                        const char* fullPath)
+bool Stream_InitFile(struct Stream * pStream,
+                     const char * fullPath)
 {
-  //assert(IsFullPath(fullPath));
-  pStream->NameOrFullPath = StrDup(fullPath);
-  pStream->FullDir2 = NULL;
-  pStream->Line = 1;
-  pStream->Column = 1;
-  pStream->Position = 0;
-  bool result = LoadFile(fullPath, (const char**)&pStream->Text,
+    //assert(IsFullPath(fullPath));
+    pStream->NameOrFullPath = StrDup(fullPath);
+    pStream->FullDir2 = NULL;
+    pStream->Line = 1;
+    pStream->Column = 1;
+    pStream->Position = 0;
+    bool result = LoadFile(fullPath, (const char **)& pStream->Text,
                            &pStream->TextLen);
 
-  if (result)
-  {
-    //O objetivo aqui eh pegar o diretorio
-    GetFullDir(fullPath, &pStream->FullDir2);
-
-    if (pStream->Text != NULL &&
-        pStream->Text[0] != '\0')
+    if (result)
     {
-      //unicode?
-      pStream->Character = pStream->Text[0];
+        //O objetivo aqui eh pegar o diretorio
+        GetFullDir(fullPath, &pStream->FullDir2);
+
+        if (pStream->Text != NULL &&
+            pStream->Text[0] != '\0')
+        {
+            //unicode?
+            pStream->Character = pStream->Text[0];
+        }
+
+        else
+        {
+            pStream->Character = '\0';
+        }
+    }
+
+    return result;
+}
+
+bool Stream_Init(struct Stream * pStream, const char * name, const char * Text)
+{
+    pStream->Line = 1;
+    pStream->Column = 1;
+    pStream->Position = 0;
+    pStream->Text = StrDup(Text);
+    pStream->NameOrFullPath = StrDup(name);
+    pStream->FullDir2 = StrDup("");
+
+    if (Text != NULL)
+    {
+        pStream->TextLen = strlen(Text);
     }
 
     else
     {
-      pStream->Character = '\0';
+        pStream->TextLen = 0;
     }
-  }
 
-  return result;
+    if (pStream->Text != NULL &&
+        pStream->Text[0] != '\0')
+    {
+        //unicode?
+        pStream->Character = pStream->Text[0];
+    }
+
+    else
+    {
+        pStream->Character = '\0';
+    }
+
+    return true;
 }
 
-bool Stream_Init(struct Stream* pStream, const char* name, const char*  Text)
+
+void Stream_Destroy(struct Stream * pStream) /*@default*/
 {
-  pStream->Line = 1;
-  pStream->Column = 1;
-  pStream->Position = 0;
-  pStream->Text = StrDup(Text);
-  pStream->NameOrFullPath = StrDup(name);
-  pStream->FullDir2 = StrDup("");
-
-  if (Text != NULL)
-  {
-    pStream->TextLen = strlen(Text);
-  }
-
-  else
-  {
-    pStream->TextLen = 0;
-  }
-
-  if (pStream->Text != NULL &&
-      pStream->Text[0] != '\0')
-  {
-    //unicode?
-    pStream->Character = pStream->Text[0];
-  }
-
-  else
-  {
-    pStream->Character = '\0';
-  }
-
-  return true;
+    Free((void *)pStream->NameOrFullPath);
+    Free((void *)pStream->FullDir2);
+    Free((void *)pStream->Text);
 }
 
 
-void Stream_Destroy(struct Stream* pStream) /*@default*/
+wchar_t Stream_LookAhead(struct Stream * pStream)
 {
-    Free((void*)pStream->NameOrFullPath);
-    Free((void*)pStream->FullDir2);
-    Free((void*)pStream->Text);
+    if (pStream->Position + 1 >= pStream->TextLen)
+    {
+        return '\0';
+    }
+
+    return pStream->Text[pStream->Position + 1];
 }
 
-
-wchar_t Stream_LookAhead(struct Stream* pStream)
-{
-  if (pStream->Position + 1 >= pStream->TextLen)
-  {
-    return '\0';
-  }
-
-  return pStream->Text[pStream->Position + 1];
-}
-
-bool Stream_MatchChar(struct Stream* pStream, wchar_t ch)
+bool Stream_MatchChar(struct Stream * pStream, wchar_t ch)
 {
     bool b = pStream->Character == ch;
     Stream_Match(pStream);
     return b;
 }
 
-void Stream_Match(struct Stream* pStream)
+void Stream_Match(struct Stream * pStream)
 {
-  if (pStream->Position >= pStream->TextLen)
-  {
-    pStream->Character = L'\0';
-    return;
-  }
+    if (pStream->Position >= pStream->TextLen)
+    {
+        pStream->Character = L'\0';
+        return;
+    }
 
-  pStream->Column++;
-  pStream->Position++;
+    pStream->Column++;
+    pStream->Position++;
 
-  if (pStream->Position == pStream->TextLen)
-  {
-    pStream->Character = '\0';
-  }
+    if (pStream->Position == pStream->TextLen)
+    {
+        pStream->Character = '\0';
+    }
 
-  else
-  {
-    pStream->Character = pStream->Text[pStream->Position];
-  }
+    else
+    {
+        pStream->Character = pStream->Text[pStream->Position];
+    }
 
-  if (pStream->Character == '\n')
-  {
-    pStream->Line++;
-    pStream->Column = 0;
-  }
+    if (pStream->Character == '\n')
+    {
+        pStream->Line++;
+        pStream->Column = 0;
+    }
 }
 

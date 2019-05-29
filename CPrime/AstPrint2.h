@@ -11,6 +11,6 @@
 
 
 
-void TProgram_PrintAstToXML(TProgram* pProgram,
-    const char* fileName,
-    const char* inputFileName);
+void TProgram_PrintAstToXML(TProgram * pProgram,
+                            const char * fileName,
+                            const char * inputFileName);

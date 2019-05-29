@@ -7,24 +7,24 @@
 #include <assert.h>
 #include "AstPrint.h"
 
-bool TFunctionSpecifier_Print(TFunctionSpecifier* p, bool b, FILE* fp);
-bool StorageSpecifier_Print(TStorageSpecifier* p, bool b, FILE* fp);
-bool TTypeQualifierList_Print(TTypeQualifierList* p, bool b, FILE* fp);
-bool TDeclarator_Print(TDeclarator* p, bool b, FILE* fp);
-bool TAnyDeclaration_Print(TAnyDeclaration *pDeclaration, bool b, FILE* fp);
-bool TTypeSpecifier_Print(TTypeSpecifier* p, bool b, FILE* fp);
-bool TStructDeclaration_Print(TAnyStructDeclaration* p, bool b, FILE* fp);
-bool TTypeQualifier_Print(TTypeQualifier* p, bool b, FILE* fp);
-bool TDeclaration_Print(TDeclaration* p, bool b, FILE* fp);
-bool TExpression_Print(TExpression * p, const char* name, bool b, FILE* fp);
-bool TStatement_Print(TStatement * p, bool b, FILE* fp);
-bool TBlockItem_Print(TBlockItem * p, bool b, FILE* fp);
-bool TInitializer_Print(TInitializer* p, bool b, FILE* fp);
-bool TPointer_Print(TPointer* pPointer, bool b, FILE* fp);
-bool TParameter_Print(TParameter* p, bool b, FILE* fp);
-bool TInitializerListItem_Print(TInitializerListItem* p, bool b, FILE* fp);
+bool TFunctionSpecifier_Print(TFunctionSpecifier * p, bool b, FILE * fp);
+bool StorageSpecifier_Print(TStorageSpecifier * p, bool b, FILE * fp);
+bool TTypeQualifierList_Print(TTypeQualifierList * p, bool b, FILE * fp);
+bool TDeclarator_Print(TDeclarator * p, bool b, FILE * fp);
+bool TAnyDeclaration_Print(TAnyDeclaration * pDeclaration, bool b, FILE * fp);
+bool TTypeSpecifier_Print(TTypeSpecifier * p, bool b, FILE * fp);
+bool TStructDeclaration_Print(TAnyStructDeclaration * p, bool b, FILE * fp);
+bool TTypeQualifier_Print(TTypeQualifier * p, bool b, FILE * fp);
+bool TDeclaration_Print(TDeclaration * p, bool b, FILE * fp);
+bool TExpression_Print(TExpression * p, const char * name, bool b, FILE * fp);
+bool TStatement_Print(TStatement * p, bool b, FILE * fp);
+bool TBlockItem_Print(TBlockItem * p, bool b, FILE * fp);
+bool TInitializer_Print(TInitializer * p, bool b, FILE * fp);
+bool TPointer_Print(TPointer * pPointer, bool b, FILE * fp);
+bool TParameter_Print(TParameter * p, bool b, FILE * fp);
+bool TInitializerListItem_Print(TInitializerListItem * p, bool b, FILE * fp);
 
-bool TCompoundStatement_Print(TCompoundStatement * p, bool b, FILE* fp)
+bool TCompoundStatement_Print(TCompoundStatement * p, bool b, FILE * fp)
 {
     if (b)
     {
@@ -36,7 +36,7 @@ bool TCompoundStatement_Print(TCompoundStatement * p, bool b, FILE* fp)
 
     for (int j = 0; j < p->BlockItemList.Size; j++)
     {
-        TBlockItem *pBlockItem = p->BlockItemList.pItems[j];
+        TBlockItem * pBlockItem = p->BlockItemList.pItems[j];
         TBlockItem_Print(pBlockItem, j > 0, fp);
     }
 
@@ -45,7 +45,7 @@ bool TCompoundStatement_Print(TCompoundStatement * p, bool b, FILE* fp)
 }
 
 
-bool TLabeledStatement_Print(TLabeledStatement * p, bool b, FILE* fp)
+bool TLabeledStatement_Print(TLabeledStatement * p, bool b, FILE * fp)
 {
     b = true;
     fprintf(fp, "\"type\":\"labeled-statement\"");
@@ -61,7 +61,7 @@ bool TLabeledStatement_Print(TLabeledStatement * p, bool b, FILE* fp)
     return b;
 }
 
-bool TForStatement_Print(TForStatement * p, bool b, FILE* fp)
+bool TForStatement_Print(TForStatement * p, bool b, FILE * fp)
 {
     b = true;
     fprintf(fp, "\"type\":\"for-statement\"");
@@ -93,7 +93,7 @@ bool TForStatement_Print(TForStatement * p, bool b, FILE* fp)
 }
 
 
-bool TWhileStatement_Print(TWhileStatement * p, bool b, FILE* fp)
+bool TWhileStatement_Print(TWhileStatement * p, bool b, FILE * fp)
 {
     b = true;
     fprintf(fp, "\"type\":\"while-statement\"");
@@ -107,7 +107,7 @@ bool TWhileStatement_Print(TWhileStatement * p, bool b, FILE* fp)
 }
 
 
-bool TDoStatement_Print(TDoStatement * p, bool b, FILE* fp)
+bool TDoStatement_Print(TDoStatement * p, bool b, FILE * fp)
 {
     b = true;
     fprintf(fp, "\"type\":\"do-statement\"");
@@ -120,7 +120,7 @@ bool TDoStatement_Print(TDoStatement * p, bool b, FILE* fp)
     return b;
 }
 
-void PrintLiteralString(FILE* fp, const char* psz)
+void PrintLiteralString(FILE * fp, const char * psz)
 {
     fprintf(fp, "\"");
 
@@ -129,40 +129,40 @@ void PrintLiteralString(FILE* fp, const char* psz)
         switch (*psz)
         {
             case '"':
-            fprintf(fp, "\\\"");
-            break;
+                fprintf(fp, "\\\"");
+                break;
 
             case '/':
-            fprintf(fp, "\\/");
-            break;
+                fprintf(fp, "\\/");
+                break;
 
             case '\b':
-            fprintf(fp, "\\b");
-            break;
+                fprintf(fp, "\\b");
+                break;
 
             case '\f':
-            fprintf(fp, "\\f");
-            break;
+                fprintf(fp, "\\f");
+                break;
 
             case '\n':
-            fprintf(fp, "\\n");
-            break;
+                fprintf(fp, "\\n");
+                break;
 
             case L'\r':
-            fprintf(fp, "\\r");
-            break;
+                fprintf(fp, "\\r");
+                break;
 
             case L'\t':
-            fprintf(fp, "\\t");
-            break;
+                fprintf(fp, "\\t");
+                break;
 
             case L'\\':
-            fprintf(fp, "\\\\");
-            break;
+                fprintf(fp, "\\\\");
+                break;
 
             default:
-            fprintf(fp, "%c", *psz);
-            break;
+                fprintf(fp, "%c", *psz);
+                break;
         }
 
         psz++;
@@ -171,7 +171,7 @@ void PrintLiteralString(FILE* fp, const char* psz)
     fprintf(fp, "\"");
 }
 
-bool TExpressionStatement_Print(TExpressionStatement * p, bool b, FILE* fp)
+bool TExpressionStatement_Print(TExpressionStatement * p, bool b, FILE * fp)
 {
     TExpression_Print(p->pExpression, "expression-statement", b, fp);
     //fprintf(fp, ",");
@@ -181,7 +181,7 @@ bool TExpressionStatement_Print(TExpressionStatement * p, bool b, FILE* fp)
 }
 
 
-bool TJumpStatement_Print(TJumpStatement * p, bool b, FILE* fp)
+bool TJumpStatement_Print(TJumpStatement * p, bool b, FILE * fp)
 {
     fprintf(fp, "\"type\":\"jump-statement\"");
     //fprintf(fp, ",");
@@ -191,13 +191,13 @@ bool TJumpStatement_Print(TJumpStatement * p, bool b, FILE* fp)
     return true;
 }
 
-bool TAsmStatement_Print(TAsmStatement * p, bool b, FILE* fp)
+bool TAsmStatement_Print(TAsmStatement * p, bool b, FILE * fp)
 {
     fprintf(fp, "\"type\":\"asm-statement\"");
     return true;
 }
 
-bool TSwitchStatement_Print(TSwitchStatement * p, bool b, FILE* fp)
+bool TSwitchStatement_Print(TSwitchStatement * p, bool b, FILE * fp)
 {
     b = true;
     fprintf(fp, "\"type\":\"switch-statement\"");
@@ -211,7 +211,7 @@ bool TSwitchStatement_Print(TSwitchStatement * p, bool b, FILE* fp)
 }
 
 
-bool TIfStatement_Print(TIfStatement * p, bool b, FILE* fp)
+bool TIfStatement_Print(TIfStatement * p, bool b, FILE * fp)
 {
     b = true;
     fprintf(fp, "\"type\":\"if-statement\"");
@@ -224,7 +224,7 @@ bool TIfStatement_Print(TIfStatement * p, bool b, FILE* fp)
     return b;
 }
 
-bool TStatement_Print(TStatement *  p, bool b, FILE* fp)
+bool TStatement_Print(TStatement * p, bool b, FILE * fp)
 {
     if (p == NULL)
     {
@@ -234,50 +234,50 @@ bool TStatement_Print(TStatement *  p, bool b, FILE* fp)
     switch (p->Type)
     {
         case TExpressionStatement_ID:
-        b = TExpressionStatement_Print((TExpressionStatement*)p, b, fp);
-        break;
+            b = TExpressionStatement_Print((TExpressionStatement *)p, b, fp);
+            break;
 
         case TSwitchStatement_ID:
-        b = TSwitchStatement_Print((TSwitchStatement*)p, b, fp);
-        break;
+            b = TSwitchStatement_Print((TSwitchStatement *)p, b, fp);
+            break;
 
         case TLabeledStatement_ID:
-        b = TLabeledStatement_Print((TLabeledStatement*)p, b, fp);
-        break;
+            b = TLabeledStatement_Print((TLabeledStatement *)p, b, fp);
+            break;
 
         case TForStatement_ID:
-        b = TForStatement_Print((TForStatement*)p, b, fp);
-        break;
+            b = TForStatement_Print((TForStatement *)p, b, fp);
+            break;
 
         case TJumpStatement_ID:
-        b = TJumpStatement_Print((TJumpStatement*)p, b, fp);
-        break;
+            b = TJumpStatement_Print((TJumpStatement *)p, b, fp);
+            break;
 
         case TAsmStatement_ID:
-        b = TAsmStatement_Print((TAsmStatement*)p, b, fp);
-        break;
+            b = TAsmStatement_Print((TAsmStatement *)p, b, fp);
+            break;
 
         case TCompoundStatement_ID:
-        b = TCompoundStatement_Print((TCompoundStatement*)p, b, fp);
-        break;
+            b = TCompoundStatement_Print((TCompoundStatement *)p, b, fp);
+            break;
 
         case TIfStatement_ID:
-        b = TIfStatement_Print((TIfStatement*)p, b, fp);
-        break;
+            b = TIfStatement_Print((TIfStatement *)p, b, fp);
+            break;
 
         case TDoStatement_ID:
-        TDoStatement_Print((TDoStatement*)p, b, fp);
-        break;
-        
+            TDoStatement_Print((TDoStatement *)p, b, fp);
+            break;
+
         default:
-        //assert(false);
-        break;
+            //assert(false);
+            break;
     }
 
     return b;
 }
 
-bool TBlockItem_Print(TBlockItem *  p, bool b, FILE* fp)
+bool TBlockItem_Print(TBlockItem * p, bool b, FILE * fp)
 {
     if (p == NULL)
     {
@@ -293,81 +293,81 @@ bool TBlockItem_Print(TBlockItem *  p, bool b, FILE* fp)
     switch (p->Type)
     {
         case TStaticAssertDeclaration_ID:
-        break;
+            break;
 
         case TSwitchStatement_ID:
-        fprintf(fp, "{");
-        b = TSwitchStatement_Print((TSwitchStatement*)p, false, fp);
-        fprintf(fp, "}");
-        break;
+            fprintf(fp, "{");
+            b = TSwitchStatement_Print((TSwitchStatement *)p, false, fp);
+            fprintf(fp, "}");
+            break;
 
         case TJumpStatement_ID:
-        fprintf(fp, "{");
-        b = TJumpStatement_Print((TJumpStatement*)p, false, fp);
-        fprintf(fp, "}");
-        break;
+            fprintf(fp, "{");
+            b = TJumpStatement_Print((TJumpStatement *)p, false, fp);
+            fprintf(fp, "}");
+            break;
 
         case TForStatement_ID:
-        fprintf(fp, "{");
-        b = TForStatement_Print((TForStatement*)p, false, fp);
-        fprintf(fp, "}");
-        break;
+            fprintf(fp, "{");
+            b = TForStatement_Print((TForStatement *)p, false, fp);
+            fprintf(fp, "}");
+            break;
 
         case TIfStatement_ID:
-        fprintf(fp, "{");
-        b = TIfStatement_Print((TIfStatement*)p, false, fp);
-        fprintf(fp, "}");
-        break;
+            fprintf(fp, "{");
+            b = TIfStatement_Print((TIfStatement *)p, false, fp);
+            fprintf(fp, "}");
+            break;
 
         case TWhileStatement_ID:
-        fprintf(fp, "{");
-        b = TWhileStatement_Print((TWhileStatement*)p, b, fp);
-        fprintf(fp, "}");
-        break;
+            fprintf(fp, "{");
+            b = TWhileStatement_Print((TWhileStatement *)p, b, fp);
+            fprintf(fp, "}");
+            break;
 
         case TDoStatement_ID:
-        fprintf(fp, "{");
-        b = TDoStatement_Print((TDoStatement*)p, false, fp);
-        fprintf(fp, "}");
-        break;
+            fprintf(fp, "{");
+            b = TDoStatement_Print((TDoStatement *)p, false, fp);
+            fprintf(fp, "}");
+            break;
 
         case TDeclaration_ID:
-        b = TDeclaration_Print((TDeclaration*)p, false, fp);
-        break;
+            b = TDeclaration_Print((TDeclaration *)p, false, fp);
+            break;
 
         case TLabeledStatement_ID:
-        fprintf(fp, "{");
-        b = TLabeledStatement_Print((TLabeledStatement*)p, false, fp);
-        fprintf(fp, "}");
-        break;
+            fprintf(fp, "{");
+            b = TLabeledStatement_Print((TLabeledStatement *)p, false, fp);
+            fprintf(fp, "}");
+            break;
 
         case TCompoundStatement_ID:
-        fprintf(fp, "{");
-        b = TCompoundStatement_Print((TCompoundStatement*)p, false, fp);
-        fprintf(fp, "}");
-        break;
+            fprintf(fp, "{");
+            b = TCompoundStatement_Print((TCompoundStatement *)p, false, fp);
+            fprintf(fp, "}");
+            break;
 
         case TExpressionStatement_ID:
-        fprintf(fp, "{");
-        b = TExpressionStatement_Print((TExpressionStatement*)p, false, fp);
-        fprintf(fp, "}");
-        break;
+            fprintf(fp, "{");
+            b = TExpressionStatement_Print((TExpressionStatement *)p, false, fp);
+            fprintf(fp, "}");
+            break;
 
         case TAsmStatement_ID:
-        fprintf(fp, "{");
-        b = TAsmStatement_Print((TAsmStatement*)p, false, fp);
-        fprintf(fp, "}");
-        break;
+            fprintf(fp, "{");
+            b = TAsmStatement_Print((TAsmStatement *)p, false, fp);
+            fprintf(fp, "}");
+            break;
 
         default:
-        //assert(false);
-        break;
+            //assert(false);
+            break;
     }
 
     return b;
 }
 
-bool TPostfixExpressionCore_Print(TPostfixExpressionCore * p, bool b, FILE* fp)
+bool TPostfixExpressionCore_Print(TPostfixExpressionCore * p, bool b, FILE * fp)
 {
     if (b)
     {
@@ -387,26 +387,26 @@ bool TPostfixExpressionCore_Print(TPostfixExpressionCore * p, bool b, FILE* fp)
     {
         case TK_FULL_STOP:
         case TK_ARROW:
-        if (b)
-        {
-            fprintf(fp, ",");
-        }
+            if (b)
+            {
+                fprintf(fp, ",");
+            }
 
-        fprintf(fp, "\"identifier\":\"%s\"", p->Identifier);
-        b = true;
-        break;
+            fprintf(fp, "\"identifier\":\"%s\"", p->Identifier);
+            b = true;
+            break;
 
         case TK_LEFT_SQUARE_BRACKET:
-        b = TExpression_Print(p->pExpressionRight, "r", b, fp);
-        break;
+            b = TExpression_Print(p->pExpressionRight, "r", b, fp);
+            break;
 
         case TK_LEFT_PARENTHESIS:
-        b = TExpression_Print(p->pExpressionRight, "r", b, fp);
-        break;
+            b = TExpression_Print(p->pExpressionRight, "r", b, fp);
+            break;
 
         case TK_PLUSPLUS:
         case TK_MINUSMINUS:
-        break;
+            break;
         default:
             //assert(false);
             break;
@@ -437,7 +437,7 @@ bool TPostfixExpressionCore_Print(TPostfixExpressionCore * p, bool b, FILE* fp)
     return b;
 }
 
-bool TTypeName_Print(TTypeName *  p, const char* name, bool b, FILE* fp)
+bool TTypeName_Print(TTypeName * p, const char * name, bool b, FILE * fp)
 {
     fprintf(fp, "\"type\":{");
     //b = TTypeQualifierList_Print(&pTUnaryExpressionOperator->TypeName.Specifiers.TypeQualifiers, false, fp);
@@ -452,7 +452,7 @@ bool TTypeName_Print(TTypeName *  p, const char* name, bool b, FILE* fp)
     return b;
 }
 
-bool TExpression_Print(TExpression *  p, const char* name, bool b, FILE* fp)
+bool TExpression_Print(TExpression * p, const char * name, bool b, FILE * fp)
 {
     if (p == NULL)
     {
@@ -471,26 +471,26 @@ bool TExpression_Print(TExpression *  p, const char* name, bool b, FILE* fp)
     switch (p->Type)
     {
         CASE(TBinaryExpression) :
-            b = TExpression_Print(((TBinaryExpression*)p)->pExpressionLeft, "l-expr", b, fp);
-        b = TExpression_Print(((TBinaryExpression*)p)->pExpressionRight, "r-expr", b, fp);
-        fprintf(fp, ",\"binary\":\"%s\"", TokenToString(((TBinaryExpression*)p)->token));
+            b = TExpression_Print(((TBinaryExpression *)p)->pExpressionLeft, "l-expr", b, fp);
+        b = TExpression_Print(((TBinaryExpression *)p)->pExpressionRight, "r-expr", b, fp);
+        fprintf(fp, ",\"binary\":\"%s\"", TokenToString(((TBinaryExpression *)p)->token));
 
         //fprintf(fp, "op\"%s\":[", ((TBinaryExpression*)p)->token);
         break;
 
         CASE(TTernaryExpression) :
-            b = TExpression_Print(((TTernaryExpression*)p)->pExpressionLeft, "l-expr", b, fp);
-        b = TExpression_Print(((TTernaryExpression*)p)->pExpressionMiddle, "m-expr", b, fp);
-        b = TExpression_Print(((TTernaryExpression*)p)->pExpressionRight, "r-expr", b, fp);
-        fprintf(fp, ",\"ternary\":\"%s\"", TokenToString(((TTernaryExpression*)p)->token));
+            b = TExpression_Print(((TTernaryExpression *)p)->pExpressionLeft, "l-expr", b, fp);
+        b = TExpression_Print(((TTernaryExpression *)p)->pExpressionMiddle, "m-expr", b, fp);
+        b = TExpression_Print(((TTernaryExpression *)p)->pExpressionRight, "r-expr", b, fp);
+        fprintf(fp, ",\"ternary\":\"%s\"", TokenToString(((TTernaryExpression *)p)->token));
 
         //fprintf(fp, "op\"%s\":[", ((TBinaryExpression*)p)->token);
         break;
 
         CASE(TPrimaryExpressionValue) :
         {
-            TPrimaryExpressionValue* pPrimaryExpressionValue =
-                (TPrimaryExpressionValue*)p;
+            TPrimaryExpressionValue * pPrimaryExpressionValue =
+                (TPrimaryExpressionValue *)p;
 
             if (pPrimaryExpressionValue->pExpressionOpt != NULL)
             {
@@ -509,16 +509,16 @@ bool TExpression_Print(TExpression *  p, const char* name, bool b, FILE* fp)
 
         CASE(TPostfixExpressionCore) :
         {
-            TPostfixExpressionCore* pPostfixExpressionCore =
-                (TPostfixExpressionCore*)p;
+            TPostfixExpressionCore * pPostfixExpressionCore =
+                (TPostfixExpressionCore *)p;
             b = TPostfixExpressionCore_Print(pPostfixExpressionCore, b, fp);
         }
         break;
 
         CASE(TUnaryExpressionOperator) :
         {
-            TUnaryExpressionOperator* pTUnaryExpressionOperator =
-                (TUnaryExpressionOperator*)p;
+            TUnaryExpressionOperator * pTUnaryExpressionOperator =
+                (TUnaryExpressionOperator *)p;
 
             if (pTUnaryExpressionOperator->token == TK_SIZEOF)
             {
@@ -553,14 +553,14 @@ bool TExpression_Print(TExpression *  p, const char* name, bool b, FILE* fp)
                 b = TExpression_Print(pTUnaryExpressionOperator->pExpressionRight, "expr", b, fp);
             }
 
-            fprintf(fp, ",\"unary\":\"%s\"", TokenToString(((TBinaryExpression*)p)->token));
+            fprintf(fp, ",\"unary\":\"%s\"", TokenToString(((TBinaryExpression *)p)->token));
         }
         break;
 
         CASE(TCastExpressionType) :
         {
             TCastExpressionType * pCastExpressionType =
-                (TCastExpressionType*)p;
+                (TCastExpressionType *)p;
 
             b = TExpression_Print(pCastExpressionType->pExpression, "expr", b, fp);
 
@@ -585,8 +585,8 @@ bool TExpression_Print(TExpression *  p, const char* name, bool b, FILE* fp)
 
         default:
 
-        //assert(false);
-			break;
+            //assert(false);
+            break;
     }
 
     fprintf(fp, "}");
@@ -594,7 +594,7 @@ bool TExpression_Print(TExpression *  p, const char* name, bool b, FILE* fp)
 }
 
 
-bool TEnumerator_Print(TEnumerator* pTEnumerator, bool b, FILE* fp)
+bool TEnumerator_Print(TEnumerator * pTEnumerator, bool b, FILE * fp)
 {
     fprintf(fp, "{");
     fprintf(fp, "\"name\":\"%s\"", pTEnumerator->Name);
@@ -611,7 +611,7 @@ bool TEnumerator_Print(TEnumerator* pTEnumerator, bool b, FILE* fp)
     return true;
 }
 
-bool TEnumSpecifier_Print(TEnumSpecifier* p, bool b, FILE* fp)
+bool TEnumSpecifier_Print(TEnumSpecifier * p, bool b, FILE * fp)
 {
     if (b)
     {
@@ -642,7 +642,7 @@ bool TEnumSpecifier_Print(TEnumSpecifier* p, bool b, FILE* fp)
 }
 
 
-bool TStructUnionSpecifier_Print(TStructUnionSpecifier* p, bool b, FILE* fp)
+bool TStructUnionSpecifier_Print(TStructUnionSpecifier * p, bool b, FILE * fp)
 {
     b = true;
     fprintf(fp, "{");
@@ -652,7 +652,7 @@ bool TStructUnionSpecifier_Print(TStructUnionSpecifier* p, bool b, FILE* fp)
         fprintf(fp, "\"type:\":\"union-specifier\",");
 
     fprintf(fp, "\"name\":\"%s\",", p->Name);
-    
+
     fprintf(fp, "\"struct-declaration-list\":[");
 
     for (int i = 0; i < p->StructDeclarationList.Size; i++)
@@ -667,11 +667,11 @@ bool TStructUnionSpecifier_Print(TStructUnionSpecifier* p, bool b, FILE* fp)
 
     fprintf(fp, "]");
     fprintf(fp, "}");
-        
+
     return true;
 }
 
-bool TSingleTypeSpecifier_Print(TSingleTypeSpecifier* p, bool b, FILE* fp)
+bool TSingleTypeSpecifier_Print(TSingleTypeSpecifier * p, bool b, FILE * fp)
 {
     fprintf(fp, "{");
     b = true;
@@ -680,7 +680,7 @@ bool TSingleTypeSpecifier_Print(TSingleTypeSpecifier* p, bool b, FILE* fp)
 
     fprintf(fp, "\"");
 
-    if (p->Token2 ==TK_IDENTIFIER)
+    if (p->Token2 == TK_IDENTIFIER)
     {
         fprintf(fp, "%s", p->TypedefName);
     }
@@ -696,7 +696,7 @@ bool TSingleTypeSpecifier_Print(TSingleTypeSpecifier* p, bool b, FILE* fp)
     return b;
 }
 
-bool TTypeSpecifier_Print(TTypeSpecifier*  p, bool b, FILE* fp)
+bool TTypeSpecifier_Print(TTypeSpecifier * p, bool b, FILE * fp)
 {
     if (p == NULL)
     {
@@ -713,26 +713,26 @@ bool TTypeSpecifier_Print(TTypeSpecifier*  p, bool b, FILE* fp)
     switch (p->Type)
     {
         case TStructUnionSpecifier_ID:
-        //TStructDeclaration_Print();
-        b = TStructUnionSpecifier_Print((TStructUnionSpecifier*)p, b, fp);
-        break;
+            //TStructDeclaration_Print();
+            b = TStructUnionSpecifier_Print((TStructUnionSpecifier *)p, b, fp);
+            break;
 
         case TEnumSpecifier_ID:
-        b = TEnumSpecifier_Print((TEnumSpecifier*)p, b, fp);
-        break;
+            b = TEnumSpecifier_Print((TEnumSpecifier *)p, b, fp);
+            break;
 
         case TSingleTypeSpecifier_ID:
-        b = TSingleTypeSpecifier_Print((TSingleTypeSpecifier*)p, b, fp);
-        break;
+            b = TSingleTypeSpecifier_Print((TSingleTypeSpecifier *)p, b, fp);
+            break;
 
         default:
-        break;
+            break;
     }
 
     return b;
 }
 
-bool TDesignator_Print(TDesignator* p, bool b, FILE* fp)
+bool TDesignator_Print(TDesignator * p, bool b, FILE * fp)
 {
     if (b)
         fprintf(fp, ",");
@@ -756,7 +756,7 @@ bool TDesignator_Print(TDesignator* p, bool b, FILE* fp)
     return b;
 }
 
-bool TInitializerList_Print(TInitializerList*p, bool b, FILE* fp)
+bool TInitializerList_Print(TInitializerList * p, bool b, FILE * fp)
 {
     b = false;
     fprintf(fp, "[");
@@ -774,7 +774,7 @@ bool TInitializerList_Print(TInitializerList*p, bool b, FILE* fp)
 }
 
 
-bool TInitializer_Print(TInitializer* p, bool b, FILE* fp)
+bool TInitializer_Print(TInitializer * p, bool b, FILE * fp)
 {
     if (p == NULL)
     {
@@ -791,26 +791,26 @@ bool TInitializer_Print(TInitializer* p, bool b, FILE* fp)
         case TBinaryExpression_ID:
         case TTernaryExpression_ID:
 
-        //fprintf(fp, "{");
-        b = TExpression_Print((TExpression*)p, "initializer-expression", false, fp);
-        //fprintf(fp, "}");
-        break;
+            //fprintf(fp, "{");
+            b = TExpression_Print((TExpression *)p, "initializer-expression", false, fp);
+            //fprintf(fp, "}");
+            break;
 
         case TInitializerListType_ID:
-        fprintf(fp, "\"initializer\":");
-        b = TInitializerList_Print(&((TInitializerListType*)p)->InitializerList, b, fp);
-        break;
+            fprintf(fp, "\"initializer\":");
+            b = TInitializerList_Print(&((TInitializerListType *)p)->InitializerList, b, fp);
+            break;
 
         default:
-        //assert(false);
-        break;
+            //assert(false);
+            break;
     }
 
     return b;
 }
 
 
-bool TPointerList_Print(TPointerList *p, bool b, FILE* fp)
+bool TPointerList_Print(TPointerList * p, bool b, FILE * fp)
 {
     b = false;
 
@@ -835,7 +835,7 @@ bool TPointerList_Print(TPointerList *p, bool b, FILE* fp)
     return b;
 }
 
-bool TParameterList_Print(TParameterList *p, bool b, FILE* fp)
+bool TParameterList_Print(TParameterList * p, bool b, FILE * fp)
 {
     b = false;
     fprintf(fp, "[");
@@ -851,12 +851,12 @@ bool TParameterList_Print(TParameterList *p, bool b, FILE* fp)
     fprintf(fp, "]");
     return true;
 }
-bool TParameterTypeList_Print(TParameterTypeList *p, bool b, FILE* fp)
+bool TParameterTypeList_Print(TParameterTypeList * p, bool b, FILE * fp)
 {
     return TParameterList_Print(&p->ParameterList, b, fp);
 }
 
-bool TStructDeclarator_Print(TStructDeclarator* p, bool b, FILE* fp)
+bool TStructDeclarator_Print(TStructDeclarator * p, bool b, FILE * fp)
 {
 
     fprintf(fp, "{");
@@ -880,7 +880,7 @@ bool TStructDeclarator_Print(TStructDeclarator* p, bool b, FILE* fp)
     return true;
 }
 
-bool TInitDeclarator_Print(TInitDeclarator* p, bool b, FILE* fp)
+bool TInitDeclarator_Print(TInitDeclarator * p, bool b, FILE * fp)
 {
 
     fprintf(fp, "{");
@@ -904,9 +904,9 @@ bool TInitDeclarator_Print(TInitDeclarator* p, bool b, FILE* fp)
     return true;
 }
 
-bool TDirectDeclarator_Print(TDirectDeclarator* pDirectDeclarator,
-  bool b,
-  FILE* fp)
+bool TDirectDeclarator_Print(TDirectDeclarator * pDirectDeclarator,
+                             bool b,
+                             FILE * fp)
 {
     fprintf(fp, "{");
     b = false;
@@ -958,7 +958,7 @@ bool TDirectDeclarator_Print(TDirectDeclarator* pDirectDeclarator,
     return b;
 }
 
-bool TDeclarator_Print(TDeclarator* p, bool b, FILE* fp)
+bool TDeclarator_Print(TDeclarator * p, bool b, FILE * fp)
 {
     fprintf(fp, "{");
     b = false;
@@ -981,7 +981,7 @@ bool TDeclarator_Print(TDeclarator* p, bool b, FILE* fp)
     return true;
 }
 
-bool TStructDeclaratorList_Print(TStructDeclaratorList *p, bool b, FILE* fp)
+bool TStructDeclaratorList_Print(TStructDeclaratorList * p, bool b, FILE * fp)
 {
     b = false;
     fprintf(fp, "[");
@@ -999,7 +999,7 @@ bool TStructDeclaratorList_Print(TStructDeclaratorList *p, bool b, FILE* fp)
     return true;
 }
 
-bool TInitDeclaratorList_Print(TInitDeclaratorList *p, bool b, FILE* fp)
+bool TInitDeclaratorList_Print(TInitDeclaratorList * p, bool b, FILE * fp)
 {
     b = false;
     fprintf(fp, "[");
@@ -1015,47 +1015,47 @@ bool TInitDeclaratorList_Print(TInitDeclaratorList *p, bool b, FILE* fp)
     return true;
 }
 
-bool SpecifierQualifier_Print(TSpecifierQualifier* pItem, bool b, FILE* fp)
+bool SpecifierQualifier_Print(TSpecifierQualifier * pItem, bool b, FILE * fp)
 {
     switch (pItem->Type)
     {
         CASE(TStorageSpecifier) :
-            b = StorageSpecifier_Print((TStorageSpecifier*)pItem, b, fp);
+            b = StorageSpecifier_Print((TStorageSpecifier *)pItem, b, fp);
         break;
         CASE(TTypeQualifier) :
-            b = TTypeQualifier_Print((TTypeQualifier*)pItem, b, fp);
+            b = TTypeQualifier_Print((TTypeQualifier *)pItem, b, fp);
         break;
         CASE(TFunctionSpecifier) :
-            b = TFunctionSpecifier_Print((TFunctionSpecifier*)pItem, b, fp);
+            b = TFunctionSpecifier_Print((TFunctionSpecifier *)pItem, b, fp);
         break;
 
         CASE(TSingleTypeSpecifier) :
-            b = TSingleTypeSpecifier_Print((TSingleTypeSpecifier*)pItem, b, fp);
+            b = TSingleTypeSpecifier_Print((TSingleTypeSpecifier *)pItem, b, fp);
         break;
 
         CASE(TStructUnionSpecifier) :
-            b = TStructUnionSpecifier_Print((TStructUnionSpecifier*)pItem, b, fp);
+            b = TStructUnionSpecifier_Print((TStructUnionSpecifier *)pItem, b, fp);
         break;
 
         CASE(TEnumSpecifier) :
-            b = TEnumSpecifier_Print((TEnumSpecifier*)pItem, b, fp);
+            b = TEnumSpecifier_Print((TEnumSpecifier *)pItem, b, fp);
         break;
 
         //CASE(TAlignmentSpecifier) :
         //  AlignmentSpecifier_Print((TAlignmentSpecifier*)pItem, b, fp);
         //break;
-    default:
-        //assert(false);
-        break;
+        default:
+            //assert(false);
+            break;
     }
     return b;
 }
-bool SpecifierQualifierList_Print(TSpecifierQualifierList* p, bool b, FILE* fp)
+bool SpecifierQualifierList_Print(TSpecifierQualifierList * p, bool b, FILE * fp)
 {
     fprintf(fp, "\"specifier-qualifier-list\" : [");
-    for (int i = 0 ; i < p->Size; i++)
+    for (int i = 0; i < p->Size; i++)
     {
-        TSpecifierQualifier* pItem = p->pData[i];
+        TSpecifierQualifier * pItem = p->pData[i];
         if (b)
             fprintf(fp, ",");
 
@@ -1065,7 +1065,7 @@ bool SpecifierQualifierList_Print(TSpecifierQualifierList* p, bool b, FILE* fp)
     return b;
 }
 
-bool TStructDeclarationBase_Print(TStructDeclaration* p, bool b, FILE* fp)
+bool TStructDeclarationBase_Print(TStructDeclaration * p, bool b, FILE * fp)
 {
     fprintf(fp, "{");
 
@@ -1082,29 +1082,29 @@ bool TStructDeclarationBase_Print(TStructDeclaration* p, bool b, FILE* fp)
     return true;
 }
 
-bool TStructDeclaration_Print(TAnyStructDeclaration* p, bool b, FILE* fp)
+bool TStructDeclaration_Print(TAnyStructDeclaration * p, bool b, FILE * fp)
 {
     switch (p->Type)
     {
         case TStructDeclaration_ID:
-        b = TStructDeclarationBase_Print((TStructDeclaration*)p, b, fp);
-        break;
+            b = TStructDeclarationBase_Print((TStructDeclaration *)p, b, fp);
+            break;
 
         default:
-        //assert(false);
-        break;
+            //assert(false);
+            break;
     }
 
     return b;
 }
 
-bool StorageSpecifier_Print(TStorageSpecifier* p, bool b, FILE* fp)
+bool StorageSpecifier_Print(TStorageSpecifier * p, bool b, FILE * fp)
 {
     b = true;
     fprintf(fp, "{");
     fprintf(fp, "\"type\":\"storage-specifer\",");
     fprintf(fp, "\"lexeme\":\"");
-    
+
     fprintf(fp, TokenToString(p->Token));
 
     fprintf(fp, "\"}");
@@ -1112,69 +1112,69 @@ bool StorageSpecifier_Print(TStorageSpecifier* p, bool b, FILE* fp)
     return b;
 }
 
-bool TFunctionSpecifier_Print(TFunctionSpecifier* p, bool b, FILE* fp)
+bool TFunctionSpecifier_Print(TFunctionSpecifier * p, bool b, FILE * fp)
 {
     int i = 0;
 
-   
-        if (b)
-        {
+
+    if (b)
+    {
+        fprintf(fp, ",");
+    }
+
+    b = true;
+    fprintf(fp, "\"function-specifers\" : {");
+
+    if (p->Token == TK_INLINE)
+    {
+        if (i > 0)
             fprintf(fp, ",");
-        }
 
-        b = true;
-        fprintf(fp, "\"function-specifers\" : {");
+        fprintf(fp, "\"inline\":true");
+        i++;
+    }
 
-        if (p->Token == TK_INLINE)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
+    if (p->Token == TK__NORETURN)
+    {
+        if (i > 0)
+            fprintf(fp, ",");
 
-            fprintf(fp, "\"inline\":true");
-            i++;
-        }
+        fprintf(fp, "\"noreturn\":true");
+        i++;
+    }
 
-        if (p->Token == TK__NORETURN)
-        {
-            if (i > 0)
-                fprintf(fp, ",");
 
-            fprintf(fp, "\"noreturn\":true");
-            i++;
-        }
 
-        
-    
-    
+
     fprintf(fp, "\"}");
     return b;
 }
 
 
 
-bool TTypeQualifier_Print(TTypeQualifier* p, bool b, FILE* fp)
+bool TTypeQualifier_Print(TTypeQualifier * p, bool b, FILE * fp)
 {
     fprintf(fp, "{");
     fprintf(fp, "\"type\": \"type-qualifier\",");
     fprintf(fp, "\"lexeme\": \"");
 
-    
+
     fprintf(fp, "%s", TokenToString(p->Token));
 
-  
+
     fprintf(fp, "\"}");
 
     return true;
 }
 
-bool TTypeQualifierList_Print(TTypeQualifierList* p, bool b, FILE* fp)
+bool TTypeQualifierList_Print(TTypeQualifierList * p, bool b, FILE * fp)
 {
     fprintf(fp, "\"type-qualifier-list\":[");
     b = false;
     for (int i = 0; i < p->Size; i++)
     {
-        TTypeQualifier* pItem = p->Data[i];
-    
+        TTypeQualifier * pItem = p->Data[i];
+
         if (b)
         {
             fprintf(fp, ",");
@@ -1187,7 +1187,7 @@ bool TTypeQualifierList_Print(TTypeQualifierList* p, bool b, FILE* fp)
 
 
 
-bool TPointer_Print(TPointer* pPointer, bool b, FILE* fp)
+bool TPointer_Print(TPointer * pPointer, bool b, FILE * fp)
 {
     fprintf(fp, "{");
     TTypeQualifierList_Print(&pPointer->Qualifier, false, fp);
@@ -1195,53 +1195,53 @@ bool TPointer_Print(TPointer* pPointer, bool b, FILE* fp)
     return true;
 }
 
-bool TDeclarationSpecifier_Print(TDeclarationSpecifier* pItem, bool b, FILE* fp)
+bool TDeclarationSpecifier_Print(TDeclarationSpecifier * pItem, bool b, FILE * fp)
 {
     switch (pItem->Type)
     {
         CASE(TStorageSpecifier) :
-            b = StorageSpecifier_Print((TStorageSpecifier*)pItem, b, fp);
+            b = StorageSpecifier_Print((TStorageSpecifier *)pItem, b, fp);
         break;
         CASE(TTypeQualifier) :
-            b = TTypeQualifier_Print((TTypeQualifier*)pItem, b, fp);
+            b = TTypeQualifier_Print((TTypeQualifier *)pItem, b, fp);
         break;
 
         CASE(TFunctionSpecifier) :
-            b = TFunctionSpecifier_Print((TFunctionSpecifier*)pItem, b, fp);
+            b = TFunctionSpecifier_Print((TFunctionSpecifier *)pItem, b, fp);
         break;
 
         CASE(TSingleTypeSpecifier) :
-            b = TSingleTypeSpecifier_Print((TSingleTypeSpecifier*)pItem, b, fp);
+            b = TSingleTypeSpecifier_Print((TSingleTypeSpecifier *)pItem, b, fp);
         break;
 
         CASE(TStructUnionSpecifier) :
-            b = TStructUnionSpecifier_Print((TStructUnionSpecifier*)pItem, b, fp);
+            b = TStructUnionSpecifier_Print((TStructUnionSpecifier *)pItem, b, fp);
         break;
 
         CASE(TEnumSpecifier) :
-            b = TEnumSpecifier_Print((TEnumSpecifier*)pItem, b, fp);
+            b = TEnumSpecifier_Print((TEnumSpecifier *)pItem, b, fp);
         break;
 
         default:
-        //assert(false);
-        break;
-        //CASE(TAlignmentSpecifier) :
-        //  AlignmentSpecifier_Print((TAlignmentSpecifier*)pItem, b, fp);
-        //break;
+            //assert(false);
+            break;
+            //CASE(TAlignmentSpecifier) :
+            //  AlignmentSpecifier_Print((TAlignmentSpecifier*)pItem, b, fp);
+            //break;
 
     }
     return b;
 }
-bool TDeclarationSpecifiers_Print(TDeclarationSpecifiers* pDeclarationSpecifiers, bool b, FILE* fp)
+bool TDeclarationSpecifiers_Print(TDeclarationSpecifiers * pDeclarationSpecifiers, bool b, FILE * fp)
 {
     fprintf(fp, "\"declarations-specifiers\": [");
     b = false;
-    
-        for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
-        {
-            TDeclarationSpecifier* pItem = pDeclarationSpecifiers->pData[i];
 
-    
+    for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
+    {
+        TDeclarationSpecifier * pItem = pDeclarationSpecifiers->pData[i];
+
+
         if (b)
         {
             fprintf(fp, ",");
@@ -1256,7 +1256,7 @@ bool TDeclarationSpecifiers_Print(TDeclarationSpecifiers* pDeclarationSpecifiers
     return b;
 }
 
-bool TDeclaration_Print(TDeclaration* p, bool b, FILE* fp)
+bool TDeclaration_Print(TDeclaration * p, bool b, FILE * fp)
 {
     fprintf(fp, "{");
     b = TDeclarationSpecifiers_Print(&p->Specifiers, false, fp);
@@ -1277,7 +1277,7 @@ bool TDeclaration_Print(TDeclaration* p, bool b, FILE* fp)
 }
 
 
-bool TParameter_Print(TParameter* p, bool b, FILE* fp)
+bool TParameter_Print(TParameter * p, bool b, FILE * fp)
 {
     fprintf(fp, "{");
     b = TDeclarationSpecifiers_Print(&p->Specifiers, false, fp);
@@ -1288,29 +1288,29 @@ bool TParameter_Print(TParameter* p, bool b, FILE* fp)
     return b;
 }
 
-bool TAnyDeclaration_Print(TAnyDeclaration *pDeclaration, bool b, FILE* fp)
+bool TAnyDeclaration_Print(TAnyDeclaration * pDeclaration, bool b, FILE * fp)
 {
     switch (pDeclaration->Type)
     {
-	case TEofDeclaration_ID:
-		break;
+        case TEofDeclaration_ID:
+            break;
 
         case TStaticAssertDeclaration_ID:
-        break;
+            break;
 
         case TDeclaration_ID:
-        b = TDeclaration_Print((TDeclaration*)pDeclaration, b, fp);
-        break;
+            b = TDeclaration_Print((TDeclaration *)pDeclaration, b, fp);
+            break;
 
         default:
-        //assert(false);
-        break;
+            //assert(false);
+            break;
     }
 
     return b;
 }
 
-bool TDesignatorList_Print(TDesignatorList *p, bool b, FILE* fp)
+bool TDesignatorList_Print(TDesignatorList * p, bool b, FILE * fp)
 {
     b = false;
     fprintf(fp, "[");
@@ -1329,7 +1329,7 @@ bool TDesignatorList_Print(TDesignatorList *p, bool b, FILE* fp)
 }
 
 
-bool TInitializerListItem_Print(TInitializerListItem* p, bool b, FILE* fp)
+bool TInitializerListItem_Print(TInitializerListItem * p, bool b, FILE * fp)
 {
     fprintf(fp, "{");
     b = false;
@@ -1353,7 +1353,7 @@ bool TInitializerListItem_Print(TInitializerListItem* p, bool b, FILE* fp)
 }
 
 
-bool TDeclarations_Print(TDeclarations *p, bool b, FILE* fp)
+bool TDeclarations_Print(TDeclarations * p, bool b, FILE * fp)
 {
     b = false;
     fprintf(fp, "[");
@@ -1363,7 +1363,7 @@ bool TDeclarations_Print(TDeclarations *p, bool b, FILE* fp)
         if (i > 0)
             fprintf(fp, ",");
 
-        TAnyDeclaration* pItem = p->pItems[i];
+        TAnyDeclaration * pItem = p->pItems[i];
         b = TAnyDeclaration_Print(pItem, b, fp);
     }
 
@@ -1372,9 +1372,9 @@ bool TDeclarations_Print(TDeclarations *p, bool b, FILE* fp)
 }
 
 
-void TProgram_PrintAstToFile(TProgram* pProgram,
-  const char* fileName,
-  const char* inputFileName)
+void TProgram_PrintAstToFile(TProgram * pProgram,
+                             const char * fileName,
+                             const char * inputFileName)
 {
     FILE * fp = fopen(fileName, "w");
     //TDeclarations_Print(&pProgram->Declarations, false, fp);
@@ -1385,7 +1385,7 @@ void TProgram_PrintAstToFile(TProgram* pProgram,
 
     for (int i = 0; i < pProgram->Declarations.Size; i++)
     {
-        TAnyDeclaration* pItem = pProgram->Declarations.pItems[i];
+        TAnyDeclaration * pItem = pProgram->Declarations.pItems[i];
         if (b)
             fprintf(fp, ",");
         b = TAnyDeclaration_Print(pItem, b, fp);
