@@ -75,6 +75,9 @@
     <ClCompile Include="..\..\TokenArray.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Options.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Array.h">
@@ -135,6 +138,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\TokenArray.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Options.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

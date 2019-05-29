@@ -161,6 +161,7 @@
     <ClCompile Include="..\..\Map.c" />
     <ClCompile Include="..\..\Map2.c" />
     <ClCompile Include="..\..\Mem.c" />
+    <ClCompile Include="..\..\Options.c" />
     <ClCompile Include="..\..\Parser.c" />
     <ClCompile Include="..\..\Path.c" />
     <ClCompile Include="..\..\PPToken.c" />
@@ -184,6 +185,7 @@
     <ClInclude Include="..\..\Map.h" />
     <ClInclude Include="..\..\Map2.h" />
     <ClInclude Include="..\..\Mem.h" />
+    <ClInclude Include="..\..\Options.h" />
     <ClInclude Include="..\..\Parser.h" />
     <ClInclude Include="..\..\Path.h" />
     <ClInclude Include="..\..\PPToken.h" />
