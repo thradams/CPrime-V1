@@ -1240,7 +1240,7 @@ typedef struct
 
 
   //Defines
-  MacroMap Defines;
+  struct MacroMap Defines;
 
   StrBuilder sbPreDeclaration;
 

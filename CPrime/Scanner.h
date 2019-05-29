@@ -118,7 +118,7 @@ typedef struct
   BasicScannerStack stack;
 
   //Mapa dos defines
-  MacroMap  Defines2;
+  struct MacroMap  Defines2;
 
   //Stack usado para #if #else etc
   StackInts StackIfDef;

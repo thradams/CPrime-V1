@@ -6,17 +6,17 @@
 #include <stdbool.h>
 #include "StringEx.h"
 
-typedef struct
+struct BucketItem
 {
     String * /*@auto*/ key;
     void *data;
     uint32_t hash;
-} BucketItem;
+} ;
 #define BUCKET_ITEM_INIT { NULL, NULL, 0 }
 
 typedef struct
 {
-    BucketItem** data;
+    struct BucketItem** data;
     int size;
     int capacity;
 

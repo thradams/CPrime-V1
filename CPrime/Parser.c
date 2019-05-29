@@ -5052,7 +5052,7 @@ static void TFileMapToStrArray(TFileMap * map, TFileArray * arr)
         {
             for (int k = 0; k < data->size; k++)
             {
-                BucketItem* node = data->data[k];
+                struct BucketItem* node = data->data[k];
                 TFile* pFile = (TFile*)node->data;
 
                 if (pFile->FileIndex >= 0 &&

@@ -80,7 +80,7 @@ void HidenSetAdd(const TokenSet * hs,
 }
 
 void ExpandMacro(const struct TokenArray * pTokenSequence,
-                 const MacroMap * macros,
+                 const struct MacroMap * macros,
                  bool get_more,
                  bool skip_defined,
                  bool evalmode,
@@ -202,7 +202,7 @@ void AppendStringize(StrBuilder * strBuilder, const struct TokenArray * ts)
 * hide set added to it, before getting returned.
 */
 void SubstituteArgs(struct Macro * pMacro,
-                    const MacroMap * macros,
+                    const struct MacroMap * macros,
                     const struct TokenArray * isOriginal,   //macro
                     const TokenArrayMap * args,
                     TokenSet * hs,
@@ -653,7 +653,7 @@ bool GatherArgs(const char * name,
 * This is the rule when processing #if #elif expressions
 */
 void GatherDefinedOperator(struct TokenArray * tokens,
-                           const MacroMap * macros,
+                           const struct MacroMap * macros,
                            struct TokenArray * result)
 {
     //struct TokenArray tokens = TOKENARRAY_INIT;
@@ -762,7 +762,7 @@ void GatherDefinedOperator(struct TokenArray * tokens,
 
 
 void ExpandMacro(const struct TokenArray * tsOriginal,
-                 const MacroMap * macros,
+                 const struct MacroMap * macros,
                  bool get_more,
                  bool skip_defined,
                  bool evalmode,
@@ -1104,7 +1104,7 @@ void Glue(const struct TokenArray * lsI,
 }
 
 void ExpandMacroToText(const struct TokenArray * pTokenSequence,
-                       const MacroMap * macros,
+                       const struct MacroMap * macros,
                        bool get_more,
                        bool skip_defined,
                        bool evalmode,
@@ -1141,7 +1141,7 @@ void ExpandMacroToText(const struct TokenArray * pTokenSequence,
 
 
 
-int MacroMap_SetAt(MacroMap * pMap,
+int MacroMap_SetAt(struct MacroMap * pMap,
                    const char * Key,
                    struct Macro * newValue)
 {
@@ -1151,7 +1151,7 @@ int MacroMap_SetAt(MacroMap * pMap,
     return r;
 }
 
-bool MacroMap_Lookup(const MacroMap * pMap,
+bool MacroMap_Lookup(const struct MacroMap * pMap,
                      const char * Key,
                      struct Macro * *rValue)
 {
@@ -1160,7 +1160,7 @@ bool MacroMap_Lookup(const MacroMap * pMap,
                        (void **)rValue);
 }
 
-struct Macro * MacroMap_Find(const MacroMap * pMap, const char * Key)
+struct Macro * MacroMap_Find(const struct MacroMap * pMap, const char * Key)
 {
     void * p = NULL;
     Map2_Lookup((Map2 *)pMap,
@@ -1170,7 +1170,7 @@ struct Macro * MacroMap_Find(const MacroMap * pMap, const char * Key)
 }
 
 
-bool MacroMap_RemoveKey(MacroMap * pMap, const char * Key)
+bool MacroMap_RemoveKey(struct MacroMap * pMap, const char * Key)
 {
     struct Macro * pItem;
     bool r = Map2_RemoveKey((Map2 *)pMap, Key, (void **)& pItem);
@@ -1183,9 +1183,9 @@ bool MacroMap_RemoveKey(MacroMap * pMap, const char * Key)
     return r;
 }
 
-void MacroMap_Init(MacroMap * p)
+void MacroMap_Init(struct MacroMap * p)
 {
-    MacroMap t = MACROMAP_INIT;
+    struct MacroMap t = MACROMAP_INIT;
     *p = t;
 }
 
@@ -1194,15 +1194,15 @@ static void Macro_DeleteVoid(void * p)
     Macro_Delete((struct Macro *)p);
 }
 
-void MacroMap_Destroy(MacroMap * p)
+void MacroMap_Destroy(struct MacroMap * p)
 {
     Map2_Destroy((Map2 *)p, Macro_DeleteVoid);
 }
 
 
-void MacroMap_Swap(MacroMap * pA, MacroMap * pB)
+void MacroMap_Swap(struct MacroMap * pA, struct MacroMap * pB)
 {
-    MacroMap t = *pA;
+    struct MacroMap t = *pA;
     *pA = *pB;
     *pB = t;
 }

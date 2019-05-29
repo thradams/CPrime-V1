@@ -1174,7 +1174,7 @@ int PreprocessorExpression(Parser * parser)
 
 int EvalExpression(const char * s, Scanner * pScanner)
 {
-    MacroMap * pDefines = &pScanner->Defines2;
+    struct MacroMap * pDefines = &pScanner->Defines2;
     // printf("%s = ", s);
     // TODO avaliador de expressoes para pre processador
     // https://gcc.gnu.org/onlinedocs/gcc-3.0.2/cpp_4.html#SEC38

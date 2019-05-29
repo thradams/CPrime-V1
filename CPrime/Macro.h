@@ -9,67 +9,67 @@
 
 struct Macro
 {
-  String * /*@auto*/ Name;
-  bool bIsFunction;
-  struct TokenArray TokenSequence;
-  struct TokenArray FormalArguments;
-  int FileIndex;
-} ;
+    String * /*@auto*/ Name;
+    bool bIsFunction;
+    struct TokenArray TokenSequence;
+    struct TokenArray FormalArguments;
+    int FileIndex;
+};
 
-struct Macro* Macro_Create(void);
+struct Macro * Macro_Create(void);
 
 
-typedef struct MacroMapItem
+struct MacroMapItem
 {
-  struct MapItem2* pNext;
-  unsigned int HashValue;
-  String * /*@auto*/Key;
-  struct Macro* pValue;
-} MacroMapItem;
+    struct MapItem2 * pNext;
+    unsigned int HashValue;
+    String * /*@auto*/Key;
+    struct Macro * pValue;
+};
 
-typedef struct
+struct MacroMap
 {
-  MacroMapItem** pHashTable;
-  unsigned int nHashTableSize;
-  int  nCount;
-} MacroMap;
+    struct MacroMapItem ** pHashTable;
+    unsigned int nHashTableSize;
+    int  nCount;
+};
 
 
 #define MACROMAP_INIT { NULL, 0, 0 }
 
-int MacroMap_SetAt(MacroMap* pMap,
-                    const char* Key,
-                    struct Macro* newValue);
+int MacroMap_SetAt(struct MacroMap * pMap,
+                   const char * Key,
+                   struct Macro * newValue);
 
-bool MacroMap_Lookup(const MacroMap* pMap,
-                      const char*  Key,
-                      struct Macro** rValue);
+bool MacroMap_Lookup(const struct MacroMap * pMap,
+                     const char * Key,
+                     struct Macro ** rValue);
 
-bool MacroMap_RemoveKey(MacroMap* pMap,
-                         const char*  Key);
+bool MacroMap_RemoveKey(struct MacroMap * pMap,
+                        const char * Key);
 
-void MacroMap_Init(MacroMap* p);
-void MacroMap_Destroy(MacroMap* p);
+void MacroMap_Init(struct MacroMap * p);
+void MacroMap_Destroy(struct MacroMap * p);
 
-void MacroMap_Swap(MacroMap * pA, MacroMap * pB);
+void MacroMap_Swap(struct MacroMap * pA, struct MacroMap * pB);
 
-struct Macro* MacroMap_Find(const MacroMap* pMap, const char*  Key);
+struct Macro * MacroMap_Find(const struct MacroMap * pMap, const char * Key);
 
 
 
-void ExpandMacro(const struct TokenArray* tsOriginal,
-                 const MacroMap* macros,
+void ExpandMacro(const struct TokenArray * tsOriginal,
+                 const struct MacroMap * macros,
                  bool get_more,
                  bool skip_defined,
-    bool evalmode,
-                 struct Macro* caller,
-                 struct TokenArray* pOutputSequence);
+                 bool evalmode,
+                 struct Macro * caller,
+                 struct TokenArray * pOutputSequence);
 
-void ExpandMacroToText(const struct TokenArray* pTokenSequence,
-                       const MacroMap* macros,
+void ExpandMacroToText(const struct TokenArray * pTokenSequence,
+                       const struct MacroMap * macros,
                        bool get_more,
                        bool skip_defined,
-    bool evalmode,
-                       struct Macro* caller,
-                       StrBuilder* strBuilder);
+                       bool evalmode,
+                       struct Macro * caller,
+                       StrBuilder * strBuilder);
 
