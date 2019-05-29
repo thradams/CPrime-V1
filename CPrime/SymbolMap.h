@@ -7,17 +7,17 @@
 struct TTypePointer;
 typedef struct TTypePointer TTypePointer;
 
-typedef struct SymbolMapItem
+struct SymbolMapItem
 {
 	struct SymbolMapItem* pNext;
 	unsigned int HashValue;
 	String * /*@auto*/ Key;
     TTypePointer* pValue;
-} SymbolMapItem;
+};
 
 typedef struct SymbolMap
 {
-	SymbolMapItem** pHashTable;
+	struct SymbolMapItem** pHashTable;
 	int nHashTableSize;
 	int  nCount;
     struct SymbolMap* pPrevious;
@@ -44,7 +44,7 @@ void SymbolMap_Destroy(SymbolMap* p);
 SymbolMap*  SymbolMap_Create();
 void SymbolMap_Delete(SymbolMap * p);
 
-SymbolMapItem* SymbolMap_FindBucket(SymbolMap* pMap, const char*  Key);
+struct SymbolMapItem* SymbolMap_FindBucket(SymbolMap* pMap, const char*  Key);
 
 void SymbolMap_Swap(SymbolMap * pA, SymbolMap * pB);
 

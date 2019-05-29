@@ -10,7 +10,7 @@
 #include "Ast.h"
 #include "Mem.h"
 
-static void SymbolMap_KeyValue_Delete(SymbolMapItem* p)
+static void SymbolMap_KeyValue_Delete(struct SymbolMapItem* p)
 {
     if (p)
     {
@@ -19,7 +19,7 @@ static void SymbolMap_KeyValue_Delete(SymbolMapItem* p)
     }
 }
 
-static SymbolMapItem* SymbolMap_GetAssocAt(
+static struct SymbolMapItem* SymbolMap_GetAssocAt(
     SymbolMap* pMap,
     const char* Key,
     unsigned int* nHashBucket,
@@ -52,12 +52,12 @@ void SymbolMap_RemoveAll(SymbolMap* pMap)
             nHash < pMap->nHashTableSize;
             nHash++)
         {
-            SymbolMapItem* pKeyValue =
+            struct SymbolMapItem* pKeyValue =
                 pMap->pHashTable[nHash];
 
             while (pKeyValue != NULL)
             {
-                SymbolMapItem* pKeyValueCurrent = pKeyValue;
+                struct SymbolMapItem* pKeyValueCurrent = pKeyValue;
                 pKeyValue = pKeyValue->pNext;
                 SymbolMap_KeyValue_Delete(pKeyValueCurrent);
             }
@@ -74,7 +74,7 @@ void SymbolMap_Destroy(SymbolMap* pMap)
     SymbolMap_RemoveAll(pMap);
 }
 
-SymbolMapItem* SymbolMap_FindBucket(SymbolMap* pMap, const char*  Key)
+struct SymbolMapItem* SymbolMap_FindBucket(SymbolMap* pMap, const char*  Key)
 {
     if (pMap->pHashTable == NULL)
     {
@@ -85,13 +85,13 @@ SymbolMapItem* SymbolMap_FindBucket(SymbolMap* pMap, const char*  Key)
     unsigned int nHashBucket = HashValue % pMap->nHashTableSize;
 
 
-    SymbolMapItem* pKeyValue =
+    struct SymbolMapItem* pKeyValue =
         pMap->pHashTable[nHashBucket];
 
     return pKeyValue;
 }
 
-static SymbolMapItem* SymbolMap_GetAssocAt(
+static struct SymbolMapItem* SymbolMap_GetAssocAt(
     SymbolMap* pMap,
     const char* Key,
     unsigned int* nHashBucket,
@@ -107,9 +107,9 @@ static SymbolMapItem* SymbolMap_GetAssocAt(
     *HashValue = SymbolMap_String2_HashKey(Key);
     *nHashBucket = *HashValue % pMap->nHashTableSize;
 
-    SymbolMapItem* pResult = NULL;
+    struct SymbolMapItem* pResult = NULL;
 
-    SymbolMapItem* pKeyValue =
+    struct SymbolMapItem* pKeyValue =
         pMap->pHashTable[*nHashBucket];
 
     for (; pKeyValue != NULL; pKeyValue = pKeyValue->pNext)
@@ -130,7 +130,7 @@ TTypePointer* SymbolMap_Find(SymbolMap* pMap,
 {
     TTypePointer* pTypePointer = NULL;
     unsigned int nHashBucket, HashValue;
-    SymbolMapItem* pKeyValue = SymbolMap_GetAssocAt(pMap,
+    struct SymbolMapItem* pKeyValue = SymbolMap_GetAssocAt(pMap,
         Key,
         &nHashBucket,
         &HashValue);
@@ -156,7 +156,7 @@ bool SymbolMap_LookupKey(SymbolMap* pMap,
     bool bResult = false;
 
     unsigned int nHashBucket, HashValue;
-    SymbolMapItem* pKeyValue = SymbolMap_GetAssocAt(pMap,
+    struct SymbolMapItem* pKeyValue = SymbolMap_GetAssocAt(pMap,
         Key,
         &nHashBucket,
         &HashValue);
@@ -182,10 +182,10 @@ bool SymbolMap_RemoveKey(SymbolMap* pMap,
         unsigned int HashValue =
           SymbolMap_String2_HashKey(Key);
 
-        SymbolMapItem** ppKeyValuePrev =
+        struct SymbolMapItem** ppKeyValuePrev =
             &pMap->pHashTable[HashValue % pMap->nHashTableSize];
 
-        SymbolMapItem* pKeyValue = *ppKeyValuePrev;
+        struct SymbolMapItem* pKeyValue = *ppKeyValuePrev;
 
         for (; pKeyValue != NULL; pKeyValue = pKeyValue->pNext)
         {
@@ -221,12 +221,12 @@ int SymbolMap_SetAt(SymbolMap* pMap,
             pMap->nHashTableSize = 1000;
         }
 
-        SymbolMapItem** pHashTable =
-            (SymbolMapItem**)Malloc(sizeof(SymbolMapItem*) * pMap->nHashTableSize);
+        struct SymbolMapItem** pHashTable =
+            (struct SymbolMapItem**)Malloc(sizeof(struct SymbolMapItem*) * pMap->nHashTableSize);
 
         if (pHashTable != NULL)
         {
-            memset(pHashTable, 0, sizeof(SymbolMapItem*) * pMap->nHashTableSize);
+            memset(pHashTable, 0, sizeof(struct SymbolMapItem*) * pMap->nHashTableSize);
             pMap->pHashTable = pHashTable;
         }
     }
@@ -234,7 +234,7 @@ int SymbolMap_SetAt(SymbolMap* pMap,
     if (pMap->pHashTable != NULL)
     {
         unsigned int nHashBucket, HashValue;
-        SymbolMapItem* pKeyValue =
+        struct SymbolMapItem* pKeyValue =
             SymbolMap_GetAssocAt(pMap,
                 Key,
                 &nHashBucket,
@@ -242,7 +242,7 @@ int SymbolMap_SetAt(SymbolMap* pMap,
 
         //if (pKeyValue == NULL)
         {
-            pKeyValue = (SymbolMapItem*)Malloc(sizeof(SymbolMapItem) * 1);
+            pKeyValue = (struct SymbolMapItem*)Malloc(sizeof(struct SymbolMapItem) * 1);
             pKeyValue->HashValue = HashValue;
             pKeyValue->pValue = newValue;
             pKeyValue->Key =  StrDup(Key);
@@ -370,7 +370,7 @@ static void SymbolMap_PrintCore(SymbolMap* pMap, int* n)
     {
         for (int i = 0; i < pMap->nHashTableSize; i++)
         {
-            SymbolMapItem* pSymbolMapItem = pMap->pHashTable[i];
+            struct SymbolMapItem* pSymbolMapItem = pMap->pHashTable[i];
             while (pSymbolMapItem != NULL)
             {
                 printf("%s = %s\n", pSymbolMapItem->Key, PrintType(pSymbolMapItem->pValue->Type));
@@ -396,7 +396,7 @@ bool SymbolMap_IsTypeName(SymbolMap* pMap, const char* identifierName)
 
     while (pMap)
     {
-        SymbolMapItem* pBucket =
+        struct SymbolMapItem* pBucket =
             SymbolMap_FindBucket(pMap, identifierName);
 
         while (pBucket)
@@ -449,7 +449,7 @@ TDeclaration* SymbolMap_FindFunction(SymbolMap* pMap, const char* funcName)
     if (pMap->pHashTable != NULL)
     {
         unsigned int nHashBucket, HashValue;
-        SymbolMapItem* pKeyValue =
+        struct SymbolMapItem* pKeyValue =
             SymbolMap_GetAssocAt(pMap,
                 funcName,
                 &nHashBucket,
@@ -499,7 +499,7 @@ TStructUnionSpecifier* SymbolMap_FindStructUnion(SymbolMap* pMap, const char* st
     if (pMap->pHashTable != NULL)
     {
         unsigned int nHashBucket, HashValue;
-        SymbolMapItem* pKeyValue =
+        struct SymbolMapItem* pKeyValue =
             SymbolMap_GetAssocAt(pMap,
                 structTagName,
                 &nHashBucket,
@@ -539,7 +539,7 @@ TEnumSpecifier* SymbolMap_FindEnum(SymbolMap* pMap, const char* enumTagName)
     if (pMap->pHashTable != NULL)
     {
         unsigned int nHashBucket, HashValue;
-        SymbolMapItem* pKeyValue =
+        struct SymbolMapItem* pKeyValue =
             SymbolMap_GetAssocAt(pMap,
                 enumTagName,
                 &nHashBucket,
@@ -578,7 +578,7 @@ TDeclaration* SymbolMap_FindTypedefDeclarationTarget(SymbolMap* pMap,
     if (pMap->pHashTable != NULL)
     {
         unsigned int nHashBucket, HashValue;
-        SymbolMapItem* pKeyValue =
+        struct SymbolMapItem* pKeyValue =
             SymbolMap_GetAssocAt(pMap,
                 typedefName,
                 &nHashBucket,
@@ -672,7 +672,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(SymbolMap* pMap,
     if (pMap->pHashTable != NULL)
     {
         unsigned int nHashBucket, HashValue;
-        SymbolMapItem* pKeyValue =
+        struct SymbolMapItem* pKeyValue =
             SymbolMap_GetAssocAt(pMap,
                 typedefName,
                 &nHashBucket,
@@ -783,7 +783,7 @@ TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(SymbolMap* pMap,
     if (pMap->pHashTable != NULL)
     {
         unsigned int nHashBucket, HashValue;
-        SymbolMapItem* pKeyValue =
+        struct SymbolMapItem* pKeyValue =
             SymbolMap_GetAssocAt(pMap,
                 typedefName,
                 &nHashBucket,
