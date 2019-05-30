@@ -39,9 +39,9 @@ void FileNode_Delete(struct FileNode * p) /*@default*/
 {
     if (p != NULL)
     {
-        Free((void *)p->Key);
+        Free((void*)p->Key);
         FileNode_Delete(p->pNext);
-        Free((void *)p);
+        Free((void*)p);
     }
 }
 
@@ -53,7 +53,7 @@ void FileNodeMap_Destroy(struct FileNodeMap * p) /*@default*/
     {
         FileNode_Delete(p->pNodes[i]);
     }
-    Free((void *)p->pNodes);
+    Free((void*)p->pNodes);
 }
 
 static unsigned int HashCode(const char * Key)
@@ -345,7 +345,7 @@ enum PPTokenType TokenToPPToken(Tokens token)
 
 TFile * TFile_Create() /*@default*/
 {
-    TFile * p = (TFile *)Malloc(sizeof * p);
+    TFile *p = (TFile*) Malloc(sizeof * p);
     if (p != NULL)
     {
         p->FullPath = NULL;
@@ -360,8 +360,8 @@ TFile * TFile_Create() /*@default*/
 
 void TFile_Destroy(TFile * p) /*@default*/
 {
-    Free((void *)p->FullPath);
-    Free((void *)p->IncludePath);
+    Free((void*)p->FullPath);
+    Free((void*)p->IncludePath);
 }
 
 void TFile_Delete(TFile * p) /*@default*/
@@ -369,7 +369,7 @@ void TFile_Delete(TFile * p) /*@default*/
     if (p != NULL)
     {
         TFile_Destroy(p);
-        Free((void *)p);
+        Free((void*)p);
     }
 }
 
@@ -395,15 +395,15 @@ void TFileArray_Destroy(TFileArray * p) /*@default*/
     {
         TFile_Delete(p->pItems[i]);
     }
-    Free((void *)p->pItems);
+    Free((void*)p->pItems);
 }
 
 void TFileArray_Reserve(TFileArray * p, int n) /*@default*/
 {
     if (n > p->Capacity)
     {
-        TFile ** pnew = p->pItems;
-        pnew = (TFile * *)Realloc(pnew, n * sizeof(TFile *));
+        TFile** pnew = p->pItems;
+        pnew = (TFile**)Realloc(pnew, n * sizeof(TFile*));
         if (pnew)
         {
             p->pItems = pnew;
@@ -480,8 +480,8 @@ void StackInts_Reserve(StackInts * p, int n) /*@default*/
 {
     if (n > p->Capacity)
     {
-        enum PPState * pnew = p->pItems;
-        pnew = (enum PPState *)Realloc(pnew, n * sizeof(enum PPState));
+        enum PPState* pnew = p->pItems;
+        pnew = (enum PPState*)Realloc(pnew, n * sizeof(enum PPState));
         if (pnew)
         {
             p->pItems = pnew;

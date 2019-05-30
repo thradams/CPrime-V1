@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Emscripten-Generated Code</title>
+  <title>CPrime online compiler</title>
 
   <body>
       <script src="codemirror.js"></script>
@@ -12,8 +12,13 @@
       <script src="clike.js"></script>
       <script src="samples.js"></script>
 
-      <h1>CPrime online</h1>
-      <p><a href="https://github.com/thradams/CPrime/blob/master/README.md">github readme</a></p>
+      <h2>CPrime online</h2>
+
+      <p>
+          CPrime is a C compiler that can explicitly instantiate functions.<br />
+          <br />
+          See <a href="https://github.com/thradams/CPrime/">github project</a>
+      </p>
 
       <select id="samples" onchange="OnChangeSelection(this.value)">
           <option>Select...</option>
@@ -21,16 +26,17 @@
 
       <button onclick="OnCompileButton()">Compile</button>
 
-      
+
       <select id="outtype" style="margin-left:auto;margin-right: 10px">
-          <option value="0">C   Annotated</option>
+          <option value="0">C Annotated</option>
           <option value="1">Preprocessed</option>
-          <option value="2">CXX</option>          
+          <option value="2">C'</option>
       </select>
 
       <button onclick="OnSwap()">Swap</button>
 
-      <input type="checkbox" id="onefile" name="oneside" >One file<br>
+      <input type="checkbox" id="onefile" name="oneside">One file
+      <input type="checkbox" id="noimplicittag">Disable implicit function tag<br>
 
       <div style="width: 100%; overflow: hidden;">
           <div style="width: 48%; float: left;border-width: thin;border-style: solid;">
@@ -43,8 +49,55 @@
       <p>ouput</p>
       <textarea id="output" rows="8" style="width: 100%"></textarea>
 
+      <h3>New name</h3>
+      <p>I am looking for a new name for this project and I accept sugestions</p>
 
+      <h3>About Function tags</h3>
+      <p>
+          Function tag is something that tells what functions does.<br />
+          It is similar of operator overloading. operator + should do something known.
+          <br />
+          The known function tags are:      init, destroy, create, delete ,  push,  reserve
+      </p>
+      <h3>Automatic function tag</h3>
+      <p>
+          If the option 'Disable implicit function tag' is not checked <br />
+          then the compiler will tag functions automatically.<br />
+          If the function name has a suffix (case insensitive) create, init, destroy, delete, reserve, pushback
+          the the function is tagged with the corresponding tag. <br />
+      </p>
+      <h3>Auto qualifier for pointers</h3>
+      <p>
+          The qualifier auto can be added to pointers and it tells to the <br />
+          compiler that the pointer is the owner of the pointed object.<br />
+          The generation of destroy and delete is affected. <br />
 
+          I also want to use this qualifier to do static analisys in the future.
+
+      </p>
+      <h3>[Size] qualifier for pointers</h3>
+      <p>
+          A qualifier with [name] can be added to pointers. It tells the compiler <br />
+          that the pointer is pointing for n items defined by the idenfier name. <br />
+          Currently it is used only for destroy and delete of auto pointers member of structs.<br/>
+
+          I also want to use this qualifier to do static analisys in the future.
+      </p>
+      <h3>Especial comments</h3>
+      <p>
+          C' compiler ignores '/*@' and '*/' these two sequences are removed
+          in early phases. <br />
+          That means that you can transform C' code to C adding it. (see samples)
+      </p>
+
+      <h3>Lambdas</h3>
+      <p>
+          C' allows lambdas like C++ but without capture. <br />
+          Normally C' compiler can compile to C with annotations<br />
+          back to C'.
+          So far, lambda information is lost in C with annotations.
+
+      </p>
 
       <script type='text/javascript'>
 
@@ -111,13 +164,13 @@
               se.appendChild(o);
           }
 
-          function CompileText(tp, inputText)
+          function CompileText(tp, bNoImplicitTag, inputText)
           {
               //var ptr = allocate(intArrayFromString(inputText), 'i8', ALLOC_NORMAL);
               var resValue = Module.ccall('CompileText', // name of C function
                   'string', // return type
-                  ['number', 'string'], // argument types
-                  [tp, inputText]); // arguments
+                  ['number', 'number', 'string'], // argument types
+                  [tp, bNoImplicitTag ? 1 : 0, inputText]); // arguments
 
               //var retPtr = _CompileText( ptr);
               //var resValue = Pointer_stringify(retPtr);
@@ -156,10 +209,10 @@
               document.getElementById("output").value = "";
               outputEditor.setValue("");
               var tp = document.getElementById("outtype").value;
-
+              var noimplicittag = document.getElementById('noimplicittag').checked;
 
               var it = inputEditor.getValue();
-              var ot = CompileText(tp, it);
+              var ot = CompileText(tp, noimplicittag, it);
 
               var bOneFile = document.getElementById("onefile").checked;
               if (bOneFile)
@@ -170,7 +223,7 @@
               {
                   outputEditor.setValue(ot);
               }
-              
+
           }
 
 

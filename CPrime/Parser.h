@@ -10,6 +10,11 @@
 
 #define SYMBOL_BUCKETS_SIZE 1000
 
+struct ParserOptions
+{
+    bool bNoImplicitTag;
+};
+
 typedef struct {
   // indica presenca de erro no parser
   bool bError;
@@ -27,6 +32,8 @@ typedef struct {
   
   int IncludeLevel;
   bool bPreprocessorEvalFlag;
+
+  struct ParserOptions ParserOptions;
 } Parser;
 
 bool Parser_InitFile(Parser *parser, const char *fileName);
@@ -49,4 +56,5 @@ Tokens Parser_MatchToken(Parser *parser, Tokens tk, TScannerItemList *listOpt);
 Tokens Parser_LookAheadToken(Parser *parser);
 
 bool GetASTFromString(const char*  sourceCode,
+    struct Options * options,
   TProgram* pProgram);

@@ -12,8 +12,8 @@ void KeyValue_Delete(MapItem2 * p) /*@default*/
 {
     if (p != NULL)
     {
-        Free((void *)p->Key);
-        Free((void *)p);
+        Free((void*)p->Key);
+        Free((void*)p);
     }
 }
 
@@ -269,7 +269,7 @@ void Map2_Swap(Map2 * pA, Map2 * pB)
 
 Map2 * Map2_Create(void) /*@default*/
 {
-    Map2 * p = (Map2 *)Malloc(sizeof * p);
+    Map2 *p = (Map2*) Malloc(sizeof * p);
     if (p != NULL)
     {
         Map2_Init(p);

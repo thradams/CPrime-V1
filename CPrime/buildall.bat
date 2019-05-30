@@ -1,9 +1,9 @@
  
  REM GERA TODOS ARQUIVOS EM Generated
- call "Release\CPrimeWindows.exe" -config "vs2017.h"  -outDir "Generated" -build "Build.h"
+ REM call "Release\CPrimeWindows.exe" -config "vs2017.h"  -outDir "Generated" -build "Build.h"
 
  REM GERA AMALGAMATION
- call "Release\CPrimeWindows.exe" -config "vs2017.h"  -a CPrime.c -o ".\Generated\out.c"
+ call "Release\cprime.exe" -config "config.txt" -a CPrime.c -o ".\Generated\out.c"
 
  REM GERA JS
 call "C:\Users\thiago\Source\Repos\emsdk\emsdk_env.bat"

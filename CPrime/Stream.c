@@ -122,9 +122,9 @@ bool Stream_Init(struct Stream * pStream, const char * name, const char * Text)
 
 void Stream_Destroy(struct Stream * pStream) /*@default*/
 {
-    Free((void *)pStream->NameOrFullPath);
-    Free((void *)pStream->FullDir2);
-    Free((void *)pStream->Text);
+    Free((void*)pStream->NameOrFullPath);
+    Free((void*)pStream->FullDir2);
+    Free((void*)pStream->Text);
 }
 
 

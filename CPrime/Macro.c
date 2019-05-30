@@ -17,7 +17,7 @@
 
 struct Macro * Macro_Create(void) /*@default*/
 {
-    struct Macro * p = (struct Macro *)Malloc(sizeof * p);
+    struct Macro* p = (struct Macro*) Malloc(sizeof * p);
     if (p != NULL)
     {
         p->Name = NULL;
@@ -31,7 +31,7 @@ struct Macro * Macro_Create(void) /*@default*/
 
 void Macro_Destroy(struct Macro * p) /*@default*/
 {
-    Free((void *)p->Name);
+    Free((void*)p->Name);
     TokenArray_Destroy(&p->TokenSequence);
     TokenArray_Destroy(&p->FormalArguments);
 }
@@ -41,7 +41,7 @@ void Macro_Delete(struct Macro * p) /*@default*/
     if (p != NULL)
     {
         Macro_Destroy(p);
-        Free((void *)p);
+        Free((void*)p);
     }
 }
 

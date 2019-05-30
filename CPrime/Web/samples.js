@@ -1,6 +1,6 @@
 var sample = {};
 
-sample["Especial functions"] =
+sample["Especial functions (auto tag)"] =
  `
 
 typedef char * /*@auto*/ String;
@@ -23,7 +23,7 @@ int main()
 `;
 
 
-sample["Especial functions CX"] =
+sample["Especial functions C' (auto tag)"] =
     `
 
 typedef char * auto String;
@@ -45,7 +45,43 @@ int main()
 }
 `;
 
-sample["Decopling"] =
+sample["Especial functions with function tags"] =
+    `
+
+struct X
+{
+    char* auto Name;
+    int i;
+};
+
+//tagged functions
+
+struct X * makeX() : create;
+void initX(struct X * p) : init;
+void destroyX(struct X * p) : destroy;
+void deleteX(struct X * p) : delete;
+
+int main()
+{
+    struct X x = {};
+    return 1;
+}
+
+
+//it is not necessary to tag again
+
+struct X * makeX() default;
+
+void initX(struct X * p) default;
+
+void destroyX(struct X * p) default;
+
+void deleteX(struct X * p) default;
+
+
+`;
+
+sample["Decopling (auto tag)"] =
 `
 // -- header file -- 
 
@@ -86,7 +122,7 @@ void Y_Destroy(struct Y * p) /*@default*/
 }
 
 `;
-sample["StrArray"] =
+sample["StrArray (auto tag)"] =
 `
 //#include <stdlib.h>
 //#include <stdio.h>
@@ -139,7 +175,39 @@ int main()
 }
 `;
 
-sample["Dynamic Array of int"] =
+sample["StrArray C' with function tags"] =
+`
+
+//#include <stdlib.h>
+//#include <stdio.h>
+//#include <string.h>
+
+struct StrArray
+{
+    const char* auto* auto [Size] data;
+    int Size;
+    int Capacity;
+};
+
+void Destroy(struct StrArray* p) : destroy;
+void Insert(struct StrArray* p, const char* s) : push;
+
+
+int main()
+{
+    struct StrArray strings = { 0 };
+    
+    Insert(&strings, _strdup("a"));
+    Destroy(&strings);
+
+}
+
+void Insert(struct StrArray* p, const char* s) default;
+void Destroy(struct StrArray* p) : destroy default;
+
+`;
+
+sample["Dynamic Array of int (auto tag)"] =
     `
 struct Items
 {
@@ -172,7 +240,7 @@ int main(int argc, char **argv)
 
 `;
 
-sample["Dynamic Array of Item*"] =
+sample["Dynamic Array of Item* (auto tag)"] =
  `
 struct Item
 {
@@ -214,7 +282,7 @@ int main(int argc, char **argv)
 
 `;
 
-sample["Linked list"] =
+sample["Linked list (auto tag)"] =
 `
 struct Item
 {
@@ -249,12 +317,36 @@ struct Line
 
 int main()
 {
-  struct Point pt = /*@default*/{0};
-  struct Line ln = /*@default*/{0};
+  //C' will keep these initializers updated 
+  //try with one file option changing the point default
+  struct Point pt = /*@default*/{/*.x=*/ 1, /*.y=*/ 2};
+  struct Line ln = /*@default*/{{/*.x=*/ 1, /*.y=*/ 2}, {/*.x=*/ 1, /*.y=*/ 2}};
 }
 `;
 
-sample["Polimorphism"] =
+sample["Initialization C'"] =
+    `
+
+struct Point
+{
+  int x = 1;
+  int y = 2;
+};
+
+struct Line
+{
+  struct Point start, end;
+};
+
+int main()
+{
+  struct Point pt = {};
+  struct Line ln = {};
+}
+
+`;
+
+sample["Polimorphism (auto tag)"] =
 `
 struct Box
 {
@@ -287,14 +379,18 @@ struct /*@<Box | Circle>*/ Shape
     int id;
 };
 
+//polimorphic objects are not using tag yet
+//they require the same function name to work
 void Shape_Delete(struct Shape* pShape) /*@default*/;
 
+//except for delete I am not sure if tags will be used
+//because they can create coupling.
 void Shape_Draw(struct Shape* pShape) /*@default*/;
 
 `;
 
 
-sample["Polimorphism CX"] =
+sample["Polimorphism C' (auto tag)"] =
     `
 struct Box
 {

@@ -11,11 +11,14 @@
 #include "Options.h"
 #include "AstPrint2.h"
 
-int Compile(const char * configFileName,
-            const char * inputFileName,
-            const char * outputFileName,
-            struct Options * options,
-            bool bPrintASTFile)
+#define CONFIG_FILE_NAME "config.txt"
+#define EXECUTABLE_NAME "cprime"
+
+int Compile(const char* configFileName,
+    const char* inputFileName,
+    const char* outputFileName,
+    struct Options* options,
+    bool bPrintASTFile)
 {
     int bSuccess = 0;
     TProgram program;
@@ -79,15 +82,15 @@ int Compile(const char * configFileName,
 
 void PrintHelp()
 {
-    printf("Syntax: cprime [options] [file ...]\n");
+    printf("Syntax: " EXECUTABLE_NAME " [options] [file ...]\n");
     printf("\n");
-    printf("Examples: cprime hello.c\n");
-    printf("          cprime -config config.h hello.c\n");
-    printf("          cprime -config config.h hello.c -o hello.c\n");
-    printf("          cprime -config config.h -P hello.c\n");
-    printf("          cprime -E hello.c\n");
-    printf("          cprime -P hello.c\n");
-    printf("          cprime -A hello.c\n");
+    printf("Examples: " EXECUTABLE_NAME " hello.c\n");
+    printf("          " EXECUTABLE_NAME " -config config.h hello.c\n");
+    printf("          " EXECUTABLE_NAME " -config config.h hello.c -o hello.c\n");
+    printf("          " EXECUTABLE_NAME " -config config.h -P hello.c\n");
+    printf("          " EXECUTABLE_NAME " -E hello.c\n");
+    printf("          " EXECUTABLE_NAME " -P hello.c\n");
+    printf("          " EXECUTABLE_NAME " -A hello.c\n");
     printf("\n");
     printf("PrintCodeOptions:\n");
     printf("-config FILE                          Configuration fp.\n");
@@ -100,25 +103,29 @@ void PrintHelp()
     printf("-a                                    Output almagamation of input file\n");
     printf("-cx                                   Generate CX.\n");
     printf("-ca                                   Generated C annotated\n");
-    printf("--removeComments                      Remove comments from output\n");
+    printf("-removeComments                      Remove comments from output\n");
     printf("-build                                Compile all sources defined in inputfile\n");
     printf("-rbuild                               Build of all sources of input\n");
     printf("-sources                              Prints all sources used\n");
+    printf("-noImplicitTag                       Prints all sources used\n");
 
 }
 
 
 
-char * CompileText(int type, char * input)
+char * CompileText(int type, int bNoImplicitTag, char * input)
 {
     char * output = NULL;
+
+    struct Options options2 = OPTIONS_INIT;
+    options2.Target = (enum CompilerTarget) type;
+    options2.bNoImplicitTag = bNoImplicitTag;
+
     TProgram program;
     TProgram_Init(&program);
-    if (GetASTFromString(input, &program))
+    if (GetASTFromString(input, &options2 ,&program))
     {
-        struct Options options2 = OPTIONS_INIT;
-        options2.Target = (enum CompilerTarget) type;
-
+        
 
         StrBuilder sb = STRBUILDER_INIT;
         StrBuilder_Reserve(&sb, 500);
@@ -155,7 +162,7 @@ int main(int argc, char * argv[])
 
     char cxconfigFileFullPath[CPRIME_MAX_PATH];
     GetFullDirS(argv[0], cxconfigFileFullPath, CPRIME_MAX_PATH);
-    strcat(cxconfigFileFullPath, "cxconfig.h");
+    strcat(cxconfigFileFullPath, CONFIG_FILE_NAME);
 
 
     if (FileExists(cxconfigFileFullPath))
@@ -215,7 +222,7 @@ int main(int argc, char * argv[])
         else if (strcmp(option, "-help") == 0)
         {
             PrintHelp();
-            return;
+            return 0;
         }
         else if (strcmp(option, "-build") == 0)
         {
@@ -237,9 +244,13 @@ int main(int argc, char * argv[])
         {
             options.Target = CompilerTarget_Annotated;
         }
-        else if (strcmp(option, "--removeComments") == 0)
+        else if (strcmp(option, "-removeComments") == 0)
         {
             options.bIncludeComments = false;
+        }
+        else if (strcmp(option, "-noImplicitTag") == 0)
+        {
+            options.bNoImplicitTag = true;
         }
         else if (strcmp(option, "-pr") == 0)
         {

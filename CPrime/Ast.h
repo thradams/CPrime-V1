@@ -207,6 +207,7 @@ typedef struct TTypeQualifier
 } TTypeQualifier;
 
 void TTypeQualifier_Copy(TTypeQualifier * dest, TTypeQualifier * src);
+bool TTypeQualifier_Compare(TTypeQualifier * p1, TTypeQualifier * p2);
 
 typedef struct {
     /*
@@ -476,6 +477,7 @@ typedef struct
 
 TFunctionSpecifier * TFunctionSpecifier_Create(void);
 void TFunctionSpecifier_Delete(TFunctionSpecifier * p);
+bool TFunctionSpecifier_Compare(TFunctionSpecifier * p1, TFunctionSpecifier * p2);
 
 typedef struct
 {
@@ -495,7 +497,7 @@ typedef struct
 
 TStorageSpecifier * TStorageSpecifier_Create(void);
 void TStorageSpecifier_Delete(TStorageSpecifier * p);
-
+bool TStorageSpecifier_Compare(TStorageSpecifier *p1, TStorageSpecifier *p2);
 
 typedef struct
 {
@@ -564,6 +566,7 @@ typedef struct TEnumSpecifier
 
 TEnumSpecifier * TEnumSpecifier_Create(void);
 void TEnumSpecifier_Delete(TEnumSpecifier * p);
+bool TEnumSpecifier_CompareTagName(TEnumSpecifier * p1, TEnumSpecifier * p2);
 
 typedef struct TSingleTypeSpecifier
 {
@@ -591,6 +594,7 @@ TSingleTypeSpecifier * TSingleTypeSpecifier_Create(void);
 void TSingleTypeSpecifier_Delete(TSingleTypeSpecifier * p);
 
 const char * TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier * p);
+bool TSingleTypeSpecifier_Compare(TSingleTypeSpecifier * p1, TSingleTypeSpecifier * p2);
 
 struct TTypeSpecifier;
 typedef struct TTypeSpecifier TTypeSpecifier;
@@ -666,7 +670,7 @@ void TSpecifierQualifierList_PushBack(TSpecifierQualifierList * p, TSpecifierQua
 const char * TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList * p);
 TDeclarationSpecifier * TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList * p);
 bool TSpecifierQualifierList_IsTypedefQualifier(TSpecifierQualifierList * p);
-
+bool TSpecifierQualifierList_Compare(TSpecifierQualifierList * p1, TSpecifierQualifierList * p2);
 
 bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList * p, Tokens token, const char * lexeme);
 bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList * p);
@@ -692,10 +696,17 @@ typedef struct TDeclarationSpecifiers {
 void TDeclarationSpecifiers_Init(TDeclarationSpecifiers * pDeclarationSpecifiers);
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers * pDeclarationSpecifiers);
 void TDeclarationSpecifiers_PushBack(TDeclarationSpecifiers * p, TDeclarationSpecifier * pItem);
+TDeclarationSpecifier* TDeclarationSpecifiers_GetMainSpecifier(TDeclarationSpecifiers* p, enum EType type);
+
 
 const char * TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers * pDeclarationSpecifiers);
 bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers * pDeclarationSpecifiers, Tokens token, const char * lexeme);
 
+//struct TStructUnionSpecifier;
+typedef struct TStructUnionSpecifier TStructUnionSpecifier;
+
+TStructUnionSpecifier* TDeclarationSpecifiers_GetCompleteStructUnionSpecifier(struct SymbolMap* pSymbolMap,
+    TDeclarationSpecifiers* pDeclarationSpecifiers);
 
 struct TParameter;
 typedef struct TParameter TParameter;
@@ -1094,20 +1105,15 @@ typedef struct TStructUnionSpecifier
     TScannerItemList ClueList2; //{
     TScannerItemList ClueList3; //}
 
+
 } TStructUnionSpecifier;
 
 TStructUnionSpecifier * TStructUnionSpecifier_Create();
 void TStructUnionSpecifier_Delete(TStructUnionSpecifier * p);
+void TStructUnionSpecifier_SetFunctionImplicitTag(TStructUnionSpecifier* p,
+    const char* funcName,
+    TDeclaration* pFuncDeclaration);
 
-enum SpecialMemberType
-{
-    SpecialMemberType_Init,
-    SpecialMemberType_Destroy,
-    SpecialMemberType_Create,
-    SpecialMemberType_Delete
-};
-enum SpecialMemberType TStructUnionSpecifier_GetSpecialMemberType(TStructUnionSpecifier * p, const char * funcName);
-const char* TStructUnionSpecifier_GetSpecialMemberName(TStructUnionSpecifier * p, enum SpecialMemberType type);
 
 struct TAtomicTypeSpecifier;
 typedef struct TAtomicTypeSpecifier TAtomicTypeSpecifier;
@@ -1121,6 +1127,8 @@ struct /*@<TSingleTypeSpecifier |
     EType Type;
 };
 
+bool TTypeSpecifier_Compare(TTypeSpecifier * p1, TTypeSpecifier * p2);
+
 typedef struct TTypeSpecifier TTypeSpecifier;
 
 CAST(TTypeSpecifier, TSingleTypeSpecifier)
@@ -1130,12 +1138,24 @@ CAST(TDeclarationSpecifier, TStructUnionSpecifier)
 CAST(TSpecifierQualifier, TStructUnionSpecifier)
 CAST(TTypeSpecifier, TAtomicTypeSpecifier)
 
+#define FUNCTION_TAG_DESTROY "destroy"
+#define FUNCTION_TAG_INIT "init"
+#define FUNCTION_TAG_DELETE "delete"
+#define FUNCTION_TAG_CREATE "create"
+
+
 typedef struct TDeclaration
 {
     /*
     declaration:
     declaration-specifiers init-declarator-listopt ;
     static_assert-declaration
+    */
+
+    /*
+    declaration:
+    declaration-specifiers init-declarator-listopt : identifier defaultopt;
+    
     */
 
     EType Type  /*@=TDeclaration_ID*/;
@@ -1148,9 +1168,13 @@ typedef struct TDeclaration
     int FileIndex;
     int Line;
 
-    TScannerItemList ClueList0; //default
+    TScannerItemList ClueList0; //default FunctionTag
+    TScannerItemList ClueList00; //:
+    TScannerItemList ClueList001; //identifier
 
     bool bDefault;
+    String* /*@auto*/ FunctionTag;
+    bool bAutoTag;
     TScannerItemList ClueList1;
 
 
@@ -1171,6 +1195,7 @@ TCompoundStatement * TDeclaration_Is_FunctionDefinition(TDeclaration * p);
 
 TDeclarator * TDeclaration_FindDeclarator(TDeclaration * p, const char * name);
 const char * TDeclaration_GetFunctionName(TDeclaration * p);
+const char* TDeclaration_FindFunctionTagName(TDeclaration* p, struct SymbolMap* pMap);
 
 
 CAST(TAnyDeclaration, TStaticAssertDeclaration)
@@ -1295,6 +1320,7 @@ typedef struct TAtomicTypeSpecifier
 
 TAtomicTypeSpecifier * TAtomicTypeSpecifier_Create();
 void TAtomicTypeSpecifier_Delete(TAtomicTypeSpecifier * p);
+bool TAtomicTypeSpecifier_Compare(TAtomicTypeSpecifier *p1, TAtomicTypeSpecifier * p2);
 
 
 bool EvaluateConstantExpression(TExpression * p, int * pResult);

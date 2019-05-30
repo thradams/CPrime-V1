@@ -165,31 +165,31 @@ void TExpression_PrintXML(TExpression * p, struct PrintXMLContext * ctx) /*@defa
     switch (p->Type)
     {
         case TBinaryExpression_ID:
-            TBinaryExpression_PrintXML((TBinaryExpression *)p, ctx);
-            break;
+            TBinaryExpression_PrintXML((TBinaryExpression*)p, ctx);
+        break;
         case TPrimaryExpressionLambda_ID:
-            TPrimaryExpressionLambda_PrintXML((TPrimaryExpressionLambda *)p, ctx);
-            break;
+            TPrimaryExpressionLambda_PrintXML((TPrimaryExpressionLambda*)p, ctx);
+        break;
         case TUnaryExpressionOperator_ID:
-            TUnaryExpressionOperator_PrintXML((TUnaryExpressionOperator *)p, ctx);
-            break;
+            TUnaryExpressionOperator_PrintXML((TUnaryExpressionOperator*)p, ctx);
+        break;
         case TCastExpressionType_ID:
-            TCastExpressionType_PrintXML((TCastExpressionType *)p, ctx);
-            break;
+            TCastExpressionType_PrintXML((TCastExpressionType*)p, ctx);
+        break;
         case TPrimaryExpressionValue_ID:
-            TPrimaryExpressionValue_PrintXML((TPrimaryExpressionValue *)p, ctx);
-            break;
+            TPrimaryExpressionValue_PrintXML((TPrimaryExpressionValue*)p, ctx);
+        break;
         case TPostfixExpressionCore_ID:
-            TPostfixExpressionCore_PrintXML((TPostfixExpressionCore *)p, ctx);
-            break;
+            TPostfixExpressionCore_PrintXML((TPostfixExpressionCore*)p, ctx);
+        break;
         case TPrimaryExpressionLiteral_ID:
-            TPrimaryExpressionLiteral_PrintXML((TPrimaryExpressionLiteral *)p, ctx);
-            break;
+            TPrimaryExpressionLiteral_PrintXML((TPrimaryExpressionLiteral*)p, ctx);
+        break;
         case TTernaryExpression_ID:
-            TTernaryExpression_PrintXML((TTernaryExpression *)p, ctx);
-            break;
+            TTernaryExpression_PrintXML((TTernaryExpression*)p, ctx);
+        break;
         default:
-            break;
+        break;
     }
 }
 
@@ -245,37 +245,37 @@ void TStatement_PrintXML(TStatement * p, struct PrintXMLContext * ctx) /*@defaul
     switch (p->Type)
     {
         case TForStatement_ID:
-            TForStatement_PrintXML((TForStatement *)p, ctx);
-            break;
+            TForStatement_PrintXML((TForStatement*)p, ctx);
+        break;
         case TJumpStatement_ID:
-            TJumpStatement_PrintXML((TJumpStatement *)p, ctx);
-            break;
+            TJumpStatement_PrintXML((TJumpStatement*)p, ctx);
+        break;
         case TExpressionStatement_ID:
-            TExpressionStatement_PrintXML((TExpressionStatement *)p, ctx);
-            break;
+            TExpressionStatement_PrintXML((TExpressionStatement*)p, ctx);
+        break;
         case TIfStatement_ID:
-            TIfStatement_PrintXML((TIfStatement *)p, ctx);
-            break;
+            TIfStatement_PrintXML((TIfStatement*)p, ctx);
+        break;
         case TWhileStatement_ID:
-            TWhileStatement_PrintXML((TWhileStatement *)p, ctx);
-            break;
+            TWhileStatement_PrintXML((TWhileStatement*)p, ctx);
+        break;
         case TSwitchStatement_ID:
-            TSwitchStatement_PrintXML((TSwitchStatement *)p, ctx);
-            break;
+            TSwitchStatement_PrintXML((TSwitchStatement*)p, ctx);
+        break;
         case TAsmStatement_ID:
-            TAsmStatement_PrintXML((TAsmStatement *)p, ctx);
-            break;
+            TAsmStatement_PrintXML((TAsmStatement*)p, ctx);
+        break;
         case TDoStatement_ID:
-            TDoStatement_PrintXML((TDoStatement *)p, ctx);
-            break;
+            TDoStatement_PrintXML((TDoStatement*)p, ctx);
+        break;
         case TLabeledStatement_ID:
-            TLabeledStatement_PrintXML((TLabeledStatement *)p, ctx);
-            break;
+            TLabeledStatement_PrintXML((TLabeledStatement*)p, ctx);
+        break;
         case TCompoundStatement_ID:
-            TCompoundStatement_PrintXML((TCompoundStatement *)p, ctx);
-            break;
+            TCompoundStatement_PrintXML((TCompoundStatement*)p, ctx);
+        break;
         default:
-            break;
+        break;
     }
 }
 
@@ -547,13 +547,13 @@ void TAnyStructDeclaration_PrintXML(TAnyStructDeclaration * p, struct PrintXMLCo
     switch (p->Type)
     {
         case TStaticAssertDeclaration_ID:
-            TStaticAssertDeclaration_PrintXML((TStaticAssertDeclaration *)p, ctx);
-            break;
+            TStaticAssertDeclaration_PrintXML((TStaticAssertDeclaration*)p, ctx);
+        break;
         case TStructDeclaration_ID:
-            TStructDeclaration_PrintXML((TStructDeclaration *)p, ctx);
-            break;
+            TStructDeclaration_PrintXML((TStructDeclaration*)p, ctx);
+        break;
         default:
-            break;
+        break;
     }
 }
 void TTypeSpecifier_PrintXML(TTypeSpecifier * p, struct PrintXMLContext * ctx) /*@default*/
@@ -561,19 +561,19 @@ void TTypeSpecifier_PrintXML(TTypeSpecifier * p, struct PrintXMLContext * ctx) /
     switch (p->Type)
     {
         case TStructUnionSpecifier_ID:
-            TStructUnionSpecifier_PrintXML((TStructUnionSpecifier *)p, ctx);
-            break;
+            TStructUnionSpecifier_PrintXML((TStructUnionSpecifier*)p, ctx);
+        break;
         case TAtomicTypeSpecifier_ID:
-            TAtomicTypeSpecifier_PrintXML((TAtomicTypeSpecifier *)p, ctx);
-            break;
+            TAtomicTypeSpecifier_PrintXML((TAtomicTypeSpecifier*)p, ctx);
+        break;
         case TSingleTypeSpecifier_ID:
-            TSingleTypeSpecifier_PrintXML((TSingleTypeSpecifier *)p, ctx);
-            break;
+            TSingleTypeSpecifier_PrintXML((TSingleTypeSpecifier*)p, ctx);
+        break;
         case TEnumSpecifier_ID:
-            TEnumSpecifier_PrintXML((TEnumSpecifier *)p, ctx);
-            break;
+            TEnumSpecifier_PrintXML((TEnumSpecifier*)p, ctx);
+        break;
         default:
-            break;
+        break;
     }
 }
 
@@ -582,31 +582,31 @@ void TDeclarationSpecifier_PrintXML(TDeclarationSpecifier * p, struct PrintXMLCo
     switch (p->Type)
     {
         case TTypeQualifier_ID:
-            TTypeQualifier_PrintXML((TTypeQualifier *)p, ctx);
-            break;
+            TTypeQualifier_PrintXML((TTypeQualifier*)p, ctx);
+        break;
         case TStructUnionSpecifier_ID:
-            TStructUnionSpecifier_PrintXML((TStructUnionSpecifier *)p, ctx);
-            break;
+            TStructUnionSpecifier_PrintXML((TStructUnionSpecifier*)p, ctx);
+        break;
         case TStorageSpecifier_ID:
-            TStorageSpecifier_PrintXML((TStorageSpecifier *)p, ctx);
-            break;
+            TStorageSpecifier_PrintXML((TStorageSpecifier*)p, ctx);
+        break;
         case TAtomicTypeSpecifier_ID:
-            TAtomicTypeSpecifier_PrintXML((TAtomicTypeSpecifier *)p, ctx);
-            break;
+            TAtomicTypeSpecifier_PrintXML((TAtomicTypeSpecifier*)p, ctx);
+        break;
         case TSingleTypeSpecifier_ID:
-            TSingleTypeSpecifier_PrintXML((TSingleTypeSpecifier *)p, ctx);
-            break;
+            TSingleTypeSpecifier_PrintXML((TSingleTypeSpecifier*)p, ctx);
+        break;
         case TAlignmentSpecifier_ID:
-            TAlignmentSpecifier_PrintXML((TAlignmentSpecifier *)p, ctx);
-            break;
+            TAlignmentSpecifier_PrintXML((TAlignmentSpecifier*)p, ctx);
+        break;
         case TFunctionSpecifier_ID:
-            TFunctionSpecifier_PrintXML((TFunctionSpecifier *)p, ctx);
-            break;
+            TFunctionSpecifier_PrintXML((TFunctionSpecifier*)p, ctx);
+        break;
         case TEnumSpecifier_ID:
-            TEnumSpecifier_PrintXML((TEnumSpecifier *)p, ctx);
-            break;
+            TEnumSpecifier_PrintXML((TEnumSpecifier*)p, ctx);
+        break;
         default:
-            break;
+        break;
     }
 }
 
@@ -641,19 +641,19 @@ void TAnyDeclaration_PrintXML(TAnyDeclaration * p,
     switch (p->Type)
     {
         case TGroupDeclaration_ID:
-            TGroupDeclaration_PrintXML((TGroupDeclaration *)p, ctx);
-            break;
+            TGroupDeclaration_PrintXML((TGroupDeclaration*)p, ctx);
+        break;
         case TStaticAssertDeclaration_ID:
-            TStaticAssertDeclaration_PrintXML((TStaticAssertDeclaration *)p, ctx);
-            break;
+            TStaticAssertDeclaration_PrintXML((TStaticAssertDeclaration*)p, ctx);
+        break;
         case TDeclaration_ID:
-            TDeclaration_PrintXML((TDeclaration *)p, ctx);
-            break;
+            TDeclaration_PrintXML((TDeclaration*)p, ctx);
+        break;
         case TEofDeclaration_ID:
-            TEofDeclaration_PrintXML((TEofDeclaration *)p, ctx);
-            break;
+            TEofDeclaration_PrintXML((TEofDeclaration*)p, ctx);
+        break;
         default:
-            break;
+        break;
     }
 }
 

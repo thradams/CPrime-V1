@@ -5,11 +5,16 @@
 #include "Mem.h"
 
 #include <string.h>
+#include <stdbool.h>
+
 typedef char String;
 
 
 
 String * StrDup(const char * p);
+int StrIComp(char const* a, char const* b);
+char* StrIStr(const char* str1, const char* str2);
+bool IsSuffix(const char * s, const char * suffix);
 
 #define PTR_STRING_REPLACE(a, b)\
 do\
@@ -35,3 +40,4 @@ do\
   (a) = (b);\
   (b) = t;\
 } while (0)
+

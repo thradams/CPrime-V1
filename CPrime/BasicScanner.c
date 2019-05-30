@@ -285,7 +285,7 @@ const char * TokenToString(Tokens tk)
 
 struct ScannerItem * ScannerItem_Create(void) /*@default*/
 {
-    struct ScannerItem * p = (struct ScannerItem *)Malloc(sizeof * p);
+    struct ScannerItem *p = (struct ScannerItem *) Malloc(sizeof * p);
     if (p != NULL)
     {
         ScannerItem_Init(p);
@@ -298,7 +298,7 @@ void ScannerItem_Delete(struct ScannerItem * pScannerItem) /*@default*/
     if (pScannerItem != NULL)
     {
         ScannerItem_Destroy(pScannerItem);
-        Free((void *)pScannerItem);
+        Free((void*)pScannerItem);
     }
 }
 
@@ -306,9 +306,9 @@ void ScannerItem_Init(struct ScannerItem * scannerItem) /*@default*/
 {
     LocalStrBuilder_Init(&scannerItem->lexeme);
     scannerItem->token = TK_NONE;
-    scannerItem->Line = -1;
-    scannerItem->FileIndex = -1;
-    scannerItem->bActive = 1;
+    scannerItem->Line =  -1;
+    scannerItem->FileIndex =  -1;
+    scannerItem->bActive =  1;
     scannerItem->pNext = NULL;
 }
 
@@ -424,7 +424,7 @@ void BasicScanner_Delete(BasicScanner * pBasicScanner) /*@default*/
     if (pBasicScanner != NULL)
     {
         BasicScanner_Destroy(pBasicScanner);
-        Free((void *)pBasicScanner);
+        Free((void*)pBasicScanner);
     }
 }
 

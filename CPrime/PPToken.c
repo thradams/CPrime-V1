@@ -7,7 +7,7 @@
 
 void PPToken_Destroy(struct  PPToken * p) /*@default*/
 {
-    Free((void *)p->Lexeme);
+    Free((void*)p->Lexeme);
     TokenSet_Destroy(&p->HiddenSet);
 }
 
@@ -49,7 +49,7 @@ void PPToken_Delete(struct PPToken * p) /*@default*/
     if (p != NULL)
     {
         PPToken_Destroy(p);
-        Free((void *)p);
+        Free((void*)p);
     }
 }
 

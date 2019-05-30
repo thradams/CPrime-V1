@@ -59,7 +59,7 @@ void TProgram_PrintCodeToString(TProgram * pProgram,
 void TTypeName_CodePrint(TProgram * program, PrintCodeOptions * options, TTypeName * p, StrBuilder * fp);
 
 
-bool IsSuffix(const char * s, const char * suffix);
+
 void TSpecifierQualifierList_CodePrint(TProgram * program,
                                        PrintCodeOptions * options,
                                        TSpecifierQualifierList * pDeclarationSpecifiers,

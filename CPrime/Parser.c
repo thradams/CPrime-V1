@@ -20,16 +20,16 @@ else {\
       (pList)->pTail = (pItem); \
   }
 
-void Declarator(Parser* ctx, bool bAbstract, TDeclarator** ppTDeclarator2);
+void Declarator(Parser * ctx, bool bAbstract, TDeclarator ** ppTDeclarator2);
 
 
-Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt);
-Tokens Parser_MatchToken(Parser* parser,
+Tokens Parser_Match(Parser * parser, TScannerItemList * listOpt);
+Tokens Parser_MatchToken(Parser * parser,
     Tokens tk,
-    TScannerItemList* listOpt);
-bool TTypeSpecifier_IsFirst(Parser* ctx, Tokens token, const char* lexeme);
+    TScannerItemList * listOpt);
+bool TTypeSpecifier_IsFirst(Parser * ctx, Tokens token, const char * lexeme);
 //static bool Is_Type_QualifierFirst(Tokens token);
-void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQualifierList);
+void Specifier_Qualifier_List(Parser * ctx, TSpecifierQualifierList * pSpecifierQualifierList);
 static bool TTypeQualifier_IsFirst(Tokens token);
 
 
@@ -65,16 +65,17 @@ static bool IsPreprocessorTokenPhase(Tokens token)
 
 
 
-bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
+bool Declaration(Parser * ctx, TAnyDeclaration ** ppDeclaration);
 
-int IsTypeName(Parser* ctx, Tokens token, const char* lexeme);
+int IsTypeName(Parser * ctx, Tokens token, const char * lexeme);
 
 
 
-bool Parser_InitString(Parser* parser,
-    const char* name,
-    const char* Text)
+bool Parser_InitString(Parser * parser,
+    const char * name,
+    const char * Text)
 {
+    parser->ParserOptions.bNoImplicitTag = false;
     TScannerItemList_Init(&parser->ClueList);
     parser->IncludeLevel = 0;
     ///////
@@ -100,10 +101,10 @@ bool Parser_InitString(Parser* parser,
     return true;
 }
 
-bool Parser_InitFile(Parser* parser, const char* fileName)
+bool Parser_InitFile(Parser * parser, const char * fileName)
 {
 
-
+    parser->ParserOptions.bNoImplicitTag = false;
     parser->IncludeLevel = 0;
     parser->bPreprocessorEvalFlag = false;
     TScannerItemList_Init(&parser->ClueList);
@@ -133,7 +134,7 @@ bool Parser_InitFile(Parser* parser, const char* fileName)
     return true;
 }
 
-void Parser_PushFile(Parser* parser, const char* fileName)
+void Parser_PushFile(Parser * parser, const char * fileName)
 {
     Scanner_IncludeFile(&parser->Scanner, fileName, FileIncludeTypeFullPath, false);
 
@@ -149,7 +150,7 @@ void Parser_PushFile(Parser* parser, const char* fileName)
 
 
 
-void Parser_Destroy(Parser* parser)
+void Parser_Destroy(Parser * parser)
 {
     TScannerItemList_Destroy(&parser->ClueList);
 
@@ -160,7 +161,7 @@ void Parser_Destroy(Parser* parser)
     Scanner_Destroy(&parser->Scanner);
 }
 
-static const char* GetName()
+static const char * GetName()
 {
     static char buffer[2];
     buffer[0] = '\0';
@@ -173,12 +174,12 @@ static const char* GetName()
     return buffer;
 }
 
-bool Parser_HasError(Parser* pParser)
+bool Parser_HasError(Parser * pParser)
 {
     return pParser->bError || pParser->Scanner.bError;
 }
 
-void SetWarning(Parser* parser, const char* fmt, ...)
+void SetWarning(Parser * parser, const char * fmt, ...)
 {
     StrBuilder warningMessage = STRBUILDER_INIT;
     Scanner_GetFilePositionString(&parser->Scanner, &warningMessage);
@@ -192,7 +193,7 @@ void SetWarning(Parser* parser, const char* fmt, ...)
     StrBuilder_Destroy(&warningMessage);
 }
 
-void SetError(Parser* parser, const char* fmt, ...)
+void SetError(Parser * parser, const char * fmt, ...)
 {
     //    //assert(false);
     if (!Parser_HasError(parser))
@@ -213,7 +214,7 @@ void SetError(Parser* parser, const char* fmt, ...)
 }
 
 
-int GetCurrentLine(Parser* parser)
+int GetCurrentLine(Parser * parser)
 {
     if (Parser_HasError(parser))
     {
@@ -223,7 +224,7 @@ int GetCurrentLine(Parser* parser)
     return Scanner_LineAt(&parser->Scanner, 0);
 }
 
-int GetFileIndex(Parser* parser)
+int GetFileIndex(Parser * parser)
 {
     if (Parser_HasError(parser))
     {
@@ -233,14 +234,14 @@ int GetFileIndex(Parser* parser)
     return Scanner_FileIndexAt(&parser->Scanner, 0);
 }
 
-static void GetPosition(Parser* ctx, TPosition* pPosition)
+static void GetPosition(Parser * ctx, TPosition * pPosition)
 {
     pPosition->Line = GetCurrentLine(ctx);
     pPosition->FileIndex = GetFileIndex(ctx);
     ////assert(pPosition->FileIndex >= 0);
 }
 
-Tokens Parser_LookAheadToken(Parser* parser)
+Tokens Parser_LookAheadToken(Parser * parser)
 {
     Tokens token = TK_ERROR;
 
@@ -261,14 +262,14 @@ Tokens Parser_LookAheadToken(Parser* parser)
 }
 
 
-const char* Parser_LookAheadLexeme(Parser* parser)
+const char * Parser_LookAheadLexeme(Parser * parser)
 {
     if (Parser_HasError(parser))
     {
         return "";
     }
 
-    const char* lexeme = NULL;
+    const char * lexeme = NULL;
 
     if (!Parser_HasError(parser))
     {
@@ -288,7 +289,7 @@ const char* Parser_LookAheadLexeme(Parser* parser)
 }
 
 
-Tokens Parser_CurrentToken(Parser* parser)
+Tokens Parser_CurrentToken(Parser * parser)
 {
     if (Parser_HasError(parser))
     {
@@ -304,7 +305,7 @@ Tokens Parser_CurrentToken(Parser* parser)
     return token;
 }
 
-Tokens Parser_MatchEx(Parser* parser, TScannerItemList* listOpt, bool bKeepComment)
+Tokens Parser_MatchEx(Parser * parser, TScannerItemList * listOpt, bool bKeepComment)
 {
     ////assert(listOpt != NULL);
     Tokens token = TK_EOF;
@@ -325,7 +326,7 @@ Tokens Parser_MatchEx(Parser* parser, TScannerItemList* listOpt, bool bKeepComme
                 IsPreprocessorTokenPhase(token)))
         {
             //so adiciona os espacos no cara atual
-            struct ScannerItem* pNew = ScannerItem_Create();
+            struct ScannerItem * pNew = ScannerItem_Create();
             LocalStrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
             pNew->token = Scanner_TokenAt(&parser->Scanner, 0);
             TScannerItemList_PushBack(&parser->ClueList, pNew);
@@ -338,14 +339,14 @@ Tokens Parser_MatchEx(Parser* parser, TScannerItemList* listOpt, bool bKeepComme
 
     return token;
 }
-Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt)
+Tokens Parser_Match(Parser * parser, TScannerItemList * listOpt)
 {
     return Parser_MatchEx(parser, listOpt, true);
 }
 
-Tokens Parser_MatchToken(Parser* parser,
+Tokens Parser_MatchToken(Parser * parser,
     Tokens tk,
-    TScannerItemList* listOpt)
+    TScannerItemList * listOpt)
 {
     if (Parser_HasError(parser))
     {
@@ -364,9 +365,9 @@ Tokens Parser_MatchToken(Parser* parser,
     return Parser_CurrentToken(parser);
 }
 
-const char* GetCompletationMessage(Parser* parser)
+const char * GetCompletationMessage(Parser * parser)
 {
-    const char* pMessage = "ok";
+    const char * pMessage = "ok";
 
     if (Parser_HasError(parser))
     {
@@ -384,7 +385,7 @@ const char* GetCompletationMessage(Parser* parser)
     return pMessage;
 }
 
-const char* Lexeme(Parser* parser)
+const char * Lexeme(Parser * parser)
 {
     if (Parser_HasError(parser))
     {
@@ -395,7 +396,7 @@ const char* Lexeme(Parser* parser)
     return Scanner_LexemeAt(&parser->Scanner, 0);
 }
 
-bool ErrorOrEof(Parser* parser)
+bool ErrorOrEof(Parser * parser)
 {
     return Parser_HasError(parser) ||
         Parser_CurrentToken(parser) == TK_EOF;
@@ -405,12 +406,12 @@ bool ErrorOrEof(Parser* parser)
 //////////////////////////////////////////////////////////////
 
 
-void Expression0(Parser* ctx, TExpression**);
-void CastExpression(Parser* ctx, TExpression**);
-void GenericSelection(Parser* ctx);
-void ArgumentExpressionList(Parser* ctx, TExpression**);
-void AssignmentExpression(Parser* ctx, TExpression**);
-void Initializer_List(Parser* ctx, TInitializerList* pInitializerList);
+void Expression0(Parser * ctx, TExpression **);
+void CastExpression(Parser * ctx, TExpression **);
+void GenericSelection(Parser * ctx);
+void ArgumentExpressionList(Parser * ctx, TExpression **);
+void AssignmentExpression(Parser * ctx, TExpression **);
+void Initializer_List(Parser * ctx, TInitializerList * pInitializerList);
 
 
 
@@ -445,21 +446,21 @@ bool IsFirstOfPrimaryExpression(Tokens token)
     return bResult;
 }
 
-void PrimaryExpressionLiteral(Parser* ctx, TExpression** ppPrimaryExpression)
+void PrimaryExpressionLiteral(Parser * ctx, TExpression ** ppPrimaryExpression)
 {
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
-    TPrimaryExpressionLiteral* pPrimaryExpressionLiteral
+    TPrimaryExpressionLiteral * pPrimaryExpressionLiteral
         = TPrimaryExpressionLiteral_Create();
 
-    *ppPrimaryExpression = (TExpression*)pPrimaryExpressionLiteral;
+    *ppPrimaryExpression = (TExpression *)pPrimaryExpressionLiteral;
 
     while (token == TK_STRING_LITERAL)
     {
-        TPrimaryExpressionLiteralItem* pPrimaryExpressionLiteralItem
+        TPrimaryExpressionLiteralItem * pPrimaryExpressionLiteralItem
             = TPrimaryExpressionLiteralItem_Create();
-        const char* lexeme2 = Lexeme(ctx);
+        const char * lexeme2 = Lexeme(ctx);
         PTR_STRING_REPLACE(pPrimaryExpressionLiteralItem->lexeme, lexeme2);
 
         token = Parser_Match(ctx,
@@ -469,11 +470,11 @@ void PrimaryExpressionLiteral(Parser* ctx, TExpression** ppPrimaryExpression)
     }
 }
 
-void Compound_Statement(Parser* ctx, TStatement** ppStatement);
+void Compound_Statement(Parser * ctx, TStatement ** ppStatement);
 
-void Parameter_Type_List(Parser* ctx, TParameterTypeList* pParameterList);
+void Parameter_Type_List(Parser * ctx, TParameterTypeList * pParameterList);
 
-void LambdaExpression(Parser* ctx, TExpression** ppPrimaryExpression)
+void LambdaExpression(Parser * ctx, TExpression ** ppPrimaryExpression)
 {
     //c++
     /*
@@ -518,9 +519,9 @@ void LambdaExpression(Parser* ctx, TExpression** ppPrimaryExpression)
     [] ( parameters opt ) compound-statement
     [] compound-statement
     */
-    TPrimaryExpressionLambda* pPrimaryExpressionLambda = TPrimaryExpressionLambda_Create();
+    TPrimaryExpressionLambda * pPrimaryExpressionLambda = TPrimaryExpressionLambda_Create();
 
-    *ppPrimaryExpression = (TExpression*)pPrimaryExpressionLambda; //out
+    *ppPrimaryExpression = (TExpression *)pPrimaryExpressionLambda; //out
 
     Parser_MatchToken(ctx,
         TK_LEFT_SQUARE_BRACKET,
@@ -554,7 +555,7 @@ void LambdaExpression(Parser* ctx, TExpression** ppPrimaryExpression)
     Compound_Statement(ctx, (TStatement * *)& pPrimaryExpressionLambda->pCompoundStatement);
 }
 
-void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
+void PrimaryExpression(Parser * ctx, TExpression ** ppPrimaryExpression)
 {
     *ppPrimaryExpression = NULL;
 
@@ -571,7 +572,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
     * ppPrimaryExpression = NULL; //out
 
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
     //PreprocessorTokenIndex(ctx);
     //-2 nem eh macro
     //-1 inicio de macro
@@ -611,7 +612,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
             }
         }
 
-        TPrimaryExpressionValue* pPrimaryExpressionValue
+        TPrimaryExpressionValue * pPrimaryExpressionValue
             = TPrimaryExpressionValue_Create();
 
         pPrimaryExpressionValue->token = token;
@@ -620,7 +621,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 
         Parser_Match(ctx,
             &pPrimaryExpressionValue->ClueList0);
-        *ppPrimaryExpression = (TExpression*)pPrimaryExpressionValue;
+        *ppPrimaryExpression = (TExpression *)pPrimaryExpressionValue;
     }
     break;
 
@@ -629,7 +630,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
     case TK_HEX_INTEGER:
     case TK_FLOAT_NUMBER:
     {
-        TPrimaryExpressionValue* pPrimaryExpressionValue
+        TPrimaryExpressionValue * pPrimaryExpressionValue
             = TPrimaryExpressionValue_Create();
 
         pPrimaryExpressionValue->token = token;
@@ -638,19 +639,19 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 
         Parser_Match(ctx,
             &pPrimaryExpressionValue->ClueList0);
-        *ppPrimaryExpression = (TExpression*)pPrimaryExpressionValue;
+        *ppPrimaryExpression = (TExpression *)pPrimaryExpressionValue;
     }
     break;
 
     case TK_LEFT_PARENTHESIS:
     {
-        TPrimaryExpressionValue* pPrimaryExpressionValue
+        TPrimaryExpressionValue * pPrimaryExpressionValue
             = TPrimaryExpressionValue_Create();
 
         Parser_Match(ctx,
             &pPrimaryExpressionValue->ClueList0);
 
-        TExpression* pExpression;
+        TExpression * pExpression;
         Expression0(ctx, &pExpression);
 
         //    //TNodeClueList_MoveToEnd(&pPrimaryExpressionValue->ClueList, &ctx->Scanner.ClueList);
@@ -664,7 +665,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
         pPrimaryExpressionValue->pExpressionOpt = pExpression;
 
 
-        *ppPrimaryExpression = (TExpression*)pPrimaryExpressionValue;
+        *ppPrimaryExpression = (TExpression *)pPrimaryExpressionValue;
     }
     break;
 
@@ -683,7 +684,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 
 }
 
-void GenericSelection(Parser* ctx)
+void GenericSelection(Parser * ctx)
 {
     //_Generic
 
@@ -693,7 +694,7 @@ void GenericSelection(Parser* ctx)
     */
 }
 
-void GenericAssocList(Parser* ctx)
+void GenericAssocList(Parser * ctx)
 {
 
     //type-name default
@@ -705,7 +706,7 @@ void GenericAssocList(Parser* ctx)
     */
 }
 
-void GenericAssociation(Parser* ctx)
+void GenericAssociation(Parser * ctx)
 {
     //type-name default
 
@@ -716,14 +717,14 @@ void GenericAssociation(Parser* ctx)
     */
 }
 
-void TTypeName_Swap(TTypeName* a, TTypeName* b)
+void TTypeName_Swap(TTypeName * a, TTypeName * b)
 {
     TTypeName temp = *a;
     *a = *b;
     *b = temp;
 }
 
-void TTypeName_Init(TTypeName* p) /*@default*/
+void TTypeName_Init(TTypeName * p) /*@default*/
 {
     p->Type = TypeName_ID;
     p->SpecifierQualifierList.pData = NULL;
@@ -734,7 +735,7 @@ void TTypeName_Init(TTypeName* p) /*@default*/
 
 
 
-void TypeName(Parser* ctx, TTypeName* pTypeName)
+void TypeName(Parser * ctx, TTypeName * pTypeName)
 {
     /*
     type-name:
@@ -743,7 +744,7 @@ void TypeName(Parser* ctx, TTypeName* pTypeName)
 
     Specifier_Qualifier_List(ctx, &pTypeName->SpecifierQualifierList);
 
-    TDeclarator* pDeclarator = NULL;
+    TDeclarator * pDeclarator = NULL;
     Declarator(ctx, true, &pDeclarator);
     if (pDeclarator)
     {
@@ -753,7 +754,7 @@ void TypeName(Parser* ctx, TTypeName* pTypeName)
 }
 
 
-static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixExpressionCore)
+static void PostfixExpressionCore(Parser * ctx, TPostfixExpressionCore * pPostfixExpressionCore)
 {
     //ja entra aqui sendo uma  postfix-expression antes
     /*
@@ -869,7 +870,7 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
     case TK_PLUSPLUS:
     case TK_MINUSMINUS:
     {
-        TPostfixExpressionCore* pPostfixExpressionCoreNext =
+        TPostfixExpressionCore * pPostfixExpressionCoreNext =
             TPostfixExpressionCore_Create();
         PostfixExpressionCore(ctx, pPostfixExpressionCoreNext);
 
@@ -888,7 +889,7 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
 
 }
 
-void PostfixExpression(Parser* ctx, TExpression** ppExpression)
+void PostfixExpression(Parser * ctx, TExpression ** ppExpression)
 {
     *ppExpression = NULL;//out
 
@@ -913,14 +914,14 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
 
     if (token == TK_LEFT_PARENTHESIS)
     {
-        const char* lookAheadlexeme = Parser_LookAheadLexeme(ctx);
+        const char * lookAheadlexeme = Parser_LookAheadLexeme(ctx);
         Tokens lookAheadToken = Parser_LookAheadToken(ctx);
 
         if (IsTypeName(ctx, lookAheadToken, lookAheadlexeme))
         {
             // ( type-name ) { initializer-list }
 
-            TPostfixExpressionCore* pTPostfixExpressionCore =
+            TPostfixExpressionCore * pTPostfixExpressionCore =
                 TPostfixExpressionCore_Create();
 
             Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pTPostfixExpressionCore->ClueList0);
@@ -944,13 +945,13 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
                 Parser_Match(ctx, &pTPostfixExpressionCore->ClueList4);
             }
 
-            *ppExpression = (TExpression*)pTPostfixExpressionCore;
+            *ppExpression = (TExpression *)pTPostfixExpressionCore;
         }
 
         else
         {
             //primary-expression
-            TExpression* pPrimaryExpression;
+            TExpression * pPrimaryExpression;
             PrimaryExpression(ctx, &pPrimaryExpression);
             *ppExpression = pPrimaryExpression;
         }
@@ -961,7 +962,7 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
         //assert(IsFirstOfPrimaryExpression(token));
 
         //primary-expression
-        TExpression* pPrimaryExpression;
+        TExpression * pPrimaryExpression;
         PrimaryExpression(ctx, &pPrimaryExpression);
         *ppExpression = pPrimaryExpression;
     }
@@ -972,11 +973,11 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
 
         // //assert(false); //pergunta deve continuar? ta certo?
 
-        TPostfixExpressionCore* pPostfixExpressionCore =
+        TPostfixExpressionCore * pPostfixExpressionCore =
             TPostfixExpressionCore_Create();
         pPostfixExpressionCore->pExpressionLeft = *ppExpression;
         PostfixExpressionCore(ctx, pPostfixExpressionCore);
-        *ppExpression = (TExpression*)pPostfixExpressionCore;
+        *ppExpression = (TExpression *)pPostfixExpressionCore;
     }
     else
     {
@@ -984,20 +985,20 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
         {
         case TK_LEFT_PARENTHESIS:
         {
-            TPostfixExpressionCore* pPostfixExpressionCore =
+            TPostfixExpressionCore * pPostfixExpressionCore =
                 TPostfixExpressionCore_Create();
             pPostfixExpressionCore->pExpressionLeft = *ppExpression;
 
-            String* /*@auto*/ lexemeCopy = NULL;
+            String * /*@auto*/ lexemeCopy = NULL;
 
-            TPrimaryExpressionValue* ppri =
+            TPrimaryExpressionValue * ppri =
                 TExpression_As_TPrimaryExpressionValue(*ppExpression);
             if (ppri)
             {
                 PTR_STRING_REPLACE(lexemeCopy, ppri->lexeme);
             }
             PostfixExpressionCore(ctx, pPostfixExpressionCore);
-            *ppExpression = (TExpression*)pPostfixExpressionCore;
+            *ppExpression = (TExpression *)pPostfixExpressionCore;
 
 
 
@@ -1010,11 +1011,11 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
         case TK_PLUSPLUS:
         case TK_MINUSMINUS:
         {
-            TPostfixExpressionCore* pPostfixExpressionCore =
+            TPostfixExpressionCore * pPostfixExpressionCore =
                 TPostfixExpressionCore_Create();
             pPostfixExpressionCore->pExpressionLeft = *ppExpression;
             PostfixExpressionCore(ctx, pPostfixExpressionCore);
-            *ppExpression = (TExpression*)pPostfixExpressionCore;
+            *ppExpression = (TExpression *)pPostfixExpressionCore;
         }
         break;
         default:
@@ -1026,13 +1027,13 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
 
 }
 
-void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
+void ArgumentExpressionList(Parser * ctx, TExpression ** ppExpression)
 {
     /*(6.5.2) argument-expression-list:
     assignment-expression
     argument-expression-list , assignment-expression
     */
-    TExpression* pAssignmentExpression;
+    TExpression * pAssignmentExpression;
     AssignmentExpression(ctx, &pAssignmentExpression);
     *ppExpression = pAssignmentExpression;
 
@@ -1040,12 +1041,12 @@ void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
 
     if (token == TK_COMMA)
     {
-        TBinaryExpression* pExpr =
+        TBinaryExpression * pExpr =
             TBinaryExpression_Create();
 
         Parser_Match(ctx, &pExpr->ClueList0);// &pAssignmentExpression->ClueList);
 
-        TExpression* pAssignmentExpressionRight;
+        TExpression * pAssignmentExpressionRight;
         AssignmentExpression(ctx, &pAssignmentExpressionRight);
 
 
@@ -1056,14 +1057,14 @@ void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
 
 
 
-        *ppExpression = (TExpression*)pExpr;
+        *ppExpression = (TExpression *)pExpr;
     }
 
     token = Parser_CurrentToken(ctx);
 
     if (token == TK_COMMA)
     {
-        TBinaryExpression* pExpr =
+        TBinaryExpression * pExpr =
             TBinaryExpression_Create();
 
         Parser_Match(ctx, &pExpr->ClueList0);
@@ -1072,11 +1073,11 @@ void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
         pExpr->token = TK_COMMA;
         pExpr->pExpressionLeft = *ppExpression;
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         ArgumentExpressionList(ctx, &pExpressionRight);
         pExpr->pExpressionRight = pExpressionRight;
 
-        *ppExpression = (TExpression*)pExpr;
+        *ppExpression = (TExpression *)pExpr;
     }
 }
 
@@ -1114,7 +1115,7 @@ static bool IsTypeQualifierToken(Tokens token)
     return bResult;
 }
 
-int IsTypeName(Parser* ctx, Tokens token, const char* lexeme)
+int IsTypeName(Parser * ctx, Tokens token, const char * lexeme)
 {
 
     int bResult = false;
@@ -1177,7 +1178,7 @@ int IsTypeName(Parser* ctx, Tokens token, const char* lexeme)
     return bResult;
 }
 
-void UnaryExpression(Parser* ctx, TExpression** ppExpression)
+void UnaryExpression(Parser * ctx, TExpression ** ppExpression)
 {
     *ppExpression = NULL; //out
 
@@ -1196,14 +1197,14 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
 
     Tokens token0 = Parser_CurrentToken(ctx);
     Tokens tokenAhead = Parser_LookAheadToken(ctx);
-    const char* lookAheadlexeme = Parser_LookAheadLexeme(ctx);
+    const char * lookAheadlexeme = Parser_LookAheadLexeme(ctx);
 
     if (IsTypeName(ctx, tokenAhead, lookAheadlexeme))
     {
         //first para postfix-expression
-        TExpression* pPostfixExpression;
+        TExpression * pPostfixExpression;
         PostfixExpression(ctx, &pPostfixExpression);
-        *ppExpression = (TExpression*)(pPostfixExpression);
+        *ppExpression = (TExpression *)(pPostfixExpression);
         return;
     }
 
@@ -1211,9 +1212,9 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
     {
         //primary-expression é first para postfix-expression
 
-        TExpression* pPostfixExpression;
+        TExpression * pPostfixExpression;
         PostfixExpression(ctx, &pPostfixExpression);
-        *ppExpression = (TExpression*)(pPostfixExpression);
+        *ppExpression = (TExpression *)(pPostfixExpression);
         return;
     }
 
@@ -1222,18 +1223,18 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
     case TK_PLUSPLUS:
     case TK_MINUSMINUS:
     {
-        TUnaryExpressionOperator* pUnaryExpressionOperator =
+        TUnaryExpressionOperator * pUnaryExpressionOperator =
             TUnaryExpressionOperator_Create();
 
         Parser_Match(ctx, &pUnaryExpressionOperator->ClueList0);
 
-        TExpression* pUnaryExpression;
+        TExpression * pUnaryExpression;
         UnaryExpression(ctx, &pUnaryExpression);
 
 
         pUnaryExpressionOperator->token = token0;
         pUnaryExpressionOperator->pExpressionRight = pUnaryExpression;
-        *ppExpression = (TExpression*)pUnaryExpressionOperator;
+        *ppExpression = (TExpression *)pUnaryExpressionOperator;
     }
     break;
 
@@ -1245,16 +1246,16 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
     case TK_TILDE:
     case TK_EXCLAMATION_MARK:
     {
-        TUnaryExpressionOperator* pUnaryExpressionOperator =
+        TUnaryExpressionOperator * pUnaryExpressionOperator =
             TUnaryExpressionOperator_Create();
 
         Parser_Match(ctx, &pUnaryExpressionOperator->ClueList0);
-        TExpression* pCastExpression;
+        TExpression * pCastExpression;
         CastExpression(ctx, &pCastExpression);
 
         pUnaryExpressionOperator->token = token0;
         pUnaryExpressionOperator->pExpressionRight = pCastExpression;
-        *ppExpression = (TExpression*)pUnaryExpressionOperator;
+        *ppExpression = (TExpression *)pUnaryExpressionOperator;
 
     }
     break;
@@ -1263,9 +1264,9 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
 
     case TK_SIZEOF:
     {
-        TUnaryExpressionOperator* pUnaryExpressionOperator =
+        TUnaryExpressionOperator * pUnaryExpressionOperator =
             TUnaryExpressionOperator_Create();
-        *ppExpression = (TExpression*)pUnaryExpressionOperator;
+        *ppExpression = (TExpression *)pUnaryExpressionOperator;
 
         pUnaryExpressionOperator->token = token0;
 
@@ -1273,7 +1274,7 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
 
         if (Parser_CurrentToken(ctx) == TK_LEFT_PARENTHESIS)
         {
-            const char* lookAheadlexeme = Parser_LookAheadLexeme(ctx);
+            const char * lookAheadlexeme = Parser_LookAheadLexeme(ctx);
             Tokens lookAheadToken = Parser_LookAheadToken(ctx);
 
             if (IsTypeName(ctx, lookAheadToken, lookAheadlexeme))
@@ -1286,7 +1287,7 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
             else
             {
                 //sizeof unary-expression
-                TExpression* pTUnaryExpression;
+                TExpression * pTUnaryExpression;
                 UnaryExpression(ctx, &pTUnaryExpression);
                 pUnaryExpressionOperator->pExpressionRight = pTUnaryExpression;
             }
@@ -1294,7 +1295,7 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
         else
         {
             //sizeof do tipo desta expressao
-            TExpression* pTUnaryExpression;
+            TExpression * pTUnaryExpression;
             UnaryExpression(ctx, &pTUnaryExpression);
             pUnaryExpressionOperator->pExpressionRight = pTUnaryExpression;
         }
@@ -1317,7 +1318,7 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
 
 }
 
-void CastExpression(Parser* ctx, TExpression** ppExpression)
+void CastExpression(Parser * ctx, TExpression ** ppExpression)
 {
     *ppExpression = NULL; //out
 
@@ -1331,7 +1332,7 @@ void CastExpression(Parser* ctx, TExpression** ppExpression)
 
     if (token == TK_LEFT_PARENTHESIS)
     {
-        const char* lookAheadlexeme = Parser_LookAheadLexeme(ctx);
+        const char * lookAheadlexeme = Parser_LookAheadLexeme(ctx);
         Tokens lookAheadToken = Parser_LookAheadToken(ctx);
 
         if (IsTypeName(ctx, lookAheadToken, lookAheadlexeme))
@@ -1360,7 +1361,7 @@ void CastExpression(Parser* ctx, TExpression** ppExpression)
 
                 Parser_MatchToken(ctx, TK_LEFT_CURLY_BRACKET, NULL);
 
-                TPostfixExpressionCore* pTPostfixExpressionCore =
+                TPostfixExpressionCore * pTPostfixExpressionCore =
                     TPostfixExpressionCore_Create();
                 pTPostfixExpressionCore->pTypeName = TTypeName_Create();
                 TTypeName_Swap(pTPostfixExpressionCore->pTypeName, &typeName);
@@ -1376,23 +1377,23 @@ void CastExpression(Parser* ctx, TExpression** ppExpression)
                     Parser_Match(ctx, NULL);
                 }
                 Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET, NULL);
-                *ppExpression = (TExpression*)pTPostfixExpressionCore;
+                *ppExpression = (TExpression *)pTPostfixExpressionCore;
                 //PostfixExpressionCore(ctx, pTPostfixExpressionCore);
             }
             else
             {
-                TCastExpressionType* pCastExpressionType =
+                TCastExpressionType * pCastExpressionType =
                     TCastExpressionType_Create();
 
                 TScannerItemList_Swap(&tempList0, &pCastExpressionType->ClueList0);
                 TScannerItemList_Swap(&tempList1, &pCastExpressionType->ClueList1);
 
-                TExpression* pCastExpression;
+                TExpression * pCastExpression;
                 CastExpression(ctx, &pCastExpression);
 
                 TTypeName_Swap(&pCastExpressionType->TypeName, &typeName);
                 pCastExpressionType->pExpression = pCastExpression;
-                *ppExpression = (TExpression*)pCastExpressionType;
+                *ppExpression = (TExpression *)pCastExpressionType;
 
             }
 
@@ -1402,14 +1403,14 @@ void CastExpression(Parser* ctx, TExpression** ppExpression)
         }
         else
         {
-            TExpression* pUnaryExpression;
+            TExpression * pUnaryExpression;
             UnaryExpression(ctx, &pUnaryExpression);
             *ppExpression = pUnaryExpression;
         }
     }
     else
     {
-        TExpression* pUnaryExpression;
+        TExpression * pUnaryExpression;
         UnaryExpression(ctx, &pUnaryExpression);
 
         *ppExpression = pUnaryExpression;
@@ -1417,7 +1418,7 @@ void CastExpression(Parser* ctx, TExpression** ppExpression)
 }
 
 
-void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
+void MultiplicativeExpression(Parser * ctx, TExpression ** ppExpression)
 {
 
 
@@ -1429,7 +1430,7 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
     multiplicative-expression % cast-expression
     */
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     CastExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -1442,7 +1443,7 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
     case TK_SOLIDUS:
     case TK_ASTERISK:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
 
         GetPosition(ctx, &pBinaryExpression->Position);
         pBinaryExpression->token = token;
@@ -1450,10 +1451,10 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         CastExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1469,7 +1470,7 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
     case TK_SOLIDUS:
     case TK_ASTERISK:
     {
-        TBinaryExpression* pBinaryExpression =
+        TBinaryExpression * pBinaryExpression =
             TBinaryExpression_Create();
 
         pBinaryExpression->token = token;
@@ -1479,10 +1480,10 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         MultiplicativeExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1491,7 +1492,7 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
     }
 }
 
-void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
+void AdditiveExpression(Parser * ctx, TExpression ** ppExpression)
 {
 
     /*
@@ -1501,7 +1502,7 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
     additive-expression - multiplicative-expression
     */
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     MultiplicativeExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -1513,7 +1514,7 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
     case TK_PLUS_SIGN:
     case TK_HYPHEN_MINUS:
     {
-        TBinaryExpression* pBinaryExpression =
+        TBinaryExpression * pBinaryExpression =
             TBinaryExpression_Create();
         GetPosition(ctx, &pBinaryExpression->Position);
         pBinaryExpression->token = token;
@@ -1522,10 +1523,10 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         MultiplicativeExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1540,7 +1541,7 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
     case TK_PLUS_SIGN:
     case TK_HYPHEN_MINUS:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1548,10 +1549,10 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         AdditiveExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1561,7 +1562,7 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
 
 }
 
-void ShiftExpression(Parser* ctx, TExpression** ppExpression)
+void ShiftExpression(Parser * ctx, TExpression ** ppExpression)
 {
 
     /*(6.5.7) shift-expression:
@@ -1571,7 +1572,7 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
     */
 
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     AdditiveExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -1583,7 +1584,7 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
     case TK_GREATERGREATER:
     case TK_LESSLESS:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1591,10 +1592,10 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         AdditiveExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1609,7 +1610,7 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
     case TK_GREATERGREATER:
     case TK_LESSLESS:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1617,10 +1618,10 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         ShiftExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1629,7 +1630,7 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
     }
 }
 
-void RelationalExpression(Parser* ctx, TExpression** ppExpression)
+void RelationalExpression(Parser * ctx, TExpression ** ppExpression)
 {
     /*
     (6.5.8) relational-expression:
@@ -1640,7 +1641,7 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
     relational-expression >= shift-expression
     */
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     ShiftExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -1654,7 +1655,7 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
     case TK_GREATEREQUAL:
     case TK_LESSEQUAL:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1662,10 +1663,10 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         ShiftExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1682,7 +1683,7 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
     case TK_GREATEREQUAL:
     case TK_LESSEQUAL:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1690,10 +1691,10 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         RelationalExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1703,7 +1704,7 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
 
 }
 
-void EqualityExpression(Parser* ctx, TExpression** ppExpression)
+void EqualityExpression(Parser * ctx, TExpression ** ppExpression)
 {
     /*(6.5.9) equality-expression:
     relational-expression
@@ -1711,7 +1712,7 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
     equality-expression != relational-expression
     */
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     RelationalExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -1723,7 +1724,7 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
     case TK_EQUALEQUAL:
     case TK_NOTEQUAL:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1731,10 +1732,10 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         RelationalExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1749,7 +1750,7 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
     case TK_EQUALEQUAL:
     case TK_NOTEQUAL:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1757,10 +1758,10 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         EqualityExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1769,14 +1770,14 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
     }
 }
 
-void AndExpression(Parser* ctx, TExpression** ppExpression)
+void AndExpression(Parser * ctx, TExpression ** ppExpression)
 {
     /*(6.5.10) AND-expression:
     equality-expression
     AND-expression & equality-expression
     */
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     EqualityExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -1787,7 +1788,7 @@ void AndExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_AMPERSAND:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1795,10 +1796,10 @@ void AndExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         EqualityExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1812,7 +1813,7 @@ void AndExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_AMPERSAND:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1820,10 +1821,10 @@ void AndExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         AndExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1832,7 +1833,7 @@ void AndExpression(Parser* ctx, TExpression** ppExpression)
     }
 }
 
-void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
+void ExclusiveOrExpression(Parser * ctx, TExpression ** ppExpression)
 {
     /*
     (6.5.11) exclusive-OR-expression:
@@ -1840,7 +1841,7 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
     exclusive-OR-expression ^ AND-expression
     */
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     AndExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -1851,7 +1852,7 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_CIRCUMFLEX_ACCENT:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1859,10 +1860,10 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         AndExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1876,7 +1877,7 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_CIRCUMFLEX_ACCENT:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1885,10 +1886,10 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         ExclusiveOrExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1898,7 +1899,7 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
 
 }
 
-void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
+void InclusiveOrExpression(Parser * ctx, TExpression ** ppExpression)
 {
 
     /*
@@ -1907,7 +1908,7 @@ void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
     inclusive-OR-expression | exclusive-OR-expression
     */
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     ExclusiveOrExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -1918,7 +1919,7 @@ void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_VERTICAL_LINE:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1926,10 +1927,10 @@ void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         ExclusiveOrExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1943,7 +1944,7 @@ void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_VERTICAL_LINE:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1951,10 +1952,10 @@ void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         InclusiveOrExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -1963,7 +1964,7 @@ void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
     }
 }
 
-void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
+void LogicalAndExpression(Parser * ctx, TExpression ** ppExpression)
 {
 
     /*
@@ -1972,7 +1973,7 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
     logical-AND-expression && inclusive-OR-expression
     */
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     InclusiveOrExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -1983,7 +1984,7 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_ANDAND:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -1992,10 +1993,10 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         InclusiveOrExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -2009,7 +2010,7 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_ANDAND:
     {
-        TBinaryExpression* pBinaryExpression =
+        TBinaryExpression * pBinaryExpression =
             TBinaryExpression_Create();
 
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -2019,10 +2020,10 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         LogicalAndExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -2031,7 +2032,7 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
     }
 }
 
-void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
+void LogicalOrExpression(Parser * ctx, TExpression ** ppExpression)
 {
     /*(6.5.14) logical-OR-expression:
     logical-AND-expression
@@ -2039,7 +2040,7 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
     */
 
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     LogicalAndExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -2050,7 +2051,7 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_OROR:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         GetPosition(ctx, &pBinaryExpression->Position);
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
@@ -2058,10 +2059,10 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         LogicalAndExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -2075,7 +2076,7 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_OROR:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         GetPosition(ctx, &pBinaryExpression->Position);
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
@@ -2083,10 +2084,10 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         LogicalOrExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
@@ -2096,29 +2097,29 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
 }
 
 
-void ConditionalExpression(Parser* ctx, TExpression** ppExpression)
+void ConditionalExpression(Parser * ctx, TExpression ** ppExpression)
 {
     /*(6.5.15) conditional-expression:
     logical-OR-expression
     logical-OR-expression ? expression : conditional-expression
     */
-    TExpression* pLogicalOrExpressionLeft;
+    TExpression * pLogicalOrExpressionLeft;
     LogicalOrExpression(ctx, &pLogicalOrExpressionLeft);
     *ppExpression = pLogicalOrExpressionLeft;
 
     if (Parser_CurrentToken(ctx) == TK_QUESTION_MARK)
     {
-        TTernaryExpression* pTernaryExpression =
+        TTernaryExpression * pTernaryExpression =
             TTernaryExpression_Create();
 
         Parser_Match(ctx, &pTernaryExpression->ClueList0);
 
-        TExpression* pTExpression;
+        TExpression * pTExpression;
         Expression0(ctx, &pTExpression);
 
         Parser_MatchToken(ctx, TK_COLON, &pTernaryExpression->ClueList1);
 
-        TExpression* pConditionalExpressionRight;
+        TExpression * pConditionalExpressionRight;
         ConditionalExpression(ctx, &pConditionalExpressionRight);
 
 
@@ -2126,13 +2127,13 @@ void ConditionalExpression(Parser* ctx, TExpression** ppExpression)
         pTernaryExpression->pExpressionLeft = pLogicalOrExpressionLeft;
         pTernaryExpression->pExpressionMiddle = pTExpression;
         pTernaryExpression->pExpressionRight = pConditionalExpressionRight;
-        *ppExpression = (TExpression*)pTernaryExpression;
+        *ppExpression = (TExpression *)pTernaryExpression;
     }
 
 
 }
 
-void AssignmentExpression(Parser* ctx, TExpression** ppExpression)
+void AssignmentExpression(Parser * ctx, TExpression ** ppExpression)
 {
     /*(6.5.16) assignment-expression:
     conditional-expression
@@ -2147,7 +2148,7 @@ void AssignmentExpression(Parser* ctx, TExpression** ppExpression)
     //unary-expression
     //Mas a conditional-expression faz tambem a
     //unary-expression
-    TExpression* pConditionalExpressionLeft;
+    TExpression * pConditionalExpressionLeft;
     ConditionalExpression(ctx, &pConditionalExpressionLeft);
     *ppExpression = pConditionalExpressionLeft;
 
@@ -2168,7 +2169,7 @@ void AssignmentExpression(Parser* ctx, TExpression** ppExpression)
     case TK_CARETEQUAL:
     case TK_OREQUAL:
     {
-        TBinaryExpression* pBinaryExpression =
+        TBinaryExpression * pBinaryExpression =
             TBinaryExpression_Create();
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
@@ -2176,7 +2177,7 @@ void AssignmentExpression(Parser* ctx, TExpression** ppExpression)
         //Significa que o anterior deve ser do tipo  unary-expression
         //embora tenhamos feito o parser de conditional-expression
         //se nao for é erro.
-        TExpression* pAssignmentExpressionRight;
+        TExpression * pAssignmentExpressionRight;
         AssignmentExpression(ctx, &pAssignmentExpressionRight);
 
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -2184,7 +2185,7 @@ void AssignmentExpression(Parser* ctx, TExpression** ppExpression)
         pBinaryExpression->pExpressionLeft = *ppExpression;
         pBinaryExpression->pExpressionRight = pAssignmentExpressionRight;
         pBinaryExpression->token = token;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
 
@@ -2194,7 +2195,7 @@ void AssignmentExpression(Parser* ctx, TExpression** ppExpression)
     }
 }
 
-void Expression0(Parser* ctx, TExpression** ppExpression)
+void Expression0(Parser * ctx, TExpression ** ppExpression)
 {
     *ppExpression = NULL; //out
                           /*
@@ -2202,7 +2203,7 @@ void Expression0(Parser* ctx, TExpression** ppExpression)
                           assignment-expression
                           expression , assignment-expression
                           */
-    TExpression* pAssignmentExpressionLeft;
+    TExpression * pAssignmentExpressionLeft;
     AssignmentExpression(ctx, &pAssignmentExpressionLeft);
     *ppExpression = pAssignmentExpressionLeft;
 
@@ -2210,22 +2211,22 @@ void Expression0(Parser* ctx, TExpression** ppExpression)
 
     if (token == TK_COMMA)
     {
-        TExpression* pAssignmentExpressionRight;
+        TExpression * pAssignmentExpressionRight;
         Parser_Match(ctx, NULL);
         Expression0(ctx, &pAssignmentExpressionRight);
 
-        TBinaryExpression* pBinaryExpression =
+        TBinaryExpression * pBinaryExpression =
             TBinaryExpression_Create();
         GetPosition(ctx, &pBinaryExpression->Position);
         pBinaryExpression->pExpressionLeft = *ppExpression;
         pBinaryExpression->pExpressionRight = pAssignmentExpressionRight;
         pBinaryExpression->token = TK_COMMA;
 
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
 }
 
-void ConstantExpression(Parser* ctx, TExpression** ppExpression)
+void ConstantExpression(Parser * ctx, TExpression ** ppExpression)
 {
     *ppExpression = NULL; //out
 
@@ -2240,36 +2241,36 @@ void ConstantExpression(Parser* ctx, TExpression** ppExpression)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-void Designator(Parser* ctx, TDesignator* pDesignator);
-void Designator_List(Parser* ctx, TDesignatorList* pDesignatorList);
-void Designation(Parser* ctx, TDesignatorList* pDesignatorList);
-void Initializer_List(Parser* ctx, TInitializerList* pInitializerList);
+void Designator(Parser * ctx, TDesignator * pDesignator);
+void Designator_List(Parser * ctx, TDesignatorList * pDesignatorList);
+void Designation(Parser * ctx, TDesignatorList * pDesignatorList);
+void Initializer_List(Parser * ctx, TInitializerList * pInitializerList);
 //void Assignment_Expression(Parser* ctx, TExpressionStatement* pExpressionStatement, Tokens endToken1, Tokens endToken2);
-bool Statement(Parser* ctx, TStatement** ppStatement);
+bool Statement(Parser * ctx, TStatement ** ppStatement);
 //void Constant_Expression(Parser* ctx, Tokens endToken1, Tokens endToken2, ScannerItemStack* outStack);
-void Compound_Statement(Parser* ctx, TStatement** ppStatement);
+void Compound_Statement(Parser * ctx, TStatement ** ppStatement);
 //void Expression(Parser* ctx, TExpression** pExpression, Tokens endToken1, Tokens endToken2);
-void Parameter_Declaration(Parser* ctx, TParameter* pParameterDeclaration);
-bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
-void Type_Qualifier_List(Parser* ctx, TTypeQualifierList* pQualifiers);
-void Declaration_Specifiers(Parser* ctx, TDeclarationSpecifiers* pDeclarationSpecifiers);
+void Parameter_Declaration(Parser * ctx, TParameter * pParameterDeclaration);
+bool Declaration(Parser * ctx, TAnyDeclaration ** ppDeclaration);
+void Type_Qualifier_List(Parser * ctx, TTypeQualifierList * pQualifiers);
+void Declaration_Specifiers(Parser * ctx, TDeclarationSpecifiers * pDeclarationSpecifiers);
 
-void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier);
-bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier);
-void Initializer(Parser* ctx,
-    TInitializer** ppInitializer,
+void Type_Specifier(Parser * ctx, TTypeSpecifier ** ppTypeSpecifier);
+bool Type_Qualifier(Parser * ctx, TTypeQualifier * pQualifier);
+void Initializer(Parser * ctx,
+    TInitializer ** ppInitializer,
     Tokens endToken1,
     Tokens endToken2);
 
 
-void Expression_Statement(Parser* ctx, TStatement** ppStatement)
+void Expression_Statement(Parser * ctx, TStatement ** ppStatement)
 {
     /*
     expression-statement:
     expressionopt;
     */
-    TExpressionStatement* pExpression = TExpressionStatement_Create();
-    *ppStatement = (TStatement*)pExpression;
+    TExpressionStatement * pExpression = TExpressionStatement_Create();
+    *ppStatement = (TStatement *)pExpression;
     Tokens token = Parser_CurrentToken(ctx);
 
     if (token != TK_SEMICOLON)
@@ -2280,7 +2281,7 @@ void Expression_Statement(Parser* ctx, TStatement** ppStatement)
     Parser_MatchToken(ctx, TK_SEMICOLON, &pExpression->ClueList0);
 }
 
-void Selection_Statement(Parser* ctx, TStatement** ppStatement)
+void Selection_Statement(Parser * ctx, TStatement ** ppStatement)
 {
     /*
     selection-statement:
@@ -2294,8 +2295,8 @@ void Selection_Statement(Parser* ctx, TStatement** ppStatement)
     {
     case TK_IF:
     {
-        TIfStatement* pIfStatement = TIfStatement_Create();
-        *ppStatement = (TStatement*)pIfStatement;
+        TIfStatement * pIfStatement = TIfStatement_Create();
+        *ppStatement = (TStatement *)pIfStatement;
 
         Parser_Match(ctx, &pIfStatement->ClueList0);
 
@@ -2319,8 +2320,8 @@ void Selection_Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_SWITCH:
     {
-        TSwitchStatement* pSelectionStatement = TSwitchStatement_Create();
-        *ppStatement = (TStatement*)pSelectionStatement;
+        TSwitchStatement * pSelectionStatement = TSwitchStatement_Create();
+        *ppStatement = (TStatement *)pSelectionStatement;
 
 
         Parser_Match(ctx, &pSelectionStatement->ClueList0);
@@ -2343,7 +2344,7 @@ void Selection_Statement(Parser* ctx, TStatement** ppStatement)
     }
 }
 
-void Jump_Statement(Parser* ctx, TStatement** ppStatement)
+void Jump_Statement(Parser * ctx, TStatement ** ppStatement)
 {
     /*
     jump-statement:
@@ -2359,9 +2360,9 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
     {
     case TK_GOTO:
     {
-        TJumpStatement* pJumpStatement = TJumpStatement_Create();
+        TJumpStatement * pJumpStatement = TJumpStatement_Create();
         pJumpStatement->token = token;
-        *ppStatement = (TStatement*)pJumpStatement;
+        *ppStatement = (TStatement *)pJumpStatement;
 
         Parser_Match(ctx, &pJumpStatement->ClueList0);
         PTR_STRING_REPLACE(pJumpStatement->Identifier, Lexeme(ctx));
@@ -2372,9 +2373,9 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_CONTINUE:
     {
-        TJumpStatement* pJumpStatement = TJumpStatement_Create();
+        TJumpStatement * pJumpStatement = TJumpStatement_Create();
         pJumpStatement->token = token;
-        *ppStatement = (TStatement*)pJumpStatement;
+        *ppStatement = (TStatement *)pJumpStatement;
         Parser_Match(ctx, &pJumpStatement->ClueList0);
 
         Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList2);
@@ -2383,9 +2384,9 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_BREAK:
     {
-        TJumpStatement* pJumpStatement = TJumpStatement_Create();
+        TJumpStatement * pJumpStatement = TJumpStatement_Create();
         pJumpStatement->token = token;
-        *ppStatement = (TStatement*)pJumpStatement;
+        *ppStatement = (TStatement *)pJumpStatement;
 
         Parser_Match(ctx, &pJumpStatement->ClueList0);
         Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList2);
@@ -2394,9 +2395,9 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_RETURN:
     {
-        TJumpStatement* pJumpStatement = TJumpStatement_Create();
+        TJumpStatement * pJumpStatement = TJumpStatement_Create();
         pJumpStatement->token = token;
-        *ppStatement = (TStatement*)pJumpStatement;
+        *ppStatement = (TStatement *)pJumpStatement;
 
         token = Parser_Match(ctx, &pJumpStatement->ClueList0);
 
@@ -2415,7 +2416,7 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
     }
 }
 
-void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
+void Iteration_Statement(Parser * ctx, TStatement ** ppStatement)
 {
     /*
     iteration-statement:
@@ -2430,8 +2431,8 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
     {
     case TK_WHILE:
     {
-        TWhileStatement* pWhileStatement = TWhileStatement_Create();
-        *ppStatement = (TStatement*)pWhileStatement;
+        TWhileStatement * pWhileStatement = TWhileStatement_Create();
+        *ppStatement = (TStatement *)pWhileStatement;
 
         Parser_Match(ctx, &pWhileStatement->ClueList0);
 
@@ -2447,8 +2448,8 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_DO:
     {
-        TDoStatement* pDoStatement = TDoStatement_Create();
-        *ppStatement = (TStatement*)pDoStatement;
+        TDoStatement * pDoStatement = TDoStatement_Create();
+        *ppStatement = (TStatement *)pDoStatement;
 
         Parser_Match(ctx, &pDoStatement->ClueList0); //do
 
@@ -2468,8 +2469,8 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_FOR:
     {
-        TForStatement* pIterationStatement = TForStatement_Create();
-        *ppStatement = (TStatement*)pIterationStatement;
+        TForStatement * pIterationStatement = TForStatement_Create();
+        *ppStatement = (TStatement *)pIterationStatement;
 
         Parser_Match(ctx, &pIterationStatement->ClueList0);
 
@@ -2579,7 +2580,7 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
 }
 
 
-void Labeled_Statement(Parser* ctx, TStatement** ppStatement)
+void Labeled_Statement(Parser * ctx, TStatement ** ppStatement)
 {
     /*
     labeled-statement:
@@ -2587,8 +2588,8 @@ void Labeled_Statement(Parser* ctx, TStatement** ppStatement)
     case constant-expression : statement
     default : statement
     */
-    TLabeledStatement* pLabeledStatement = TLabeledStatement_Create();
-    *ppStatement = (TStatement*)pLabeledStatement;
+    TLabeledStatement * pLabeledStatement = TLabeledStatement_Create();
+    *ppStatement = (TStatement *)pLabeledStatement;
     Tokens token = Parser_CurrentToken(ctx);
     pLabeledStatement->token = token;
 
@@ -2628,14 +2629,14 @@ void Labeled_Statement(Parser* ctx, TStatement** ppStatement)
     }
 }
 
-void Asm_Statement(Parser* ctx, TStatement** ppStatement)
+void Asm_Statement(Parser * ctx, TStatement ** ppStatement)
 {
     /*
     __asm assembly-instruction ;opt
     __asm { assembly-instruction-list };opt
     */
-    TAsmStatement* pAsmStatement = TAsmStatement_Create();
-    *ppStatement = (TStatement*)pAsmStatement;
+    TAsmStatement * pAsmStatement = TAsmStatement_Create();
+    *ppStatement = (TStatement *)pAsmStatement;
     Parser_MatchToken(ctx, TK__ASM, NULL);
     Tokens token = Parser_CurrentToken(ctx);
 
@@ -2705,7 +2706,7 @@ void Asm_Statement(Parser* ctx, TStatement** ppStatement)
     }
 }
 
-bool Statement(Parser* ctx, TStatement** ppStatement)
+bool Statement(Parser * ctx, TStatement ** ppStatement)
 {
     //assert(*ppStatement == NULL);
 
@@ -2716,7 +2717,7 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
 
     bool bResult = false;
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
     switch (token)
     {
@@ -2885,7 +2886,7 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
     return bResult;
 }
 
-void Block_Item(Parser* ctx, TBlockItem** ppBlockItem)
+void Block_Item(Parser * ctx, TBlockItem ** ppBlockItem)
 {
     /*
     block-item:
@@ -2893,11 +2894,11 @@ void Block_Item(Parser* ctx, TBlockItem** ppBlockItem)
     statement
     */
     *ppBlockItem = NULL;
-    TStatement* pStatement = NULL;
+    TStatement * pStatement = NULL;
 
     if (Statement(ctx, &pStatement))
     {
-        *ppBlockItem = (TBlockItem*)pStatement;
+        *ppBlockItem = (TBlockItem *)pStatement;
         //assert(*ppBlockItem != NULL);
     }
 
@@ -2905,21 +2906,21 @@ void Block_Item(Parser* ctx, TBlockItem** ppBlockItem)
     {
 
 
-        TAnyDeclaration* pDeclaration;
+        TAnyDeclaration * pDeclaration;
         Declaration(ctx, &pDeclaration);
-        *ppBlockItem = (TBlockItem*)pDeclaration;
+        *ppBlockItem = (TBlockItem *)pDeclaration;
         //assert(*ppBlockItem != NULL);
     }
 }
 
-void Block_Item_List(Parser* ctx, TBlockItemList* pBlockItemList)
+void Block_Item_List(Parser * ctx, TBlockItemList * pBlockItemList)
 {
     for (; ;)
     {
         if (ErrorOrEof(ctx))
             break;
 
-        TBlockItem* pBlockItem = NULL;
+        TBlockItem * pBlockItem = NULL;
         Block_Item(ctx, &pBlockItem);
         TBlockItemList_PushBack(pBlockItemList, pBlockItem);
         Tokens token = Parser_CurrentToken(ctx);
@@ -2935,14 +2936,14 @@ void Block_Item_List(Parser* ctx, TBlockItemList* pBlockItemList)
     }
 }
 
-void Compound_Statement(Parser* ctx, TStatement** ppStatement)
+void Compound_Statement(Parser * ctx, TStatement ** ppStatement)
 {
     /*
     compound-statement:
     { block-item-listopt }
     */
-    TCompoundStatement* pCompoundStatement = TCompoundStatement_Create();
-    *ppStatement = (TStatement*)pCompoundStatement;
+    TCompoundStatement * pCompoundStatement = TCompoundStatement_Create();
+    *ppStatement = (TStatement *)pCompoundStatement;
 
     struct SymbolMap BlockScope = SYMBOLMAP_INIT;
 
@@ -2966,8 +2967,8 @@ void Compound_Statement(Parser* ctx, TStatement** ppStatement)
     SymbolMap_Destroy(&BlockScope);
 }
 
-void Struct_Or_Union(Parser* ctx,
-    TStructUnionSpecifier* pStructUnionSpecifier)
+void Struct_Or_Union(Parser * ctx,
+    TStructUnionSpecifier * pStructUnionSpecifier)
 {
     /*
     struct-or-union:
@@ -2994,7 +2995,7 @@ void Struct_Or_Union(Parser* ctx,
     }
 }
 
-void Static_Assert_Declaration(Parser* ctx, TStaticAssertDeclaration* pStaticAssertDeclaration)
+void Static_Assert_Declaration(Parser * ctx, TStaticAssertDeclaration * pStaticAssertDeclaration)
 {
     /*
     static_assert-declaration:
@@ -3022,24 +3023,24 @@ void Static_Assert_Declaration(Parser* ctx, TStaticAssertDeclaration* pStaticAss
     }
 }
 
-void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQualifierList)
+void Specifier_Qualifier_List(Parser * ctx, TSpecifierQualifierList * pSpecifierQualifierList)
 {
     /*specifier-qualifier-list:
     type-specifier specifier-qualifier-listopt
     type-qualifier specifier-qualifier-listopt
     */
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
     if (TTypeSpecifier_IsFirst(ctx, token, lexeme))
     {
         if (TSpecifierQualifierList_CanAdd(pSpecifierQualifierList, token, lexeme))
         {
-            TTypeSpecifier* pTypeSpecifier = NULL;
+            TTypeSpecifier * pTypeSpecifier = NULL;
             Type_Specifier(ctx, &pTypeSpecifier);
             if (pTypeSpecifier != NULL)
             {
                 //ATENCAO
-                TSpecifierQualifierList_PushBack(pSpecifierQualifierList, (TSpecifierQualifier*)pTypeSpecifier);
+                TSpecifierQualifierList_PushBack(pSpecifierQualifierList, (TSpecifierQualifier *)pTypeSpecifier);
             }
         }
         else
@@ -3050,7 +3051,7 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
     }
     else if (TTypeQualifier_IsFirst(token))
     {
-        TTypeQualifier* pTypeQualifier = TTypeQualifier_Create();
+        TTypeQualifier * pTypeQualifier = TTypeQualifier_Create();
         Type_Qualifier(ctx, pTypeQualifier);
         TSpecifierQualifierList_PushBack(pSpecifierQualifierList, TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
     }
@@ -3082,9 +3083,9 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
 }
 
 
-void Struct_Declarator(Parser* ctx,
+void Struct_Declarator(Parser * ctx,
 
-    TStructDeclarator** ppTDeclarator2)
+    TStructDeclarator ** ppTDeclarator2)
 {
     /**
     struct-declarator:
@@ -3099,14 +3100,14 @@ void Struct_Declarator(Parser* ctx,
         ////TNodeClueList_MoveToEnd(&ppTDeclarator2->ClueList, &ctx->Scanner.ClueList);
 
         Parser_Match(ctx, NULL);// &ppTDeclarator2->ClueList);
-        TExpression* p = NULL;
+        TExpression * p = NULL;
         ConstantExpression(ctx, &p);
         TExpression_Delete(p);
     }
 
     else
     {
-        TInitDeclarator* pInitDeclarator =
+        TInitDeclarator * pInitDeclarator =
             TInitDeclarator_Create();
 
         *ppTDeclarator2 = pInitDeclarator;
@@ -3121,7 +3122,7 @@ void Struct_Declarator(Parser* ctx,
         {
             Parser_Match(ctx, &pInitDeclarator->ClueList0);
 
-            TExpression* p = NULL;
+            TExpression * p = NULL;
             ConstantExpression(ctx, &p);
             TExpression_Delete(p);
         }
@@ -3141,16 +3142,16 @@ void Struct_Declarator(Parser* ctx,
     }
 }
 
-void Struct_Declarator_List(Parser* ctx,
+void Struct_Declarator_List(Parser * ctx,
 
-    TStructDeclaratorList* pStructDeclarationList)
+    TStructDeclaratorList * pStructDeclarationList)
 {
     /*
     struct-declarator-list:
     struct-declarator
     struct-declarator-list , struct-declarator
     */
-    TStructDeclarator* pTDeclarator2 = NULL;// TDeclarator_Create();
+    TStructDeclarator * pTDeclarator2 = NULL;// TDeclarator_Create();
 
     Struct_Declarator(ctx, &pTDeclarator2);
     TStructDeclaratorList_Add(pStructDeclarationList, pTDeclarator2);
@@ -3192,8 +3193,8 @@ void Struct_Declarator_List(Parser* ctx,
     }
 }
 
-void Struct_Declaration(Parser* ctx,
-    TAnyStructDeclaration** ppStructDeclaration)
+void Struct_Declaration(Parser * ctx,
+    TAnyStructDeclaration ** ppStructDeclaration)
 {
     /**
     struct-declaration:
@@ -3204,8 +3205,8 @@ void Struct_Declaration(Parser* ctx,
 
     if (token != TK__STATIC_ASSERT)
     {
-        TStructDeclaration* pStructDeclarationBase = TStructDeclaration_Create();
-        *ppStructDeclaration = (TAnyStructDeclaration*)pStructDeclarationBase;
+        TStructDeclaration * pStructDeclarationBase = TStructDeclaration_Create();
+        *ppStructDeclaration = (TAnyStructDeclaration *)pStructDeclarationBase;
         Specifier_Qualifier_List(ctx,
             &pStructDeclarationBase->SpecifierQualifierList);
         token = Parser_CurrentToken(ctx);
@@ -3226,14 +3227,14 @@ void Struct_Declaration(Parser* ctx,
 
     else
     {
-        TStaticAssertDeclaration* pStaticAssertDeclaration = TStaticAssertDeclaration_Create();
-        *ppStructDeclaration = (TAnyStructDeclaration*)pStaticAssertDeclaration;
+        TStaticAssertDeclaration * pStaticAssertDeclaration = TStaticAssertDeclaration_Create();
+        *ppStructDeclaration = (TAnyStructDeclaration *)pStaticAssertDeclaration;
         Static_Assert_Declaration(ctx, pStaticAssertDeclaration);
     }
 }
 
-void Struct_Declaration_List(Parser* ctx,
-    TStructDeclarationList* pStructDeclarationList)
+void Struct_Declaration_List(Parser * ctx,
+    TStructDeclarationList * pStructDeclarationList)
 {
     /*
     struct-declaration-list:
@@ -3245,7 +3246,7 @@ void Struct_Declaration_List(Parser* ctx,
         return;
     }
 
-    TAnyStructDeclaration* pStructDeclaration = NULL;
+    TAnyStructDeclaration * pStructDeclaration = NULL;
     Struct_Declaration(ctx, &pStructDeclaration);
     TStructDeclarationList_PushBack(pStructDeclarationList, pStructDeclaration);
 
@@ -3258,7 +3259,7 @@ void Struct_Declaration_List(Parser* ctx,
     }
 }
 
-void UnionSetItem(Parser* ctx, TUnionSet* p)
+void UnionSetItem(Parser * ctx, TUnionSet * p)
 {
     /*
     _union-set-item:
@@ -3267,9 +3268,9 @@ void UnionSetItem(Parser* ctx, TUnionSet* p)
     Identifier
     */
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
-    TUnionSetItem* pItem = TUnionSetItem_Create();
+    TUnionSetItem * pItem = TUnionSetItem_Create();
 
     if (token == TK_IDENTIFIER)
     {
@@ -3292,7 +3293,7 @@ void UnionSetItem(Parser* ctx, TUnionSet* p)
     }
 }
 
-void UnionSetList(Parser* ctx, TUnionSet* p)
+void UnionSetList(Parser * ctx, TUnionSet * p)
 {
     /*
     _union-set-list:
@@ -3311,7 +3312,7 @@ void UnionSetList(Parser* ctx, TUnionSet* p)
     }
 }
 
-void UnionSet(Parser* ctx, TUnionSet* pUnionSet)
+void UnionSet(Parser * ctx, TUnionSet * pUnionSet)
 {
     /*
     _union-set:
@@ -3319,7 +3320,7 @@ void UnionSet(Parser* ctx, TUnionSet* pUnionSet)
     */
 
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
 
     if (token == TK_LESS_THAN_SIGN)
@@ -3336,8 +3337,8 @@ void UnionSet(Parser* ctx, TUnionSet* pUnionSet)
 
 }
 
-void Struct_Or_Union_Specifier(Parser* ctx,
-    TStructUnionSpecifier* pStructUnionSpecifier)
+void Struct_Or_Union_Specifier(Parser * ctx,
+    TStructUnionSpecifier * pStructUnionSpecifier)
 {
     /*
     struct-or-union-specifier:
@@ -3356,7 +3357,7 @@ void Struct_Or_Union_Specifier(Parser* ctx,
 
 
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
 
 
@@ -3380,7 +3381,7 @@ void Struct_Or_Union_Specifier(Parser* ctx,
 
     if (pStructUnionSpecifier->TagName != NULL)
     {
-        SymbolMap_SetAt(ctx->pCurrentScope, pStructUnionSpecifier->TagName, (TTypePointer*)pStructUnionSpecifier);
+        SymbolMap_SetAt(ctx->pCurrentScope, pStructUnionSpecifier->TagName, (TTypePointer *)pStructUnionSpecifier);
     }
 
     token = Parser_CurrentToken(ctx);
@@ -3402,15 +3403,15 @@ void Struct_Or_Union_Specifier(Parser* ctx,
     }
 }
 
-void Enumeration_Constant(Parser* ctx,
-    TEnumerator* pEnumerator2)
+void Enumeration_Constant(Parser * ctx,
+    TEnumerator * pEnumerator2)
 {
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
     PTR_STRING_REPLACE(pEnumerator2->Name, lexeme);
     Parser_MatchToken(ctx, TK_IDENTIFIER, &pEnumerator2->ClueList0);
 }
 
-bool EnumeratorC(Parser* ctx, TEnumerator* pEnumerator2)
+bool EnumeratorC(Parser * ctx, TEnumerator * pEnumerator2)
 {
     /*
     enumerator:
@@ -3433,8 +3434,8 @@ bool EnumeratorC(Parser* ctx, TEnumerator* pEnumerator2)
     return bValueAssigned;
 }
 
-void Enumerator_List(Parser* ctx,
-    TEnumeratorList* pEnumeratorList2)
+void Enumerator_List(Parser * ctx,
+    TEnumeratorList * pEnumeratorList2)
 {
     if (ErrorOrEof(ctx))
     {
@@ -3447,11 +3448,11 @@ void Enumerator_List(Parser* ctx,
     enumerator-list , enumerator
     */
 
-    TEnumerator* pEnumerator2 = TEnumerator_Create();
+    TEnumerator * pEnumerator2 = TEnumerator_Create();
     List_Add(pEnumeratorList2, pEnumerator2);
 
     EnumeratorC(ctx, pEnumerator2);
-    SymbolMap_SetAt(ctx->pCurrentScope, pEnumerator2->Name, (TTypePointer*)pEnumerator2);
+    SymbolMap_SetAt(ctx->pCurrentScope, pEnumerator2->Name, (TTypePointer *)pEnumerator2);
 
     Tokens token = Parser_CurrentToken(ctx);
 
@@ -3469,7 +3470,7 @@ void Enumerator_List(Parser* ctx,
     }
 }
 
-void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
+void Enum_Specifier(Parser * ctx, TEnumSpecifier * pEnumSpecifier2)
 {
     /*
     enum-specifier:
@@ -3484,17 +3485,17 @@ void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
 
     if (token == TK_IDENTIFIER)
     {
-        const char* lexeme = Lexeme(ctx);
+        const char * lexeme = Lexeme(ctx);
         PTR_STRING_REPLACE(pEnumSpecifier2->Name, lexeme);
         Parser_Match(ctx, &pEnumSpecifier2->ClueList1);
 
 
-        SymbolMap_SetAt(ctx->pCurrentScope, pEnumSpecifier2->Name, (TTypePointer*)pEnumSpecifier2);
+        SymbolMap_SetAt(ctx->pCurrentScope, pEnumSpecifier2->Name, (TTypePointer *)pEnumSpecifier2);
     }
 
     else
     {
-        const char* name = GetName();
+        const char * name = GetName();
         PTR_STRING_REPLACE(pEnumSpecifier2->Name, name);
         Parser_Match(ctx, &pEnumSpecifier2->ClueList2);
     }
@@ -3561,8 +3562,8 @@ bool TFunctionSpecifier_IsFirst(Tokens token)
     return bResult;
 }
 
-void Function_Specifier(Parser* ctx,
-    TFunctionSpecifier* pFunctionSpecifier)
+void Function_Specifier(Parser * ctx,
+    TFunctionSpecifier * pFunctionSpecifier)
 {
     /*
     function-specifier:
@@ -3616,9 +3617,9 @@ bool TStorageSpecifier_IsFirst(Tokens token)
     return bResult;
 }
 
-void Storage_Class_Specifier(Parser* ctx,
+void Storage_Class_Specifier(Parser * ctx,
 
-    TStorageSpecifier* pStorageSpecifier)
+    TStorageSpecifier * pStorageSpecifier)
 {
     /*
     storage-class-specifier:
@@ -3649,8 +3650,8 @@ void Storage_Class_Specifier(Parser* ctx,
     }
 }
 
-void Parameter_List(Parser* ctx,
-    TParameterList* pParameterList)
+void Parameter_List(Parser * ctx,
+    TParameterList * pParameterList)
 {
     /*
     parameter-list:
@@ -3659,7 +3660,7 @@ void Parameter_List(Parser* ctx,
     */
     Tokens token = Parser_CurrentToken(ctx);
 
-    TParameter* pParameter = TParameter_Create();
+    TParameter * pParameter = TParameter_Create();
     List_Add(pParameterList, pParameter);
     Parameter_Declaration(ctx, pParameter);
 
@@ -3679,8 +3680,8 @@ void Parameter_List(Parser* ctx,
     }
 }
 
-void Parameter_Declaration(Parser* ctx,
-    TParameter* pParameterDeclaration)
+void Parameter_Declaration(Parser * ctx,
+    TParameter * pParameterDeclaration)
 {
 
     //ctx->pCurrentParameterScope
@@ -3693,7 +3694,7 @@ void Parameter_Declaration(Parser* ctx,
     Declaration_Specifiers(ctx,
         &pParameterDeclaration->Specifiers);
 
-    TDeclarator* pDeclarator = NULL;
+    TDeclarator * pDeclarator = NULL;
     Declarator(ctx, true, &pDeclarator);
     if (pDeclarator)
     {
@@ -3702,8 +3703,8 @@ void Parameter_Declaration(Parser* ctx,
     }
 }
 
-void Parameter_Type_List(Parser* ctx,
-    TParameterTypeList* pParameterList)
+void Parameter_Type_List(Parser * ctx,
+    TParameterTypeList * pParameterList)
 {
     /*
     parameter-type-list:
@@ -3724,7 +3725,7 @@ void Parameter_Type_List(Parser* ctx,
 }
 
 
-void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclarator2)
+void Direct_Declarator(Parser * ctx, bool bAbstract, TDirectDeclarator ** ppDeclarator2)
 {
     *ppDeclarator2 = NULL; //out
 
@@ -3739,7 +3740,7 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
                            direct-declarator ( parameter-type-list )
                            direct-declarator ( identifier-listopt )
                            */
-    TDirectDeclarator* pDirectDeclarator = NULL;
+    TDirectDeclarator * pDirectDeclarator = NULL;
 
     if (ErrorOrEof(ctx))
         return;
@@ -3774,7 +3775,7 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
 
         pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeIdentifier;
 
-        const char* lexeme = Lexeme(ctx);
+        const char * lexeme = Lexeme(ctx);
         PTR_STRING_REPLACE(pDirectDeclarator->Identifier, lexeme);
         pDirectDeclarator->Position.Line = GetCurrentLine(ctx);
         pDirectDeclarator->Position.FileIndex = GetFileIndex(ctx);
@@ -3887,7 +3888,7 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
         }
         else
         {
-            TDirectDeclarator* pDirectDeclaratorNext = TDirectDeclarator_Create();
+            TDirectDeclarator * pDirectDeclaratorNext = TDirectDeclarator_Create();
             pDirectDeclarator->pDirectDeclarator = pDirectDeclaratorNext;
             pDirectDeclarator = pDirectDeclaratorNext;
         }
@@ -3897,14 +3898,14 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
     if (token == TK_LEFT_PARENTHESIS)
     {
         //tem mais
-        TDirectDeclarator* pDirectDeclaratorNext = NULL;
+        TDirectDeclarator * pDirectDeclaratorNext = NULL;
         Direct_Declarator(ctx, bAbstract, &pDirectDeclaratorNext);
         pDirectDeclarator->pDirectDeclarator = pDirectDeclaratorNext;
     }
     else if (!bAbstract && token == TK_IDENTIFIER)
     {
         //tem mais
-        TDirectDeclarator* pDirectDeclaratorNext = NULL;
+        TDirectDeclarator * pDirectDeclaratorNext = NULL;
         Direct_Declarator(ctx, bAbstract, &pDirectDeclaratorNext);
         pDirectDeclarator->pDirectDeclarator = pDirectDeclaratorNext;
     }
@@ -3942,7 +3943,7 @@ static bool TTypeQualifier_IsFirst(Tokens token)
 }
 
 #ifdef LANGUAGE_EXTENSIONS
-void Size_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
+void Size_Qualifier(Parser * ctx, TTypeQualifier * pQualifier)
 {
     Tokens token = Parser_CurrentToken(ctx);
     pQualifier->Token = token;
@@ -3967,7 +3968,7 @@ void Size_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
 #endif
 
 
-bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
+bool Type_Qualifier(Parser * ctx, TTypeQualifier * pQualifier)
 {
     /*
     type-qualifier:
@@ -4023,8 +4024,8 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
     return bResult;
 }
 
-void Type_Qualifier_List(Parser* ctx,
-    TTypeQualifierList* pQualifiers)
+void Type_Qualifier_List(Parser * ctx,
+    TTypeQualifierList * pQualifiers)
 {
     /*
     type-qualifier-list:
@@ -4032,7 +4033,7 @@ void Type_Qualifier_List(Parser* ctx,
     type-qualifier-list type-qualifier
     */
 
-    TTypeQualifier* pTypeQualifier = TTypeQualifier_Create();
+    TTypeQualifier * pTypeQualifier = TTypeQualifier_Create();
     Type_Qualifier(ctx, pTypeQualifier);
     TTypeQualifierList_PushBack(pQualifiers, pTypeQualifier);
 
@@ -4044,7 +4045,7 @@ void Type_Qualifier_List(Parser* ctx,
 }
 
 
-void Pointer(Parser* ctx, TPointerList* pPointerList)
+void Pointer(Parser * ctx, TPointerList * pPointerList)
 {
     /*
     pointer:
@@ -4052,7 +4053,7 @@ void Pointer(Parser* ctx, TPointerList* pPointerList)
     * type-qualifier-listopt pointer
     */
 
-    TPointer* pPointer = TPointer_Create();
+    TPointer * pPointer = TPointer_Create();
 
     Tokens token = Parser_CurrentToken(ctx);
 
@@ -4087,12 +4088,12 @@ void Pointer(Parser* ctx, TPointerList* pPointerList)
 }
 
 //pag 123 C
-void Declarator(Parser* ctx, bool bAbstract, TDeclarator** ppTDeclarator2)
+void Declarator(Parser * ctx, bool bAbstract, TDeclarator ** ppTDeclarator2)
 {
     //assert(*ppTDeclarator2 == NULL);
     *ppTDeclarator2 = NULL; //out
 
-    TDeclarator* pDeclarator = TDeclarator_Create();
+    TDeclarator * pDeclarator = TDeclarator_Create();
     /*
     declarator:
     pointeropt direct-declarator
@@ -4144,7 +4145,7 @@ bool Alignment_Specifier(Parser * ctx,
 }
 
 
-bool TTypeSpecifier_IsFirst(Parser * ctx, Tokens token, const char* lexeme)
+bool TTypeSpecifier_IsFirst(Parser * ctx, Tokens token, const char * lexeme)
 {
     /*
     type-specifier:
@@ -4215,7 +4216,7 @@ void AtomicTypeSpecifier(Parser * ctx,
                    atomic-type-specifier:
                    _Atomic ( type-name )
                    */
-    TAtomicTypeSpecifier* pAtomicTypeSpecifier =
+    TAtomicTypeSpecifier * pAtomicTypeSpecifier =
         TAtomicTypeSpecifier_Create();
 
     *ppTypeSpecifier = TAtomicTypeSpecifier_As_TTypeSpecifier(pAtomicTypeSpecifier);
@@ -4253,7 +4254,7 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
 
     bool bResult = false;
 
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
     Tokens token = Parser_CurrentToken(ctx);
 
     switch (token)
@@ -4278,7 +4279,7 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
     case TK__BOOL:
     case TK__COMPLEX:
     {
-        TSingleTypeSpecifier* pSingleTypeSpecifier =
+        TSingleTypeSpecifier * pSingleTypeSpecifier =
             TSingleTypeSpecifier_Create();
 
         pSingleTypeSpecifier->Token2 = token;
@@ -4286,7 +4287,7 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
 
         Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
 
-        *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
+        *ppTypeSpecifier = (TTypeSpecifier *)pSingleTypeSpecifier;
     }
     break;
 
@@ -4301,9 +4302,9 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
     {
         //assert(*ppTypeSpecifier == NULL);
         bResult = true;
-        TStructUnionSpecifier* pStructUnionSpecifier = TStructUnionSpecifier_Create();
+        TStructUnionSpecifier * pStructUnionSpecifier = TStructUnionSpecifier_Create();
 
-        *ppTypeSpecifier = (TTypeSpecifier*)pStructUnionSpecifier;
+        *ppTypeSpecifier = (TTypeSpecifier *)pStructUnionSpecifier;
         Struct_Or_Union_Specifier(ctx, pStructUnionSpecifier);
     }
     break;
@@ -4312,8 +4313,8 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
     {
         //assert(*ppTypeSpecifier == NULL);
         bResult = true;
-        TEnumSpecifier* pEnumSpecifier2 = TEnumSpecifier_Create();
-        *ppTypeSpecifier = (TTypeSpecifier*)pEnumSpecifier2;
+        TEnumSpecifier * pEnumSpecifier2 = TEnumSpecifier_Create();
+        *ppTypeSpecifier = (TTypeSpecifier *)pEnumSpecifier2;
         Enum_Specifier(ctx, pEnumSpecifier2);
     }
     break;
@@ -4323,7 +4324,7 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
         int bIsTypedef = IsTypeName(ctx, TK_IDENTIFIER, lexeme);
         if (bIsTypedef)
         {
-            TSingleTypeSpecifier* pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
+            TSingleTypeSpecifier * pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
 
             if (bIsTypedef == 2 /*struct*/)
                 pSingleTypeSpecifier->Token2 = TK_STRUCT;
@@ -4339,7 +4340,7 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
             bResult = true;
 
             Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
+            *ppTypeSpecifier = (TTypeSpecifier *)pSingleTypeSpecifier;
 
         }
         else
@@ -4361,7 +4362,7 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
     //}
 }
 
-bool Declaration_Specifiers_IsFirst(Parser * ctx, Tokens token, const char* lexeme)
+bool Declaration_Specifiers_IsFirst(Parser * ctx, Tokens token, const char * lexeme)
 {
     /*
     declaration-specifiers:
@@ -4393,11 +4394,11 @@ void Declaration_Specifiers(Parser * ctx,
     alignment-specifier     declaration-specifiersopt
     */
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
     if (TStorageSpecifier_IsFirst(token))
     {
-        TStorageSpecifier* pStorageSpecifier = TStorageSpecifier_Create();
+        TStorageSpecifier * pStorageSpecifier = TStorageSpecifier_Create();
 
         Storage_Class_Specifier(ctx, pStorageSpecifier);
 
@@ -4409,10 +4410,10 @@ void Declaration_Specifiers(Parser * ctx,
             token,
             lexeme))
         {
-            TTypeSpecifier* pTypeSpecifier = NULL;
+            TTypeSpecifier * pTypeSpecifier = NULL;
             Type_Specifier(ctx, &pTypeSpecifier);
             //ATENCAO
-            TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, (TDeclarationSpecifier*)pTypeSpecifier);
+            TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, (TDeclarationSpecifier *)pTypeSpecifier);
         }
         else
         {
@@ -4422,14 +4423,14 @@ void Declaration_Specifiers(Parser * ctx,
     }
     else if (TTypeQualifier_IsFirst(token))
     {
-        TTypeQualifier* pTypeQualifier = TTypeQualifier_Create();
+        TTypeQualifier * pTypeQualifier = TTypeQualifier_Create();
         Type_Qualifier(ctx, pTypeQualifier);
         //ATENCAO
-        TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, (TDeclarationSpecifier*)TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
+        TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, (TDeclarationSpecifier *)TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
     }
     else if (TFunctionSpecifier_IsFirst(token))
     {
-        TFunctionSpecifier* pFunctionSpecifier = TFunctionSpecifier_Create();
+        TFunctionSpecifier * pFunctionSpecifier = TFunctionSpecifier_Create();
         Function_Specifier(ctx, pFunctionSpecifier);
         TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, TFunctionSpecifier_As_TDeclarationSpecifier(pFunctionSpecifier));
     }
@@ -4488,12 +4489,12 @@ void Initializer(Parser * ctx,
     if (
         token == TK_DEFAULT)
     {
-        TInitializerListType* pTInitializerList =
+        TInitializerListType * pTInitializerList =
             TInitializerListType_Create();
 
         pTInitializerList->bDefault = true;
 
-        *ppInitializer = (TInitializer*)pTInitializerList;
+        *ppInitializer = (TInitializer *)pTInitializerList;
 
         Parser_Match(ctx, &pTInitializerList->ClueList0);
         token = Parser_CurrentToken(ctx);
@@ -4514,11 +4515,11 @@ void Initializer(Parser * ctx,
         if (token == TK_LEFT_CURLY_BRACKET)
         {
 
-            TInitializerListType* pTInitializerList =
+            TInitializerListType * pTInitializerList =
                 TInitializerListType_Create();
 
 
-            *ppInitializer = (TInitializer*)pTInitializerList;
+            *ppInitializer = (TInitializer *)pTInitializerList;
 
             Parser_Match(ctx, &pTInitializerList->ClueList1);
             //ANNOTATED AQUI DIZ DEFAULT 
@@ -4531,9 +4532,9 @@ void Initializer(Parser * ctx,
 
         else
         {
-            TExpression* pExpression = NULL;
+            TExpression * pExpression = NULL;
             AssignmentExpression(ctx, &pExpression);
-            *ppInitializer = (TInitializer*)pExpression;
+            *ppInitializer = (TInitializer *)pExpression;
         }
     }
 }
@@ -4557,7 +4558,7 @@ void Initializer_List(Parser * ctx, TInitializerList * pInitializerList)
             break;
         }
 
-        TInitializerListItem* pTInitializerListItem = TInitializerListItem_Create();
+        TInitializerListItem * pTInitializerListItem = TInitializerListItem_Create();
         List_Add(pInitializerList, pTInitializerListItem);
 
 #ifdef LANGUAGE_EXTENSIONS
@@ -4605,7 +4606,7 @@ void Designator_List(Parser * ctx, TDesignatorList * pDesignatorList)
     designator
     designator-list designator
     */
-    TDesignator* pDesignator = TDesignator_Create();
+    TDesignator * pDesignator = TDesignator_Create();
     Designator(ctx, pDesignator);
     TDesignatorList_PushBack(pDesignatorList, pDesignator);
 
@@ -4619,7 +4620,7 @@ void Designator_List(Parser * ctx, TDesignatorList * pDesignatorList)
         if (token == TK_LEFT_SQUARE_BRACKET ||
             token == TK_FULL_STOP)
         {
-            TDesignator* pDesignatorNew = TDesignator_Create();
+            TDesignator * pDesignatorNew = TDesignator_Create();
             Designator(ctx, pDesignatorNew);
             List_Add(pDesignatorList, pDesignatorNew);
         }
@@ -4668,19 +4669,19 @@ void Init_Declarator(Parser * ctx,
     declarator
     declarator = initializer
     */
-    TInitDeclarator* pInitDeclarator =
+    TInitDeclarator * pInitDeclarator =
         TInitDeclarator_Create();
 
     Declarator(ctx, false, &pInitDeclarator->pDeclarator);
     Tokens token = Parser_CurrentToken(ctx);
 
-    const char* declaratorName = TInitDeclarator_FindName(pInitDeclarator);
+    const char * declaratorName = TInitDeclarator_FindName(pInitDeclarator);
     if (declaratorName)
     {
         //Fica em um contexto que vive so durante a declaracao
         //depois eh substituido
 
-        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer*)pInitDeclarator);
+        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer *)pInitDeclarator);
     }
 
     //Antes do =
@@ -4706,7 +4707,7 @@ void Init_Declarator_List(Parser * ctx,
     init-declarator-list , init-declarator
     */
 
-    TInitDeclarator* pInitDeclarator = NULL;
+    TInitDeclarator * pInitDeclarator = NULL;
     Init_Declarator(ctx, &pInitDeclarator);
     List_Add(pInitDeclaratorList, pInitDeclarator);
 
@@ -4732,7 +4733,7 @@ void GroupDeclaration(Parser * ctx,
     default identifier { declarations opt }
     */
 
-    TGroupDeclaration* p = TGroupDeclaration_Create();
+    TGroupDeclaration * p = TGroupDeclaration_Create();
     *ppGroupDeclaration = p;
 
     Parser_Match(ctx, &p->ClueList0);//default
@@ -4765,16 +4766,31 @@ void PopBack(TScannerItemList * clueList)
         clueList->pHead->pNext = 0;
     }
 }
-bool HasCommentedKeyword(TScannerItemList * clueList, const char* keyword)
+bool HasCommentedKeyword(TScannerItemList * clueList, const char * keyword)
 {
     bool bResult = false;
-    struct ScannerItem* pCurrent = clueList->pTail;
+    struct ScannerItem * pCurrent = clueList->pTail;
     if (pCurrent &&
         pCurrent->token == TK_COMMENT)
     {
         bResult = strncmp(pCurrent->lexeme.c_str + 2, keyword, strlen(keyword)) == 0;
     }
     return bResult;
+}
+
+static bool IsDefaultFunctionTag(const char * functionTag)
+{
+    if (functionTag)
+    {
+        if (strcmp(functionTag, "init") == 0 ||
+            strcmp(functionTag, "delete") == 0 ||
+            strcmp(functionTag, "destroy") == 0 ||
+            strcmp(functionTag, "create") == 0)
+        {
+            return true;
+        }
+    }
+    return false;    
 }
 
 bool  Declaration(Parser * ctx,
@@ -4794,22 +4810,22 @@ bool  Declaration(Parser * ctx,
 
     if (token == TK__STATIC_ASSERT)
     {
-        TStaticAssertDeclaration* pStaticAssertDeclaration = TStaticAssertDeclaration_Create();
-        *ppDeclaration = (TAnyDeclaration*)pStaticAssertDeclaration;
+        TStaticAssertDeclaration * pStaticAssertDeclaration = TStaticAssertDeclaration_Create();
+        *ppDeclaration = (TAnyDeclaration *)pStaticAssertDeclaration;
         Static_Assert_Declaration(ctx, pStaticAssertDeclaration);
         bHasDeclaration = true;
 
     }
     else if (token == TK_DEFAULT)
     {
-        TGroupDeclaration* p = NULL;
+        TGroupDeclaration * p = NULL;
         GroupDeclaration(ctx, &p);
-        *ppDeclaration = (TAnyDeclaration*)p;//moved
+        *ppDeclaration = (TAnyDeclaration *)p;//moved
         bHasDeclaration = true;
     }
     else
     {
-        TDeclaration* pFuncVarDeclaration = TDeclaration_Create();
+        TDeclaration * pFuncVarDeclaration = TDeclaration_Create();
 
         if (token == TK_SEMICOLON)
         {
@@ -4828,7 +4844,7 @@ bool  Declaration(Parser * ctx,
 
         if (bHasDeclaration)
         {
-            *ppDeclaration = (TAnyDeclaration*)pFuncVarDeclaration;
+            *ppDeclaration = (TAnyDeclaration *)pFuncVarDeclaration;
             pFuncVarDeclaration->FileIndex = GetFileIndex(ctx);
             pFuncVarDeclaration->Line = GetCurrentLine(ctx);
             ////assert(pFuncVarDeclaration->FileIndex >= 0);
@@ -4874,28 +4890,80 @@ bool  Declaration(Parser * ctx,
                 //agora ele monta a tabela com a declaracao toda
                 ForEachListItem(TInitDeclarator, pInitDeclarator, &pFuncVarDeclaration->InitDeclaratorList)
                 {
-                    const char* declaratorName = TInitDeclarator_FindName(pInitDeclarator);
+                    const char * declaratorName = TInitDeclarator_FindName(pInitDeclarator);
 
 
 
                     if (declaratorName != NULL)
                     {
-                        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer*)pFuncVarDeclaration);
+                        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer *)pFuncVarDeclaration);
                     }
 
                     //ctx->
                 }
-#if 0
+
                 if (token == TK_COLON)
                 {
-                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList0);
+                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList00);
                     token = Parser_CurrentToken(ctx);
-                    const char * opName = Lexeme(ctx);
-                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList1);
+
+                    assert(pFuncVarDeclaration->FunctionTag == NULL);
+                    pFuncVarDeclaration->FunctionTag = StrDup(Lexeme(ctx));
+
+                    if (!IsDefaultFunctionTag(pFuncVarDeclaration->FunctionTag))
+                    {
+                        SetWarning(ctx, "Unknown tag '%s'", pFuncVarDeclaration->FunctionTag);
+                    }
+
+                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList001);
                     token = Parser_CurrentToken(ctx);
-                    //fazer o set deste nome com a operacao da struct
+
+                    SymbolMap_SetAt(ctx->pCurrentScope,
+                        pFuncVarDeclaration->FunctionTag,
+                        (TTypePointer *)pFuncVarDeclaration);
                 }
-#endif
+                else if (!ctx->ParserOptions.bNoImplicitTag)
+                {
+                    const char * funcName = TDeclaration_GetFunctionName(pFuncVarDeclaration);
+                    const char * functionTag = NULL;
+
+                    //auto tag
+                    if (funcName && IsSuffix(funcName, "init"))
+                    {
+                        //tem que ter 1 argumento
+                        functionTag = "init";
+                    }
+                    else if (funcName && IsSuffix(funcName, "destroy"))
+                    {
+                        //tem que ter 1 argumento
+                        functionTag = "destroy";
+                    }
+                    else if (funcName && IsSuffix(funcName, "delete"))
+                    {
+                        //tem que ter 1 argumento
+                        functionTag = "delete";
+                    }
+                    else if (funcName && IsSuffix(funcName, "create"))
+                    {
+                        //tem que ter 0 argumentos
+                        functionTag = "create";
+                    }
+                    else
+                    {
+                        
+                    }
+                    if (functionTag)
+                    {
+                        assert(pFuncVarDeclaration->FunctionTag == NULL);
+                        pFuncVarDeclaration->FunctionTag = StrDup(functionTag);
+                        pFuncVarDeclaration->bAutoTag = true;
+                        SymbolMap_SetAt(ctx->pCurrentScope,
+                            functionTag,
+                            (TTypePointer *)pFuncVarDeclaration);
+                    }
+                  
+                }
+
                 //
                 if (token == TK_DEFAULT)
                 {
@@ -4918,15 +4986,15 @@ bool  Declaration(Parser * ctx,
                     //Adiconar os parametros em um escopo um pouco a cima.
                     struct SymbolMap BlockScope2 = SYMBOLMAP_INIT;
 
-                    TInitDeclarator* pDeclarator3 =
+                    TInitDeclarator * pDeclarator3 =
                         pFuncVarDeclaration->InitDeclaratorList.pHead;
 
                     ForEachListItem(TParameter, pParameter, &pDeclarator3->pDeclarator->pDirectDeclarator->Parameters.ParameterList)
                     {
-                        const char* parameterName = TDeclarator_GetName(&pParameter->Declarator);
+                        const char * parameterName = TDeclarator_GetName(&pParameter->Declarator);
                         if (parameterName != NULL)
                         {
-                            SymbolMap_SetAt(&BlockScope2, parameterName, (TTypePointer*)pParameter);
+                            SymbolMap_SetAt(&BlockScope2, parameterName, (TTypePointer *)pParameter);
                         }
                         else
                         {
@@ -4943,7 +5011,7 @@ bool  Declaration(Parser * ctx,
                     6.9.1) function-definition:
                     declaration-specifiers declarator declaration-listopt compound-statement
                     */
-                    TStatement* pStatement;
+                    TStatement * pStatement;
                     Compound_Statement(ctx, &pStatement);
                     //TODO cast
 
@@ -4951,7 +5019,7 @@ bool  Declaration(Parser * ctx,
                     SymbolMap_Destroy(&BlockScope2);
 
 
-                    pFuncVarDeclaration->pCompoundStatementOpt = (TCompoundStatement*)pStatement;
+                    pFuncVarDeclaration->pCompoundStatementOpt = (TCompoundStatement *)pStatement;
                 }
 
                 else
@@ -4987,7 +5055,7 @@ void Parse_Declarations(Parser * ctx, TDeclarations * declarations)
     while (!ErrorOrEof(ctx))
     {
 
-        TAnyDeclaration* pDeclarationOut = NULL;
+        TAnyDeclaration * pDeclarationOut = NULL;
 
         bool bHasDecl = Declaration(ctx, &pDeclarationOut);
         if (bHasDecl)
@@ -5034,11 +5102,11 @@ void Parse_Declarations(Parser * ctx, TDeclarations * declarations)
 
     if (Parser_CurrentToken(ctx) == TK_EOF)
     {
-        TEofDeclaration* pEofDeclaration =
+        TEofDeclaration * pEofDeclaration =
             TEofDeclaration_Create();
         //ok
         Parser_Match(ctx, &pEofDeclaration->ClueList0);
-        TDeclarations_PushBack(declarations, (TAnyDeclaration*)pEofDeclaration);
+        TDeclarations_PushBack(declarations, (TAnyDeclaration *)pEofDeclaration);
     }
 
 
@@ -5056,14 +5124,14 @@ static void TFileMapToStrArray(TFileMap * map, TFileArray * arr)
 
     for (int i = 0; i < map->buckets.size; i++)
     {
-        Bucket* data = map->buckets.data[i];
+        Bucket * data = map->buckets.data[i];
 
         if (data != NULL)
         {
             for (int k = 0; k < data->size; k++)
             {
-                struct BucketItem* node = data->data[k];
-                TFile* pFile = (TFile*)node->data;
+                struct BucketItem * node = data->data[k];
+                TFile * pFile = (TFile *)node->data;
 
                 if (pFile->FileIndex >= 0 &&
                     pFile->FileIndex < (int)arr->Size)
@@ -5076,8 +5144,8 @@ static void TFileMapToStrArray(TFileMap * map, TFileArray * arr)
     }
 }
 
-bool GetAST(const char* filename,
-    const char* configFileName /*optional*/,
+bool GetAST(const char * filename,
+    const char * configFileName /*optional*/,
     struct Options * options,
     TProgram * pProgram)
 {
@@ -5089,7 +5157,7 @@ bool GetAST(const char* filename,
     if (configFileName != NULL)
     {
         //opcional   
-        String* /*@auto*/ fullConfigFilePath = NULL;
+        String * /*@auto*/ fullConfigFilePath = NULL;
         GetFullPath(configFileName, &fullConfigFilePath);
 
         Parser_InitFile(&parser, fullConfigFilePath);
@@ -5106,10 +5174,13 @@ bool GetAST(const char* filename,
         Free(fullConfigFilePath);
     }
 
-    String* /*@auto*/ fullFileNamePath = NULL;
+    String * /*@auto*/ fullFileNamePath = NULL;
     GetFullPath(filename, &fullFileNamePath);
 
     parser.Scanner.pOptions = options; //TODO
+
+    //Copy parser options
+    parser.ParserOptions.bNoImplicitTag = options->bNoImplicitTag;
 
     if (filename != NULL)
     {
@@ -5133,19 +5204,19 @@ bool GetAST(const char* filename,
         //Inserts the initial file
         FileNodeMap_Insert(&map, FileNode_Create(fullFileNamePath));
 
-        
+
         for (;;)
         {
 
 
-            struct FileNode* pSources = parser.Scanner.Sources.pHead;
+            struct FileNode * pSources = parser.Scanner.Sources.pHead;
             parser.Scanner.Sources.pHead = NULL;
             parser.Scanner.Sources.pTail = NULL;
 
-            struct FileNode* pCurrent = pSources;
+            struct FileNode * pCurrent = pSources;
             while (pCurrent)
             {
-                struct FileNode* pNext = pCurrent->pNext;
+                struct FileNode * pNext = pCurrent->pNext;
                 if (FileNodeMap_Lookup(&map, pCurrent->Key) == 0)
                 {
                     //processar
@@ -5156,7 +5227,7 @@ bool GetAST(const char* filename,
                     TScannerItemList_Destroy(&parser.ClueList);
                     TScannerItemList_Init(&parser.ClueList);
 
-                    struct ScannerItem* pNew = ScannerItem_Create();
+                    struct ScannerItem * pNew = ScannerItem_Create();
                     pNew->token = TK_PRE_INCLUDE;
                     LocalStrBuilder_Append(&pNew->lexeme, "source");
                     TScannerItemList_PushBack(&parser.ClueList, pNew);
@@ -5204,7 +5275,8 @@ bool GetAST(const char* filename,
 
 
 
-bool GetASTFromString(const char* sourceCode,
+bool GetASTFromString(const char * sourceCode,
+    struct Options * options,
     TProgram * pProgram)
 {
     bool bResult = false;
@@ -5212,6 +5284,9 @@ bool GetASTFromString(const char* sourceCode,
     Parser parser;
 
     Parser_InitString(&parser, "source", sourceCode);
+
+    parser.ParserOptions.bNoImplicitTag = options->bNoImplicitTag;
+
     Parser_Main(&parser, &pProgram->Declarations);
 
 

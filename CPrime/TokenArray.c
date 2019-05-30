@@ -11,8 +11,8 @@ void TokenArray_Reserve(struct TokenArray * p, int nelements) /*@default*/
 {
     if (nelements > p->Capacity)
     {
-        struct PPToken ** pnew = p->pItems;
-        pnew = (struct PPToken **)Realloc(pnew, nelements * sizeof(struct PPToken *));
+        struct PPToken** pnew = p->pItems;
+        pnew = (struct PPToken**)Realloc(pnew, nelements * sizeof(struct PPToken*));
         if (pnew)
         {
             p->pItems = pnew;
@@ -72,7 +72,7 @@ void TokenArray_Init(struct TokenArray * p) /*@default*/
 
 struct TokenArray * TokenArray_Create() /*@default*/
 {
-    struct TokenArray * p = (struct TokenArray *) Malloc(sizeof * p);
+    struct TokenArray *p = (struct TokenArray *) Malloc(sizeof * p);
     if (p != NULL)
     {
         TokenArray_Init(p);
@@ -86,7 +86,7 @@ void TokenArray_Destroy(struct TokenArray * st) /*@default*/
     {
         PPToken_Delete(st->pItems[i]);
     }
-    Free((void *)st->pItems);
+    Free((void*)st->pItems);
 }
 
 void TokenArray_Swap(struct TokenArray * p1, struct TokenArray * p2)
@@ -101,7 +101,7 @@ void TokenArray_Delete(struct TokenArray * st) /*@default*/
     if (st != NULL)
     {
         TokenArray_Destroy(st);
-        Free((void *)st);
+        Free((void*)st);
     }
 }
 
@@ -329,7 +329,7 @@ void TokenSet_Destroy(TokenSet * pArray) /*@default*/
     {
         PPToken_Delete(pArray->pItems[i]);
     }
-    Free((void *)pArray->pItems);
+    Free((void*)pArray->pItems);
 }
 
 void SetIntersection(const TokenSet * p1,
