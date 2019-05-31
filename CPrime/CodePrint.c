@@ -243,7 +243,7 @@ static void TNodeClueList_CodePrint(PrintCodeOptions * options, TScannerItemList
             }
             else
             {
-                Output_Append(fp, options, "\n");
+                
             }
             break;
 
