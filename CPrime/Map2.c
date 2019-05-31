@@ -120,9 +120,9 @@ bool Map2_Lookup(struct Map2* pMap,
 
     unsigned int nHashBucket, HashValue;
     struct MapItem2* pKeyValue = Map2_GetAssocAt(pMap,
-                                          Key,
-                                          &nHashBucket,
-                                          &HashValue);
+                                                 Key,
+                                                 &nHashBucket,
+                                                 &HashValue);
 
     if (pKeyValue != NULL)
     {
@@ -141,9 +141,9 @@ bool Map2_LookupKey(struct Map2* pMap,
 
     unsigned int nHashBucket, HashValue;
     struct MapItem2* pKeyValue = Map2_GetAssocAt(pMap,
-                                          Key,
-                                          &nHashBucket,
-                                          &HashValue);
+                                                 Key,
+                                                 &nHashBucket,
+                                                 &HashValue);
 
     if (pKeyValue != NULL)
     {
@@ -208,7 +208,7 @@ int Map2_SetAt(struct Map2* pMap,
         }
 
         struct MapItem2** pHashTable =
-            (struct MapItem2 * *)Malloc(sizeof(struct MapItem2*) * pMap->nHashTableSize);
+            (struct MapItem2**)Malloc(sizeof(struct MapItem2*) * pMap->nHashTableSize);
 
         if (pHashTable != NULL)
         {
@@ -269,7 +269,7 @@ void Map2_Swap(struct Map2* pA, struct Map2* pB)
 
 struct Map2* Map2_Create(void) /*@default*/
 {
-    struct Map2* p = (struct Map2*)Malloc(sizeof * p);
+    struct Map2* p = (struct Map2*) Malloc(sizeof * p);
     if (p != NULL)
     {
         Map2_Init(p);

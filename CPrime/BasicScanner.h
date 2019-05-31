@@ -258,15 +258,20 @@ void BasicScanner_Destroy(struct BasicScanner* pScanner);
 
 
 
-typedef struct BasicScanner* BasicScannerStack;
+
+
+struct BasicScannerStack
+{
+    struct BasicScanner * pTop;
+};
 
 #define ITEM_STACK_INIT NULL
-void BasicScannerStack_Init(BasicScannerStack* stack);
-void BasicScannerStack_Push(BasicScannerStack* stack, struct BasicScanner* pItem);
-struct BasicScanner* BasicScannerStack_PopGet(BasicScannerStack* stack);
-void BasicScannerStack_Pop(BasicScannerStack* stack);
-void BasicScannerStack_PopIfNotLast(BasicScannerStack* stack);
-void BasicScannerStack_Destroy(BasicScannerStack* stack);
+void BasicScannerStack_Init(struct BasicScannerStack* stack);
+void BasicScannerStack_Push(struct BasicScannerStack* stack, struct BasicScanner* pItem);
+struct BasicScanner* BasicScannerStack_PopGet(struct BasicScannerStack* stack);
+void BasicScannerStack_Pop(struct BasicScannerStack* stack);
+void BasicScannerStack_PopIfNotLast(struct BasicScannerStack* stack);
+void BasicScannerStack_Destroy(struct BasicScannerStack* stack);
 
 #define ForEachBasicScanner(pItem, stack)\
     for (struct BasicScanner* pItem = stack;\

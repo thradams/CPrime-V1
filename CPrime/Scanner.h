@@ -115,7 +115,7 @@ void StackInts_Destroy(StackInts * p);
 typedef struct
 {
     //Stack de basicscanner
-    BasicScannerStack stack;
+    struct BasicScannerStack stack;
 
     //Mapa dos defines
     struct MacroMap  Defines2;

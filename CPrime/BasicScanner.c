@@ -309,7 +309,7 @@ void ScannerItem_Delete(struct ScannerItem* pScannerItem) /*@default*/
 void ScannerItem_Init(struct ScannerItem* scannerItem) /*@default*/
 {
     LocalStrBuilder_Init(&scannerItem->lexeme);
-    scannerItem->token = TK_NONE;
+    scannerItem->token = 0;
     scannerItem->Line = -1;
     scannerItem->FileIndex = -1;
     scannerItem->bActive = 1;
@@ -1209,52 +1209,52 @@ wchar_t BasicScanner_MatchChar(struct BasicScanner* scanner)
 
 
 
-void BasicScannerStack_Init(BasicScannerStack* stack)
+void BasicScannerStack_Init(struct BasicScannerStack* stack) /*@default*/
 {
-    *stack = NULL;
+    stack->pTop = NULL;
 }
 
-void BasicScannerStack_Push(BasicScannerStack* stack, struct BasicScanner* pItem)
+void BasicScannerStack_Push(struct BasicScannerStack* stack, struct BasicScanner* pItem)
 {
-    if (*stack == NULL)
+    if (stack->pTop == NULL)
     {
-        *stack = pItem;
+        stack->pTop = pItem;
     }
     else
     {
-        pItem->pPrevious = *stack;
-        *stack = pItem;
+        pItem->pPrevious = stack->pTop;
+        stack->pTop = pItem;
     }
 }
 
-struct BasicScanner* BasicScannerStack_PopGet(BasicScannerStack* stack)
+struct BasicScanner* BasicScannerStack_PopGet(struct BasicScannerStack* stack)
 {
     struct BasicScanner* pItem = NULL;
-    if (*stack != NULL)
+    if (stack->pTop != NULL)
     {
-        pItem = *stack;
-        *stack = pItem->pPrevious;
+        pItem = stack->pTop;
+        stack->pTop = pItem->pPrevious;
     }
     return pItem;
 }
 
-void BasicScannerStack_PopIfNotLast(BasicScannerStack* stack)
+void BasicScannerStack_PopIfNotLast(struct BasicScannerStack* stack)
 {
     //assert(*stack != NULL);
-    if ((*stack)->pPrevious != NULL)
+    if (stack->pTop->pPrevious != NULL)
     {
         BasicScanner_Delete(BasicScannerStack_PopGet(stack));
     }
 }
 
-void BasicScannerStack_Pop(BasicScannerStack* stack)
+void BasicScannerStack_Pop(struct BasicScannerStack* stack)
 {
     BasicScanner_Delete(BasicScannerStack_PopGet(stack));
 }
 
-void BasicScannerStack_Destroy(BasicScannerStack* stack)
+void BasicScannerStack_Destroy(struct BasicScannerStack* stack)
 {
-    struct BasicScanner* pItem = *stack;
+    struct BasicScanner* pItem = stack->pTop;
     while (pItem)
     {
         struct BasicScanner* p = pItem;

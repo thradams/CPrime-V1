@@ -528,7 +528,7 @@ void Scanner_GetError(Scanner * pScanner, StrBuilder * str)
     StrBuilder_Append(str, pScanner->DebugString.c_str);
     StrBuilder_Append(str, "\n");
 
-    ForEachBasicScanner(p, pScanner->stack)
+    ForEachBasicScanner(p, pScanner->stack.pTop)
     {
         StrBuilder_AppendFmt(str, "%s(%d)\n",
                              p->stream.NameOrFullPath,
@@ -586,7 +586,7 @@ void Scanner_PrintDebug(Scanner * pScanner)
 {
     printf("include stack---\n");
 
-    ForEachBasicScanner(p, pScanner->stack)
+    ForEachBasicScanner(p, pScanner->stack.pTop)
     {
         printf("%s(%d):\n", p->stream.NameOrFullPath, p->stream.Line);
     }
@@ -724,13 +724,13 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char* fileName,
         }
         else
         {
-            if (pScanner->stack != NULL)
+            if (pScanner->stack.pTop != NULL)
             {
                 // tenta nos diretorios ja abertos
                 StrBuilder path = STRBUILDER_INIT;
 
                 // for (int i = (int)pScanner->stack.size - 1; i >= 0; i--)
-                ForEachBasicScanner(p, pScanner->stack)
+                ForEachBasicScanner(p, pScanner->stack.pTop)
                 {
                     // struct BasicScanner* p = (struct BasicScanner*)pScanner->stack.pItems[i];
                     StrBuilder_Set(&path, p->stream.FullDir2);
@@ -1044,7 +1044,7 @@ int Scanner_GetFileIndex(Scanner * pScanner)
 
     int fileIndex = -1;
 
-    ForEachBasicScanner(pBasicScanner, pScanner->stack)
+    ForEachBasicScanner(pBasicScanner, pScanner->stack.pTop)
     {
         fileIndex = pBasicScanner->FileIndex;
 
@@ -1076,7 +1076,7 @@ int Scanner_GetFileIndex(Scanner * pScanner)
 
 struct BasicScanner* Scanner_Top(Scanner * pScanner)
 {
-    return pScanner->stack;
+    return pScanner->stack.pTop;
 }
 
 // int Scanner_Line(Scanner* pScanner)
@@ -1729,7 +1729,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
 
             // Procurar pelo (
 
-            struct TScannerItemList LocalAcumulatedTokens = {0};
+            struct TScannerItemList LocalAcumulatedTokens = { 0 };
             token = pBasicScanner->currentItem.token;
             lexeme = pBasicScanner->currentItem.lexeme.c_str;
             while (token == TK_SPACES ||
@@ -1918,7 +1918,7 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
     if (token == TK_FILE_EOF)
     {
-        if (pScanner->stack->pPrevious == NULL)
+        if (pScanner->stack.pTop->pPrevious == NULL)
         {
             // se eh o unico arquivo TK_FILE_EOF vira eof
             token = TK_EOF;
@@ -2158,8 +2158,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
                     }
                     else
                     {
-                        fileName = StrDup(pScanner->stack->stream.NameOrFullPath);
-                        fileName[strlen(pScanner->stack->stream.NameOrFullPath) - 1] = 'c';
+                        fileName = StrDup(pScanner->stack.pTop->stream.NameOrFullPath);
+                        fileName[strlen(pScanner->stack.pTop->stream.NameOrFullPath) - 1] = 'c';
                     }
 
 
@@ -2725,7 +2725,7 @@ void GetSources(const char* configFile,
     Scanner_Reset(&scanner);
 
 
-    struct FileNodeMap map = {0};
+    struct FileNodeMap map = { 0 };
     if (bRecursiveSearch)
     {
         for (;;)
@@ -2979,7 +2979,7 @@ void Scanner_MatchDontExpand(Scanner * pScanner)
 
             enum Tokens token = pTopScanner->currentItem.token;
 
-            while (token == TK_EOF && pScanner->stack->pPrevious != NULL)
+            while (token == TK_EOF && pScanner->stack.pTop->pPrevious != NULL)
             {
                 //assert(pScanner->AcumulatedTokens.pHead == NULL);
                 BasicScannerStack_PopIfNotLast(&pScanner->stack);

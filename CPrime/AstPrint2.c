@@ -668,7 +668,7 @@ void SyntaxTree_PrintAstToXML(struct SyntaxTree* pProgram,
     FILE* fp = fopen(fileName, "w");
     //TDeclarations_Print(&pProgram->Declarations, false, fp);
 
-    struct PrintXMLContext ctx = {0};
+    struct PrintXMLContext ctx = { 0 };
     ctx.fp = fp;
     bool b = false;
     fprintf(fp, "<AST>\n");

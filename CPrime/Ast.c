@@ -176,7 +176,7 @@ void TBlockItemList_PushBack(struct TBlockItemList* p, struct TBlockItem* pItem)
 
 struct TCompoundStatement* TCompoundStatement_Create() /*@default*/
 {
-    struct TCompoundStatement* p = (struct TCompoundStatement*)Malloc(sizeof * p);
+    struct TCompoundStatement* p = (struct TCompoundStatement*) Malloc(sizeof * p);
     if (p != NULL)
     {
         p->Type = TCompoundStatement_ID;
@@ -208,7 +208,7 @@ struct TLabeledStatement* TLabeledStatement_Create(void) /*@default*/
         p->pStatementOpt = NULL;
         p->pExpression = NULL;
         p->Identifier = NULL;
-        p->token = TK_NONE;
+        p->token = 0;
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
     }
@@ -354,7 +354,7 @@ struct TJumpStatement* TJumpStatement_Create(void) /*@default*/
     if (p != NULL)
     {
         p->Type = TJumpStatement_ID;
-        p->token = TK_NONE;
+        p->token = 0;
         p->Identifier = NULL;
         p->pExpression = NULL;
         TScannerItemList_Init(&p->ClueList0);
@@ -553,7 +553,7 @@ void TBlockItem_Delete(struct TBlockItem* p) /*@default*/
 void TPrimaryExpressionValue_Init(struct TPrimaryExpressionValue* p) /*@default*/
 {
     p->Type = TPrimaryExpressionValue_ID;
-    p->token = TK_NONE;
+    p->token = 0;
     p->lexeme = NULL;
     p->pExpressionOpt = NULL;
     TScannerItemList_Init(&p->ClueList0);
@@ -642,7 +642,7 @@ struct TBinaryExpression* TBinaryExpression_Create(void) /*@default*/
     if (p != NULL)
     {
         p->Type = TBinaryExpression_ID;
-        p->token = TK_NONE;
+        p->token = 0;
         p->pExpressionLeft = NULL;
         p->pExpressionRight = NULL;
         p->Position.FileIndex = 0;
@@ -696,7 +696,7 @@ struct TTernaryExpression* TTernaryExpression_Create(void) /*@default*/
     if (p != NULL)
     {
         p->Type = TTernaryExpression_ID;
-        p->token = TK_NONE;
+        p->token = 0;
         p->pExpressionLeft = NULL;
         p->pExpressionMiddle = NULL;
         p->pExpressionRight = NULL;
@@ -948,8 +948,8 @@ struct TUnionSetItem* TUnionSetItem_Create() /*@default*/
     if (p != NULL)
     {
         p->pNext = NULL;
-        p->Token = TK_NONE;
-        p->TokenFollow = TK_NONE;
+        p->Token = 0;
+        p->TokenFollow = 0;
         p->Name = NULL;
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
@@ -1017,7 +1017,7 @@ struct TStructUnionSpecifier* TStructUnionSpecifier_Create() /*@default*/
         p->Type = TStructUnionSpecifier_ID;
         TStructDeclarationList_Init(&p->StructDeclarationList);
         p->TagName = NULL;
-        p->Token = TK_NONE;
+        p->Token = 0;
         TUnionSet_Init(&p->UnionSet);
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
@@ -1068,7 +1068,7 @@ struct TSingleTypeSpecifier* TSingleTypeSpecifier_Create(void) /*@default*/
     if (p != NULL)
     {
         p->Type = TSingleTypeSpecifier_ID;
-        p->Token2 = TK_NONE;
+        p->Token2 = 0;
         p->TypedefName = NULL;
         TScannerItemList_Init(&p->ClueList0);
     }
@@ -1112,7 +1112,7 @@ const char* TSingleTypeSpecifier_GetTypedefName(struct TSingleTypeSpecifier* p)
     return result;
 }
 
-bool TTypeSpecifier_Compare(struct TTypeSpecifier * p1, struct TTypeSpecifier * p2)
+bool TTypeSpecifier_Compare(struct TTypeSpecifier* p1, struct TTypeSpecifier* p2)
 {
     bool result = false;
 
@@ -1141,7 +1141,7 @@ bool TTypeSpecifier_Compare(struct TTypeSpecifier * p1, struct TTypeSpecifier * 
     return result;
 }
 
-void TTypeSpecifier_Delete(struct TTypeSpecifier * p) /*@default*/
+void TTypeSpecifier_Delete(struct TTypeSpecifier* p) /*@default*/
 {
     if (p != NULL)
     {
@@ -2119,7 +2119,7 @@ struct TTypeQualifier* TTypeQualifier_Create(void) /*@default*/
     {
         p->Type = TTypeQualifier_ID;
         p->SizeIdentifier = NULL;
-        p->Token = TK_NONE;
+        p->Token = 0;
         TScannerItemList_Init(&p->ClueList0);
     }
     return p;
@@ -2165,7 +2165,7 @@ struct TStorageSpecifier* TStorageSpecifier_Create(void) /*@default*/
     if (p != NULL)
     {
         p->Type = TStorageSpecifier_ID;
-        p->Token = TK_NONE;
+        p->Token = 0;
         TScannerItemList_Init(&p->ClueList0);
     }
     return p;
@@ -2700,7 +2700,7 @@ struct TFunctionSpecifier* TFunctionSpecifier_Create(void) /*@default*/
     if (p != NULL)
     {
         p->Type = TFunctionSpecifier_ID;
-        p->Token = TK_NONE;
+        p->Token = 0;
         TScannerItemList_Init(&p->ClueList0);
     }
     return p;
@@ -3839,7 +3839,7 @@ struct TDirectDeclarator* TDirectDeclarator_Create() /*@default*/
         p->Position.Line = 0;
         TParameterTypeList_Init(&p->Parameters);
         p->pExpression = NULL;
-        p->DeclaratorType = TDirectDeclaratorTypeNone;
+        p->DeclaratorType = 0;
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
         TScannerItemList_Init(&p->ClueList2);
@@ -3899,7 +3899,7 @@ struct TPostfixExpressionCore* TPostfixExpressionCore_Create() /*@default*/
     if (p != NULL)
     {
         p->Type = TPostfixExpressionCore_ID;
-        p->token = TK_NONE;
+        p->token = 0;
         p->lexeme = NULL;
         p->pExpressionLeft = NULL;
         p->pExpressionRight = NULL;
@@ -3937,7 +3937,7 @@ struct TUnaryExpressionOperator* TUnaryExpressionOperator_Create() /*@default*/
     if (p != NULL)
     {
         p->Type = TUnaryExpressionOperator_ID;
-        p->token = TK_NONE;
+        p->token = 0;
         p->pExpressionRight = NULL;
         TTypeName_Init(&p->TypeName);
         TScannerItemList_Init(&p->ClueList0);

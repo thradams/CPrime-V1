@@ -135,10 +135,10 @@ struct TEofDeclaration* TEofDeclaration_Create();
 void TEofDeclaration_Delete(struct TEofDeclaration* p);
 
 
-struct /*@<struct TStaticAssertDeclaration |
-  struct TDeclaration |
-  struct TGroupDeclaration |
-  struct TEofDeclaration>*/ TAnyDeclaration
+struct /*@<TStaticAssertDeclaration |
+  TDeclaration |
+  TGroupDeclaration |
+  TEofDeclaration>*/ TAnyDeclaration
 {
     enum Type Type;
 };
@@ -350,16 +350,16 @@ struct TIfStatement* TIfStatement_Create(void);
 void TIfStatement_Delete(struct TIfStatement* p);
 
 
-struct /*@<struct TCompoundStatement |
-  struct TExpressionStatement |
-  struct TLabeledStatement |
-  struct TJumpStatement |
-  struct TIfStatement |
-  struct TDoStatement |
-  struct TForStatement |
-  struct TAsmStatement |
-  struct TWhileStatement |
-  struct TSwitchStatement>*/ TStatement
+struct /*@<TCompoundStatement |
+  TExpressionStatement |
+  TLabeledStatement |
+  TJumpStatement |
+  TIfStatement |
+  TDoStatement |
+  TForStatement |
+  TAsmStatement |
+  TWhileStatement |
+  TSwitchStatement>*/ TStatement
 {
     enum Type Type;
 };
@@ -382,7 +382,7 @@ CAST(TStatement, TSwitchStatement)
 declaration
 statement
 */
-struct /*@<struct TDeclaration | struct TStatement>*/ TBlockItem
+struct /*@<TDeclaration | TStatement>*/ TBlockItem
 {
     enum Type Type;
 };
@@ -595,11 +595,11 @@ function-specifier declaration-specifiersopt
 alignment-specifier declaration-specifiersopt
 */
 
-struct /*@<struct TStorageSpecifier |
-  struct TTypeSpecifier |
-  struct TTypeQualifier |
-  struct TFunctionSpecifier |
-  struct TAlignmentSpecifier>*/ TDeclarationSpecifier
+struct /*@<TStorageSpecifier |
+  TTypeSpecifier |
+  TTypeQualifier |
+  TFunctionSpecifier |
+  TAlignmentSpecifier>*/ TDeclarationSpecifier
 {
     enum Type Type;
 };
@@ -616,7 +616,7 @@ specifier-qualifier-list:
 type-specifier specifier-qualifier-listopt
 type-qualifier specifier-qualifier-listopt
 */
-struct /*@<struct TTypeSpecifier | struct TTypeQualifier>*/ TSpecifierQualifier
+struct /*@<TTypeSpecifier | TTypeQualifier>*/ TSpecifierQualifier
 {
     enum Type Type;
 };
@@ -846,7 +846,7 @@ void TInitializerListType_Delete(struct TInitializerListType* p);
 
 
 
-struct /*@<struct TInitializerListType | struct TExpression>*/ TInitializer
+struct /*@<TInitializerListType | TExpression>*/ TInitializer
 {
     /*
     initializer:
@@ -1002,7 +1002,7 @@ struct-declaration:
 specifier-qualifier-list struct-declarator-listopt ;
 static_assert-declaration
 */
-struct /*@<struct TStructDeclaration | struct TStaticAssertDeclaration>*/ TAnyStructDeclaration
+struct /*@<TStructDeclaration | TStaticAssertDeclaration>*/ TAnyStructDeclaration
 {
     enum Type Type;
 };
@@ -1090,10 +1090,10 @@ void TStructUnionSpecifier_SetFunctionImplicitTag(struct TStructUnionSpecifier* 
                                                   struct TDeclaration* pFuncDeclaration);
 
 
-struct /*@<struct TSingleTypeSpecifier |
-  struct TAtomicTypeSpecifier |
-  struct TEnumSpecifier |
-  struct TStructUnionSpecifier>*/ TTypeSpecifier
+struct /*@<TSingleTypeSpecifier |
+  TAtomicTypeSpecifier |
+  TEnumSpecifier |
+  TStructUnionSpecifier>*/ TTypeSpecifier
 {
     enum Type Type;
 };
@@ -1435,15 +1435,15 @@ struct TUnaryExpressionOperator
 struct TUnaryExpressionOperator* TUnaryExpressionOperator_Create();
 void TUnaryExpressionOperator_Delete(struct TUnaryExpressionOperator* p);
 
-struct /*@<struct TPrimaryExpressionLiteral |
-  struct TPrimaryExpressionValue |
-  struct TBinaryExpression |
-  struct TUnaryExpressionOperator |
-  struct TPostfixExpressionCore |
-  struct TPostfixExpressionCore |
-  struct TCastExpressionType |
-  struct TTernaryExpression |
-  struct TPrimaryExpressionLambda>*/ TExpression
+struct  /*@<TPrimaryExpressionLiteral |
+  TPrimaryExpressionValue |
+  TBinaryExpression |
+  TUnaryExpressionOperator |
+  TPostfixExpressionCore |
+  TPostfixExpressionCore |
+  TCastExpressionType |
+  TTernaryExpression |
+  TPrimaryExpressionLambda>*/TExpression
 {
     enum Type Type;
 };
