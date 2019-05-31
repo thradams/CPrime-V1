@@ -7,7 +7,7 @@
 #include  <stdio.h>
 #include "Mem.h"
 
-void TokenArray_Reserve(struct TokenArray * p, int nelements) /*@default*/
+void TokenArray_Reserve(struct TokenArray* p, int nelements) /*@default*/
 {
     if (nelements > p->Capacity)
     {
@@ -21,28 +21,28 @@ void TokenArray_Reserve(struct TokenArray * p, int nelements) /*@default*/
     }
 }
 
-int TokenArray_Grow(struct TokenArray * p, int nelements)
+int TokenArray_Grow(struct TokenArray* p, int nelements)
 {
-    return Array_Grow((Array *)p, nelements);
+    return Array_Grow((struct Array*)p, nelements);
 }
 
-struct PPToken * TokenArray_PopFront(struct TokenArray * p)
+struct PPToken* TokenArray_PopFront(struct TokenArray* p)
 {
-    void * pItem = Array_PopFront((Array *)p);
-    return (struct PPToken *)pItem;
+    void* pItem = Array_PopFront((struct Array*)p);
+    return (struct PPToken*)pItem;
 }
 
-void TokenArray_Pop(struct TokenArray * p)
+void TokenArray_Pop(struct TokenArray* p)
 {
-    Array_Pop((Array *)p, PPToken_DeleteVoid);
+    Array_Pop((struct Array*)p, PPToken_DeleteVoid);
 }
 
-struct PPToken * TokenArray_Top(struct TokenArray * p)
+struct PPToken* TokenArray_Top(struct TokenArray* p)
 {
-    return (struct PPToken *)Array_Top((Array *)p);
+    return (struct PPToken*)Array_Top((struct Array*)p);
 }
 
-void TokenArray_PushBack(struct TokenArray * p, struct PPToken * pItem) /*@default*/
+void TokenArray_PushBack(struct TokenArray* p, struct PPToken* pItem) /*@default*/
 {
     if (p->Size + 1 > p->Capacity)
     {
@@ -57,22 +57,22 @@ void TokenArray_PushBack(struct TokenArray * p, struct PPToken * pItem) /*@defau
     p->Size++;
 }
 
-void TokenArray_Clear(struct TokenArray * p)
+void TokenArray_Clear(struct TokenArray* p)
 {
-    Array_Clear((Array *)p, PPToken_DeleteVoid);
+    Array_Clear((struct Array*)p, PPToken_DeleteVoid);
 }
 
 
-void TokenArray_Init(struct TokenArray * p) /*@default*/
+void TokenArray_Init(struct TokenArray* p) /*@default*/
 {
     p->pItems = NULL;
     p->Size = 0;
     p->Capacity = 0;
 }
 
-struct TokenArray * TokenArray_Create() /*@default*/
+struct TokenArray* TokenArray_Create() /*@default*/
 {
-    struct TokenArray *p = (struct TokenArray *) Malloc(sizeof * p);
+    struct TokenArray* p = (struct TokenArray*) Malloc(sizeof * p);
     if (p != NULL)
     {
         TokenArray_Init(p);
@@ -80,7 +80,7 @@ struct TokenArray * TokenArray_Create() /*@default*/
     return p;
 }
 
-void TokenArray_Destroy(struct TokenArray * st) /*@default*/
+void TokenArray_Destroy(struct TokenArray* st) /*@default*/
 {
     for (int i = 0; i < st->Size; i++)
     {
@@ -89,14 +89,14 @@ void TokenArray_Destroy(struct TokenArray * st) /*@default*/
     Free((void*)st->pItems);
 }
 
-void TokenArray_Swap(struct TokenArray * p1, struct TokenArray * p2)
+void TokenArray_Swap(struct TokenArray* p1, struct TokenArray* p2)
 {
     struct TokenArray temp = *p1;
     *p1 = *p2;
     *p2 = temp;
 }
 
-void TokenArray_Delete(struct TokenArray * st) /*@default*/
+void TokenArray_Delete(struct TokenArray* st) /*@default*/
 {
     if (st != NULL)
     {
@@ -108,14 +108,14 @@ void TokenArray_Delete(struct TokenArray * st) /*@default*/
 
 
 
-void TokenArray_AppendTokensCopy(struct TokenArray * pArray, struct PPToken ** pToken, int len)
+void TokenArray_AppendTokensCopy(struct TokenArray* pArray, struct PPToken** pToken, int len)
 {
     for (int i = 0; i < len; i++)
     {
         TokenArray_PushBack(pArray, PPToken_Clone(pToken[i]));
     }
 }
-void TokenArray_AppendTokensMove(struct TokenArray * pArray, struct PPToken ** pToken, int len)
+void TokenArray_AppendTokensMove(struct TokenArray* pArray, struct PPToken** pToken, int len)
 {
     for (int i = 0; i < len; i++)
     {
@@ -124,7 +124,7 @@ void TokenArray_AppendTokensMove(struct TokenArray * pArray, struct PPToken ** p
     }
 }
 
-void TokenArray_AppendCopy(struct TokenArray * pArrayTo, const struct TokenArray * pArrayFrom)
+void TokenArray_AppendCopy(struct TokenArray* pArrayTo, const struct TokenArray* pArrayFrom)
 {
     for (int i = 0; i < pArrayFrom->Size; i++)
     {
@@ -132,7 +132,7 @@ void TokenArray_AppendCopy(struct TokenArray * pArrayTo, const struct TokenArray
     }
 }
 
-void TokenArray_AppendMove(struct TokenArray * pArrayTo, struct TokenArray * pArrayFrom)
+void TokenArray_AppendMove(struct TokenArray* pArrayTo, struct TokenArray* pArrayFrom)
 {
     for (int i = 0; i < pArrayFrom->Size; i++)
     {
@@ -141,9 +141,9 @@ void TokenArray_AppendMove(struct TokenArray * pArrayTo, struct TokenArray * pAr
     }
 }
 
-struct PPToken * TokenArray_Find(const struct TokenArray * pArray, const char * lexeme)
+struct PPToken* TokenArray_Find(const struct TokenArray* pArray, const char* lexeme)
 {
-    struct PPToken * pFound = NULL;
+    struct PPToken* pFound = NULL;
 
     for (int i = 0; i < pArray->Size; i++)
     {
@@ -157,8 +157,8 @@ struct PPToken * TokenArray_Find(const struct TokenArray * pArray, const char * 
     return pFound;
 }
 
-void TokenArray_ToStrBuilder(const struct TokenArray * tokens,
-                             StrBuilder * strBuidler)
+void TokenArray_ToStrBuilder(const struct TokenArray* tokens,
+                             StrBuilder* strBuidler)
 {
     StrBuilder_Clear(strBuidler);
     for (int i = 0; i < tokens->Size; i++)
@@ -167,7 +167,7 @@ void TokenArray_ToStrBuilder(const struct TokenArray * tokens,
     }
 }
 
-void TokenArray_Print(const struct TokenArray * tokens)
+void TokenArray_Print(const struct TokenArray* tokens)
 {
     if (tokens->Size == 0)
     {
@@ -185,7 +185,7 @@ void TokenArray_Print(const struct TokenArray * tokens)
 }
 
 
-void TokenArray_Erase(struct TokenArray * pArray, int begin, int end)
+void TokenArray_Erase(struct TokenArray* pArray, int begin, int end)
 {
     for (int i = begin; i < end; i++)
     {
@@ -197,41 +197,41 @@ void TokenArray_Erase(struct TokenArray * pArray, int begin, int end)
     {
         memmove(pArray->pItems + begin,
                 pArray->pItems + end,
-                sizeof(void *) * (pArray->Size - end));
+                sizeof(void*) * (pArray->Size - end));
     }
 
     pArray->Size = pArray->Size - end;
 }
 
 
-int TokenArrayMap_SetAt(TokenArrayMap * pMap,
-                        const char * Key,
-                        struct TokenArray * newValue)
+int TokenArrayMap_SetAt(struct TokenArrayMap* pMap,
+                        const char* Key,
+                        struct TokenArray* newValue)
 {
-    void * pPrevious;
-    int r = Map2_SetAt((Map2 *)pMap, Key, newValue, &pPrevious);
-    TokenArray_Delete((struct TokenArray *)pPrevious);
+    void* pPrevious;
+    int r = Map2_SetAt((struct Map2*)pMap, Key, newValue, &pPrevious);
+    TokenArray_Delete((struct TokenArray*)pPrevious);
     return r;
 }
 
-bool TokenArrayMap_Lookup(const TokenArrayMap * pMap,
-                          const char * Key,
-                          struct TokenArray ** rValue)
+bool TokenArrayMap_Lookup(const struct TokenArrayMap* pMap,
+                          const char* Key,
+                          struct TokenArray** rValue)
 {
     if (pMap == NULL)
     {
         return false;
     }
 
-    return Map2_Lookup((Map2 *)pMap,
+    return Map2_Lookup((struct Map2*)pMap,
                        Key,
-                       (void **)rValue);
+                       (void**)rValue);
 }
 
-bool TokenArrayMap_RemoveKey(TokenArrayMap * pMap, const char * Key)
+bool TokenArrayMap_RemoveKey(struct TokenArrayMap* pMap, const char* Key)
 {
-    struct TokenArray * pItem;
-    bool r = Map2_RemoveKey((Map2 *)pMap, Key, (void **)& pItem);
+    struct TokenArray* pItem;
+    bool r = Map2_RemoveKey((struct Map2*)pMap, Key, (void**)& pItem);
 
     if (r)
     {
@@ -241,40 +241,40 @@ bool TokenArrayMap_RemoveKey(TokenArrayMap * pMap, const char * Key)
     return r;
 }
 
-void TokenArrayMap_Init(TokenArrayMap * p)
+void TokenArrayMap_Init(struct TokenArrayMap* p)
 {
-    TokenArrayMap t = TOKENARRAY_INIT;
+    struct TokenArrayMap t = TOKENARRAY_INIT;
     *p = t;
 }
 
 
-static void TokenArray_DeleteVoid(void * p)
+static void TokenArray_DeleteVoid(void* p)
 {
-    TokenArray_Delete((struct TokenArray *)p);
+    TokenArray_Delete((struct TokenArray*)p);
 }
 
-void TokenArrayMap_Destroy(TokenArrayMap * p)
+void TokenArrayMap_Destroy(struct TokenArrayMap* p)
 {
-    Map2_Destroy((Map2 *)p, &TokenArray_DeleteVoid);
+    Map2_Destroy((struct Map2*)p, &TokenArray_DeleteVoid);
 }
 
 
 
-void TokenArrayMap_Swap(TokenArrayMap * pA, TokenArrayMap * pB)
+void TokenArrayMap_Swap(struct TokenArrayMap* pA, struct TokenArrayMap* pB)
 {
-    TokenArrayMap t = TOKENARRAYMAP_INIT;
+    struct TokenArrayMap t = TOKENARRAYMAP_INIT;
     *pA = *pB;
     *pB = t;
 }
 
-void TokenSet_PushBack(TokenSet * p, struct PPToken * pItem) /*custom*/
+void TokenSet_PushBack(struct TokenSet* p, struct PPToken* pItem) /*custom*/
 {
     int r = 0;
-    struct PPToken * pTk = TokenSet_Find(p, pItem->Lexeme);
+    struct PPToken* pTk = TokenSet_Find(p, pItem->Lexeme);
 
     if (pTk == NULL)
     {
-        r = Array_Push((Array *)p, pItem);
+        r = Array_Push((struct Array*)p, pItem);
 
         if (r == -1)
         {
@@ -292,7 +292,7 @@ void TokenSet_PushBack(TokenSet * p, struct PPToken * pItem) /*custom*/
 }
 
 
-void TokenSetAppendCopy(TokenSet * pArrayTo, const TokenSet * pArrayFrom)
+void TokenSetAppendCopy(struct TokenSet* pArrayTo, const struct TokenSet* pArrayFrom)
 {
     for (int i = 0; i < pArrayFrom->Size; i++)
     {
@@ -301,9 +301,9 @@ void TokenSetAppendCopy(TokenSet * pArrayTo, const TokenSet * pArrayFrom)
 }
 
 
-struct PPToken * TokenSet_Find(const TokenSet * pArray, const char * lexeme)
+struct PPToken* TokenSet_Find(const struct TokenSet* pArray, const char* lexeme)
 {
-    struct PPToken * pFound = NULL;
+    struct PPToken* pFound = NULL;
 
     for (int i = 0; i < pArray->Size; i++)
     {
@@ -317,13 +317,13 @@ struct PPToken * TokenSet_Find(const TokenSet * pArray, const char * lexeme)
     return pFound;
 }
 
-void TokenSet_Clear(TokenSet * p)
+void TokenSet_Clear(struct TokenSet* p)
 {
-    Array_Clear((Array *)p, PPToken_DeleteVoid);
+    Array_Clear((struct Array*)p, PPToken_DeleteVoid);
 }
 
 
-void TokenSet_Destroy(TokenSet * pArray) /*@default*/
+void TokenSet_Destroy(struct TokenSet* pArray) /*@default*/
 {
     for (int i = 0; i < pArray->Size; i++)
     {
@@ -332,17 +332,17 @@ void TokenSet_Destroy(TokenSet * pArray) /*@default*/
     Free((void*)pArray->pItems);
 }
 
-void SetIntersection(const TokenSet * p1,
-                     const TokenSet * p2,
-                     TokenSet * pResult)
+void SetIntersection(const struct TokenSet* p1,
+                     const struct TokenSet* p2,
+                     struct TokenSet* pResult)
 {
     if (p1->Size != 0 && p2->Size != 0)
     {
-        struct PPToken * first1 = p1->pItems[0];
-        struct PPToken * last1 = p1->pItems[p1->Size];
+        struct PPToken* first1 = p1->pItems[0];
+        struct PPToken* last1 = p1->pItems[p1->Size];
 
-        struct PPToken * first2 = p2->pItems[0];
-        struct PPToken * last2 = p2->pItems[p2->Size];
+        struct PPToken* first2 = p2->pItems[0];
+        struct PPToken* last2 = p2->pItems[p2->Size];
 
         while (first1 != last1 && first2 != last2)
         {

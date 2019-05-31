@@ -7,10 +7,10 @@
 
 struct LocalStrBuilder
 {
-  char* c_str;
-  int size;
-  int capacity;
-  char chars[LOCALSTRBUILDER_NCHARS + 1];
+    char* c_str;
+    int size;
+    int capacity;
+    char chars[LOCALSTRBUILDER_NCHARS + 1];
 
 };
 

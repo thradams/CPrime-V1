@@ -15,46 +15,47 @@ struct ParserOptions
     bool bNoImplicitTag;
 };
 
-typedef struct {
-  // indica presenca de erro no parser
-  bool bError;
+struct Parser
+{
+    // indica presenca de erro no parser
+    bool bError;
 
-  // mensagem de erro
-  StrBuilder ErrorMessage;
+    // mensagem de erro
+    StrBuilder ErrorMessage;
 
-  // scanner ja pré-processado
-  Scanner Scanner;
+    // scanner ja pré-processado
+    Scanner Scanner;
 
-  TScannerItemList ClueList;
+    struct TScannerItemList ClueList;
 
-  struct SymbolMap GlobalScope;
-  struct SymbolMap* pCurrentScope;
-  
-  int IncludeLevel;
-  bool bPreprocessorEvalFlag;
+    struct SymbolMap GlobalScope;
+    struct SymbolMap* pCurrentScope;
 
-  struct ParserOptions ParserOptions;
-} Parser;
+    int IncludeLevel;
+    bool bPreprocessorEvalFlag;
 
-bool Parser_InitFile(Parser *parser, const char *fileName);
+    struct ParserOptions ParserOptions;
+};
 
-bool Parser_InitString(Parser *parser, const char *name, const char *Text);
+bool Parser_InitFile(struct Parser* parser, const char* fileName);
 
-void Parser_Destroy(Parser *parser);
+bool Parser_InitString(struct Parser* parser, const char* name, const char* Text);
 
-bool Parser_HasError(Parser *pParser);
+void Parser_Destroy(struct Parser* parser);
 
-const char *GetCompletationMessage(Parser *parser);
+bool Parser_HasError(struct Parser* pParser);
 
-bool GetAST(const char *filename, const char *configFileName,
+const char* GetCompletationMessage(struct Parser* parser);
+
+bool GetAST(const char* filename, const char* configFileName,
             struct Options* options,
-            TProgram *pProgram);
+            struct SyntaxTree* pProgram);
 
-void ConstantExpression(Parser *ctx, TExpression **ppExpression);
-Tokens Parser_MatchToken(Parser *parser, Tokens tk, TScannerItemList *listOpt);
+void ConstantExpression(struct Parser* ctx, struct TExpression** ppExpression);
+enum Tokens Parser_MatchToken(struct Parser* parser, enum Tokens tk, struct TScannerItemList* listOpt);
 
-Tokens Parser_LookAheadToken(Parser *parser);
+enum Tokens Parser_LookAheadToken(struct Parser* parser);
 
-bool GetASTFromString(const char*  sourceCode,
-    struct Options * options,
-  TProgram* pProgram);
+bool GetASTFromString(const char* sourceCode,
+                      struct Options* options,
+                      struct SyntaxTree* pProgram);

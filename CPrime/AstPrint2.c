@@ -3,11 +3,11 @@
 
 struct PrintXMLContext
 {
-    FILE * fp;
+    FILE* fp;
 };
 
 
-void PrintText(struct PrintXMLContext * ctx, const char * text)
+void PrintText(struct PrintXMLContext* ctx, const char* text)
 {
     while (*text)
     {
@@ -37,7 +37,7 @@ void PrintText(struct PrintXMLContext * ctx, const char * text)
 
 }
 
-void Print(struct PrintXMLContext * ctx, const char * format, ...)
+void Print(struct PrintXMLContext* ctx, const char* format, ...)
 {
     va_list argList;
 
@@ -46,7 +46,7 @@ void Print(struct PrintXMLContext * ctx, const char * format, ...)
     va_end(argList);
 }
 
-void PrintLn(struct PrintXMLContext * ctx, const char * format, ...)
+void PrintLn(struct PrintXMLContext* ctx, const char* format, ...)
 {
     va_list argList;
 
@@ -57,19 +57,19 @@ void PrintLn(struct PrintXMLContext * ctx, const char * format, ...)
 
     fprintf(ctx->fp, "\n");
 }
-void TDeclarator_PrintXML(TDeclarator * p,
-                          struct PrintXMLContext * ctx);
+void TDeclarator_PrintXML(struct TDeclarator* p,
+                          struct PrintXMLContext* ctx);
 
-void TDeclarationSpecifiers_PrintXML(TDeclarationSpecifiers * p,
-                                     struct PrintXMLContext * ctx);
+void TDeclarationSpecifiers_PrintXML(struct TDeclarationSpecifiers* p,
+                                     struct PrintXMLContext* ctx);
 
-void TStructDeclaration_PrintXML(TStructDeclaration * p, struct PrintXMLContext * ctx);
+void TStructDeclaration_PrintXML(struct TStructDeclaration* p, struct PrintXMLContext* ctx);
 
-void TAnyStructDeclaration_PrintXML(TAnyStructDeclaration * p, struct PrintXMLContext * ctx);
-void TTypeQualifier_PrintXML(TTypeQualifier * p, struct PrintXMLContext * ctx);
+void TAnyStructDeclaration_PrintXML(struct TAnyStructDeclaration* p, struct PrintXMLContext* ctx);
+void TTypeQualifier_PrintXML(struct TTypeQualifier* p, struct PrintXMLContext* ctx);
 
 
-int HasItemsToPrint(TScannerItemList * list)
+int HasItemsToPrint(struct TScannerItemList* list)
 {
     /* ScannerItem* pCurrent = list->pHead;
      while (pCurrent)
@@ -89,17 +89,17 @@ int HasItemsToPrint(TScannerItemList * list)
     return 1;
 }
 
-void TScannerItemList_PrintXML(const char* tokenString, TScannerItemList * list,
-                               struct PrintXMLContext * ctx)
+void TScannerItemList_PrintXML(const char* tokenString, struct TScannerItemList* list,
+                               struct PrintXMLContext* ctx)
 {
 
     if (HasItemsToPrint(list))
     {
         PrintLn(ctx, "<CLUE token=\"%s\">", tokenString);
-        struct ScannerItem * pCurrent = list->pHead;
+        struct ScannerItem* pCurrent = list->pHead;
         while (pCurrent)
         {
-            const char * name = TokenToString(pCurrent->token);
+            const char* name = TokenToString(pCurrent->token);
             switch (pCurrent->token)
             {
                 case TK_PRE_INCLUDE:
@@ -118,9 +118,9 @@ void TScannerItemList_PrintXML(const char* tokenString, TScannerItemList * list,
                 case TK_MACRO_EOF:
                     PrintLn(ctx, "<TK_MACRO_EOF/>");
                     break;
-                    case TK_BREAKLINE:
-                        PrintLn(ctx, "<TK_BREAKLINE/>");
-                        break;
+                case TK_BREAKLINE:
+                    PrintLn(ctx, "<TK_BREAKLINE/>");
+                    break;
                 default:
                     PrintLn(ctx, "<%s>%s</%s>", TokenToString(pCurrent->token), pCurrent->lexeme.c_str, TokenToString(pCurrent->token));
                     break;
@@ -131,164 +131,164 @@ void TScannerItemList_PrintXML(const char* tokenString, TScannerItemList * list,
     }
 }
 
-void TBinaryExpression_PrintXML(TBinaryExpression * p, struct PrintXMLContext * ctx)
+void TBinaryExpression_PrintXML(struct TBinaryExpression* p, struct PrintXMLContext* ctx)
 {
 }
 
-void TPrimaryExpressionLambda_PrintXML(TPrimaryExpressionLambda * p, struct PrintXMLContext * ctx)
+void TPrimaryExpressionLambda_PrintXML(struct TPrimaryExpressionLambda* p, struct PrintXMLContext* ctx)
 {
 }
-void TUnaryExpressionOperator_PrintXML(TUnaryExpressionOperator * p, struct PrintXMLContext * ctx)
+void TUnaryExpressionOperator_PrintXML(struct TUnaryExpressionOperator* p, struct PrintXMLContext* ctx)
 {
 }
-void TCastExpressionType_PrintXML(TCastExpressionType * p, struct PrintXMLContext * ctx)
+void TCastExpressionType_PrintXML(struct TCastExpressionType* p, struct PrintXMLContext* ctx)
 {
 }
-void TPrimaryExpressionValue_PrintXML(TPrimaryExpressionValue * p, struct PrintXMLContext * ctx)
-{
-}
-
-void TPostfixExpressionCore_PrintXML(TPostfixExpressionCore * p, struct PrintXMLContext * ctx)
+void TPrimaryExpressionValue_PrintXML(struct TPrimaryExpressionValue* p, struct PrintXMLContext* ctx)
 {
 }
 
-void TPrimaryExpressionLiteral_PrintXML(TPrimaryExpressionLiteral * p, struct PrintXMLContext * ctx)
+void TPostfixExpressionCore_PrintXML(struct TPostfixExpressionCore* p, struct PrintXMLContext* ctx)
 {
 }
 
-void TTernaryExpression_PrintXML(TTernaryExpression * p, struct PrintXMLContext * ctx)
+void TPrimaryExpressionLiteral_PrintXML(struct TPrimaryExpressionLiteral* p, struct PrintXMLContext* ctx)
 {
 }
 
-void TExpression_PrintXML(TExpression * p, struct PrintXMLContext * ctx) /*@default*/
+void TTernaryExpression_PrintXML(struct TTernaryExpression* p, struct PrintXMLContext* ctx)
+{
+}
+
+void TExpression_PrintXML(struct TExpression* p, struct PrintXMLContext* ctx) /*@default*/
 {
     switch (p->Type)
     {
         case TBinaryExpression_ID:
-            TBinaryExpression_PrintXML((TBinaryExpression*)p, ctx);
-        break;
+            TBinaryExpression_PrintXML((struct TBinaryExpression*)p, ctx);
+            break;
         case TPrimaryExpressionLambda_ID:
-            TPrimaryExpressionLambda_PrintXML((TPrimaryExpressionLambda*)p, ctx);
-        break;
+            TPrimaryExpressionLambda_PrintXML((struct TPrimaryExpressionLambda*)p, ctx);
+            break;
         case TUnaryExpressionOperator_ID:
-            TUnaryExpressionOperator_PrintXML((TUnaryExpressionOperator*)p, ctx);
-        break;
+            TUnaryExpressionOperator_PrintXML((struct TUnaryExpressionOperator*)p, ctx);
+            break;
         case TCastExpressionType_ID:
-            TCastExpressionType_PrintXML((TCastExpressionType*)p, ctx);
-        break;
+            TCastExpressionType_PrintXML((struct TCastExpressionType*)p, ctx);
+            break;
         case TPrimaryExpressionValue_ID:
-            TPrimaryExpressionValue_PrintXML((TPrimaryExpressionValue*)p, ctx);
-        break;
+            TPrimaryExpressionValue_PrintXML((struct TPrimaryExpressionValue*)p, ctx);
+            break;
         case TPostfixExpressionCore_ID:
-            TPostfixExpressionCore_PrintXML((TPostfixExpressionCore*)p, ctx);
-        break;
+            TPostfixExpressionCore_PrintXML((struct TPostfixExpressionCore*)p, ctx);
+            break;
         case TPrimaryExpressionLiteral_ID:
-            TPrimaryExpressionLiteral_PrintXML((TPrimaryExpressionLiteral*)p, ctx);
-        break;
+            TPrimaryExpressionLiteral_PrintXML((struct TPrimaryExpressionLiteral*)p, ctx);
+            break;
         case TTernaryExpression_ID:
-            TTernaryExpression_PrintXML((TTernaryExpression*)p, ctx);
-        break;
+            TTernaryExpression_PrintXML((struct TTernaryExpression*)p, ctx);
+            break;
         default:
-        break;
+            break;
     }
 }
 
-void TForStatement_PrintXML(TForStatement * p, struct PrintXMLContext * ctx)
+void TForStatement_PrintXML(struct TForStatement* p, struct PrintXMLContext* ctx)
 {
 }
 
-void TJumpStatement_PrintXML(TJumpStatement * p, struct PrintXMLContext * ctx)
-{
-}
-
-
-void TExpressionStatement_PrintXML(TExpressionStatement * p, struct PrintXMLContext * ctx)
+void TJumpStatement_PrintXML(struct TJumpStatement* p, struct PrintXMLContext* ctx)
 {
 }
 
 
-void TIfStatement_PrintXML(TIfStatement * p, struct PrintXMLContext * ctx)
+void TExpressionStatement_PrintXML(struct TExpressionStatement* p, struct PrintXMLContext* ctx)
 {
 }
 
 
-void TWhileStatement_PrintXML(TWhileStatement * p, struct PrintXMLContext * ctx)
+void TIfStatement_PrintXML(struct TIfStatement* p, struct PrintXMLContext* ctx)
 {
 }
 
 
-void TSwitchStatement_PrintXML(TSwitchStatement * p, struct PrintXMLContext * ctx)
+void TWhileStatement_PrintXML(struct TWhileStatement* p, struct PrintXMLContext* ctx)
 {
 }
 
 
-void TAsmStatement_PrintXML(TAsmStatement * p, struct PrintXMLContext * ctx)
+void TSwitchStatement_PrintXML(struct TSwitchStatement* p, struct PrintXMLContext* ctx)
 {
 }
 
 
-void TDoStatement_PrintXML(TDoStatement * p, struct PrintXMLContext * ctx)
+void TAsmStatement_PrintXML(struct TAsmStatement* p, struct PrintXMLContext* ctx)
 {
 }
 
 
-void TLabeledStatement_PrintXML(TLabeledStatement * p, struct PrintXMLContext * ctx)
+void TDoStatement_PrintXML(struct TDoStatement* p, struct PrintXMLContext* ctx)
 {
 }
 
-void TCompoundStatement_PrintXML(TCompoundStatement * p, struct PrintXMLContext * ctx)
+
+void TLabeledStatement_PrintXML(struct TLabeledStatement* p, struct PrintXMLContext* ctx)
 {
 }
 
-void TStatement_PrintXML(TStatement * p, struct PrintXMLContext * ctx) /*@default*/
+void TCompoundStatement_PrintXML(struct TCompoundStatement* p, struct PrintXMLContext* ctx)
+{
+}
+
+void TStatement_PrintXML(struct TStatement* p, struct PrintXMLContext* ctx) /*@default*/
 {
     switch (p->Type)
     {
         case TForStatement_ID:
-            TForStatement_PrintXML((TForStatement*)p, ctx);
-        break;
+            TForStatement_PrintXML((struct TForStatement*)p, ctx);
+            break;
         case TJumpStatement_ID:
-            TJumpStatement_PrintXML((TJumpStatement*)p, ctx);
-        break;
+            TJumpStatement_PrintXML((struct TJumpStatement*)p, ctx);
+            break;
         case TExpressionStatement_ID:
-            TExpressionStatement_PrintXML((TExpressionStatement*)p, ctx);
-        break;
+            TExpressionStatement_PrintXML((struct TExpressionStatement*)p, ctx);
+            break;
         case TIfStatement_ID:
-            TIfStatement_PrintXML((TIfStatement*)p, ctx);
-        break;
+            TIfStatement_PrintXML((struct TIfStatement*)p, ctx);
+            break;
         case TWhileStatement_ID:
-            TWhileStatement_PrintXML((TWhileStatement*)p, ctx);
-        break;
+            TWhileStatement_PrintXML((struct TWhileStatement*)p, ctx);
+            break;
         case TSwitchStatement_ID:
-            TSwitchStatement_PrintXML((TSwitchStatement*)p, ctx);
-        break;
+            TSwitchStatement_PrintXML((struct TSwitchStatement*)p, ctx);
+            break;
         case TAsmStatement_ID:
-            TAsmStatement_PrintXML((TAsmStatement*)p, ctx);
-        break;
+            TAsmStatement_PrintXML((struct TAsmStatement*)p, ctx);
+            break;
         case TDoStatement_ID:
-            TDoStatement_PrintXML((TDoStatement*)p, ctx);
-        break;
+            TDoStatement_PrintXML((struct TDoStatement*)p, ctx);
+            break;
         case TLabeledStatement_ID:
-            TLabeledStatement_PrintXML((TLabeledStatement*)p, ctx);
-        break;
+            TLabeledStatement_PrintXML((struct TLabeledStatement*)p, ctx);
+            break;
         case TCompoundStatement_ID:
-            TCompoundStatement_PrintXML((TCompoundStatement*)p, ctx);
-        break;
+            TCompoundStatement_PrintXML((struct TCompoundStatement*)p, ctx);
+            break;
         default:
-        break;
+            break;
     }
 }
 
-void TGroupDeclaration_PrintXML(TGroupDeclaration * p,
-                                struct PrintXMLContext * ctx)
+void TGroupDeclaration_PrintXML(struct TGroupDeclaration* p,
+                                struct PrintXMLContext* ctx)
 {
 }
 
-void TStaticAssertDeclaration_PrintXML(TStaticAssertDeclaration * p,
-                                       struct PrintXMLContext * ctx)
+void TStaticAssertDeclaration_PrintXML(struct TStaticAssertDeclaration* p,
+                                       struct PrintXMLContext* ctx)
 {
 }
-void TParameter_PrintXML(TParameter * p, struct PrintXMLContext * ctx)
+void TParameter_PrintXML(struct TParameter* p, struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<parameter>");
     TDeclarationSpecifiers_PrintXML(&p->Specifiers, ctx);
@@ -297,12 +297,12 @@ void TParameter_PrintXML(TParameter * p, struct PrintXMLContext * ctx)
 }
 
 
-void TParameterList_PrintXML(TParameterList * p, struct PrintXMLContext * ctx)
+void TParameterList_PrintXML(struct TParameterList* p, struct PrintXMLContext* ctx)
 {
     if (p->pHead)
     {
         PrintLn(ctx, "<parameter-list>");
-        TParameter * pCurrent = p->pHead;
+        struct TParameter* pCurrent = p->pHead;
         while (pCurrent)
         {
             TParameter_PrintXML(pCurrent, ctx);
@@ -312,16 +312,16 @@ void TParameterList_PrintXML(TParameterList * p, struct PrintXMLContext * ctx)
     }
 }
 
-void TParameterTypeList_PrintXML(TParameterTypeList * p,
-                                 struct PrintXMLContext * ctx)
+void TParameterTypeList_PrintXML(struct TParameterTypeList* p,
+                                 struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<parameter-type-list>");
     TParameterList_PrintXML(&p->ParameterList, ctx);
     PrintLn(ctx, "</parameter-type-list>");
 }
 
-void TDirectDeclarator_PrintXML(TDirectDeclarator * p,
-                                struct PrintXMLContext * ctx)
+void TDirectDeclarator_PrintXML(struct TDirectDeclarator* p,
+                                struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<direct-declarator>");
     if (p->Identifier)
@@ -354,8 +354,8 @@ void TDirectDeclarator_PrintXML(TDirectDeclarator * p,
 
 
 
-void TTypeQualifierList_PrintXML(TTypeQualifierList * p,
-                                 struct PrintXMLContext * ctx)
+void TTypeQualifierList_PrintXML(struct TTypeQualifierList* p,
+                                 struct PrintXMLContext* ctx)
 {
     if (p->Size)
     {
@@ -368,8 +368,8 @@ void TTypeQualifierList_PrintXML(TTypeQualifierList * p,
     }
 }
 
-void TPointer_PrintXML(TPointer * p,
-                       struct PrintXMLContext * ctx)
+void TPointer_PrintXML(struct TPointer* p,
+                       struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<pointer>");
 
@@ -377,10 +377,10 @@ void TPointer_PrintXML(TPointer * p,
 
     PrintLn(ctx, "</pointer>");
 }
-void TPointerList_PrintXML(TPointerList * p,
-                           struct PrintXMLContext * ctx)
+void TPointerList_PrintXML(struct TPointerList* p,
+                           struct PrintXMLContext* ctx)
 {
-    TPointer * pCurrent = p->pHead;
+    struct TPointer* pCurrent = p->pHead;
     if (pCurrent)
     {
         PrintLn(ctx, "<pointer-list>");
@@ -393,8 +393,8 @@ void TPointerList_PrintXML(TPointerList * p,
     }
 }
 
-void TDeclarator_PrintXML(TDeclarator * p,
-                          struct PrintXMLContext * ctx)
+void TDeclarator_PrintXML(struct TDeclarator* p,
+                          struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<declarator>");
     TDirectDeclarator_PrintXML(p->pDirectDeclarator, ctx);
@@ -402,18 +402,18 @@ void TDeclarator_PrintXML(TDeclarator * p,
     PrintLn(ctx, "</declarator>");
 }
 
-void TInitDeclarator_PrintXML(TInitDeclarator * p,
-                              struct PrintXMLContext * ctx)
+void TInitDeclarator_PrintXML(struct TInitDeclarator* p,
+                              struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<init-declarator>");
     TDeclarator_PrintXML(p->pDeclarator, ctx);
     PrintLn(ctx, "</init-declarator>");
 }
 
-void TInitDeclaratorList_PrintXML(TInitDeclaratorList * p,
-                                  struct PrintXMLContext * ctx)
+void TInitDeclaratorList_PrintXML(struct TInitDeclaratorList* p,
+                                  struct PrintXMLContext* ctx)
 {
-    TInitDeclarator * pCurrent = p->pHead;
+    struct TInitDeclarator* pCurrent = p->pHead;
     while (pCurrent)
     {
         TInitDeclarator_PrintXML(pCurrent, ctx);
@@ -421,7 +421,7 @@ void TInitDeclaratorList_PrintXML(TInitDeclaratorList * p,
     }
 }
 
-void TDeclaration_PrintXML(TDeclaration * p, struct PrintXMLContext * ctx)
+void TDeclaration_PrintXML(struct TDeclaration* p, struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<declaration>");
 
@@ -436,8 +436,8 @@ void TDeclaration_PrintXML(TDeclaration * p, struct PrintXMLContext * ctx)
 }
 
 
-void TSingleTypeSpecifier_PrintXML(TSingleTypeSpecifier * p,
-                                   struct PrintXMLContext * ctx)
+void TSingleTypeSpecifier_PrintXML(struct TSingleTypeSpecifier* p,
+                                   struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<single-type-specifier>");
 
@@ -455,47 +455,47 @@ void TSingleTypeSpecifier_PrintXML(TSingleTypeSpecifier * p,
     PrintLn(ctx, "</single-type-specifier>");
 }
 
-void TTypeQualifier_PrintXML(TTypeQualifier * p, struct PrintXMLContext * ctx)
+void TTypeQualifier_PrintXML(struct TTypeQualifier* p, struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<type-qualifier>");
-    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("", &p->ClueList0, ctx);
     PrintLn(ctx, "</type-qualifier>");
 }
 
-void TStructDeclarationList_PrintXML(TStructDeclarationList * p, struct PrintXMLContext * ctx)
+void TStructDeclarationList_PrintXML(struct TStructDeclarationList* p, struct PrintXMLContext* ctx)
 {
     for (int i = 0; i < p->Size; i++)
     {
-        TAnyStructDeclaration * pCurrent = p->pItems[i];
+        struct TAnyStructDeclaration* pCurrent = p->pItems[i];
         TAnyStructDeclaration_PrintXML(pCurrent, ctx);
     }
 }
 
-void TStructUnionSpecifier_PrintXML(TStructUnionSpecifier * p, struct PrintXMLContext * ctx)
+void TStructUnionSpecifier_PrintXML(struct TStructUnionSpecifier* p, struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<struct-union-specifier>");
-    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("", &p->ClueList0, ctx);
     TStructDeclarationList_PrintXML(&p->StructDeclarationList, ctx);
     PrintLn(ctx, "</struct-union-specifier>");
 
 
 }
 
-void TStorageSpecifier_PrintXML(TStorageSpecifier * p,
-                                struct PrintXMLContext * ctx)
+void TStorageSpecifier_PrintXML(struct TStorageSpecifier* p,
+                                struct PrintXMLContext* ctx)
 {
     Print(ctx, "<storage-specifier>");
-    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("", &p->ClueList0, ctx);
     PrintText(ctx, TokenToString(p->Token));
     PrintLn(ctx, "</storage-specifier>");
 }
 
 
-void TAtomicTypeSpecifier_PrintXML(TAtomicTypeSpecifier * p,
-                                   struct PrintXMLContext * ctx)
+void TAtomicTypeSpecifier_PrintXML(struct TAtomicTypeSpecifier* p,
+                                   struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<atomic-specifier>");
-    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("", &p->ClueList0, ctx);
     //PrintText(ctx, TokenToString(p->Token));
     PrintLn(ctx, "</atomic-specifier>");
 
@@ -503,32 +503,32 @@ void TAtomicTypeSpecifier_PrintXML(TAtomicTypeSpecifier * p,
 }
 
 
-void TAlignmentSpecifier_PrintXML(TAlignmentSpecifier * p,
-                                  struct PrintXMLContext * ctx)
+void TAlignmentSpecifier_PrintXML(struct TAlignmentSpecifier* p,
+                                  struct PrintXMLContext* ctx)
 {
     //TScannerItemList_PrintXML(&p->ClueList0, ctx);
 }
 
 
 
-void TFunctionSpecifier_PrintXML(TFunctionSpecifier * p,
-                                 struct PrintXMLContext * ctx)
+void TFunctionSpecifier_PrintXML(struct TFunctionSpecifier* p,
+                                 struct PrintXMLContext* ctx)
 {
-    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("", &p->ClueList0, ctx);
 }
 
-void TEnumSpecifier_PrintXML(TEnumSpecifier * p, struct PrintXMLContext * ctx)
+void TEnumSpecifier_PrintXML(struct TEnumSpecifier* p, struct PrintXMLContext* ctx)
 {
-    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("", &p->ClueList0, ctx);
 }
 
 
-void TStructDeclaratorList_PrintXML(TStructDeclaratorList * p, struct PrintXMLContext * ctx)
+void TStructDeclaratorList_PrintXML(struct TStructDeclaratorList* p, struct PrintXMLContext* ctx)
 {
     if (p->pHead)
     {
         PrintLn(ctx, "<struct-declarator-list>");
-        TInitDeclarator * pCurrent = p->pHead;
+        struct TInitDeclarator* pCurrent = p->pHead;
         while (pCurrent)
         {
             TInitDeclarator_PrintXML(pCurrent, ctx);
@@ -538,83 +538,83 @@ void TStructDeclaratorList_PrintXML(TStructDeclaratorList * p, struct PrintXMLCo
     }
 }
 
-void TStructDeclaration_PrintXML(TStructDeclaration * p, struct PrintXMLContext * ctx)
+void TStructDeclaration_PrintXML(struct TStructDeclaration* p, struct PrintXMLContext* ctx)
 {
     PrintLn(ctx, "<struct-declaration>");
     TStructDeclaratorList_PrintXML(&p->DeclaratorList, ctx);
     PrintLn(ctx, "</struct-declaration>");
 }
 
-void TAnyStructDeclaration_PrintXML(TAnyStructDeclaration * p, struct PrintXMLContext * ctx) /*@default*/
+void TAnyStructDeclaration_PrintXML(struct TAnyStructDeclaration* p, struct PrintXMLContext* ctx) /*@default*/
 {
     switch (p->Type)
     {
         case TStaticAssertDeclaration_ID:
-            TStaticAssertDeclaration_PrintXML((TStaticAssertDeclaration*)p, ctx);
-        break;
+            TStaticAssertDeclaration_PrintXML((struct TStaticAssertDeclaration*)p, ctx);
+            break;
         case TStructDeclaration_ID:
-            TStructDeclaration_PrintXML((TStructDeclaration*)p, ctx);
-        break;
+            TStructDeclaration_PrintXML((struct TStructDeclaration*)p, ctx);
+            break;
         default:
-        break;
+            break;
     }
 }
-void TTypeSpecifier_PrintXML(TTypeSpecifier * p, struct PrintXMLContext * ctx) /*@default*/
+void TTypeSpecifier_PrintXML(struct TTypeSpecifier* p, struct PrintXMLContext* ctx) /*@default*/
 {
     switch (p->Type)
     {
         case TStructUnionSpecifier_ID:
-            TStructUnionSpecifier_PrintXML((TStructUnionSpecifier*)p, ctx);
-        break;
+            TStructUnionSpecifier_PrintXML((struct TStructUnionSpecifier*)p, ctx);
+            break;
         case TAtomicTypeSpecifier_ID:
-            TAtomicTypeSpecifier_PrintXML((TAtomicTypeSpecifier*)p, ctx);
-        break;
+            TAtomicTypeSpecifier_PrintXML((struct TAtomicTypeSpecifier*)p, ctx);
+            break;
         case TSingleTypeSpecifier_ID:
-            TSingleTypeSpecifier_PrintXML((TSingleTypeSpecifier*)p, ctx);
-        break;
+            TSingleTypeSpecifier_PrintXML((struct TSingleTypeSpecifier*)p, ctx);
+            break;
         case TEnumSpecifier_ID:
-            TEnumSpecifier_PrintXML((TEnumSpecifier*)p, ctx);
-        break;
+            TEnumSpecifier_PrintXML((struct TEnumSpecifier*)p, ctx);
+            break;
         default:
-        break;
+            break;
     }
 }
 
-void TDeclarationSpecifier_PrintXML(TDeclarationSpecifier * p, struct PrintXMLContext * ctx) /*@default*/
+void TDeclarationSpecifier_PrintXML(struct TDeclarationSpecifier* p, struct PrintXMLContext* ctx) /*@default*/
 {
     switch (p->Type)
     {
         case TTypeQualifier_ID:
-            TTypeQualifier_PrintXML((TTypeQualifier*)p, ctx);
-        break;
+            TTypeQualifier_PrintXML((struct TTypeQualifier*)p, ctx);
+            break;
         case TStructUnionSpecifier_ID:
-            TStructUnionSpecifier_PrintXML((TStructUnionSpecifier*)p, ctx);
-        break;
+            TStructUnionSpecifier_PrintXML((struct TStructUnionSpecifier*)p, ctx);
+            break;
         case TStorageSpecifier_ID:
-            TStorageSpecifier_PrintXML((TStorageSpecifier*)p, ctx);
-        break;
+            TStorageSpecifier_PrintXML((struct TStorageSpecifier*)p, ctx);
+            break;
         case TAtomicTypeSpecifier_ID:
-            TAtomicTypeSpecifier_PrintXML((TAtomicTypeSpecifier*)p, ctx);
-        break;
+            TAtomicTypeSpecifier_PrintXML((struct TAtomicTypeSpecifier*)p, ctx);
+            break;
         case TSingleTypeSpecifier_ID:
-            TSingleTypeSpecifier_PrintXML((TSingleTypeSpecifier*)p, ctx);
-        break;
+            TSingleTypeSpecifier_PrintXML((struct TSingleTypeSpecifier*)p, ctx);
+            break;
         case TAlignmentSpecifier_ID:
-            TAlignmentSpecifier_PrintXML((TAlignmentSpecifier*)p, ctx);
-        break;
+            TAlignmentSpecifier_PrintXML((struct TAlignmentSpecifier*)p, ctx);
+            break;
         case TFunctionSpecifier_ID:
-            TFunctionSpecifier_PrintXML((TFunctionSpecifier*)p, ctx);
-        break;
+            TFunctionSpecifier_PrintXML((struct TFunctionSpecifier*)p, ctx);
+            break;
         case TEnumSpecifier_ID:
-            TEnumSpecifier_PrintXML((TEnumSpecifier*)p, ctx);
-        break;
+            TEnumSpecifier_PrintXML((struct TEnumSpecifier*)p, ctx);
+            break;
         default:
-        break;
+            break;
     }
 }
 
-void TDeclarationSpecifiers_PrintXML(TDeclarationSpecifiers * p,
-                                     struct PrintXMLContext * ctx)
+void TDeclarationSpecifiers_PrintXML(struct TDeclarationSpecifiers* p,
+                                     struct PrintXMLContext* ctx)
 {
     if (p->Size > 0)
     {
@@ -631,51 +631,51 @@ void TDeclarationSpecifiers_PrintXML(TDeclarationSpecifiers * p,
 
 
 
-void TEofDeclaration_PrintXML(TEofDeclaration * p,
-                              struct PrintXMLContext * ctx)
+void TEofDeclaration_PrintXML(struct TEofDeclaration* p,
+                              struct PrintXMLContext* ctx)
 {
-    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("", &p->ClueList0, ctx);
     PrintLn(ctx, "<eof-declaration/>");
 }
 
-void TAnyDeclaration_PrintXML(TAnyDeclaration * p,
-                              struct PrintXMLContext * ctx) /*@default*/
+void TAnyDeclaration_PrintXML(struct TAnyDeclaration* p,
+                              struct PrintXMLContext* ctx) /*@default*/
 {
     switch (p->Type)
     {
         case TGroupDeclaration_ID:
-            TGroupDeclaration_PrintXML((TGroupDeclaration*)p, ctx);
-        break;
+            TGroupDeclaration_PrintXML((struct TGroupDeclaration*)p, ctx);
+            break;
         case TStaticAssertDeclaration_ID:
-            TStaticAssertDeclaration_PrintXML((TStaticAssertDeclaration*)p, ctx);
-        break;
+            TStaticAssertDeclaration_PrintXML((struct TStaticAssertDeclaration*)p, ctx);
+            break;
         case TDeclaration_ID:
-            TDeclaration_PrintXML((TDeclaration*)p, ctx);
-        break;
+            TDeclaration_PrintXML((struct TDeclaration*)p, ctx);
+            break;
         case TEofDeclaration_ID:
-            TEofDeclaration_PrintXML((TEofDeclaration*)p, ctx);
-        break;
+            TEofDeclaration_PrintXML((struct TEofDeclaration*)p, ctx);
+            break;
         default:
-        break;
+            break;
     }
 }
 
 
-void TProgram_PrintAstToXML(TProgram * pProgram,
-                            const char * fileName,
-                            const char * inputFileName)
+void SyntaxTree_PrintAstToXML(struct SyntaxTree* pProgram,
+                              const char* fileName,
+                              const char* inputFileName)
 {
-    FILE * fp = fopen(fileName, "w");
+    FILE* fp = fopen(fileName, "w");
     //TDeclarations_Print(&pProgram->Declarations, false, fp);
 
-    struct PrintXMLContext ctx = { 0 };
+    struct PrintXMLContext ctx = {0};
     ctx.fp = fp;
     bool b = false;
     fprintf(fp, "<AST>\n");
 
     for (int i = 0; i < pProgram->Declarations.Size; i++)
     {
-        TAnyDeclaration * pItem = pProgram->Declarations.pItems[i];
+        struct TAnyDeclaration* pItem = pProgram->Declarations.pItems[i];
         TAnyDeclaration_PrintXML(pItem, &ctx);
     }
 

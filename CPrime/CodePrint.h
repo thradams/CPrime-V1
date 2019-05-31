@@ -12,24 +12,24 @@
 
 struct IntegerStack
 {
-    int * /*@auto*/ /*@[Size]*/ pData;
+    int* /*@auto*/ /*@[Size]*/ pData;
     int Size;
     int Capacity;
 };
 
 
 #define INTEGER_STACK_INIT {0,0,0}
-typedef enum
+enum Search
 {
     SearchNone,
     SearchAll,
     SearchDestroy,
     SearchInit,
     SearchDelete,
-} Search;
+};
 
 
-typedef struct PrintCodeOptions
+struct PrintCodeOptions
 {
     struct Options Options;
 
@@ -40,36 +40,38 @@ typedef struct PrintCodeOptions
     int IdentationLevel;
     //
 
-} PrintCodeOptions;
+    StrBuilder sbPreDeclaration;
 
-#define CODE_PRINT_OPTIONS_INIT {OPTIONS_INIT, INTEGER_STACK_INIT, true, 0}
+};
 
-void PrintCodeOptions_Destroy(PrintCodeOptions * options);
+#define CODE_PRINT_OPTIONS_INIT {OPTIONS_INIT, INTEGER_STACK_INIT, true, 0, STRBUILDER_INIT}
 
-void TProgram_PrintCodeToFile(TProgram * pProgram,
-                              struct Options * options,
-                              const char * fileName,
-                              const char * userpath);
+void PrintCodeOptions_Destroy(struct PrintCodeOptions* options);
 
-void TProgram_PrintCodeToString(TProgram * pProgram,
-                                struct Options * options,
-                                StrBuilder * output);
+void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pProgram,
+                                struct Options* options,
+                                const char* fileName,
+                                const char* userpath);
 
-
-void TTypeName_CodePrint(TProgram * program, PrintCodeOptions * options, TTypeName * p, StrBuilder * fp);
-
+void SyntaxTree_PrintCodeToString(struct SyntaxTree* pProgram,
+                                  struct Options* options,
+                                  StrBuilder* output);
 
 
-void TSpecifierQualifierList_CodePrint(TProgram * program,
-                                       PrintCodeOptions * options,
-                                       TSpecifierQualifierList * pDeclarationSpecifiers,
-
-                                       StrBuilder * fp);
+void TTypeName_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeName* p, StrBuilder* fp);
 
 
-void TDeclarationSpecifiers_CodePrint(TProgram * program, PrintCodeOptions * options, TDeclarationSpecifiers * pDeclarationSpecifiers, StrBuilder * fp);
 
-typedef enum
+void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program,
+                                       struct PrintCodeOptions* options,
+                                       struct TSpecifierQualifierList* pDeclarationSpecifiers,
+
+                                       StrBuilder* fp);
+
+
+void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarationSpecifiers* pDeclarationSpecifiers, StrBuilder* fp);
+
+enum Action
 {
     ActionDestroy,
     ActionDestroyContent,
@@ -78,18 +80,18 @@ typedef enum
     ActionInit,
     ActionInitContent,
     ActionStaticInit,
-} Action;
+};
 
-void InstanciateDestroy2(TProgram * program,
-                         PrintCodeOptions * options,
-                         TSpecifierQualifierList * pSpecifierQualifierList,//<-dupla para entender o tipo
-                         TDeclarator * pDeclatator,                        //<-dupla para entender o tipo
-                         TInitializer * pInitializer,
-                         TParameterTypeList * pArgsOpt,
-                         const char * pInitExpressionText, //(x->p->i = 0)    
-                         const char * pszAutoPointerLenExpressionOpt, //expressao usada para definir o tamanho de um spaw de auto pointers
+void InstanciateDestroy2(struct SyntaxTree* program,
+                         struct PrintCodeOptions* options,
+                         struct TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
+                         struct TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
+                         struct TInitializer* pInitializer,
+                         struct TParameterTypeList* pArgsOpt,
+                         const char* pInitExpressionText, //(x->p->i = 0)    
+                         const char* pszAutoPointerLenExpressionOpt, //expressao usada para definir o tamanho de um spaw de auto pointers
                                                                      //se passar null eh pq nao interessa
-                         const Action action,
-                         Search search,
-                         bool * pbHasInitializers,
-                         StrBuilder * fp);
+                         const enum Action action,
+                         enum Search search,
+                         bool* pbHasInitializers,
+                         StrBuilder* fp);

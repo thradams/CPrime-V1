@@ -18,7 +18,7 @@
 
 void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
 {
-    const char* end; /* end of processed string */
+    const char* end; /* end of processed char */
     const char* p;      /* search pointer */
     const char* s;      /* copy pointer */
 
@@ -33,9 +33,9 @@ void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
         }
     }
     else if (drv)
-        *drv = '\0';
+        * drv = '\0';
 
-    /* search for end of string or stream separator */
+    /* search for end of char or stream separator */
     for (end = path; *end && *end != ':'; )
         end++;
 
@@ -62,7 +62,7 @@ void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
     if (name)
     {
         for (s = p; s < end; )
-            *name++ = *s++;
+            * name++ = *s++;
 
         *name = '\0';
     }
@@ -70,7 +70,7 @@ void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
     if (dir)
     {
         for (s = path; s < p; )
-            *dir++ = *s++;
+            * dir++ = *s++;
 
         *dir = '\0';
     }
@@ -132,7 +132,7 @@ void MakePath(char* path, char* drv, char* dir, char* name, char* ext)
     *path = '\0';
 }
 
-bool IsInPath(const char * filePath, const char* path)
+bool IsInPath(const char* filePath, const char* path)
 {
     while (*path)
     {
@@ -151,7 +151,7 @@ bool IsInPath(const char * filePath, const char* path)
     return true;
 }
 
-bool IsFullPath(const char*  path)
+bool IsFullPath(const char* path)
 {
     if (path != NULL)
     {
@@ -219,8 +219,8 @@ void GetFullDirS(const char* fileName, char* out, int len)
     char fname[CPRIME_MAX_FNAME];
     char ext[CPRIME_MAX_EXT];
     SplitPath(buffer, drive, dir, fname, ext); // C4996
-    
-    
+
+
     strcpy(out, drive);
     strcat(out, dir);
 }
@@ -252,7 +252,7 @@ void GetFullDir(const char* fileName, char** out)
     StrBuilder_Append(&s, drive);
     StrBuilder_Append(&s, dir);
     *out = StrBuilder_Release(&s);
-    
+
     StrBuilder_Destroy(&s);
 }
 
@@ -314,6 +314,6 @@ void GetFullPathS(const char* fileName, char* out)
     strcat(out, dir);
     strcat(out, fname);
     strcat(out, ext);
-    
+
 }
 

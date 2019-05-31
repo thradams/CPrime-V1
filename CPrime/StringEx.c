@@ -1,9 +1,9 @@
 #include  "StringEx.h"
 #include <ctype.h>
 
-char * StrDup(const char * p)
+char* StrDup(const char* p)
 {
-    char * a = 0;
+    char* a = 0;
     if (p)
     {
         a = Malloc(strlen(p) + 1);
@@ -73,14 +73,14 @@ char* StrIStr(const char* str1, const char* str2)
     return *p2 == 0 ? (char*)r : 0;
 }
 
-bool IsSuffix(const char * s, const char * suffix)
+bool IsSuffix(const char* s, const char* suffix)
 {
     bool bResult = false;
     int len = (int)strlen(s);
     int len2 = (int)strlen(suffix);
     if (len > len2)
     {
-        const char * pEndPart = &s[len - len2];
+        const char* pEndPart = &s[len - len2];
         if (StrIComp(pEndPart, suffix) == 0) //case insensitive
         {
             bResult = true;

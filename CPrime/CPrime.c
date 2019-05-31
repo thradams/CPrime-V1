@@ -15,14 +15,14 @@
 #define EXECUTABLE_NAME "cpc"
 
 int Compile(const char* configFileName,
-    const char* inputFileName,
-    const char* outputFileName,
-    struct Options* options,
-    bool bPrintASTFile)
+            const char* inputFileName,
+            const char* outputFileName,
+            struct Options* options,
+            bool bPrintASTFile)
 {
     int bSuccess = 0;
-    TProgram program;
-    TProgram_Init(&program);
+    struct SyntaxTree program;
+    SyntaxTree_Init(&program);
 
     clock_t tstart = clock();
 
@@ -44,12 +44,12 @@ int Compile(const char* configFileName,
         {
             if (bPrintASTFile)
             {
-                //TProgram_PrintAstToFile(&program, outputFileName, inputFileName);
-                TProgram_PrintAstToXML(&program, outputFileName, inputFileName);
+                //SyntaxTree_PrintAstToFile(&program, outputFileName, inputFileName);
+                SyntaxTree_PrintAstToXML(&program, outputFileName, inputFileName);
             }
             else
             {
-                TProgram_PrintCodeToFile(&program, options, outputFileName, inputFileName);
+                SyntaxTree_PrintCodeToFile(&program, options, outputFileName, inputFileName);
             }
         }
         else
@@ -60,15 +60,15 @@ int Compile(const char* configFileName,
             {
                 //faz um  arquivo com extensao json
                 //MakePath(outc, drive, dir, fname, ".json");
-                //TProgram_PrintAstToFile(&program, outc, inputFileName);
+                //SyntaxTree_PrintAstToFile(&program, outc, inputFileName);
                 MakePath(outc, drive, dir, fname, ".xml");
-                TProgram_PrintAstToXML(&program, outc, inputFileName);
+                SyntaxTree_PrintAstToXML(&program, outc, inputFileName);
             }
             else
             {
                 //gera em cima do proprio arquivo
                 MakePath(outc, drive, dir, fname, ext);
-                TProgram_PrintCodeToFile(&program, options, outc, inputFileName);
+                SyntaxTree_PrintCodeToFile(&program, options, outc, inputFileName);
             }
         }
 
@@ -76,7 +76,7 @@ int Compile(const char* configFileName,
         printf("Completed in %d second(s)\n", (int)((tend - tstart) / CLOCKS_PER_SEC));
 
     }
-    TProgram_Destroy(&program);
+    SyntaxTree_Destroy(&program);
     return bSuccess;
 }
 
@@ -92,14 +92,14 @@ void PrintHelp()
     printf("          " EXECUTABLE_NAME " -P hello.c\n");
     printf("          " EXECUTABLE_NAME " -A hello.c\n");
     printf("\n");
-    printf("PrintCodeOptions:\n");
+    printf("struct PrintCodeOptions:\n");
     printf("-config FILE                          Configuration fp.\n");
     printf("-outDir                               Set the directory for output.\n");
     printf("-help                                 Print this message.\n");
     printf("-o FILE                               Sets ouput file name.\n");
     printf("-E                                    Preprocess to console.\n");
     printf("-P                                    Preprocess to file.\n");
-    printf("-A                                    Output AST to file.\n");    
+    printf("-A                                    Output AST to file.\n");
     printf("-cx                                   Generate C'.\n");
     printf("-ca                                   Generated C annotated\n");
     printf("-removeComments                       Remove comments from output\n");
@@ -115,19 +115,19 @@ void PrintHelp()
 
 
 
-char * CompileText(int type, int bNoImplicitTag, char * input)
+char* CompileText(int type, int bNoImplicitTag, char* input)
 {
-    char * output = NULL;
+    char* output = NULL;
 
     struct Options options2 = OPTIONS_INIT;
     options2.Target = (enum CompilerTarget) type;
     options2.bNoImplicitTag = bNoImplicitTag;
 
-    TProgram program;
-    TProgram_Init(&program);
-    if (GetASTFromString(input, &options2 ,&program))
+    struct SyntaxTree program;
+    SyntaxTree_Init(&program);
+    if (GetASTFromString(input, &options2, &program))
     {
-        
+
 
         StrBuilder sb = STRBUILDER_INIT;
         StrBuilder_Reserve(&sb, 500);
@@ -137,7 +137,7 @@ char * CompileText(int type, int bNoImplicitTag, char * input)
         }
         else
         {
-            TProgram_PrintCodeToString(&program, &options2, &sb);
+            SyntaxTree_PrintCodeToString(&program, &options2, &sb);
         }
         output = sb.c_str;
     }
@@ -145,7 +145,7 @@ char * CompileText(int type, int bNoImplicitTag, char * input)
 }
 
 
-int main(int argc, char * argv[])
+int main(int argc, char* argv[])
 {
     printf("\n");
     printf("C' Version " __DATE__ "\n");
@@ -160,7 +160,7 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    char outputDirFullPath[CPRIME_MAX_PATH] = { 0 };
+    char outputDirFullPath[CPRIME_MAX_PATH] = {0};
 
     char cxconfigFileFullPath[CPRIME_MAX_PATH];
     GetFullDirS(argv[0], cxconfigFileFullPath, CPRIME_MAX_PATH);
@@ -178,8 +178,8 @@ int main(int argc, char * argv[])
     }
 
 
-    char outputFileFullPath[CPRIME_MAX_PATH] = { 0 };
-    char inputFileFullPath[CPRIME_MAX_PATH] = { 0 };
+    char outputFileFullPath[CPRIME_MAX_PATH] = {0};
+    char inputFileFullPath[CPRIME_MAX_PATH] = {0};
 
 
     struct Options options = OPTIONS_INIT;
@@ -193,12 +193,12 @@ int main(int argc, char * argv[])
     bool bSources = false;
 
     clock_t tstart = clock();
-    struct FileNodeList sources = { 0 };
+    struct FileNodeList sources = {0};
 
 
     for (int i = 1; i < argc; i++)
     {
-        const char * option = argv[i];
+        const char* option = argv[i];
         if (strcmp(option, "-P") == 0)
         {
             options.Target = CompilerTarget_Preprocessed;
@@ -228,7 +228,7 @@ int main(int argc, char * argv[])
         }
         else if (strcmp(option, "-buildfile") == 0)
         {
-            
+
             bBuildFile = true;
         }
         else if (strcmp(option, "-build") == 0)
@@ -333,8 +333,8 @@ int main(int argc, char * argv[])
                 MkDir(outputDirFullPath);
             }
 
-            char outputItemPath[2000] = { 0 };
-            struct FileNode * pCurrent = sources.pHead;
+            char outputItemPath[2000] = {0};
+            struct FileNode* pCurrent = sources.pHead;
             while (pCurrent != NULL)
             {
                 outputItemPath[0] = 0;
@@ -362,7 +362,7 @@ int main(int argc, char * argv[])
     {
         GetSources(cxconfigFileFullPath, inputFileFullPath, true, &sources);
         int fileCount = 0;
-        struct FileNode * pCurrent = sources.pHead;
+        struct FileNode* pCurrent = sources.pHead;
         while (pCurrent != NULL)
         {
             fileCount++;

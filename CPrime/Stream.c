@@ -10,18 +10,18 @@
 #include "Path.h"
 #include "Mem.h"
 
-bool LoadFile(const char * filename, const char ** out, int * szOut)
+bool LoadFile(const char* filename, const char** out, int* szOut)
 {
     bool result = false;
     int lSize = 0;
-    FILE * fp = (FILE *)fopen(filename, "rb");
+    FILE* fp = (FILE*)fopen(filename, "rb");
 
     if (fp)
     {
         fseek(fp, 0L, SEEK_END);
         lSize = ftell(fp);
         rewind(fp);
-        char * buffer = (char *)Malloc(lSize + 1);
+        char* buffer = (char*)Malloc(lSize + 1);
 
         if (buffer)
         {
@@ -52,8 +52,8 @@ bool LoadFile(const char * filename, const char ** out, int * szOut)
 }
 
 
-bool Stream_InitFile(struct Stream * pStream,
-                     const char * fullPath)
+bool Stream_InitFile(struct Stream* pStream,
+                     const char* fullPath)
 {
     //assert(IsFullPath(fullPath));
     pStream->NameOrFullPath = StrDup(fullPath);
@@ -61,7 +61,7 @@ bool Stream_InitFile(struct Stream * pStream,
     pStream->Line = 1;
     pStream->Column = 1;
     pStream->Position = 0;
-    bool result = LoadFile(fullPath, (const char **)& pStream->Text,
+    bool result = LoadFile(fullPath, (const char**)& pStream->Text,
                            &pStream->TextLen);
 
     if (result)
@@ -85,7 +85,7 @@ bool Stream_InitFile(struct Stream * pStream,
     return result;
 }
 
-bool Stream_Init(struct Stream * pStream, const char * name, const char * Text)
+bool Stream_Init(struct Stream* pStream, const char* name, const char* Text)
 {
     pStream->Line = 1;
     pStream->Column = 1;
@@ -120,7 +120,7 @@ bool Stream_Init(struct Stream * pStream, const char * name, const char * Text)
 }
 
 
-void Stream_Destroy(struct Stream * pStream) /*@default*/
+void Stream_Destroy(struct Stream* pStream) /*@default*/
 {
     Free((void*)pStream->NameOrFullPath);
     Free((void*)pStream->FullDir2);
@@ -128,7 +128,7 @@ void Stream_Destroy(struct Stream * pStream) /*@default*/
 }
 
 
-wchar_t Stream_LookAhead(struct Stream * pStream)
+wchar_t Stream_LookAhead(struct Stream* pStream)
 {
     if (pStream->Position + 1 >= pStream->TextLen)
     {
@@ -138,14 +138,14 @@ wchar_t Stream_LookAhead(struct Stream * pStream)
     return pStream->Text[pStream->Position + 1];
 }
 
-bool Stream_MatchChar(struct Stream * pStream, wchar_t ch)
+bool Stream_MatchChar(struct Stream* pStream, wchar_t ch)
 {
     bool b = pStream->Character == ch;
     Stream_Match(pStream);
     return b;
 }
 
-void Stream_Match(struct Stream * pStream)
+void Stream_Match(struct Stream* pStream)
 {
     if (pStream->Position >= pStream->TextLen)
     {

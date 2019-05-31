@@ -8,7 +8,7 @@
 
 #include "Mem.h"
 
-void KeyValue_Delete(MapItem2 * p) /*@default*/
+void KeyValue_Delete(struct MapItem2* p) /*@default*/
 {
     if (p != NULL)
     {
@@ -17,17 +17,17 @@ void KeyValue_Delete(MapItem2 * p) /*@default*/
     }
 }
 
-static MapItem2 * Map2_GetAssocAt(
-    Map2 * pMap,
-    const char * Key,
-    unsigned int * nHashBucket,
-    unsigned int * HashValue);
+static struct MapItem2* Map2_GetAssocAt(
+    struct Map2* pMap,
+    const char* Key,
+    unsigned int* nHashBucket,
+    unsigned int* HashValue);
 
 
-unsigned int String2_HashKey(const char * Key)
+unsigned int String2_HashKey(const char* Key)
 {
     // hash key to unsigned int value by pseudorandomizing transform
-    // (algorithm copied from STL string hash in xfunctional)
+    // (algorithm copied from STL char hash in xfunctional)
     unsigned int uHashVal = 2166136261U;
     unsigned int uFirst = 0;
     unsigned int uLast = (unsigned int)strlen(Key);
@@ -42,7 +42,7 @@ unsigned int String2_HashKey(const char * Key)
 }
 
 
-void Map2_RemoveAll(Map2 * pMap, void(*DeleteFunc)(void *))
+void Map2_RemoveAll(struct Map2* pMap, void(*DeleteFunc)(void*))
 {
     if (pMap->pHashTable != NULL)
     {
@@ -50,12 +50,12 @@ void Map2_RemoveAll(Map2 * pMap, void(*DeleteFunc)(void *))
              nHash < pMap->nHashTableSize;
              nHash++)
         {
-            MapItem2 * pKeyValue =
+            struct MapItem2* pKeyValue =
                 pMap->pHashTable[nHash];
 
             while (pKeyValue != NULL)
             {
-                MapItem2 * pKeyValueCurrent = pKeyValue;
+                struct MapItem2* pKeyValueCurrent = pKeyValue;
 
                 if (DeleteFunc)
                     DeleteFunc(pKeyValueCurrent->pValue);
@@ -73,16 +73,16 @@ void Map2_RemoveAll(Map2 * pMap, void(*DeleteFunc)(void *))
     }
 }
 
-void Map2_Destroy(Map2 * pMap, void(*DeleteFunc)(void *))
+void Map2_Destroy(struct Map2* pMap, void(*DeleteFunc)(void*))
 {
     Map2_RemoveAll(pMap, DeleteFunc);
 }
 
-static MapItem2 * Map2_GetAssocAt(
-    Map2 * pMap,
-    const char * Key,
-    unsigned int * nHashBucket,
-    unsigned int * HashValue)
+static struct MapItem2* Map2_GetAssocAt(
+    struct Map2* pMap,
+    const char* Key,
+    unsigned int* nHashBucket,
+    unsigned int* HashValue)
 {
     if (pMap->pHashTable == NULL)
     {
@@ -94,9 +94,9 @@ static MapItem2 * Map2_GetAssocAt(
     *HashValue = String2_HashKey(Key);
     *nHashBucket = *HashValue % pMap->nHashTableSize;
 
-    MapItem2 * pResult = NULL;
+    struct MapItem2* pResult = NULL;
 
-    MapItem2 * pKeyValue =
+    struct MapItem2* pKeyValue =
         pMap->pHashTable[*nHashBucket];
 
     for (; pKeyValue != NULL; pKeyValue = pKeyValue->pNext)
@@ -112,17 +112,17 @@ static MapItem2 * Map2_GetAssocAt(
     return pResult;
 }
 
-bool Map2_Lookup(Map2 * pMap,
-                 const char * Key,
-                 void ** rValue)
+bool Map2_Lookup(struct Map2* pMap,
+                 const char* Key,
+                 void** rValue)
 {
     bool bResult = false;
 
     unsigned int nHashBucket, HashValue;
-    MapItem2 * pKeyValue = Map2_GetAssocAt(pMap,
-                                           Key,
-                                           &nHashBucket,
-                                           &HashValue);
+    struct MapItem2* pKeyValue = Map2_GetAssocAt(pMap,
+                                          Key,
+                                          &nHashBucket,
+                                          &HashValue);
 
     if (pKeyValue != NULL)
     {
@@ -133,17 +133,17 @@ bool Map2_Lookup(Map2 * pMap,
     return bResult;
 }
 
-bool Map2_LookupKey(Map2 * pMap,
-                    const char * Key,
-                    const char ** rKey)
+bool Map2_LookupKey(struct Map2* pMap,
+                    const char* Key,
+                    const char** rKey)
 {
     bool bResult = false;
 
     unsigned int nHashBucket, HashValue;
-    MapItem2 * pKeyValue = Map2_GetAssocAt(pMap,
-                                           Key,
-                                           &nHashBucket,
-                                           &HashValue);
+    struct MapItem2* pKeyValue = Map2_GetAssocAt(pMap,
+                                          Key,
+                                          &nHashBucket,
+                                          &HashValue);
 
     if (pKeyValue != NULL)
     {
@@ -154,9 +154,9 @@ bool Map2_LookupKey(Map2 * pMap,
     return bResult;
 }
 
-bool Map2_RemoveKey(Map2 * pMap,
-                    const char * Key,
-                    void ** ppValue)
+bool Map2_RemoveKey(struct Map2* pMap,
+                    const char* Key,
+                    void** ppValue)
 {
     *ppValue = 0;
     bool bResult = false;
@@ -166,10 +166,10 @@ bool Map2_RemoveKey(Map2 * pMap,
         unsigned int HashValue =
             String2_HashKey(Key);
 
-        MapItem2 ** ppKeyValuePrev =
+        struct MapItem2** ppKeyValuePrev =
             &pMap->pHashTable[HashValue % pMap->nHashTableSize];
 
-        MapItem2 * pKeyValue = *ppKeyValuePrev;
+        struct MapItem2* pKeyValue = *ppKeyValuePrev;
 
         for (; pKeyValue != NULL; pKeyValue = pKeyValue->pNext)
         {
@@ -192,10 +192,10 @@ bool Map2_RemoveKey(Map2 * pMap,
     return bResult;
 }
 
-int Map2_SetAt(Map2 * pMap,
-               const char * Key,
-               void * newValue,
-               void ** ppPreviousValue)
+int Map2_SetAt(struct Map2* pMap,
+               const char* Key,
+               void* newValue,
+               void** ppPreviousValue)
 {
     int result = 0;
     *ppPreviousValue = NULL;
@@ -207,12 +207,12 @@ int Map2_SetAt(Map2 * pMap,
             pMap->nHashTableSize = 1000;
         }
 
-        MapItem2 ** pHashTable =
-            (MapItem2 * *)Malloc(sizeof(MapItem2 *) * pMap->nHashTableSize);
+        struct MapItem2** pHashTable =
+            (struct MapItem2 * *)Malloc(sizeof(struct MapItem2*) * pMap->nHashTableSize);
 
         if (pHashTable != NULL)
         {
-            memset(pHashTable, 0, sizeof(MapItem2 *) * pMap->nHashTableSize);
+            memset(pHashTable, 0, sizeof(struct MapItem2*) * pMap->nHashTableSize);
             pMap->pHashTable = pHashTable;
         }
     }
@@ -220,7 +220,7 @@ int Map2_SetAt(Map2 * pMap,
     if (pMap->pHashTable != NULL)
     {
         unsigned int nHashBucket, HashValue;
-        MapItem2 * pKeyValue =
+        struct MapItem2* pKeyValue =
             Map2_GetAssocAt(pMap,
                             Key,
                             &nHashBucket,
@@ -228,7 +228,7 @@ int Map2_SetAt(Map2 * pMap,
 
         if (pKeyValue == NULL)
         {
-            pKeyValue = (MapItem2 *)Malloc(sizeof(MapItem2) * 1);
+            pKeyValue = (struct MapItem2*)Malloc(sizeof(struct MapItem2) * 1);
             pKeyValue->HashValue = HashValue;
             pKeyValue->pValue = newValue;
             pKeyValue->Key = StrDup(Key);
@@ -253,23 +253,23 @@ int Map2_SetAt(Map2 * pMap,
     return result;
 }
 
-void Map2_Init(Map2 * p) /*@default*/
+void Map2_Init(struct Map2* p) /*@default*/
 {
     p->pHashTable = NULL;
     p->nHashTableSize = 0;
     p->nCount = 0;
 }
 
-void Map2_Swap(Map2 * pA, Map2 * pB)
+void Map2_Swap(struct Map2* pA, struct Map2* pB)
 {
-    Map2 temp = *pA;
+    struct Map2 temp = *pA;
     *pA = *pB;
     *pB = temp;
 }
 
-Map2 * Map2_Create(void) /*@default*/
+struct Map2* Map2_Create(void) /*@default*/
 {
-    Map2 *p = (Map2*) Malloc(sizeof * p);
+    struct Map2* p = (struct Map2*)Malloc(sizeof * p);
     if (p != NULL)
     {
         Map2_Init(p);
@@ -277,11 +277,11 @@ Map2 * Map2_Create(void) /*@default*/
     return p;
 }
 
-void Map2_Delete(Map2 * p, void(*DeleteFunc)(void *))
+void Map2_Delete(struct Map2* p, void(*DeleteFunc)(void*))
 {
     if (p != NULL)
     {
         Map2_Destroy(p, DeleteFunc);
-        Free((void *)p);
+        Free((void*)p);
     }
 }

@@ -10,11 +10,11 @@
 * Simple Bob Jenkins's hash algorithm taken from the
 * wikipedia description.
 */
-static uint32_t HashFunc(const char * a)
+static uint32_t HashFunc(const char* a)
 {
     //assert(a != NULL);
     int len = strlen(a);
-    const char * key = a;
+    const char* key = a;
     uint32_t hash = 0;
 
 
@@ -32,12 +32,12 @@ static uint32_t HashFunc(const char * a)
     return hash;
 }
 
-bool Bucket_Reserve(Bucket * p, int nelements);
+bool Bucket_Reserve(struct Bucket* p, int nelements);
 
-bool BucketItem_InitMoveKey(struct BucketItem * node,
+bool BucketItem_InitMoveKey(struct BucketItem* node,
                             int hash,
-                            String * *key /*in out*/,
-                            void * data)
+                            char** key /*in out*/,
+                            void* data)
 {
     node->data = data;
     node->hash = hash;
@@ -49,10 +49,10 @@ bool BucketItem_InitMoveKey(struct BucketItem * node,
 }
 
 
-bool BucketItem_Init(struct BucketItem * node,
+bool BucketItem_Init(struct BucketItem* node,
                      int hash,
-                     const char * key,
-                     void * data)
+                     const char* key,
+                     void* data)
 {
     node->key = StrDup(key);
     node->data = data;
@@ -60,13 +60,13 @@ bool BucketItem_Init(struct BucketItem * node,
     return true;
 }
 
-bool BucketItem_CreateMoveKey(struct BucketItem ** pp,
+bool BucketItem_CreateMoveKey(struct BucketItem** pp,
                               int hash,
-                              String * *key,
-                              void * data)
+                              char** key,
+                              void* data)
 {
     bool result = false /*nomem*/;
-    struct BucketItem * node = (struct BucketItem *)Malloc(sizeof(struct BucketItem) * 1);
+    struct BucketItem* node = (struct BucketItem*)Malloc(sizeof(struct BucketItem) * 1);
     if (node)
     {
         BucketItem_InitMoveKey(node,
@@ -79,14 +79,14 @@ bool BucketItem_CreateMoveKey(struct BucketItem ** pp,
     return result;
 }
 
-bool BucketItem_Change(struct BucketItem * p,
-                       void * data)
+bool BucketItem_Change(struct BucketItem* p,
+                       void* data)
 {
     p->data = data;
     return true;
 }
 
-void BucketItem_Destroy(struct BucketItem * node, void(*pfDestroyData)(void *))
+void BucketItem_Destroy(struct BucketItem* node, void(*pfDestroyData)(void*))
 {
     Free(node->key);
     if (pfDestroyData)
@@ -95,7 +95,7 @@ void BucketItem_Destroy(struct BucketItem * node, void(*pfDestroyData)(void *))
     }
 }
 
-void BucketItem_Delete(struct BucketItem * p, void(*pfDestroyData)(void *))
+void BucketItem_Delete(struct BucketItem* p, void(*pfDestroyData)(void*))
 {
     if (p)
     {
@@ -104,7 +104,7 @@ void BucketItem_Delete(struct BucketItem * p, void(*pfDestroyData)(void *))
     }
 }
 
-bool Bucket_Init(Bucket * p, int capacity)
+bool Bucket_Init(struct Bucket* p, int capacity)
 {
     bool result = true;
     p->data = NULL;
@@ -119,10 +119,10 @@ bool Bucket_Init(Bucket * p, int capacity)
     return result;
 }
 
-bool Bucket_Create(Bucket * *pp)
+bool Bucket_Create(struct Bucket** pp)
 {
     bool result = false /*nomem*/;
-    Bucket * p = (Bucket *)Malloc(sizeof(Bucket) * 1);
+    struct Bucket* p = (struct Bucket*)Malloc(sizeof(struct Bucket) * 1);
     if (p)
     {
         result = Bucket_Init(p, 0);
@@ -137,7 +137,7 @@ bool Bucket_Create(Bucket * *pp)
 }
 
 
-void Bucket_Destroy(Bucket * p, void(*pfDestroyData)(void *))
+void Bucket_Destroy(struct Bucket* p, void(*pfDestroyData)(void*))
 {
     for (int i = 0; i < p->size; i++)
     {
@@ -147,7 +147,7 @@ void Bucket_Destroy(Bucket * p, void(*pfDestroyData)(void *))
 }
 
 
-void Bucket_Delete(Bucket * p, void(*pfDestroyData)(void *))
+void Bucket_Delete(struct Bucket* p, void(*pfDestroyData)(void*))
 {
     if (p)
     {
@@ -157,13 +157,13 @@ void Bucket_Delete(Bucket * p, void(*pfDestroyData)(void *))
 }
 
 
-bool Bucket_Reserve(Bucket * p, int nelements)
+bool Bucket_Reserve(struct Bucket* p, int nelements)
 {
     bool r = true;
 
     if (nelements > p->capacity)
     {
-        struct BucketItem ** pnew = (struct BucketItem **)Realloc(p->data,
+        struct BucketItem** pnew = (struct BucketItem**)Realloc(p->data,
             (nelements + 1) * sizeof(p->data[0]));
 
         if (pnew)
@@ -185,7 +185,7 @@ bool Bucket_Reserve(Bucket * p, int nelements)
 
     return r;
 }
-static bool Grow(Bucket * p, int nelements)
+static bool Grow(struct Bucket* p, int nelements)
 {
     bool r = true;
 
@@ -204,7 +204,7 @@ static bool Grow(Bucket * p, int nelements)
     return r;
 }
 
-bool Bucket_Append(Bucket * p, struct BucketItem * pItem)
+bool Bucket_Append(struct Bucket* p, struct BucketItem* pItem)
 {
     bool result = Grow(p, p->size + 1);
 
@@ -217,12 +217,12 @@ bool Bucket_Append(Bucket * p, struct BucketItem * pItem)
     return result;
 }
 
-static int FindNodeIndex(Bucket * bucket, uint32_t hash, const char * key)
+static int FindNodeIndex(struct Bucket* bucket, uint32_t hash, const char* key)
 {
     //assert(key != NULL);
     for (int i = 0; i < bucket->size; i++)
     {
-        struct BucketItem * node = bucket->data[i];
+        struct BucketItem* node = bucket->data[i];
         if (node->hash == hash &&
             strcmp(node->key, key) == 0)
         {
@@ -233,10 +233,10 @@ static int FindNodeIndex(Bucket * bucket, uint32_t hash, const char * key)
     return -1;
 }
 
-bool RemoveBucketItem(Bucket * bucket,
+bool RemoveBucketItem(struct Bucket* bucket,
                       uint32_t hash,
-                      const char * key,
-                      void ** ppData)
+                      const char* key,
+                      void** ppData)
 {
     //assert(key != NULL);
     *ppData = NULL; //out
@@ -252,7 +252,7 @@ bool RemoveBucketItem(Bucket * bucket,
         if (index != (int)(bucket->size) - 1)
         {
             //swap  dos ponteiros de [index] e [size - 1]
-            struct BucketItem * pTemp = bucket->data[bucket->size - 1];
+            struct BucketItem* pTemp = bucket->data[bucket->size - 1];
             bucket->data[bucket->size - 1] = bucket->data[index];
             bucket->data[index] = pTemp;
         }
@@ -266,14 +266,14 @@ bool RemoveBucketItem(Bucket * bucket,
 }
 
 
-bool Buckets_Init(Buckets * p,
+bool Buckets_Init(struct Buckets* p,
                   int size)
 {
     bool result = false /*nomem*/;
     p->data = NULL;
     p->size = size;
 
-    p->data = (Bucket * *)Malloc(sizeof(Bucket *) * size);
+    p->data = (struct Bucket**)Malloc(sizeof(struct Bucket*) * size);
     if (p->data)
     {
         for (int i = 0; i < size; i++)
@@ -286,7 +286,7 @@ bool Buckets_Init(Buckets * p,
     return result;
 }
 
-void Buckets_Destroy(Buckets * p, void(*pfDestroyData)(void *))
+void Buckets_Destroy(struct Buckets* p, void(*pfDestroyData)(void*))
 {
     for (int i = 0; i < p->size; i++)
     {
@@ -297,7 +297,7 @@ void Buckets_Destroy(Buckets * p, void(*pfDestroyData)(void *))
 }
 
 
-bool Map_Init(Map * map, int nBuckets)
+bool Map_Init(struct Map* map, int nBuckets)
 {
     map->Size = 0;
     bool result = Buckets_Init(&map->buckets, nBuckets);
@@ -307,10 +307,10 @@ bool Map_Init(Map * map, int nBuckets)
     return result;
 }
 
-bool Map_Create(Map * *pp, int nBuckets)
+bool Map_Create(struct Map** pp, int nBuckets)
 {
     bool result = false /*nomem*/;
-    Map * p = (Map *)Malloc(sizeof(Map));
+    struct Map* p = (struct Map*)Malloc(sizeof(struct Map));
     if (p)
     {
         result = Map_Init(p, nBuckets);
@@ -326,18 +326,18 @@ bool Map_Create(Map * *pp, int nBuckets)
     return result;
 }
 
-void Map_Destroy(Map * map, void(*pfDestroyData)(void *))
+void Map_Destroy(struct Map* map, void(*pfDestroyData)(void*))
 {
     Buckets_Destroy(&map->buckets, pfDestroyData);
 }
 
-void Map_Delete(Map * p, void(*pfDestroyData)(void *))
+void Map_Delete(struct Map* p, void(*pfDestroyData)(void*))
 {
     Map_Destroy(p, pfDestroyData);
-    Free((void *)p);
+    Free((void*)p);
 }
 
-struct BucketItem * Map_FindNode(Map * map, const char * key)
+struct BucketItem* Map_FindNode(struct Map* map, const char* key)
 {
     if (map->buckets.data == NULL)
     {
@@ -348,7 +348,7 @@ struct BucketItem * Map_FindNode(Map * map, const char * key)
     uint32_t hash = HashFunc(key);
     int bucket_n = hash % map->buckets.size;
 
-    Bucket * pBucket = map->buckets.data[bucket_n];
+    struct Bucket* pBucket = map->buckets.data[bucket_n];
 
     if (pBucket == NULL)
     {
@@ -365,12 +365,12 @@ struct BucketItem * Map_FindNode(Map * map, const char * key)
 }
 
 
-bool Map_SetMoveKey(Map * map, String * *key, void * data)
+bool Map_SetMoveKey(struct Map* map, char** key, void* data)
 {
     //assert(key != NULL);
     bool result;
 
-    struct BucketItem * pNode = Map_FindNode(map, *key);
+    struct BucketItem* pNode = Map_FindNode(map, *key);
     if (pNode)
     {
         return BucketItem_Change(pNode, data);
@@ -383,7 +383,7 @@ bool Map_SetMoveKey(Map * map, String * *key, void * data)
 
     uint32_t hash = HashFunc(*key);
     int bucket_n = hash % map->buckets.size;
-    Bucket * bucket = map->buckets.data[bucket_n];
+    struct Bucket* bucket = map->buckets.data[bucket_n];
 
     if (bucket == NULL)
     {
@@ -400,7 +400,7 @@ bool Map_SetMoveKey(Map * map, String * *key, void * data)
 
     if (result == true)
     {
-        struct BucketItem * node;
+        struct BucketItem* node;
         result = BucketItem_CreateMoveKey(&node,
                                           hash,
                                           key,
@@ -419,10 +419,10 @@ bool Map_SetMoveKey(Map * map, String * *key, void * data)
     return result;
 }
 
-bool Map_Set(Map * map, const char * key, void * data)
+bool Map_Set(struct Map* map, const char* key, void* data)
 {
     //assert(key != NULL);
-    void * pv;
+    void* pv;
     bool result = Map_Find(map, key, &pv);
     if (result == true)
     {
@@ -432,17 +432,17 @@ bool Map_Set(Map * map, const char * key, void * data)
 
 
     //assert(key != NULL);
-    String * /*@auto*/ localkey = StrDup(key);
+    char* /*@auto*/ localkey = StrDup(key);
     result = Map_SetMoveKey(map, &localkey, data);
     Free(localkey);
     return result;
 }
 
 
-bool Map_Find(Map * map, const char * key, void ** pp)
+bool Map_Find(struct Map* map, const char* key, void** pp)
 {
     //assert(key != NULL);
-    struct BucketItem * pNode = Map_FindNode(map, key);
+    struct BucketItem* pNode = Map_FindNode(map, key);
     bool result = pNode ? true : false;
 
     if (result == true)
@@ -453,21 +453,21 @@ bool Map_Find(Map * map, const char * key, void ** pp)
     return result;
 }
 
-void * Map_Find2(Map * map, const char * key)
+void* Map_Find2(struct Map* map, const char* key)
 {
-    void * pv;
+    void* pv;
     bool result = Map_Find(map, key, &pv);
 
     return result == true ? pv : NULL;
 }
 
-bool Map_DeleteEx(Map * map, const char * key, void ** pp)
+bool Map_DeleteEx(struct Map* map, const char* key, void** pp)
 {
     //assert(key != NULL);
     uint32_t hash = HashFunc(key);
     int bucket_n = hash % map->buckets.size;
 
-    Bucket * bucket = map->buckets.data[bucket_n];
+    struct Bucket* bucket = map->buckets.data[bucket_n];
 
     if (bucket == NULL)
     {
@@ -483,10 +483,10 @@ bool Map_DeleteEx(Map * map, const char * key, void ** pp)
     return result;
 }
 
-bool Map_DeleteItemOpt(Map * map, const char * key, void(*pfDestroyData)(void *))
+bool Map_DeleteItemOpt(struct Map* map, const char* key, void(*pfDestroyData)(void*))
 {
     //assert(key != NULL);
-    void * p;
+    void* p;
     bool result = Map_DeleteEx(map, key, &p);
     if (result == true)
     {
@@ -498,10 +498,10 @@ bool Map_DeleteItemOpt(Map * map, const char * key, void(*pfDestroyData)(void *)
     return result;
 }
 
-bool Map_DeleteItem(Map * map, const char * key, void(*pfDestroyData)(void *))
+bool Map_DeleteItem(struct Map* map, const char* key, void(*pfDestroyData)(void*))
 {
     bool result = Map_DeleteItemOpt(map, key, pfDestroyData);
-    void * p;
+    void* p;
     ////assert(Map_Find(map, key, &p) != true);
     if (Map_Find(map, key, &p) == true)
     {
@@ -512,16 +512,16 @@ bool Map_DeleteItem(Map * map, const char * key, void(*pfDestroyData)(void *))
 }
 
 
-void Map_Print(Map * map)
+void Map_Print(struct Map* map)
 {
     for (int i = 0; i < map->buckets.size; i++)
     {
-        Bucket * data = map->buckets.data[i];
+        struct Bucket* data = map->buckets.data[i];
         if (data != NULL)
         {
             for (int k = 0; k < data->size; k++)
             {
-                struct BucketItem * node = data->data[k];
+                struct BucketItem* node = data->data[k];
                 printf("%s", node->key);
             }
         }
@@ -529,9 +529,9 @@ void Map_Print(Map * map)
 }
 
 
-void Buckets_Swap(Buckets * b1, Buckets * b2)
+void Buckets_Swap(struct Buckets* b1, struct Buckets* b2)
 {
-    Bucket ** data2 = b2->data;
+    struct Bucket** data2 = b2->data;
     int size2 = b2->size;
 
     b2->data = b1->data;
@@ -542,9 +542,9 @@ void Buckets_Swap(Buckets * b1, Buckets * b2)
 
 }
 
-void Map_Swap(Map * map, Map * map2)
+void Map_Swap(struct Map* map, struct Map* map2)
 {
-    Map temp = *map2;
+    struct Map temp = *map2;
     *map2 = *map;
     *map = temp;
     //Buckets_Swap(&map->buckets, &map2->buckets);
@@ -563,19 +563,19 @@ bool MultiMap_Init(MultiMap * map, int nBuckets)
     return result;
 }
 
-void MultiMap_Destroy(MultiMap * map, void(*pfDestroyData)(void *))
+void MultiMap_Destroy(MultiMap * map, void(*pfDestroyData)(void*))
 {
     Buckets_Destroy(&map->buckets, pfDestroyData);
 }
 
-bool MultiMap_Add(MultiMap * map, const char * key, void * data)
+bool MultiMap_Add(MultiMap * map, const char* key, void* data)
 {
     //assert(key != NULL);
     bool result;
 
     uint32_t hash = HashFunc(key);
     int bucket_n = hash % map->buckets.size;
-    Bucket * bucket = map->buckets.data[bucket_n];
+    struct Bucket* bucket = map->buckets.data[bucket_n];
 
     if (bucket == NULL)
     {
@@ -594,9 +594,9 @@ bool MultiMap_Add(MultiMap * map, const char * key, void * data)
     if (result == true)
     {
         //Adiciona no fim - não verifica se ja existe
-        String * /*@auto*/stemp = StrDup(key);
+        char* /*@auto*/stemp = StrDup(key);
 
-        struct BucketItem * node;
+        struct BucketItem* node;
         result = BucketItem_CreateMoveKey(&node,
                                           hash,
                                           &stemp,
@@ -619,7 +619,7 @@ bool MultiMap_Add(MultiMap * map, const char * key, void * data)
 }
 
 
-Bucket * MultiMap_FindBucket(MultiMap * map, const char * key)
+struct Bucket* MultiMap_FindBucket(MultiMap * map, const char* key)
 {
     if (map->buckets.data == NULL)
     {
@@ -630,7 +630,7 @@ Bucket * MultiMap_FindBucket(MultiMap * map, const char * key)
     uint32_t hash = HashFunc(key);
     int bucket_n = hash % map->buckets.size;
 
-    Bucket * pBucket = map->buckets.data[bucket_n];
+    struct Bucket* pBucket = map->buckets.data[bucket_n];
 
     if (pBucket == NULL)
     {

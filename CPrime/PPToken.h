@@ -18,8 +18,8 @@ enum PPTokenType
 struct PPToken
 {
     enum PPTokenType Token;
-    String * /*@auto*/Lexeme;
-    TokenSet HiddenSet;
+    char* /*@auto*/Lexeme;
+    struct TokenSet HiddenSet;
 };
 
 #define TOKEN_INIT { PPTokenType_Other, NULL, TOKENSET_INIT }

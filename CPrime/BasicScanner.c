@@ -7,9 +7,9 @@
 #include "Mem.h"
 #include "BasicScanner.h"
 
-wchar_t BasicScanner_MatchChar(BasicScanner * scanner);
+wchar_t BasicScanner_MatchChar(struct BasicScanner* scanner);
 
-const char * TokenToString(Tokens tk)
+const char* TokenToString(enum Tokens tk)
 {
     switch (tk)
     {
@@ -287,9 +287,9 @@ const char * TokenToString(Tokens tk)
     return "???";
 }
 
-struct ScannerItem * ScannerItem_Create(void) /*@default*/
+struct ScannerItem* ScannerItem_Create(void) /*@default*/
 {
-    struct ScannerItem *p = (struct ScannerItem *) Malloc(sizeof * p);
+    struct ScannerItem* p = (struct ScannerItem*) Malloc(sizeof * p);
     if (p != NULL)
     {
         ScannerItem_Init(p);
@@ -297,7 +297,7 @@ struct ScannerItem * ScannerItem_Create(void) /*@default*/
     return p;
 }
 
-void ScannerItem_Delete(struct ScannerItem * pScannerItem) /*@default*/
+void ScannerItem_Delete(struct ScannerItem* pScannerItem) /*@default*/
 {
     if (pScannerItem != NULL)
     {
@@ -306,45 +306,45 @@ void ScannerItem_Delete(struct ScannerItem * pScannerItem) /*@default*/
     }
 }
 
-void ScannerItem_Init(struct ScannerItem * scannerItem) /*@default*/
+void ScannerItem_Init(struct ScannerItem* scannerItem) /*@default*/
 {
     LocalStrBuilder_Init(&scannerItem->lexeme);
     scannerItem->token = TK_NONE;
-    scannerItem->Line =  -1;
-    scannerItem->FileIndex =  -1;
-    scannerItem->bActive =  1;
+    scannerItem->Line = -1;
+    scannerItem->FileIndex = -1;
+    scannerItem->bActive = 1;
     scannerItem->pNext = NULL;
 }
 
-void ScannerItem_Reset(struct ScannerItem * scannerItem)
+void ScannerItem_Reset(struct ScannerItem* scannerItem)
 {
     LocalStrBuilder_Clear(&scannerItem->lexeme);
     scannerItem->token = TK_ERROR;
 }
 
-void ScannerItem_Copy(struct ScannerItem * scannerItem,
-                      struct ScannerItem * other)
+void ScannerItem_Copy(struct ScannerItem* scannerItem,
+                      struct ScannerItem* other)
 {
     scannerItem->token = other->token;
     LocalStrBuilder_Set(&scannerItem->lexeme, other->lexeme.c_str);
 }
 
-void ScannerItem_Swap(struct ScannerItem * scannerItem,
-                      struct ScannerItem * other)
+void ScannerItem_Swap(struct ScannerItem* scannerItem,
+                      struct ScannerItem* other)
 {
-    Tokens tk = other->token;
+    enum Tokens tk = other->token;
     other->token = scannerItem->token;
     scannerItem->token = tk;
     LocalStrBuilder_Swap(&scannerItem->lexeme, &other->lexeme);
 }
 
-void ScannerItem_Destroy(struct ScannerItem * scannerItem) /*@default*/
+void ScannerItem_Destroy(struct ScannerItem* scannerItem) /*@default*/
 {
     LocalStrBuilder_Destroy(&scannerItem->lexeme);
 }
 
-void BasicScanner_InitCore(BasicScanner * pBasicScanner,
-                           BasicScannerType Type)
+void BasicScanner_InitCore(struct BasicScanner* pBasicScanner,
+                           enum BasicScannerType Type)
 {
     pBasicScanner->m_Token = TK_BOF;
     pBasicScanner->Type = Type;
@@ -356,18 +356,18 @@ void BasicScanner_InitCore(BasicScanner * pBasicScanner,
     pBasicScanner->currentItem.token = TK_BOF;
 }
 
-bool BasicScanner_Init(BasicScanner * pBasicScanner,
-                       const char * name,
-                       const char * Text,
-                       BasicScannerType type)
+bool BasicScanner_Init(struct BasicScanner* pBasicScanner,
+                       const char* name,
+                       const char* Text,
+                       enum BasicScannerType type)
 {
     BasicScanner_InitCore(pBasicScanner, type);
     bool b = Stream_Init(&pBasicScanner->stream, name, Text);
     return b ? true : false;
 }
 
-bool BasicScanner_InitFile(BasicScanner * pBasicScanner,
-                           const char * fileName)
+bool BasicScanner_InitFile(struct BasicScanner* pBasicScanner,
+                           const char* fileName)
 {
     BasicScanner_InitCore(pBasicScanner, BasicScannerType_File);
 
@@ -375,13 +375,13 @@ bool BasicScanner_InitFile(BasicScanner * pBasicScanner,
     return b ? true : false;
 }
 
-bool BasicScanner_Create(BasicScanner ** pp,
-                         const char * name,
-                         const char * Text,
-                         BasicScannerType Type)
+bool BasicScanner_Create(struct BasicScanner** pp,
+                         const char* name,
+                         const char* Text,
+                         enum BasicScannerType Type)
 {
     bool result = false /*nomem*/;
-    BasicScanner * p = (BasicScanner *)Malloc(sizeof(BasicScanner));
+    struct BasicScanner* p = (struct BasicScanner*)Malloc(sizeof(struct BasicScanner));
     if (p)
     {
         result = BasicScanner_Init(p, name, Text, Type);
@@ -397,10 +397,10 @@ bool BasicScanner_Create(BasicScanner ** pp,
     return result;
 }
 
-bool BasicScanner_CreateFile(const char * fileName, BasicScanner ** pp)
+bool BasicScanner_CreateFile(const char* fileName, struct BasicScanner** pp)
 {
     bool result = false /*nomem*/;
-    BasicScanner * p = (BasicScanner *)Malloc(sizeof(BasicScanner));
+    struct BasicScanner* p = (struct BasicScanner*)Malloc(sizeof(struct BasicScanner));
     if (p)
     {
         result = BasicScanner_InitFile(p, fileName);
@@ -417,13 +417,13 @@ bool BasicScanner_CreateFile(const char * fileName, BasicScanner ** pp)
 }
 
 
-void BasicScanner_Destroy(BasicScanner * pBasicScanner) /*@default*/
+void BasicScanner_Destroy(struct BasicScanner* pBasicScanner) /*@default*/
 {
     Stream_Destroy(&pBasicScanner->stream);
     ScannerItem_Destroy(&pBasicScanner->currentItem);
 }
 
-void BasicScanner_Delete(BasicScanner * pBasicScanner) /*@default*/
+void BasicScanner_Delete(struct BasicScanner* pBasicScanner) /*@default*/
 {
     if (pBasicScanner != NULL)
     {
@@ -434,148 +434,148 @@ void BasicScanner_Delete(BasicScanner * pBasicScanner) /*@default*/
 
 struct TkPair
 {
-    const char * lexeme;
-    Tokens token;
+    const char* lexeme;
+    enum Tokens token;
 };
 
 static struct TkPair singleoperators[] =
 {
     //punctuator: one of
 
-    {"[", TK_LEFT_SQUARE_BRACKET }, //0
-    {"]",  TK_RIGHT_SQUARE_BRACKET},
-    {"(", TK_LEFT_PARENTHESIS},
-    {")", TK_RIGHT_PARENTHESIS},
-    {"{", TK_LEFT_CURLY_BRACKET},
-    {"}", TK_RIGHT_CURLY_BRACKET},
-    {".", TK_FULL_STOP},
-    {"&", TK_AMPERSAND},
-    {"*", TK_ASTERISK},
-    {"+", TK_PLUS_SIGN},
-    {"-",  TK_HYPHEN_MINUS},
-    {"~", TK_TILDE},
-    {"!", TK_EXCLAMATION_MARK},
-    {"%", TK_PERCENT_SIGN},
-    {"<", TK_LESS_THAN_SIGN},
-    {">", TK_GREATER_THAN_SIGN },
-    {"^", TK_CIRCUMFLEX_ACCENT },
-    {"|", TK_VERTICAL_LINE },
-    {"?", TK_QUESTION_MARK},
-    {":", TK_COLON },
-    {";", TK_SEMICOLON },
-    {"=", TK_EQUALS_SIGN},
-    {",", TK_COMMA},
-    { "$", TK_DOLLAR_SIGN},
-    { "@", TK_COMMERCIAL_AT } //pode ser usado em macros pp-tokens
-    //  {"...", TK_DOTDOTDOT},//50
-    //  {"%:%:", TK_PERCENTCOLONPERCENTCOLON},
-    //  {"<<=", TK_LESSLESSEQUAL},
-    //{">>=", TK_GREATERGREATEREQUAL},
+    {"[", TK_LEFT_SQUARE_BRACKET}, //0
+{"]", TK_RIGHT_SQUARE_BRACKET},
+{"(", TK_LEFT_PARENTHESIS},
+{")", TK_RIGHT_PARENTHESIS},
+{"{", TK_LEFT_CURLY_BRACKET},
+{"}", TK_RIGHT_CURLY_BRACKET},
+{".", TK_FULL_STOP},
+{"&", TK_AMPERSAND},
+{"*", TK_ASTERISK},
+{"+", TK_PLUS_SIGN},
+{"-", TK_HYPHEN_MINUS},
+{"~", TK_TILDE},
+{"!", TK_EXCLAMATION_MARK},
+{"%", TK_PERCENT_SIGN},
+{"<", TK_LESS_THAN_SIGN},
+{">", TK_GREATER_THAN_SIGN},
+{"^", TK_CIRCUMFLEX_ACCENT},
+{"|", TK_VERTICAL_LINE},
+{"?", TK_QUESTION_MARK},
+{":", TK_COLON},
+{";", TK_SEMICOLON},
+{"=", TK_EQUALS_SIGN},
+{",", TK_COMMA},
+{"$", TK_DOLLAR_SIGN},
+{"@", TK_COMMERCIAL_AT} //pode ser usado em macros pp-tokens
+//  {"...", TK_DOTDOTDOT},//50
+//  {"%:%:", TK_PERCENTCOLONPERCENTCOLON},
+//  {"<<=", TK_LESSLESSEQUAL},
+//{">>=", TK_GREATERGREATEREQUAL},
 };
 
 static struct TkPair doubleoperators[] =
 {
-    { "->", TK_ARROW },//25
-    { "++", TK_PLUSPLUS },
-    { "--", TK_MINUSMINUS },
-    { "<<", TK_LESSLESS },
-    { ">>", TK_GREATERGREATER },
-    { "<=", TK_LESSEQUAL },
-    { ">=", TK_GREATEREQUAL },
-    { "==", TK_EQUALEQUAL },
-    { "!=", TK_NOTEQUAL },
-    { "&&", TK_ANDAND },
-    { "||", TK_OROR },
-    { "*=", TK_MULTIEQUAL },
-    { "/=", TK_DIVEQUAL },
-    { "%=", TK_PERCENT_EQUAL },
-    { "+=", TK_PLUSEQUAL },
-    { "-=", TK_MINUS_EQUAL },
-    { "&=", TK_ANDEQUAL },
-    { "^=", TK_CARETEQUAL },
-    { "|=", TK_OREQUAL },
-    { "##", TK_NUMBERNUMBER },
-    { "<:", TK_LESSCOLON },
-    { ":>", TK_COLONGREATER },
-    { "<%", TK_LESSPERCENT },
-    { "%>", TK_PERCENTGREATER },
-    { "%:", TK_PERCENTCOLON },
+    {"->", TK_ARROW},//25
+{"++", TK_PLUSPLUS},
+{"--", TK_MINUSMINUS},
+{"<<", TK_LESSLESS},
+{">>", TK_GREATERGREATER},
+{"<=", TK_LESSEQUAL},
+{">=", TK_GREATEREQUAL},
+{"==", TK_EQUALEQUAL},
+{"!=", TK_NOTEQUAL},
+{"&&", TK_ANDAND},
+{"||", TK_OROR},
+{"*=", TK_MULTIEQUAL},
+{"/=", TK_DIVEQUAL},
+{"%=", TK_PERCENT_EQUAL},
+{"+=", TK_PLUSEQUAL},
+{"-=", TK_MINUS_EQUAL},
+{"&=", TK_ANDEQUAL},
+{"^=", TK_CARETEQUAL},
+{"|=", TK_OREQUAL},
+{"##", TK_NUMBERNUMBER},
+{"<:", TK_LESSCOLON},
+{":>", TK_COLONGREATER},
+{"<%", TK_LESSPERCENT},
+{"%>", TK_PERCENTGREATER},
+{"%:", TK_PERCENTCOLON},
 
-    { "...", TK_DOTDOTDOT },//50
-    { "%:%:", TK_PERCENTCOLONPERCENTCOLON },
-    { "<<=", TK_LESSLESSEQUAL },
-    { ">>=", TK_GREATERGREATEREQUAL }
+{"...", TK_DOTDOTDOT},//50
+{"%:%:", TK_PERCENTCOLONPERCENTCOLON},
+{"<<=", TK_LESSLESSEQUAL},
+{">>=", TK_GREATERGREATEREQUAL}
 };
 
 static struct TkPair keywords[] =
 {
     //keywords
-    { "auto", TK_AUTO },
-    { "break", TK_BREAK },
-    { "case", TK_CASE },
-    { "char", TK_CHAR },
-    { "const", TK_CONST },
-    { "continue", TK_CONTINUE },
-    { "default", TK_DEFAULT },
-    { "do", TK_DO },
-    { "double", TK_DOUBLE },
-    { "else", TK_ELSE },
-    { "enum", TK_ENUM },
-    { "extern", TK_EXTERN },
-    { "float", TK_FLOAT },
-    { "for", TK_FOR },
-    { "goto", TK_GOTO },
-    { "if", TK_IF },
-    { "inline", TK_INLINE },
-    { "__inline", TK__INLINE },
-    {"__forceinline", TK__FORCEINLINE },
-    { "int", TK_INT },
-    { "long", TK_LONG },
-    //
-    { "__int8", TK__INT8},
-    { "__int16", TK__INT16 },
-    { "__int32", TK__INT32 },
-    { "__int64", TK__INT64 },
-    { "__wchar_t", TK__WCHAR_T},
-    //
-    { "register", TK_REGISTER },
-    { "restrict", TK_RESTRICT },
-    { "return", TK_RETURN },
-    { "short", TK_SHORT },
-    { "signed", TK_SIGNED },
-    { "sizeof", TK_SIZEOF },
-    { "static", TK_STATIC },
-    { "struct", TK_STRUCT },
-    { "switch", TK_SWITCH },
-    { "typedef", TK_TYPEDEF },
-    { "union", TK_UNION },
+    {"auto", TK_AUTO},
+{"break", TK_BREAK},
+{"case", TK_CASE},
+{"char", TK_CHAR},
+{"const", TK_CONST},
+{"continue", TK_CONTINUE},
+{"default", TK_DEFAULT},
+{"do", TK_DO},
+{"double", TK_DOUBLE},
+{"else", TK_ELSE},
+{"enum", TK_ENUM},
+{"extern", TK_EXTERN},
+{"float", TK_FLOAT},
+{"for", TK_FOR},
+{"goto", TK_GOTO},
+{"if", TK_IF},
+{"inline", TK_INLINE},
+{"__inline", TK__INLINE},
+{"__forceinline", TK__FORCEINLINE},
+{"int", TK_INT},
+{"long", TK_LONG},
+//
+{"__int8", TK__INT8},
+{"__int16", TK__INT16},
+{"__int32", TK__INT32},
+{"__int64", TK__INT64},
+{"__wchar_t", TK__WCHAR_T},
+//
+{"register", TK_REGISTER},
+{"restrict", TK_RESTRICT},
+{"return", TK_RETURN},
+{"short", TK_SHORT},
+{"signed", TK_SIGNED},
+{"sizeof", TK_SIZEOF},
+{"static", TK_STATIC},
+{"struct", TK_STRUCT},
+{"switch", TK_SWITCH},
+{"typedef", TK_TYPEDEF},
+{"union", TK_UNION},
 
-    { "unsigned", TK_UNSIGNED },
-    { "void", TK_VOID },
-    { "volatile", TK_VOLATILE },
-    { "while", TK_WHILE },
-    { "_Alignas", TK__ALIGNAS },
-    { "_Alignof", TK__ALINGOF },
-    { "_Atomic", TK__ATOMIC },
+{"unsigned", TK_UNSIGNED},
+{"void", TK_VOID},
+{"volatile", TK_VOLATILE},
+{"while", TK_WHILE},
+{"_Alignas", TK__ALIGNAS},
+{"_Alignof", TK__ALINGOF},
+{"_Atomic", TK__ATOMIC},
 
-    { "_Bool", TK__BOOL },
-    { "_Complex", TK__COMPLEX },
-    { "_Generic", TK__GENERIC },
-    { "_Imaginary", TK__IMAGINARY },
-    { "_Noreturn", TK__NORETURN },
-    { "_Static_assert", TK__STATIC_ASSERT },
-    { "_Thread_local", TK__THREAD_LOCAL },
-    //
-    { "__asm", TK__ASM } //visual studio
+{"_Bool", TK__BOOL},
+{"_Complex", TK__COMPLEX},
+{"_Generic", TK__GENERIC},
+{"_Imaginary", TK__IMAGINARY},
+{"_Noreturn", TK__NORETURN},
+{"_Static_assert", TK__STATIC_ASSERT},
+{"_Thread_local", TK__THREAD_LOCAL},
+//
+{"__asm", TK__ASM} //visual studio
 
 };
-void BasicScanner_Next(BasicScanner * scanner);
-void BasicScanner_Match(BasicScanner * scanner)
+void BasicScanner_Next(struct BasicScanner* scanner);
+void BasicScanner_Match(struct BasicScanner* scanner)
 {
     BasicScanner_Next(scanner);
 }
 
-bool BasicScanner_MatchToken(BasicScanner * scanner, Tokens token)
+bool BasicScanner_MatchToken(struct BasicScanner* scanner, enum Tokens token)
 {
     bool b = false;
     if (scanner->currentItem.token == token)
@@ -587,7 +587,7 @@ bool BasicScanner_MatchToken(BasicScanner * scanner, Tokens token)
 }
 
 
-void BasicScanner_Next(BasicScanner * scanner)
+void BasicScanner_Next(struct BasicScanner* scanner)
 {
     if (scanner->Type == BasicScannerType_Token)
     {
@@ -673,7 +673,7 @@ void BasicScanner_Next(BasicScanner * scanner)
     //u
     //L
     //Devido ao L' tem que vir antes do identificador
-    //literal string
+    //literal char
     if (ch == L'"' ||
         (ch == L'L' && ch1 == L'"'))
     {
@@ -1182,22 +1182,22 @@ void BasicScanner_Next(BasicScanner * scanner)
 }
 
 
-Tokens BasicScanner_Token(BasicScanner * scanner)
+enum Tokens BasicScanner_Token(struct BasicScanner* scanner)
 {
     return scanner->currentItem.token;
 }
 
-const char * BasicScanner_Lexeme(BasicScanner * scanner)
+const char* BasicScanner_Lexeme(struct BasicScanner* scanner)
 {
     return scanner->currentItem.lexeme.c_str;
 }
 
-bool BasicScanner_IsLexeme(BasicScanner * scanner, const char * psz)
+bool BasicScanner_IsLexeme(struct BasicScanner* scanner, const char* psz)
 {
     return strcmp(BasicScanner_Lexeme(scanner), psz) == 0;
 }
 
-wchar_t BasicScanner_MatchChar(BasicScanner * scanner)
+wchar_t BasicScanner_MatchChar(struct BasicScanner* scanner)
 {
     LocalStrBuilder_AppendChar(&scanner->currentItem.lexeme,
         (char)scanner->stream.Character);
@@ -1209,12 +1209,12 @@ wchar_t BasicScanner_MatchChar(BasicScanner * scanner)
 
 
 
-void BasicScannerStack_Init(BasicScannerStack * stack)
+void BasicScannerStack_Init(BasicScannerStack* stack)
 {
     *stack = NULL;
 }
 
-void BasicScannerStack_Push(BasicScannerStack * stack, BasicScanner * pItem)
+void BasicScannerStack_Push(BasicScannerStack* stack, struct BasicScanner* pItem)
 {
     if (*stack == NULL)
     {
@@ -1227,9 +1227,9 @@ void BasicScannerStack_Push(BasicScannerStack * stack, BasicScanner * pItem)
     }
 }
 
-BasicScanner * BasicScannerStack_PopGet(BasicScannerStack * stack)
+struct BasicScanner* BasicScannerStack_PopGet(BasicScannerStack* stack)
 {
-    BasicScanner * pItem = NULL;
+    struct BasicScanner* pItem = NULL;
     if (*stack != NULL)
     {
         pItem = *stack;
@@ -1238,7 +1238,7 @@ BasicScanner * BasicScannerStack_PopGet(BasicScannerStack * stack)
     return pItem;
 }
 
-void BasicScannerStack_PopIfNotLast(BasicScannerStack * stack)
+void BasicScannerStack_PopIfNotLast(BasicScannerStack* stack)
 {
     //assert(*stack != NULL);
     if ((*stack)->pPrevious != NULL)
@@ -1247,17 +1247,17 @@ void BasicScannerStack_PopIfNotLast(BasicScannerStack * stack)
     }
 }
 
-void BasicScannerStack_Pop(BasicScannerStack * stack)
+void BasicScannerStack_Pop(BasicScannerStack* stack)
 {
     BasicScanner_Delete(BasicScannerStack_PopGet(stack));
 }
 
-void BasicScannerStack_Destroy(BasicScannerStack * stack)
+void BasicScannerStack_Destroy(BasicScannerStack* stack)
 {
-    BasicScanner * pItem = *stack;
+    struct BasicScanner* pItem = *stack;
     while (pItem)
     {
-        BasicScanner * p = pItem;
+        struct BasicScanner* p = pItem;
         pItem = pItem->pPrevious;
         BasicScanner_Delete(p);
     }

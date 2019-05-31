@@ -11,8 +11,8 @@
 
 typedef struct
 {
-    String * /*@auto*/ FullPath;
-    String * /*@auto*/ IncludePath;
+    char * /*@auto*/ FullPath;
+    char * /*@auto*/ IncludePath;
     int FileIndex;
     bool PragmaOnce;
     bool bDirectInclude;
@@ -21,7 +21,7 @@ typedef struct
 
 void TFile_Delete(TFile * p);
 
-typedef Map TFileMap;
+typedef struct Map TFileMap;
 
 void TFileMap_Destroy(TFileMap * p);
 bool TFileMap_Set(TFileMap * map, const char * key, TFile * data);
@@ -43,18 +43,18 @@ void TFileArray_PushBack(TFileArray * p, TFile * pItem);
 void TFileArray_Reserve(TFileArray * p, int n);
 
 
-typedef struct
+struct TScannerItemList
 {
     struct ScannerItem * pHead, * pTail;
-}TScannerItemList;
+};
 
 
-void TScannerItemList_Destroy(TScannerItemList * p);
-void TScannerItemList_Init(TScannerItemList * p);
-void TScannerItemList_PushBack(TScannerItemList * p, struct ScannerItem * pItem);
-void TScannerItemList_Swap(TScannerItemList * a, TScannerItemList * b);
-void TScannerItemList_Clear(TScannerItemList * p);
-void TScannerItemList_PopFront(TScannerItemList * p);
+void TScannerItemList_Destroy(struct TScannerItemList * p);
+void TScannerItemList_Init(struct TScannerItemList * p);
+void TScannerItemList_PushBack(struct TScannerItemList * p, struct ScannerItem * pItem);
+void TScannerItemList_Swap(struct TScannerItemList * a, struct TScannerItemList * b);
+void TScannerItemList_Clear(struct TScannerItemList * p);
+void TScannerItemList_PopFront(struct TScannerItemList * p);
 
 struct FileNode
 {
@@ -132,17 +132,17 @@ typedef struct
     //Lista de diretorios de include
     struct FileNodeList Sources;
 
-    //string para debug
+    //char para debug
     StrBuilder DebugString;
 
 
-    //String que mantem o erro
+    //char que mantem o erro
     StrBuilder ErrorString;
 
     //True indica error
     bool bError;
 
-    TScannerItemList AcumulatedTokens;
+    struct TScannerItemList AcumulatedTokens;
 
     struct Options * pOptions;
     ///////////////////////////////////////////////////
@@ -197,10 +197,10 @@ int Scanner_GetNumberOfScannerItems(Scanner * pScanner);
 int Scanner_FileIndexAt(Scanner * pScanner, int index);
 int Scanner_LineAt(Scanner * pScanner, int index);
 bool Scanner_IsActiveAt(Scanner * pScanner, int index);
-Tokens Scanner_TokenAt(Scanner * pScanner, int index);
+enum Tokens Scanner_TokenAt(Scanner * pScanner, int index);
 const char * Scanner_LexemeAt(Scanner * pScanner, int index);
 void Scanner_PrintItems(Scanner * pScanner);
 
 void Scanner_Match(Scanner * pScanner);
-bool Scanner_MatchToken(Scanner * pScanner, Tokens token, bool bActive);
+bool Scanner_MatchToken(Scanner * pScanner, enum Tokens token, bool bActive);
 

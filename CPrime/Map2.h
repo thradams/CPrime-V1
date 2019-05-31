@@ -4,43 +4,43 @@
 #include <stdbool.h>
 #include "StringEx.h"
 
-typedef struct MapItem2
+struct MapItem2
 {
-    struct MapItem2 * pNext;
+    struct MapItem2* pNext;
     unsigned int HashValue;
-    String * /*@auto*/ Key;
-    void * pValue;
-} MapItem2;
+    char* /*@auto*/ Key;
+    void* pValue;
+};
 
-typedef struct
+struct Map2
 {
-    MapItem2 ** pHashTable;
+    struct MapItem2** pHashTable;
     unsigned int nHashTableSize;
     int  nCount;
-} Map2;
+};
 
 
 #define MAPSTRINGTOPTR_INIT { NULL, 100, 0 }
 
-int Map2_SetAt(Map2 * pMap,
-               const char * Key,
-               void * newValue,
-               void ** ppPreviousValue);
+int Map2_SetAt(struct Map2* pMap,
+               const char* Key,
+               void* newValue,
+               void** ppPreviousValue);
 
 
-bool Map2_Lookup(Map2 * pMap,
-                 const char * Key,
-                 void ** rValue);
+bool Map2_Lookup(struct Map2* pMap,
+                 const char* Key,
+                 void** rValue);
 
-bool Map2_RemoveKey(Map2 * pMap,
-                    const char * Key,
-                    void ** ppValue);
+bool Map2_RemoveKey(struct Map2* pMap,
+                    const char* Key,
+                    void** ppValue);
 
-void Map2_Init(Map2 * p);
-void Map2_Destroy(Map2 * p, void (*DeleteFunc)(void *));
+void Map2_Init(struct Map2* p);
+void Map2_Destroy(struct Map2* p, void (*DeleteFunc)(void*));
 
-Map2 * Map2_Create(void);
+struct Map2* Map2_Create(void);
 
 
-void Map2_Swap(Map2 * pA, Map2 * pB);
-void Map2_Delete(Map2 * p, void(*DeleteFunc)(void *));
+void Map2_Swap(struct Map2* pA, struct Map2* pB);
+void Map2_Delete(struct Map2* p, void(*DeleteFunc)(void*));

@@ -10,11 +10,11 @@
 struct Stream
 {
     //name to identify this stream
-    String* /*@auto*/ NameOrFullPath;
-    String* /*@auto*/ FullDir2;
-     
+    char* /*@auto*/ NameOrFullPath;
+    char* /*@auto*/ FullDir2;
+
     //stream content and length
-    String * /*@auto*/ Text;
+    char* /*@auto*/ Text;
     int TextLen;
 
     wchar_t Character;
@@ -26,11 +26,11 @@ struct Stream
 
 
 bool Stream_Init(struct Stream* pfStream,
-    const char* name,
-    const char* psz);
+                 const char* name,
+                 const char* psz);
 
 bool Stream_InitFile(struct Stream* pfStream,
-    const char* fileName);
+                     const char* fileName);
 
 void Stream_Destroy(struct Stream* pfStream);
 
