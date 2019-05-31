@@ -728,6 +728,7 @@ static void TPrimaryExpressionLambda_CodePrint(TProgram * program,
 {
 
     //Output_Append(fp, options, "l1");
+    //Output_Append
     StrBuilder_AppendFmt(fp, "_lambda_%d", global_lambda_counter);
 
     StrBuilder sb = STRBUILDER_INIT;
@@ -2855,17 +2856,17 @@ static void TDeclaration_CodePrint(TProgram * program,
 
         if (options->Options.Target == CompilerTarget_Annotated)
         {
-            StrBuilder_Append(fp, "/*@");
+            Output_Append(fp, options, "/*@");
         }
 
-        StrBuilder_Append(fp, ":");
+        Output_Append(fp, options, ":");
         TNodeClueList_CodePrint(options, &p->ClueList001, fp);
-        StrBuilder_Append(fp, p->FunctionTag);
+        Output_Append(fp, options, p->FunctionTag);
 
 
         if (options->Options.Target == CompilerTarget_Annotated)
         {
-            StrBuilder_Append(fp, "*/");
+            Output_Append(fp, options, "*/");
         }
     }
 
@@ -2885,14 +2886,14 @@ static void TDeclaration_CodePrint(TProgram * program,
             {
                 if (options->Options.Target == CompilerTarget_Annotated)
                 {
-                    StrBuilder_Append(fp, "/*@");
+                    Output_Append(fp, options, "/*@");
                 }
 
-                StrBuilder_Append(fp, "default");
+                Output_Append(fp, options, "default");
 
                 if (options->Options.Target == CompilerTarget_Annotated)
                 {
-                    StrBuilder_Append(fp, "*/");
+                    Output_Append(fp, options, "*/");
                 }
 
 
@@ -2909,7 +2910,7 @@ static void TDeclaration_CodePrint(TProgram * program,
             }
             else if (options->Options.Target == CompilerTarget_CXX)
             {
-                StrBuilder_Append(fp, "default;");
+                Output_Append(fp, options, "default;");
             }
 
 
@@ -2941,13 +2942,13 @@ static void TDeclaration_CodePrint(TProgram * program,
 
                 if (options->Options.Target == CompilerTarget_Annotated)
                 {
-                    StrBuilder_Append(fp, "/*@");
+                    Output_Append(fp, options, "/*@");
                 }
-                StrBuilder_Append(fp, "default");
+                Output_Append(fp, options, "default");
 
                 if (options->Options.Target == CompilerTarget_Annotated)
                 {
-                    StrBuilder_Append(fp, "*/");
+                    Output_Append(fp, options, "*/");
                 }
 
                 TNodeClueList_CodePrint(options, &p->ClueList1, fp);
@@ -2964,7 +2965,7 @@ static void TDeclaration_CodePrint(TProgram * program,
             else if (options->Options.Target == CompilerTarget_CXX)
             {
                 TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-                StrBuilder_Append(fp, " default");
+                Output_Append(fp, options, " default");
                 Output_Append(fp, options, ";");
             }
 

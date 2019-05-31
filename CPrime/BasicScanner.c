@@ -276,6 +276,10 @@ const char * TokenToString(Tokens tk)
 
         case TK_FILE_EOF:
             return "TK_FILE_EOF";
+
+        case TK_PRE_PRAGMA:
+            return "TK_PRE_PRAGMA";
+
         default:
             //assert(false);
             break;

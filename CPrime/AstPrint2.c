@@ -86,16 +86,16 @@ int HasItemsToPrint(TScannerItemList * list)
          }
          pCurrent = pCurrent->pNext;
      }*/
-    return 0;
+    return 1;
 }
 
-void TScannerItemList_PrintXML(TScannerItemList * list,
+void TScannerItemList_PrintXML(const char* tokenString, TScannerItemList * list,
                                struct PrintXMLContext * ctx)
 {
 
     if (HasItemsToPrint(list))
     {
-        PrintLn(ctx, "<pr>");
+        PrintLn(ctx, "<CLUE token=\"%s\">", tokenString);
         struct ScannerItem * pCurrent = list->pHead;
         while (pCurrent)
         {
@@ -118,16 +118,16 @@ void TScannerItemList_PrintXML(TScannerItemList * list,
                 case TK_MACRO_EOF:
                     PrintLn(ctx, "<TK_MACRO_EOF/>");
                     break;
-                    //case TK_BREAKLINE:
-                      //  PrintLn(ctx, "<BR/>");
-                        //break;
+                    case TK_BREAKLINE:
+                        PrintLn(ctx, "<TK_BREAKLINE/>");
+                        break;
                 default:
-                    //PrintLn(ctx, "<TK>%s</TK>", pCurrent->lexeme.c_str);
+                    PrintLn(ctx, "<%s>%s</%s>", TokenToString(pCurrent->token), pCurrent->lexeme.c_str, TokenToString(pCurrent->token));
                     break;
             }
             pCurrent = pCurrent->pNext;
         }
-        PrintLn(ctx, "</pr>");
+        PrintLn(ctx, "</CLUE>");
     }
 }
 
@@ -424,11 +424,14 @@ void TInitDeclaratorList_PrintXML(TInitDeclaratorList * p,
 void TDeclaration_PrintXML(TDeclaration * p, struct PrintXMLContext * ctx)
 {
     PrintLn(ctx, "<declaration>");
-    TScannerItemList_PrintXML(&p->ClueList0, ctx);
+
+    TScannerItemList_PrintXML(":", &p->ClueList00, ctx);
+    TScannerItemList_PrintXML("tag", &p->ClueList001, ctx);
+    TScannerItemList_PrintXML("default", &p->ClueList0, ctx);
 
     TDeclarationSpecifiers_PrintXML(&p->Specifiers, ctx);
     TInitDeclaratorList_PrintXML(&p->InitDeclaratorList, ctx);
-    TScannerItemList_PrintXML(&p->ClueList1, ctx);
+    TScannerItemList_PrintXML(";", &p->ClueList1, ctx);
     PrintLn(ctx, "</declaration>");
 }
 
@@ -438,7 +441,7 @@ void TSingleTypeSpecifier_PrintXML(TSingleTypeSpecifier * p,
 {
     PrintLn(ctx, "<single-type-specifier>");
 
-    TScannerItemList_PrintXML(&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("", &p->ClueList0, ctx);
 
     if (p->TypedefName)
     {
@@ -455,7 +458,7 @@ void TSingleTypeSpecifier_PrintXML(TSingleTypeSpecifier * p,
 void TTypeQualifier_PrintXML(TTypeQualifier * p, struct PrintXMLContext * ctx)
 {
     PrintLn(ctx, "<type-qualifier>");
-    TScannerItemList_PrintXML(&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
     PrintLn(ctx, "</type-qualifier>");
 }
 
@@ -471,7 +474,7 @@ void TStructDeclarationList_PrintXML(TStructDeclarationList * p, struct PrintXML
 void TStructUnionSpecifier_PrintXML(TStructUnionSpecifier * p, struct PrintXMLContext * ctx)
 {
     PrintLn(ctx, "<struct-union-specifier>");
-    TScannerItemList_PrintXML(&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
     TStructDeclarationList_PrintXML(&p->StructDeclarationList, ctx);
     PrintLn(ctx, "</struct-union-specifier>");
 
@@ -482,7 +485,7 @@ void TStorageSpecifier_PrintXML(TStorageSpecifier * p,
                                 struct PrintXMLContext * ctx)
 {
     Print(ctx, "<storage-specifier>");
-    TScannerItemList_PrintXML(&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
     PrintText(ctx, TokenToString(p->Token));
     PrintLn(ctx, "</storage-specifier>");
 }
@@ -492,7 +495,7 @@ void TAtomicTypeSpecifier_PrintXML(TAtomicTypeSpecifier * p,
                                    struct PrintXMLContext * ctx)
 {
     PrintLn(ctx, "<atomic-specifier>");
-    TScannerItemList_PrintXML(&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
     //PrintText(ctx, TokenToString(p->Token));
     PrintLn(ctx, "</atomic-specifier>");
 
@@ -511,12 +514,12 @@ void TAlignmentSpecifier_PrintXML(TAlignmentSpecifier * p,
 void TFunctionSpecifier_PrintXML(TFunctionSpecifier * p,
                                  struct PrintXMLContext * ctx)
 {
-    TScannerItemList_PrintXML(&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
 }
 
 void TEnumSpecifier_PrintXML(TEnumSpecifier * p, struct PrintXMLContext * ctx)
 {
-    TScannerItemList_PrintXML(&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
 }
 
 
@@ -631,7 +634,7 @@ void TDeclarationSpecifiers_PrintXML(TDeclarationSpecifiers * p,
 void TEofDeclaration_PrintXML(TEofDeclaration * p,
                               struct PrintXMLContext * ctx)
 {
-    TScannerItemList_PrintXML(&p->ClueList0, ctx);
+    TScannerItemList_PrintXML("",&p->ClueList0, ctx);
     PrintLn(ctx, "<eof-declaration/>");
 }
 

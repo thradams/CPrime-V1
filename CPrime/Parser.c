@@ -4904,7 +4904,7 @@ bool  Declaration(Parser * ctx,
 
                 if (token == TK_COLON)
                 {
-                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList00);
+                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList00); //:
                     token = Parser_CurrentToken(ctx);
 
                     assert(pFuncVarDeclaration->FunctionTag == NULL);
@@ -4979,9 +4979,6 @@ bool  Declaration(Parser * ctx,
 
                 if (token == TK_LEFT_CURLY_BRACKET)
                 {
-
-                    //ANNOTATED AQUI TEM O COMENTARIO /*@default*/ antes do {
-
                     //Ativa o escopo dos parametros
                     //Adiconar os parametros em um escopo um pouco a cima.
                     struct SymbolMap BlockScope2 = SYMBOLMAP_INIT;
