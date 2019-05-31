@@ -69,7 +69,8 @@ void StrArray_Swap(struct StrArray * p1, struct StrArray * p2);
 
 #define List_IsFirstItem(pList, pItem) ((pList)->pHead == (pItem))
 
-//#define List_IsLastItem(pList, pItem) ((pList)->pTail == (pItem))
+
+
 
 
 
@@ -93,11 +94,16 @@ void PrintMemory();
 
 #include <string.h>
 
+
+
 typedef char String;
 
 
 
 String * StrDup(const char * p);
+int StrIComp(char const* a, char const* b);
+char* StrIStr(const char* str1, const char* str2);
+bool IsSuffix(const char * s, const char * suffix);
 
 #define PTR_STRING_REPLACE(a, b)\
 do\
@@ -123,6 +129,7 @@ do\
   (a) = (b);\
   (b) = t;\
 } while (0)
+
 
 
 
@@ -211,11 +218,13 @@ void StrBuilder_AppendFmtV(StrBuilder * p, const char* fmt, va_list va);
 
 struct Stream
 {
-    //name to identify this stream
+    
+
     String* /*@auto*/ NameOrFullPath;
     String* /*@auto*/ FullDir2;
      
-    //stream content and length
+    
+
     String * /*@auto*/ Text;
     int TextLen;
 
@@ -277,7 +286,8 @@ void LocalStrBuilder_Set(struct LocalStrBuilder* p, const char* source);
 
 
 #define LANGUAGE_EXTENSIONS
-//
+
+
 
 
 typedef enum
@@ -300,52 +310,90 @@ typedef enum
     TK_MACROPLACEHOLDER,
     TK_BREAKLINE,
     TK_BACKSLASHBREAKLINE,
-    CHAR1, // '/' ,
-    CHARACTER_TABULATION,// = '\t';
+    CHAR1, 
+
+    CHARACTER_TABULATION,
+
     TK_PREPROCESSOR,
-    TK_ERROR, //reservado para erro
+    TK_ERROR, 
 
 
-    //
-    TK_EXCLAMATION_MARK,// = '!';
-    TK_QUOTATION_MARK,// = '\"';
-    TK_NUMBER_SIGN,// = '#';
 
-    TK_DOLLAR_SIGN,// = '$';
-    TK_PERCENT_SIGN,// = '%';
-    TK_AMPERSAND,// = '&';
-    TK_APOSTROPHE,// = '\'';
-    TK_LEFT_PARENTHESIS,// = '(';
-    TK_RIGHT_PARENTHESIS,// = ')';
-    TK_ASTERISK,// = '*';
-    TK_PLUS_SIGN,// = '+';
-    TK_COMMA,// = ',';
-    TK_HYPHEN_MINUS,// = '-';
-    TK_HYPHEN_MINUS_NEG,// = '-'; //nao retorna no basic string mas eh usado para saber se eh - unario
-    TK_FULL_STOP,// = '.';
-    TK_SOLIDUS,// = '/';
+    
 
-    TK_COLON,// = ':';
-    TK_SEMICOLON,// = ';';
-    TK_LESS_THAN_SIGN,// = '<';
-    TK_EQUALS_SIGN,// = '=';
-    TK_GREATER_THAN_SIGN,// = '>';
-    TK_QUESTION_MARK,// = '\?';
-    TK_COMMERCIAL_AT,// = '@';
+    TK_EXCLAMATION_MARK,
 
-    TK_LEFT_SQUARE_BRACKET,// = '[';
-    REVERSE_SOLIDUS,// = '\\';
-    TK_RIGHT_SQUARE_BRACKET,// = ']';
-    TK_CIRCUMFLEX_ACCENT,// = '^';
-    TK_LOW_LINE,// = '_';
-    TK_GRAVE_ACCENT,// = '`';
+    TK_QUOTATION_MARK,
 
-    TK_LEFT_CURLY_BRACKET,// = '{';
-    TK_VERTICAL_LINE,// = '|';
-    TK_RIGHT_CURLY_BRACKET,// = '}';
-    TK_TILDE, // ~
+    TK_NUMBER_SIGN,
 
-    ////////////////////////////////////////
+
+    TK_DOLLAR_SIGN,
+
+    TK_PERCENT_SIGN,
+
+    TK_AMPERSAND,
+
+    TK_APOSTROPHE,
+
+    TK_LEFT_PARENTHESIS,
+
+    TK_RIGHT_PARENTHESIS,
+
+    TK_ASTERISK,
+
+    TK_PLUS_SIGN,
+
+    TK_COMMA,
+
+    TK_HYPHEN_MINUS,
+
+    TK_HYPHEN_MINUS_NEG,
+
+    TK_FULL_STOP,
+
+    TK_SOLIDUS,
+
+
+    TK_COLON,
+
+    TK_SEMICOLON,
+
+    TK_LESS_THAN_SIGN,
+
+    TK_EQUALS_SIGN,
+
+    TK_GREATER_THAN_SIGN,
+
+    TK_QUESTION_MARK,
+
+    TK_COMMERCIAL_AT,
+
+
+    TK_LEFT_SQUARE_BRACKET,
+
+    REVERSE_SOLIDUS,
+
+    TK_RIGHT_SQUARE_BRACKET,
+
+    TK_CIRCUMFLEX_ACCENT,
+
+    TK_LOW_LINE,
+
+    TK_GRAVE_ACCENT,
+
+
+    TK_LEFT_CURLY_BRACKET,
+
+    TK_VERTICAL_LINE,
+
+    TK_RIGHT_CURLY_BRACKET,
+
+    TK_TILDE, 
+
+
+    
+
     TK_ARROW,
     TK_PLUSPLUS,
     TK_MINUSMINUS,
@@ -399,14 +447,17 @@ typedef enum
     TK_IF,
     TK_INT,
     TK_LONG,
-    ////////////////
-    //Microsoft - specific
+    
+
+    
+
     TK__INT8,
     TK__INT16,
     TK__INT32,
     TK__INT64,
     TK__WCHAR_T,
-    ////////////////
+    
+
     TK_REGISTER,
     TK_RETURN,
     TK_SHORT,
@@ -428,18 +479,23 @@ typedef enum
     TK_RESTRICT,
     TK__STATIC_ASSERT,
     TK_INLINE,
-    TK__INLINE,//ms
-    TK__FORCEINLINE, //ms
+    TK__INLINE,
+
+    TK__FORCEINLINE, 
+
     TK__NORETURN,
     TK__ALIGNAS,
     TK__GENERIC,
     TK__IMAGINARY,
     TK__ALINGOF,
 
-    ///
-    TK__ASM, //visual c++    
+    
 
-    //Tokens para linhas do pre processador
+    TK__ASM, 
+
+
+    
+
     TK_PRE_INCLUDE,
     TK_PRE_PRAGMA,
     TK_PRE_IF,
@@ -452,7 +508,8 @@ typedef enum
     TK_PRE_LINE,
     TK_PRE_UNDEF,
     TK_PRE_DEFINE,
-    //fim tokens preprocessador
+    
+
     TK_MACRO_CALL,
     TK_MACRO_EOF,
     TK_FILE_EOF,
@@ -496,7 +553,8 @@ typedef struct BasicScanner
     struct Stream stream;
     struct ScannerItem currentItem;
 
-    //true antes do 1 token de cada linha
+    
+
     bool bLineStart;
     bool bMacroExpanded;
     int FileIndex;
@@ -508,7 +566,8 @@ typedef struct BasicScanner
 
 const char * BasicScanner_Lexeme(BasicScanner * scanner);
 bool        BasicScanner_IsLexeme(BasicScanner * scanner, const char * psz);
-//void        BasicScanner_Match(BasicScanner* scanner);
+
+
 void        BasicScanner_Match(BasicScanner * scanner);
 bool         BasicScanner_MatchToken(BasicScanner * scanner, Tokens token);
 bool      BasicScanner_InitFile(BasicScanner * pScanner, const char * fileName);
@@ -606,7 +665,8 @@ void Map_Print(Map * map);
 
 
 
-//////////////
+
+
 typedef struct
 {
     Buckets buckets;
@@ -618,12 +678,16 @@ typedef struct
 bool MultiMap_Init(MultiMap * map, int nBuckets);
 void MultiMap_Destroy(MultiMap * map, void(*pfDestroyData)(void *));
 
-//Adiciona outro item no mapa sem testar se ja existe
+
+
 bool MultiMap_Add(MultiMap * map, const char * key, void * data);
 
-//Retorna todo bucket que tem o mesm hash
-//Ainda � preciso percorrer para saber se sao da mesma key
-//Varias entradas para mesma key
+
+
+
+
+
+
 Bucket * MultiMap_FindBucket(MultiMap * map, const char * key);
 void MultiMap_Swap(MultiMap * map, MultiMap * map2);
 
@@ -673,7 +737,8 @@ struct PPToken * TokenArray_Find(const struct TokenArray * pArray, const char * 
 void TokenArray_Erase(struct TokenArray * pArray, int begin, int end);
 
 
-///////////////////////////////
+
+
 
 
 typedef struct TokenArrayMapItem
@@ -899,14 +964,16 @@ struct Options
 
     enum CompilerTarget Target;
 
-    //imprime na forma para declarar um tipo, remove o resto
+    
+
     bool bCannonical;
 
     bool bAmalgamate;
 
+    bool bNoImplicitTag;
 };
 
-#define OPTIONS_INIT {false, true, CompilerTarget_Annotated,  false, false}
+#define OPTIONS_INIT {false, true, CompilerTarget_Annotated,  false, false, false}
 void Options_Destroy(struct Options* options);
 
 typedef struct
@@ -995,11 +1062,14 @@ void FileNodeList_PushBack(struct FileNodeList * pItems,
 
 enum PPState
 {
-    PPState_NONE, // inclui
-    PPState_I1,   // inclui
+    PPState_NONE, 
+
+    PPState_I1,   
+
     PPState_I0,
     PPState_E0,
-    PPState_E1, // inclui
+    PPState_E1, 
+
 };
 
 typedef struct
@@ -1014,38 +1084,48 @@ void StackInts_Destroy(StackInts * p);
 
 typedef struct
 {
-    //Stack de basicscanner
+    
+
     BasicScannerStack stack;
 
-    //Mapa dos defines
+    
+
     struct MacroMap  Defines2;
 
-    //Stack usado para #if #else etc
+    
+
     StackInts StackIfDef;
 
-    //lista de arquivos marcados com pragma once
+    
+
     TFileMap FilesIncluded;
 
-    //Lista de diretorios de include
+    
+
     struct StrArray IncludeDir;
 
-    //Lista de diretorios de include
+    
+
     struct FileNodeList Sources;
 
-    //string para debug
+    
+
     StrBuilder DebugString;
 
 
-    //String que mantem o erro
+    
+
     StrBuilder ErrorString;
 
-    //True indica error
+    
+
     bool bError;
 
     TScannerItemList AcumulatedTokens;
 
     struct Options * pOptions;
-    ///////////////////////////////////////////////////
+    
+
 } Scanner;
 
 void Scanner_SetError(Scanner * pScanner, const char * fmt, ...);
@@ -1092,7 +1172,8 @@ void PrintPreprocessedToConsole(const char * fileIn,
 int Scanner_GetNumberOfScannerItems(Scanner * pScanner);
 
 
-//NOVA INTERFACE
+
+
 
 int Scanner_FileIndexAt(Scanner * pScanner, int index);
 int Scanner_LineAt(Scanner * pScanner, int index);
@@ -1115,50 +1196,56 @@ typedef struct TTypePointer TTypePointer;
 
 struct SymbolMapItem
 {
-    struct SymbolMapItem * pNext;
+    struct SymbolMapItem* pNext;
     unsigned int HashValue;
-    String * /*@auto*/ Key;
-    TTypePointer * pValue;
+    String* /*@auto*/ Key;
+    TTypePointer* pValue;
 };
 
 struct SymbolMap
 {
-    struct SymbolMapItem ** pHashTable;
+    struct SymbolMapItem** pHashTable;
     int nHashTableSize;
     int  nCount;
-    struct SymbolMap * pPrevious;
+    struct SymbolMap* pPrevious;
 };
 
 
 #define SYMBOLMAP_INIT { NULL, 100, 0 , NULL}
 
-int SymbolMap_SetAt(struct SymbolMap * pMap,
-                    const char * Key,
-                    TTypePointer * newValue);
+int SymbolMap_SetAt(struct SymbolMap* pMap,
+    const char* Key,
+    TTypePointer* newValue);
 
 
-TTypePointer * SymbolMap_Find(struct SymbolMap * pMap,
-                              const char * Key);
+TTypePointer* SymbolMap_Find(struct SymbolMap* pMap,
+    const char* Key);
 
-bool SymbolMap_RemoveKey(struct SymbolMap * pMap,
-                         const char * Key,
-                         TTypePointer ** ppValue);
+bool SymbolMap_RemoveKey(struct SymbolMap* pMap,
+    const char* Key,
+    TTypePointer** ppValue);
 
-void SymbolMap_Init(struct SymbolMap * p);
-void SymbolMap_Destroy(struct SymbolMap * p);
+void SymbolMap_Init(struct SymbolMap* p);
+void SymbolMap_Destroy(struct SymbolMap* p);
 
-struct SymbolMap * SymbolMap_Create();
-void SymbolMap_Delete(struct SymbolMap * p);
+struct SymbolMap* SymbolMap_Create();
+void SymbolMap_Delete(struct SymbolMap* p);
 
-struct SymbolMapItem * SymbolMap_FindBucket(struct SymbolMap * pMap, const char * Key);
+struct SymbolMapItem* SymbolMap_FindBucket(struct SymbolMap* pMap, const char* Key);
 
-void SymbolMap_Swap(struct SymbolMap * pA, struct SymbolMap * pB);
+void SymbolMap_Swap(struct SymbolMap* pA, struct SymbolMap* pB);
 
-void SymbolMap_Print(struct SymbolMap * pMap);
-bool SymbolMap_IsTypeName(struct SymbolMap * pMap, const char * identifierName);
+void SymbolMap_Print(struct SymbolMap* pMap);
+bool SymbolMap_IsTypeName(struct SymbolMap* pMap, const char* identifierName);
 
-struct TStructUnionSpecifier * SymbolMap_FindStructUnion(struct SymbolMap * pMap, const char * structTagName);
-struct TEnumSpecifier * SymbolMap_FindEnum(struct SymbolMap * pMap, const char * enumTagName);
+struct SymbolMapItem * SymbolMap_GetAssocAt(
+    struct SymbolMap * pMap,
+    const char * Key,
+    unsigned int * nHashBucket,
+    unsigned int * HashValue);
+
+struct TStructUnionSpecifier* SymbolMap_FindStructUnion(struct SymbolMap* pMap, const char* structTagName);
+struct TEnumSpecifier* SymbolMap_FindEnum(struct SymbolMap* pMap, const char* enumTagName);
 
 struct TTypePointer;
 typedef struct TTypePointer TTypePointer;
@@ -1166,25 +1253,27 @@ typedef struct TTypePointer TTypePointer;
 struct TTypeSpecifier;
 typedef struct TTypeSpecifier TTypeSpecifier;
 
-TTypeSpecifier * SymbolMap_FindTypedefSpecifierTarget(struct SymbolMap * pMap,
-                                                      const char * typedefName);
+TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(struct SymbolMap* pMap,
+    const char* typedefName);
 
-struct TDeclaration * SymbolMap_FindTypedefDeclarationTarget(struct SymbolMap * pMap,
-    const char * typedefName);
-struct TDeclaration * SymbolMap_FindFunction(struct SymbolMap * pMap, const char * funcName);
-struct TDeclaration * SymbolMap_FindObjFunction(struct SymbolMap * pMap,
-    const char * objName,
-                                                const char * funcName);
+struct TDeclaration* SymbolMap_FindTypedefDeclarationTarget(struct SymbolMap* pMap,
+    const char* typedefName);
+struct TDeclaration* SymbolMap_FindFunction(struct SymbolMap* pMap, const char* funcName);
+struct TDeclaration* SymbolMap_FindObjFunction2(struct SymbolMap* pMap,
+    const char* objName,
+    const char* funcName);
+
+
 
 struct TDeclarator;
 
-struct TDeclarationSpecifiers * SymbolMap_FindTypedefTarget(struct SymbolMap * pMap,
-    const char * typedefName,
-                                                            struct TDeclarator * declarator);
+struct TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(struct SymbolMap* pMap,
+    const char* typedefName,
+    struct TDeclarator* declarator);
 
-struct TDeclarationSpecifiers * SymbolMap_FindTypedefFirstTarget(struct SymbolMap * pMap,
-    const char * typedefName,
-                                                                 struct TDeclarator * declarator);
+struct TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(struct SymbolMap* pMap,
+    const char* typedefName,
+    struct TDeclarator* declarator);
 
 
 
@@ -1205,9 +1294,7 @@ static inline struct TO * FROM##_As_##TO(struct FROM* p) { return (struct TO * )
 static inline struct FROM * TO##_As_##FROM(struct TO* p) { return (struct FROM *) p; }
 
 
-/*
-AST data structures
-*/
+ 
 
 typedef enum EType
 {
@@ -1277,10 +1364,7 @@ typedef struct TExpression TExpression;
 
 typedef struct
 {
-    /*
-    static_assert-declaration:
-    _Static_assert ( constant-expression , string-literal ) ;
-    */
+     
     EType Type /*@=TStaticAssertDeclaration_ID*/;
 
     TExpression * /*@auto*/  pConstantExpression;
@@ -1300,9 +1384,7 @@ void TStaticAssertDeclaration_Delete(TStaticAssertDeclaration * p);
 
 typedef struct
 {
-    /*
-    Marca fim de um arquivo
-    */
+     
     EType Type /*@=TEofDeclaration_ID*/;
     TScannerItemList ClueList0;
 } TEofDeclaration;
@@ -1332,11 +1414,7 @@ struct TBlockItem;
 typedef struct TBlockItem TBlockItem;
 
 typedef struct {
-    /*
-    block-item-list:
-    block-item
-    block-item-list block-item
-    */
+     
     TBlockItem * /*@auto*/ * /*@auto*/ /*@[Size]*/ pItems;
     int Size;
     int Capacity;
@@ -1362,18 +1440,9 @@ void TCompoundStatement_Delete(TCompoundStatement * p);
 
 typedef struct TTypeQualifier
 {
-    /*
-    type-qualifier:
-    const
-    restrict
-    volatile
-    _Atomic
-    */
+     
 
-    /*
-    auto
-    _size ( SizeIdentifier )
-    */
+     
 
     EType Type /*@=TTypeQualifier_ID*/;
     String * /*@auto*/ SizeIdentifier;
@@ -1383,13 +1452,10 @@ typedef struct TTypeQualifier
 } TTypeQualifier;
 
 void TTypeQualifier_Copy(TTypeQualifier * dest, TTypeQualifier * src);
+bool TTypeQualifier_Compare(TTypeQualifier * p1, TTypeQualifier * p2);
 
 typedef struct {
-    /*
-    type-qualifier-list:
-    type-qualifier
-    type-qualifier-list type-qualifier
-    */
+     
 
     TTypeQualifier * /*@auto*/ Data[4];
     int Size;
@@ -1475,11 +1541,16 @@ typedef struct
     EType Type  /*@=TDoStatement_ID*/;
     TExpression * /*@auto*/    pExpression;
     TStatement * /*@auto*/    pStatement;
-    TScannerItemList ClueList0; //do
-    TScannerItemList ClueList1; //while
-    TScannerItemList ClueList2; //(
-    TScannerItemList ClueList3; //)
-    TScannerItemList ClueList4; // ;
+    TScannerItemList ClueList0; 
+
+    TScannerItemList ClueList1; 
+
+    TScannerItemList ClueList2; 
+
+    TScannerItemList ClueList3; 
+
+    TScannerItemList ClueList4; 
+
 
 } TDoStatement;
 
@@ -1522,10 +1593,14 @@ typedef struct
     TExpression * /*@auto*/    pConditionExpression;
     TStatement * /*@auto*/   pStatement;
     TStatement * /*@auto*/   pElseStatement;
-    TScannerItemList ClueList0; //if 
-    TScannerItemList ClueList1; //(
-    TScannerItemList ClueList2; //)
-    TScannerItemList ClueList3; //else
+    TScannerItemList ClueList0; 
+
+    TScannerItemList ClueList1; 
+
+    TScannerItemList ClueList2; 
+
+    TScannerItemList ClueList3; 
+
 } TIfStatement;
 
 TIfStatement * TIfStatement_Create(void);
@@ -1564,10 +1639,7 @@ CAST(TStatement, TSwitchStatement)
 struct TDeclaration;
 typedef struct TDeclaration TDeclaration;
 
-/*block-item:
-declaration
-statement
-*/
+ 
 struct /*@<TDeclaration | TStatement>*/ TBlockItem
 {
     EType Type;
@@ -1595,11 +1667,7 @@ CASTSAME(TBlockItem, TAnyDeclaration)
 
 typedef struct TPointer
 {
-    /*
-    pointer:
-    * type-qualifier-listopt
-    * type-qualifier-listopt pointer
-    */
+     
     TTypeQualifierList Qualifier;
     struct TPointer * pNext;
     TScannerItemList ClueList0;
@@ -1612,11 +1680,7 @@ void TPointer_Copy(TPointer * dest, TPointer * src);
 
 typedef struct TPointerList
 {
-    /*
-    pointer:
-    * type-qualifier-listopt
-    * type-qualifier-listopt pointer
-    */
+     
     TPointer * pHead, * pTail;
 } TPointerList;
 
@@ -1639,11 +1703,7 @@ const char * TPointerList_GetSize(TPointerList * pPointerlist);
 
 typedef struct
 {
-    /*
-    function-specifier:
-    inline
-    _Noreturn
-    */
+     
     EType Type  /*@=TFunctionSpecifier_ID*/;
     Tokens Token;
     TScannerItemList ClueList0;
@@ -1652,18 +1712,11 @@ typedef struct
 
 TFunctionSpecifier * TFunctionSpecifier_Create(void);
 void TFunctionSpecifier_Delete(TFunctionSpecifier * p);
+bool TFunctionSpecifier_Compare(TFunctionSpecifier * p1, TFunctionSpecifier * p2);
 
 typedef struct
 {
-    /*
-    storage-class-specifier:
-    typedef
-    extern
-    static
-    _Thread_local
-    auto
-    register
-    */
+     
     EType Type  /*@=TStorageSpecifier_ID*/;
     Tokens Token;
     TScannerItemList ClueList0;
@@ -1671,15 +1724,11 @@ typedef struct
 
 TStorageSpecifier * TStorageSpecifier_Create(void);
 void TStorageSpecifier_Delete(TStorageSpecifier * p);
-
+bool TStorageSpecifier_Compare(TStorageSpecifier *p1, TStorageSpecifier *p2);
 
 typedef struct
 {
-    /*
-    alignment-specifier:
-    _Alignas ( type-name )
-    _Alignas ( constant-expression )
-    */
+     
     EType Type  /*@=TAlignmentSpecifier_ID*/;
     String * /*@auto*/ TypeName;
 } TAlignmentSpecifier;
@@ -1690,17 +1739,15 @@ void TAlignmentSpecifier_Delete(TAlignmentSpecifier * p);
 
 typedef struct TEnumerator
 {
-    /*
-    enumerator:
-    enumeration-constant
-    enumeration-constant = constant-expression
-    */
+     
     struct TEnumerator * pNext;
     String * /*@auto*/ Name;
     TExpression * /*@auto*/   pExpression;
     TScannerItemList ClueList0;
-    TScannerItemList ClueList1; // =
-    TScannerItemList ClueList2; // ,
+    TScannerItemList ClueList1; 
+
+    TScannerItemList ClueList2; 
+
     bool bHasComma;
 } TEnumerator;
 
@@ -1710,11 +1757,7 @@ void TEnumerator_Delete(TEnumerator * p);
 
 typedef struct
 {
-    /*
-    enumerator-list:
-    enumerator
-    enumerator-list, enumerator
-    */
+     
     TEnumerator * pHead, * pTail;
 } TEnumeratorList;
 void TEnumeratorList_Destroy(TEnumeratorList * p);
@@ -1722,12 +1765,7 @@ void TEnumeratorList_Init(TEnumeratorList * p);
 
 typedef struct TEnumSpecifier
 {
-    /*
-    enum-specifier:
-    enum identifieropt { enumerator-list }
-    enum identifieropt { enumerator-list , }
-    enum identifier
-    */
+     
 
     EType Type  /*@=TEnumSpecifier_ID*/;
     String * /*@auto*/ Name;
@@ -1740,23 +1778,11 @@ typedef struct TEnumSpecifier
 
 TEnumSpecifier * TEnumSpecifier_Create(void);
 void TEnumSpecifier_Delete(TEnumSpecifier * p);
+bool TEnumSpecifier_CompareTagName(TEnumSpecifier * p1, TEnumSpecifier * p2);
 
 typedef struct TSingleTypeSpecifier
 {
-    /*
-    void
-    char
-    short
-    int
-    long
-    float
-    double
-    signed
-    unsigned
-    _Bool
-    _Complex
-    typedef-name
-    */
+     
     EType Type  /*@=TSingleTypeSpecifier_ID*/;
     Tokens Token2;
     String * /*@auto*/ TypedefName;
@@ -1767,19 +1793,13 @@ TSingleTypeSpecifier * TSingleTypeSpecifier_Create(void);
 void TSingleTypeSpecifier_Delete(TSingleTypeSpecifier * p);
 
 const char * TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier * p);
+bool TSingleTypeSpecifier_Compare(TSingleTypeSpecifier * p1, TSingleTypeSpecifier * p2);
 
 struct TTypeSpecifier;
 typedef struct TTypeSpecifier TTypeSpecifier;
 
 
-/*
-declaration-specifiers:
-storage-class-specifier declaration-specifiersopt
-type-specifier declaration-specifiersopt
-type-qualifier declaration-specifiersopt
-function-specifier declaration-specifiersopt
-alignment-specifier declaration-specifiersopt
-*/
+ 
 
 struct /*@<TStorageSpecifier |
   TTypeSpecifier |
@@ -1798,22 +1818,14 @@ CAST(TDeclarationSpecifier, TAlignmentSpecifier)
 CAST(TDeclarationSpecifier, TSingleTypeSpecifier)
 CAST(TDeclarationSpecifier, TEnumSpecifier)
 
-/*
-specifier-qualifier-list:
-type-specifier specifier-qualifier-listopt
-type-qualifier specifier-qualifier-listopt
-*/
+ 
 struct /*@<TTypeSpecifier | TTypeQualifier>*/ TSpecifierQualifier
 {
     EType Type;
 };
 
 
-/*
-specifier-qualifier-list:
-type-specifier specifier-qualifier-listopt
-type-qualifier specifier-qualifier-listopt
-*/
+ 
 typedef struct TSpecifierQualifier TSpecifierQualifier;
 void TSpecifierQualifier_Delete(TSpecifierQualifier * p);
 
@@ -1826,11 +1838,7 @@ CAST(TSpecifierQualifier, TEnumSpecifier)
 
 
 typedef struct {
-    /*
-    specifier-qualifier-list:
-    type-specifier specifier-qualifier-listopt
-    type-qualifier specifier-qualifier-listopt
-    */
+     
     TSpecifierQualifier * /*@auto*/ * /*@auto*/ /*@[Size]*/ pData;
     int Size;
     int Capacity;
@@ -1842,7 +1850,7 @@ void TSpecifierQualifierList_PushBack(TSpecifierQualifierList * p, TSpecifierQua
 const char * TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList * p);
 TDeclarationSpecifier * TSpecifierQualifierList_GetMainSpecifier(TSpecifierQualifierList * p);
 bool TSpecifierQualifierList_IsTypedefQualifier(TSpecifierQualifierList * p);
-
+bool TSpecifierQualifierList_Compare(TSpecifierQualifierList * p1, TSpecifierQualifierList * p2);
 
 bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList * p, Tokens token, const char * lexeme);
 bool TSpecifierQualifierList_IsBool(TSpecifierQualifierList * p);
@@ -1852,14 +1860,7 @@ bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList * p);
 
 
 typedef struct TDeclarationSpecifiers {
-    /*
-    declaration-specifiers:
-    storage-class-specifier declaration-specifiersopt
-    type-specifier declaration-specifiersopt
-    type-qualifier declaration-specifiersopt
-    function-specifier declaration-specifiersopt
-    alignment-specifier declaration-specifiersopt
-    */
+     
     TDeclarationSpecifier * /*@auto*/ * /*@auto*/ /*@[Size]*/ pData;
     int Size;
     int Capacity;
@@ -1868,21 +1869,25 @@ typedef struct TDeclarationSpecifiers {
 void TDeclarationSpecifiers_Init(TDeclarationSpecifiers * pDeclarationSpecifiers);
 void TDeclarationSpecifiers_Destroy(TDeclarationSpecifiers * pDeclarationSpecifiers);
 void TDeclarationSpecifiers_PushBack(TDeclarationSpecifiers * p, TDeclarationSpecifier * pItem);
+TDeclarationSpecifier* TDeclarationSpecifiers_GetMainSpecifier(TDeclarationSpecifiers* p, enum EType type);
+
 
 const char * TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers * pDeclarationSpecifiers);
 bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers * pDeclarationSpecifiers, Tokens token, const char * lexeme);
 
+
+
+typedef struct TStructUnionSpecifier TStructUnionSpecifier;
+
+TStructUnionSpecifier* TDeclarationSpecifiers_GetCompleteStructUnionSpecifier(struct SymbolMap* pSymbolMap,
+    TDeclarationSpecifiers* pDeclarationSpecifiers);
 
 struct TParameter;
 typedef struct TParameter TParameter;
 
 typedef struct
 {
-    /*
-    parameter-list:
-    parameter-declaration
-    parameter-list , parameter-declaration
-    */
+     
 
     TParameter * pHead, * pTail;
 } TParameterList;
@@ -1894,14 +1899,12 @@ bool TParameter_IsDirectPointer(TParameter * p);
 
 typedef struct TParameterTypeList
 {
-    /*
-    parameter-type-list:
-    parameter-list
-    parameter-list , ...
-    */
+     
     TParameterList ParameterList;
-    TScannerItemList ClueList0; //,
-    TScannerItemList ClueList1; //...
+    TScannerItemList ClueList0; 
+
+    TScannerItemList ClueList1; 
+
     bool bVariadicArgs;
 } TParameterTypeList;
 
@@ -1919,16 +1922,14 @@ bool TParameterTypeList_HasNamedArgs(TParameterTypeList * p);
 
 typedef struct TDesignator
 {
-    /*
-    designator:
-    [ constant-expression ]
-    . identifier
-    */
+     
     String * /*@auto*/ Name;
     TExpression * /*@auto*/  pExpression;
     struct TDesignator * pNext;
-    TScannerItemList ClueList0; //. ou [
-    TScannerItemList ClueList1; //]
+    TScannerItemList ClueList0; 
+
+    TScannerItemList ClueList1; 
+
 } TDesignator;
 
 
@@ -1938,11 +1939,7 @@ void TDesignator_Delete(TDesignator * p);
 
 typedef struct
 {
-    /*
-    designator-list:
-    designator
-    designator-list designator
-    */
+     
     TDesignator * /*@auto*/ pHead, * pTail;
 } TDesignatorList;
 void TDesignatorList_Destroy(TDesignatorList * p);
@@ -1951,10 +1948,7 @@ void TDesignatorList_PushBack(TDesignatorList * p, TDesignator * pItem);
 
 typedef struct TDesignation
 {
-    /*
-    designation:
-    designator-list =
-    */
+     
     TDesignatorList DesignatorList;
     TScannerItemList ClueList0;
 } TDesignation;
@@ -1968,11 +1962,7 @@ void TInitializer_Delete(TInitializer * p);
 
 typedef struct TInitializerListItem
 {
-    /*
-    initializer-list:
-    designationopt initializer
-    initializer-list , designationopt initializer
-    */
+     
     TDesignatorList  DesignatorList;
     TInitializer * /*@auto*/  pInitializer;
     struct TInitializerListItem * pNext;
@@ -1987,11 +1977,7 @@ void TInitializerListItem_Delete(TInitializerListItem * p);
 
 typedef struct TInitializerList
 {
-    /*
-    initializer-list:
-    designationopt initializer
-    initializer-list , designationopt initializer
-    */
+     
 
     TInitializerListItem * /*@auto*/ pHead, * pTail;
 } TInitializerList;
@@ -2002,19 +1988,8 @@ void TInitializerList_Destroy(TInitializerList * p);
 
 typedef struct
 {
-    /*
-    initializer:
-    assignment-expression
-
-    { initializer-list }    <-----representa esta parte
-    { initializer-list ,}
-    */
-    /*
-      {}
-      default {}
-      default { initializer-list }
-      default { initializer-list ,}
-    */
+     
+     
 
     EType Type  /*@=TInitializerListType_ID*/;
     TInitializerList InitializerList;
@@ -2031,13 +2006,7 @@ void TInitializerListType_Delete(TInitializerListType * p);
 
 struct /*@<TInitializerListType | TExpression>*/ TInitializer
 {
-    /*
-    initializer:
-    assignment-expression
-
-    { initializer-list }
-    { initializer-list ,}
-    */
+     
     EType Type;
 };
 typedef struct TInitializer TInitializer;
@@ -2050,16 +2019,9 @@ typedef struct TDirectDeclarator TDirectDeclarator;
 
 typedef struct TDeclarator
 {
-    /*
-    declarator:
-    pointeropt direct-declarator
-    */
+     
 
-    /*
-    abstract-declarator:
-    pointer
-    pointeropt direct-abstract-declarator
-    */
+     
 
     TPointerList PointerList;
     TDirectDeclarator * /*@auto*/  pDirectDeclarator;
@@ -2085,17 +2047,7 @@ typedef enum TDirectDeclaratorType
 
 typedef struct TDirectDeclarator
 {
-    /*
-    direct-declarator:
-    identifier
-    ( declarator )
-    direct-declarator [ type-qualifier-listopt assignment-expressionopt ]
-    direct-declarator [ static type-qualifier-listopt assignment-expression ]
-    direct-declarator [ type-qualifier-list static assignment-expression ]
-    direct-declarator [ type-qualifier-listopt * ]
-    direct-declarator ( parameter-type-list )
-    direct-declarator ( identifier-listopt )
-    */
+     
 
     String * /*@auto*/ Identifier;
     TDeclarator * /*@auto*/ pDeclarator;
@@ -2103,7 +2055,8 @@ typedef struct TDirectDeclarator
     TPosition Position;
     TParameterTypeList  Parameters;
     TExpression * /*@auto*/  pExpression;
-    TDirectDeclaratorType DeclaratorType; //para diferenciar pois null nao basta []
+    TDirectDeclaratorType DeclaratorType; 
+
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
     TScannerItemList ClueList2;
@@ -2116,16 +2069,13 @@ void TDirectDeclarator_Delete(TDirectDeclarator * p);
 
 typedef struct TInitDeclarator
 {
-    /*
-    init-declarator:
-    declarator
-    declarator = initializer
-    */
+     
     TDeclarator * /*@auto*/  pDeclarator;
     TInitializer * /*@auto*/   pInitializer;
     struct TInitDeclarator * pNext;
     TScannerItemList ClueList0;
-    TScannerItemList ClueList1; //defval
+    TScannerItemList ClueList1; 
+
 } TInitDeclarator;
 
 
@@ -2137,11 +2087,7 @@ typedef TInitDeclarator TStructDeclarator;
 
 typedef struct TInitDeclaratorList
 {
-    /*
-    init-declarator-list:
-    init-declarator
-    init-declarator-list , init-declarator
-    */
+     
     TInitDeclarator * pHead, * pTail;
 } TInitDeclaratorList;
 
@@ -2153,11 +2099,7 @@ const char * TInitDeclarator_FindName(TInitDeclarator * p);
 
 typedef struct TStructDeclaratorList
 {
-    /*
-    init-declarator-list:
-    init-declarator
-    init-declarator-list , init-declarator
-    */
+     
     TInitDeclarator * /*@auto*/ pHead, * pTail;
 } TStructDeclaratorList;
 
@@ -2169,11 +2111,7 @@ void TStructDeclaratorList_Add(TStructDeclaratorList * p, TInitDeclarator * pIte
 
 typedef struct TStructDeclaration
 {
-    /*
-    struct-declaration:
-    specifier-qualifier-list struct-declarator-listopt ;
-    static_assert-declaration
-    */
+     
 
     EType Type  /*@=TStructDeclaration_ID*/;
 
@@ -2187,11 +2125,7 @@ TStructDeclaration * TStructDeclaration_Create();
 void TStructDeclaration_Delete(TStructDeclaration * p);
 
 
-/*
-struct-declaration:
-specifier-qualifier-list struct-declarator-listopt ;
-static_assert-declaration
-*/
+ 
 struct /*@<TStructDeclaration | TStaticAssertDeclaration>*/ TAnyStructDeclaration
 {
     EType Type;
@@ -2234,9 +2168,12 @@ typedef struct TUnionSet
 {
     TUnionSetItem * pHead, * pTail;
 
-    TScannerItemList ClueList0; // <
-    TScannerItemList ClueList1; // > 
-    //TScannerItemList ClueList2; //>
+    TScannerItemList ClueList0; 
+
+    TScannerItemList ClueList1; 
+
+    
+
 
 } TUnionSet;
 void TUnionSet_Init(TUnionSet * p);
@@ -2245,17 +2182,9 @@ void TUnionSet_PushBack(TUnionSet * p, TUnionSetItem * pItem);
 
 typedef struct TStructUnionSpecifier
 {
-    /*
-    struct-or-union-specifier:
-    struct-or-union identifieropt { struct-declaration-list }
-    struct-or-union identifier
-    */
+     
 
-    /*
-    struct-or-union-specifier:
-    struct-or-union identifieropt { struct-declaration-list }
-    struct-or-union union-set-opt identifier
-    */
+     
 
     EType Type  /*@=TStructUnionSpecifier_ID*/;
     TStructDeclarationList StructDeclarationList;
@@ -2265,25 +2194,24 @@ typedef struct TStructUnionSpecifier
 
 
     TUnionSet UnionSet;
-    TScannerItemList ClueList0; //struct-or-union
-    TScannerItemList ClueList1; //identifieropt
-    TScannerItemList ClueList2; //{
-    TScannerItemList ClueList3; //}
+    TScannerItemList ClueList0; 
+
+    TScannerItemList ClueList1; 
+
+    TScannerItemList ClueList2; 
+
+    TScannerItemList ClueList3; 
+
+
 
 } TStructUnionSpecifier;
 
 TStructUnionSpecifier * TStructUnionSpecifier_Create();
 void TStructUnionSpecifier_Delete(TStructUnionSpecifier * p);
+void TStructUnionSpecifier_SetFunctionImplicitTag(TStructUnionSpecifier* p,
+    const char* funcName,
+    TDeclaration* pFuncDeclaration);
 
-enum SpecialMemberType
-{
-    SpecialMemberType_Init,
-    SpecialMemberType_Destroy,
-    SpecialMemberType_Create,
-    SpecialMemberType_Delete
-};
-enum SpecialMemberType TStructUnionSpecifier_GetSpecialMemberType(TStructUnionSpecifier * p, const char * funcName);
-const char* TStructUnionSpecifier_GetSpecialMemberName(TStructUnionSpecifier * p, enum SpecialMemberType type);
 
 struct TAtomicTypeSpecifier;
 typedef struct TAtomicTypeSpecifier TAtomicTypeSpecifier;
@@ -2297,6 +2225,8 @@ struct /*@<TSingleTypeSpecifier |
     EType Type;
 };
 
+bool TTypeSpecifier_Compare(TTypeSpecifier * p1, TTypeSpecifier * p2);
+
 typedef struct TTypeSpecifier TTypeSpecifier;
 
 CAST(TTypeSpecifier, TSingleTypeSpecifier)
@@ -2306,27 +2236,39 @@ CAST(TDeclarationSpecifier, TStructUnionSpecifier)
 CAST(TSpecifierQualifier, TStructUnionSpecifier)
 CAST(TTypeSpecifier, TAtomicTypeSpecifier)
 
+#define FUNCTION_TAG_DESTROY "destroy"
+#define FUNCTION_TAG_INIT "init"
+#define FUNCTION_TAG_DELETE "delete"
+#define FUNCTION_TAG_CREATE "create"
+
+
 typedef struct TDeclaration
 {
-    /*
-    declaration:
-    declaration-specifiers init-declarator-listopt ;
-    static_assert-declaration
-    */
+     
+
+     
 
     EType Type  /*@=TDeclaration_ID*/;
     TDeclarationSpecifiers Specifiers;
     TInitDeclaratorList InitDeclaratorList;
 
-    //se for funcao
+    
+
     TCompoundStatement * /*@auto*/  pCompoundStatementOpt;
 
     int FileIndex;
     int Line;
 
-    TScannerItemList ClueList0; //default
+    TScannerItemList ClueList0; 
+
+    TScannerItemList ClueList00; 
+
+    TScannerItemList ClueList001; 
+
 
     bool bDefault;
+    String* /*@auto*/ FunctionTag;
+    bool bAutoTag;
     TScannerItemList ClueList1;
 
 
@@ -2347,6 +2289,7 @@ TCompoundStatement * TDeclaration_Is_FunctionDefinition(TDeclaration * p);
 
 TDeclarator * TDeclaration_FindDeclarator(TDeclaration * p, const char * name);
 const char * TDeclaration_GetFunctionName(TDeclaration * p);
+const char* TDeclaration_FindFunctionTagName(TDeclaration* p, struct SymbolMap* pMap);
 
 
 CAST(TAnyDeclaration, TStaticAssertDeclaration)
@@ -2360,16 +2303,13 @@ int TAnyDeclaration_GetFileIndex(TAnyDeclaration * pDeclaration);
 
 typedef struct TParameter
 {
-    /*
-    parameter-declaration:
-    declaration-specifiers declarator
-    declaration-specifiers abstract-declaratoropt
-    */
+     
 
     struct TParameter * pNext;
     TDeclarationSpecifiers Specifiers;
     TDeclarator Declarator;
-    TScannerItemList ClueList0; //, do parametro
+    TScannerItemList ClueList0; 
+
     bool bHasComma;
 } TParameter;
 
@@ -2394,11 +2334,7 @@ void TDeclarations_PushBack(TDeclarations * p, TAnyDeclaration * pItem);
 
 typedef struct TGroupDeclaration
 {
-    /*
-    default identifier
-    {
-    }
-    */
+     
     EType Type  /*@=TGroupDeclaration_ID*/;
     TDeclarations Declarations;
     String * /*@auto*/ Identifier;
@@ -2410,21 +2346,27 @@ typedef struct TGroupDeclaration
 TGroupDeclaration * TGroupDeclaration_Create();
 void TGroupDeclaration_Delete(TGroupDeclaration * p);
 
-//Coleta o resultado do parser
+
+
 typedef struct
 {
-    //declaracoes
+    
+
     TDeclarations Declarations;
 
-    //arquivos na qual declaracao tem indice
+    
+
     TFileArray Files2;
 
-    //multimap dos simbolos
-    //DeclarationsMap Symbols;
+    
+
+    
+
     struct SymbolMap GlobalScope;
 
 
-    //Defines
+    
+
     struct MacroMap Defines;
 
     StrBuilder sbPreDeclaration;
@@ -2441,10 +2383,7 @@ TDeclaration * TProgram_FindDeclaration(TProgram * p, const char * name);
 
 typedef struct TTypeName
 {
-    /*
-    type-name:
-    specifier-qualifier-list abstract-declaratoropt
-    */
+     
     EType Type  /*@=TypeName_ID*/;
     TSpecifierQualifierList SpecifierQualifierList;
     TDeclarator Declarator;
@@ -2457,10 +2396,7 @@ void TTypeName_Init(TTypeName * p);
 
 typedef struct TAtomicTypeSpecifier
 {
-    /*
-    atomic-type-specifier:
-    _Atomic ( type-name )
-    */
+     
     EType Type  /*@=TAtomicTypeSpecifier_ID*/;
     TTypeName TypeName;
     TScannerItemList ClueList0;
@@ -2471,6 +2407,7 @@ typedef struct TAtomicTypeSpecifier
 
 TAtomicTypeSpecifier * TAtomicTypeSpecifier_Create();
 void TAtomicTypeSpecifier_Delete(TAtomicTypeSpecifier * p);
+bool TAtomicTypeSpecifier_Compare(TAtomicTypeSpecifier *p1, TAtomicTypeSpecifier * p2);
 
 
 bool EvaluateConstantExpression(TExpression * p, int * pResult);
@@ -2485,19 +2422,13 @@ bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers * pDeclarationSpeci
 
 typedef struct
 {
-    /*
-    (6.5.1) primary-expression:
-    identifier
-    constant
-    string-literal
-    ( expression )
-    generic-selection
-    */
+     
 
     EType Type /*@=TPrimaryExpressionValue_ID*/;
     Tokens token;
     String * /*@auto*/ lexeme;
-    TExpression * /*@auto*/   pExpressionOpt; //( expression )
+    TExpression * /*@auto*/   pExpressionOpt; 
+
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
 } TPrimaryExpressionValue;
@@ -2582,7 +2513,7 @@ typedef struct TPostfixExpressionCore
     struct TPostfixExpressionCore * /*@auto*/  pNext;
     TInitializerList InitializerList;
     String * /*@auto*/ Identifier;
-    TTypeName * /*@auto*/  pTypeName; /*typename*/
+    TTypeName * /*@auto*/  pTypeName;  
 
     TScannerItemList ClueList0;
     TScannerItemList ClueList1;
@@ -2616,8 +2547,10 @@ typedef struct
     TExpression * /*@auto*/   pExpressionRight;
     TTypeName TypeName;
     TScannerItemList ClueList0;
-    TScannerItemList ClueList1; //sizeof (
-    TScannerItemList ClueList2; //sizeof ( )
+    TScannerItemList ClueList1; 
+
+    TScannerItemList ClueList2; 
+
 } TUnaryExpressionOperator;
 
 
@@ -2655,10 +2588,14 @@ typedef struct TPrimaryExpressionLambda
 
     TCompoundStatement * pCompoundStatement;
     TParameterTypeList * /*@auto*/ pParameterTypeListOpt;
-    TScannerItemList ClueList0; //[
-    TScannerItemList ClueList1; //]
-    TScannerItemList ClueList2; //(
-    TScannerItemList ClueList3; //)
+    TScannerItemList ClueList0; 
+
+    TScannerItemList ClueList1; 
+
+    TScannerItemList ClueList2; 
+
+    TScannerItemList ClueList3; 
+
 } TPrimaryExpressionLambda;
 
 TPrimaryExpressionLambda * TPrimaryExpressionLambda_Create();
@@ -2714,12 +2651,17 @@ typedef struct PrintCodeOptions
 {
     struct Options Options;
 
-    ///////////
-    //controle interno
-    struct IntegerStack Stack;// = 0;
-    bool bInclude;// = true;
+    
+
+    
+
+    struct IntegerStack Stack;
+
+    bool bInclude;
+
     int IdentationLevel;
-    //
+    
+
 
 } PrintCodeOptions;
 
@@ -2740,7 +2682,7 @@ void TProgram_PrintCodeToString(TProgram * pProgram,
 void TTypeName_CodePrint(TProgram * program, PrintCodeOptions * options, TTypeName * p, StrBuilder * fp);
 
 
-bool IsSuffix(const char * s, const char * suffix);
+
 void TSpecifierQualifierList_CodePrint(TProgram * program,
                                        PrintCodeOptions * options,
                                        TSpecifierQualifierList * pDeclarationSpecifiers,
@@ -2763,13 +2705,18 @@ typedef enum
 
 void InstanciateDestroy2(TProgram * program,
                          PrintCodeOptions * options,
-                         TSpecifierQualifierList * pSpecifierQualifierList,//<-dupla para entender o tipo
-                         TDeclarator * pDeclatator,                        //<-dupla para entender o tipo
+                         TSpecifierQualifierList * pSpecifierQualifierList,
+
+                         TDeclarator * pDeclatator,                        
+
                          TInitializer * pInitializer,
                          TParameterTypeList * pArgsOpt,
-                         const char * pInitExpressionText, //(x->p->i = 0)    
-                         const char * pszAutoPointerLenExpressionOpt, //expressao usada para definir o tamanho de um spaw de auto pointers
-                                                                     //se passar null eh pq nao interessa
+                         const char * pInitExpressionText, 
+
+                         const char * pszAutoPointerLenExpressionOpt, 
+
+                                                                     
+
                          const Action action,
                          Search search,
                          bool * pbHasInitializers,
@@ -2778,14 +2725,22 @@ void InstanciateDestroy2(TProgram * program,
 
 #define SYMBOL_BUCKETS_SIZE 1000
 
+struct ParserOptions
+{
+    bool bNoImplicitTag;
+};
+
 typedef struct {
-  // indica presenca de erro no parser
+  
+
   bool bError;
 
-  // mensagem de erro
+  
+
   StrBuilder ErrorMessage;
 
-  // scanner ja pr�-processado
+  
+
   Scanner Scanner;
 
   TScannerItemList ClueList;
@@ -2795,6 +2750,8 @@ typedef struct {
   
   int IncludeLevel;
   bool bPreprocessorEvalFlag;
+
+  struct ParserOptions ParserOptions;
 } Parser;
 
 bool Parser_InitFile(Parser *parser, const char *fileName);
@@ -2817,6 +2774,7 @@ Tokens Parser_MatchToken(Parser *parser, Tokens tk, TScannerItemList *listOpt);
 Tokens Parser_LookAheadToken(Parser *parser);
 
 bool GetASTFromString(const char*  sourceCode,
+    struct Options * options,
   TProgram* pProgram);
 
 
@@ -2860,11 +2818,14 @@ void TProgram_PrintAstToXML(TProgram * pProgram,
                             const char * inputFileName);
 
 
-int Compile(const char * configFileName,
-            const char * inputFileName,
-            const char * outputFileName,
-            struct Options * options,
-            bool bPrintASTFile)
+#define CONFIG_FILE_NAME "config.txt"
+#define EXECUTABLE_NAME "cpc"
+
+int Compile(const char* configFileName,
+    const char* inputFileName,
+    const char* outputFileName,
+    struct Options* options,
+    bool bPrintASTFile)
 {
     int bSuccess = 0;
     TProgram program;
@@ -2882,7 +2843,8 @@ int Compile(const char * configFileName,
         char dir[CPRIME_MAX_DIR];
         char fname[CPRIME_MAX_FNAME];
         char ext[CPRIME_MAX_EXT];
-        SplitPath(inputFileName, drive, dir, fname, ext); // C4996
+        SplitPath(inputFileName, drive, dir, fname, ext); 
+
 
 
         printf("Generating code for %s...\n", inputFileName);
@@ -2890,7 +2852,8 @@ int Compile(const char * configFileName,
         {
             if (bPrintASTFile)
             {
-                //TProgram_PrintAstToFile(&program, outputFileName, inputFileName);
+                
+
                 TProgram_PrintAstToXML(&program, outputFileName, inputFileName);
             }
             else
@@ -2904,15 +2867,19 @@ int Compile(const char * configFileName,
 
             if (bPrintASTFile)
             {
-                //faz um  arquivo com extensao json
-                //MakePath(outc, drive, dir, fname, ".json");
-                //TProgram_PrintAstToFile(&program, outc, inputFileName);
+                
+
+                
+
+                
+
                 MakePath(outc, drive, dir, fname, ".xml");
                 TProgram_PrintAstToXML(&program, outc, inputFileName);
             }
             else
             {
-                //gera em cima do proprio arquivo
+                
+
                 MakePath(outc, drive, dir, fname, ext);
                 TProgram_PrintCodeToFile(&program, options, outc, inputFileName);
             }
@@ -2928,15 +2895,15 @@ int Compile(const char * configFileName,
 
 void PrintHelp()
 {
-    printf("Syntax: cprime [options] [file ...]\n");
+    printf("Syntax: " EXECUTABLE_NAME " [options] [file ...]\n");
     printf("\n");
-    printf("Examples: cprime hello.c\n");
-    printf("          cprime -config config.h hello.c\n");
-    printf("          cprime -config config.h hello.c -o hello.c\n");
-    printf("          cprime -config config.h -P hello.c\n");
-    printf("          cprime -E hello.c\n");
-    printf("          cprime -P hello.c\n");
-    printf("          cprime -A hello.c\n");
+    printf("Examples: " EXECUTABLE_NAME " hello.c\n");
+    printf("          " EXECUTABLE_NAME " -config config.h hello.c\n");
+    printf("          " EXECUTABLE_NAME " -config config.h hello.c -o hello.c\n");
+    printf("          " EXECUTABLE_NAME " -config config.h -P hello.c\n");
+    printf("          " EXECUTABLE_NAME " -E hello.c\n");
+    printf("          " EXECUTABLE_NAME " -P hello.c\n");
+    printf("          " EXECUTABLE_NAME " -A hello.c\n");
     printf("\n");
     printf("PrintCodeOptions:\n");
     printf("-config FILE                          Configuration fp.\n");
@@ -2945,29 +2912,35 @@ void PrintHelp()
     printf("-o FILE                               Sets ouput file name.\n");
     printf("-E                                    Preprocess to console.\n");
     printf("-P                                    Preprocess to file.\n");
-    printf("-A                                    Output AST to file.\n");
-    printf("-a                                    Output almagamation of input file\n");
-    printf("-cx                                   Generate CX.\n");
+    printf("-A                                    Output AST to file.\n");    
+    printf("-cx                                   Generate C'.\n");
     printf("-ca                                   Generated C annotated\n");
-    printf("--removeComments                      Remove comments from output\n");
-    printf("-build                                Compile all sources defined in inputfile\n");
-    printf("-rbuild                               Build of all sources of input\n");
+    printf("-removeComments                       Remove comments from output\n");
+    printf("-buildfile                            Compile all sources defined in inputfile\n");
+    printf("                                      (not recursive)\n");
+    printf("-build                                Build of all sources used by the input file\n");
+    printf("                                      -build with -o generates amalgamation\n");
+    printf("                                      -outDir can define build output\n");
     printf("-sources                              Prints all sources used\n");
+    printf("-noImplicitTag                        Disable implicit function tags\n");
 
 }
 
 
 
-char * CompileText(int type, char * input)
+char * CompileText(int type, int bNoImplicitTag, char * input)
 {
     char * output = NULL;
+
+    struct Options options2 = OPTIONS_INIT;
+    options2.Target = (enum CompilerTarget) type;
+    options2.bNoImplicitTag = bNoImplicitTag;
+
     TProgram program;
     TProgram_Init(&program);
-    if (GetASTFromString(input, &program))
+    if (GetASTFromString(input, &options2 ,&program))
     {
-        struct Options options2 = OPTIONS_INIT;
-        options2.Target = (enum CompilerTarget) type;
-
+        
 
         StrBuilder sb = STRBUILDER_INIT;
         StrBuilder_Reserve(&sb, 500);
@@ -2992,7 +2965,8 @@ int main(int argc, char * argv[])
     printf("https://github.com/thradams/CPrime\n\n");
 
 #ifdef _DEBUG
-    //AllTests();
+    
+
 #endif
     if (argc < 2)
     {
@@ -3004,13 +2978,14 @@ int main(int argc, char * argv[])
 
     char cxconfigFileFullPath[CPRIME_MAX_PATH];
     GetFullDirS(argv[0], cxconfigFileFullPath, CPRIME_MAX_PATH);
-    strcat(cxconfigFileFullPath, "cxconfig.h");
+    strcat(cxconfigFileFullPath, CONFIG_FILE_NAME);
 
 
     if (FileExists(cxconfigFileFullPath))
     {
         printf("using config file %s\n", cxconfigFileFullPath);
-        // configFileName = cxconfigFileFullPath;
+        
+
     }
     else
     {
@@ -3028,8 +3003,8 @@ int main(int argc, char * argv[])
     bool bPrintPreprocessedToFile = false;
     bool bPrintPreprocessedToConsole = false;
     bool bPrintASTFile = false;
+    bool bBuildFile = false;
     bool bBuild = false;
-    bool bRecursiveBuild = false;
     bool bSources = false;
 
     clock_t tstart = clock();
@@ -3064,15 +3039,16 @@ int main(int argc, char * argv[])
         else if (strcmp(option, "-help") == 0)
         {
             PrintHelp();
-            return;
+            return 0;
+        }
+        else if (strcmp(option, "-buildfile") == 0)
+        {
+            
+            bBuildFile = true;
         }
         else if (strcmp(option, "-build") == 0)
         {
             bBuild = true;
-        }
-        else if (strcmp(option, "-rbuild") == 0)
-        {
-            bRecursiveBuild = true;
         }
         else if (strcmp(option, "-sources") == 0)
         {
@@ -3086,9 +3062,13 @@ int main(int argc, char * argv[])
         {
             options.Target = CompilerTarget_Annotated;
         }
-        else if (strcmp(option, "--removeComments") == 0)
+        else if (strcmp(option, "-removeComments") == 0)
         {
             options.bIncludeComments = false;
+        }
+        else if (strcmp(option, "-noImplicitTag") == 0)
+        {
+            options.bNoImplicitTag = true;
         }
         else if (strcmp(option, "-pr") == 0)
         {
@@ -3142,10 +3122,14 @@ int main(int argc, char * argv[])
 
     int numberOfFiles = 1;
 
-    if (bBuild || bRecursiveBuild)
+    
+
+    if ((bBuildFile || bBuild)
+        && outputFileFullPath[0] == '\0'
+        )
     {
         printf("Output dir : %s\n", outputDirFullPath);
-        if (bBuild)
+        if (bBuildFile)
         {
             GetSources(NULL, inputFileFullPath, false, &sources);
         }
@@ -3159,7 +3143,8 @@ int main(int argc, char * argv[])
             GetFullDirS(inputFileFullPath, inputFileFullDir, CPRIME_MAX_PATH);
             const int inputFullDirLength = strlen(inputFileFullDir);
 
-            //Cria o diretorio de ouput
+            
+
             if (outputDirFullPath[0] != '\0')
             {
                 MkDir(outputDirFullPath);
@@ -3214,6 +3199,10 @@ int main(int argc, char * argv[])
         }
         else
         {
+            
+
+            options.bAmalgamate = bBuild && outputFileFullPath[0] != '\0';
+
             Compile(cxconfigFileFullPath, inputFileFullPath, outputFileFullPath, &options, bPrintASTFile);
             numberOfFiles++;
         }
@@ -3307,14 +3296,17 @@ bool TForStatement_Print(TForStatement * p, bool b, FILE * fp)
     {
         fprintf(fp, "\"initdecl\":");
         b = TAnyDeclaration_Print(p->pInitDeclarationOpt, b, fp);
-        //fprintf(fp, "}");
+        
+
         b = true;
     }
 
     b = TExpression_Print(p->pExpression1, "expr1", true, fp);
-    //fprintf(fp, ",");
+    
+
     b = TExpression_Print(p->pExpression2, "expr2", b, fp);
-    //fprintf(fp, ",");
+    
+
     b = TExpression_Print(p->pExpression3, "expr3", b, fp);
 
     if (b)
@@ -3408,9 +3400,12 @@ void PrintLiteralString(FILE * fp, const char * psz)
 bool TExpressionStatement_Print(TExpressionStatement * p, bool b, FILE * fp)
 {
     TExpression_Print(p->pExpression, "expression-statement", b, fp);
-    //fprintf(fp, ",");
-    //TExpression_Print(&p->Expression, false, fp);
-    //fprintf(fp, "}");
+    
+
+    
+
+    
+
     return true;
 }
 
@@ -3418,10 +3413,13 @@ bool TExpressionStatement_Print(TExpressionStatement * p, bool b, FILE * fp)
 bool TJumpStatement_Print(TJumpStatement * p, bool b, FILE * fp)
 {
     fprintf(fp, "\"type\":\"jump-statement\"");
-    //fprintf(fp, ",");
-    //fprintf(fp, "\"statement\": {");
+    
+
+    
+
     b = TExpression_Print(p->pExpression, "statement", false, fp);
-    //fprintf(fp, "}");
+    
+
     return true;
 }
 
@@ -3504,7 +3502,8 @@ bool TStatement_Print(TStatement * p, bool b, FILE * fp)
             break;
 
         default:
-            //assert(false);
+            
+
             break;
     }
 
@@ -3515,7 +3514,8 @@ bool TBlockItem_Print(TBlockItem * p, bool b, FILE * fp)
 {
     if (p == NULL)
     {
-        //assert(false);
+        
+
         return false;
     }
 
@@ -3594,7 +3594,8 @@ bool TBlockItem_Print(TBlockItem * p, bool b, FILE * fp)
             break;
 
         default:
-            //assert(false);
+            
+
             break;
     }
 
@@ -3642,7 +3643,8 @@ bool TPostfixExpressionCore_Print(TPostfixExpressionCore * p, bool b, FILE * fp)
         case TK_MINUSMINUS:
             break;
         default:
-            //assert(false);
+            
+
             break;
     }
 
@@ -3674,8 +3676,10 @@ bool TPostfixExpressionCore_Print(TPostfixExpressionCore * p, bool b, FILE * fp)
 bool TTypeName_Print(TTypeName * p, const char * name, bool b, FILE * fp)
 {
     fprintf(fp, "\"type\":{");
-    //b = TTypeQualifierList_Print(&pTUnaryExpressionOperator->TypeName.Specifiers.TypeQualifiers, false, fp);
-    //b = TTypeSpecifier_Print(pTUnaryExpressionOperator->TypeName.Specifiers.pTypeSpecifierOpt, b, fp);
+    
+
+    
+
 
     if (b)
     {
@@ -3690,7 +3694,8 @@ bool TExpression_Print(TExpression * p, const char * name, bool b, FILE * fp)
 {
     if (p == NULL)
     {
-        ////assert(false);
+        
+
         return b;
     }
 
@@ -3709,7 +3714,8 @@ bool TExpression_Print(TExpression * p, const char * name, bool b, FILE * fp)
         b = TExpression_Print(((TBinaryExpression *)p)->pExpressionRight, "r-expr", b, fp);
         fprintf(fp, ",\"binary\":\"%s\"", TokenToString(((TBinaryExpression *)p)->token));
 
-        //fprintf(fp, "op\"%s\":[", ((TBinaryExpression*)p)->token);
+        
+
         break;
 
         CASE(TTernaryExpression) :
@@ -3718,7 +3724,8 @@ bool TExpression_Print(TExpression * p, const char * name, bool b, FILE * fp)
         b = TExpression_Print(((TTernaryExpression *)p)->pExpressionRight, "r-expr", b, fp);
         fprintf(fp, ",\"ternary\":\"%s\"", TokenToString(((TTernaryExpression *)p)->token));
 
-        //fprintf(fp, "op\"%s\":[", ((TBinaryExpression*)p)->token);
+        
+
         break;
 
         CASE(TPrimaryExpressionValue) :
@@ -3756,26 +3763,38 @@ bool TExpression_Print(TExpression * p, const char * name, bool b, FILE * fp)
 
             if (pTUnaryExpressionOperator->token == TK_SIZEOF)
             {
-                //ttypename_print pTUnaryExpressionOperator->TypeName
+                
 
 
-                //tem algo?
+
+                
+
                 if (pTUnaryExpressionOperator->TypeName.SpecifierQualifierList.Size > 0)
                 {
                     TTypeName_Print(&pTUnaryExpressionOperator->TypeName, "", b, fp);
-                    //fprintf(fp, "\"type\":{");
-                    //b = TTypeQualifierList_Print(&pTUnaryExpressionOperator->TypeName.Specifiers.TypeQualifiers, false, fp);
-                    //b/ = TTypeSpecifier_Print(pTUnaryExpressionOperator->TypeName.Specifiers.pTypeSpecifierOpt, b, fp);
+                    
 
-                    //if (b)
-                    //{
-                      //fprintf(fp, ",");
-                    //}
+                    
 
-                    //fprintf(fp, "\"declarator\":");
-                    //b = TDeclarator_Print(&pTUnaryExpressionOperator->TypeName.Declarator, b, fp);
+                    
 
-                    //fprintf(fp, "}");
+
+                    
+
+                    
+
+                      
+
+                    
+
+
+                    
+
+                    
+
+
+                    
+
                 }
                 else
                 {
@@ -3799,27 +3818,38 @@ bool TExpression_Print(TExpression * p, const char * name, bool b, FILE * fp)
             b = TExpression_Print(pCastExpressionType->pExpression, "expr", b, fp);
 
 
-            //fprintf(fp, ",\"cast\":{");
+            
+
             TTypeName_Print(&pCastExpressionType->TypeName, "cast", b, fp);
-            //b = TTypeQualifierList_Print(&pCastExpressionType->TypeName.Specifiers.TypeQualifiers, false, fp);
-            //b = TTypeSpecifier_Print(pCastExpressionType->TypeName.Specifiers.pTypeSpecifierOpt, b, fp);
+            
 
-            //if (b)
-            //{
-              //fprintf(fp, ",");
-            //}
+            
 
-            //fprintf(fp, "\"declarator\":");
-            //b = TDeclarator_Print(&pCastExpressionType->TypeName.Declarator, b, fp);
 
-            //fprintf(fp, "}");
+            
+
+            
+
+              
+
+            
+
+
+            
+
+            
+
+
+            
+
 
         }
         break;
 
         default:
 
-            //assert(false);
+            
+
             break;
     }
 
@@ -3832,14 +3862,16 @@ bool TEnumerator_Print(TEnumerator * pTEnumerator, bool b, FILE * fp)
 {
     fprintf(fp, "{");
     fprintf(fp, "\"name\":\"%s\"", pTEnumerator->Name);
-    //fprintf(fp, ",");
+    
+
     if (pTEnumerator->pExpression)
     {
         TExpression_Print(pTEnumerator->pExpression, "expr", true, fp);
     }
     else
     {
-        //vou criar uma expressionp enum?
+        
+
     }
     fprintf(fp, "}");
     return true;
@@ -3857,11 +3889,13 @@ bool TEnumSpecifier_Print(TEnumSpecifier * p, bool b, FILE * fp)
     fprintf(fp, "\"name\":\"%s\",", p->Name);
     fprintf(fp, "\"enumerator-list\":[");
 
-    //for (int i = 0; i < p->EnumeratorList.size; i++)
+    
+
     int i = 0;
     ForEachListItem(TEnumerator, pTEnumerator, &p->EnumeratorList)
     {
-        //TEnumerator *pTEnumerator = p->EnumeratorList.pItems[i];
+        
+
 
         if (i > 0)
             fprintf(fp, ",");
@@ -3934,7 +3968,8 @@ bool TTypeSpecifier_Print(TTypeSpecifier * p, bool b, FILE * fp)
 {
     if (p == NULL)
     {
-        //declaracao vazia: ;
+        
+
         if (b)
         {
             fprintf(fp, ",");
@@ -3947,7 +3982,8 @@ bool TTypeSpecifier_Print(TTypeSpecifier * p, bool b, FILE * fp)
     switch (p->Type)
     {
         case TStructUnionSpecifier_ID:
-            //TStructDeclaration_Print();
+            
+
             b = TStructUnionSpecifier_Print((TStructUnionSpecifier *)p, b, fp);
             break;
 
@@ -3973,16 +4009,19 @@ bool TDesignator_Print(TDesignator * p, bool b, FILE * fp)
 
     fprintf(fp, "{");
 
-    //
+    
+
     if (p->Name)
     {
-        //.identifier
+        
+
         fprintf(fp, "\"member-name\":\"%s\"", p->Name);
     }
 
     else
     {
-        //[constant-expression]
+        
+
         TExpression_Print(p->pExpression, "index", b, fp);
     }
 
@@ -4025,9 +4064,11 @@ bool TInitializer_Print(TInitializer * p, bool b, FILE * fp)
         case TBinaryExpression_ID:
         case TTernaryExpression_ID:
 
-            //fprintf(fp, "{");
+            
+
             b = TExpression_Print((TExpression *)p, "initializer-expression", false, fp);
-            //fprintf(fp, "}");
+            
+
             break;
 
         case TInitializerListType_ID:
@@ -4036,7 +4077,8 @@ bool TInitializer_Print(TInitializer * p, bool b, FILE * fp)
             break;
 
         default:
-            //assert(false);
+            
+
             break;
     }
 
@@ -4051,13 +4093,15 @@ bool TPointerList_Print(TPointerList * p, bool b, FILE * fp)
 
     fprintf(fp, "[");
     int i = 0;
-    //for (int i = 0; i < p->size; i++)
+    
+
     ForEachListItem(TPointer, pItem, p)
     {
         if (i > 0)
             fprintf(fp, ",");
 
-        //TPointer * pItem = p->pItems[i];
+        
+
         b = TPointer_Print(pItem, b, fp);
         i++;
     }
@@ -4105,7 +4149,8 @@ bool TStructDeclarator_Print(TStructDeclarator * p, bool b, FILE * fp)
         {
             fprintf(fp, ",");
         }
-        //fprintf(fp, "\"initializer\":");
+        
+
         TInitializer_Print(p->pInitializer, b, fp);
 
     }
@@ -4129,7 +4174,8 @@ bool TInitDeclarator_Print(TInitDeclarator * p, bool b, FILE * fp)
         {
             fprintf(fp, ",");
         }
-        //fprintf(fp, "\"initializer\":");
+        
+
         TInitializer_Print(p->pInitializer, b, fp);
 
     }
@@ -4147,31 +4193,30 @@ bool TDirectDeclarator_Print(TDirectDeclarator * pDirectDeclarator,
 
     if (pDirectDeclarator->Identifier)
     {
-        //identifier
+        
+
         fprintf(fp, "\"identifier\":");
         fprintf(fp, "\"%s\"", pDirectDeclarator->Identifier);
         b = true;
     }
     else  if (pDirectDeclarator->pDeclarator)
     {
-        //( declarator )
+        
+
         fprintf(fp, "\"declarator\":");
         b = TDeclarator_Print(pDirectDeclarator->pDeclarator, b, fp);
     }
 
     if (pDirectDeclarator->pExpression)
     {
-        /*
-         direct-declarator [ type-qualifier-listopt assignment-expressionopt ]
-         direct-declarator [ static type-qualifier-listopt assignment-expression ]
-         direct-declarator [ type-qualifier-list static assignment-expression ]
-        */
+         
         b = TExpression_Print(pDirectDeclarator->pExpression, "assignment-expression", b, fp);
     }
 
     if (pDirectDeclarator->DeclaratorType == TDirectDeclaratorTypeFunction)
     {
-        //( parameter-type-list )
+        
+
         fprintf(fp, ",");
         fprintf(fp, "\"parameter-type-list\":");
         TParameterTypeList_Print(&pDirectDeclarator->Parameters, b, fp);
@@ -4275,11 +4320,15 @@ bool SpecifierQualifier_Print(TSpecifierQualifier * pItem, bool b, FILE * fp)
             b = TEnumSpecifier_Print((TEnumSpecifier *)pItem, b, fp);
         break;
 
-        //CASE(TAlignmentSpecifier) :
-        //  AlignmentSpecifier_Print((TAlignmentSpecifier*)pItem, b, fp);
-        //break;
+        
+
+        
+
+        
+
         default:
-            //assert(false);
+            
+
             break;
     }
     return b;
@@ -4304,8 +4353,10 @@ bool TStructDeclarationBase_Print(TStructDeclaration * p, bool b, FILE * fp)
     fprintf(fp, "{");
 
     b = SpecifierQualifierList_Print(&p->SpecifierQualifierList, false, fp);
-    //b = TTypeQualifierList_Print(&p->Qualifier, false, fp);
-    //b = TTypeSpecifier_Print(p->pSpecifier, b, fp);
+    
+
+    
+
 
     if (b)
         fprintf(fp, ",");
@@ -4325,7 +4376,8 @@ bool TStructDeclaration_Print(TAnyStructDeclaration * p, bool b, FILE * fp)
             break;
 
         default:
-            //assert(false);
+            
+
             break;
     }
 
@@ -4457,11 +4509,15 @@ bool TDeclarationSpecifier_Print(TDeclarationSpecifier * pItem, bool b, FILE * f
         break;
 
         default:
-            //assert(false);
+            
+
             break;
-            //CASE(TAlignmentSpecifier) :
-            //  AlignmentSpecifier_Print((TAlignmentSpecifier*)pItem, b, fp);
-            //break;
+            
+
+            
+
+            
+
 
     }
     return b;
@@ -4483,10 +4539,14 @@ bool TDeclarationSpecifiers_Print(TDeclarationSpecifiers * pDeclarationSpecifier
         b = TDeclarationSpecifier_Print(pItem, b, fp);
     }
     fprintf(fp, "]");
-    //b = TFunctionSpecifier_Print(&pDeclarationSpecifiers->FunctionSpecifiers, b, fp);
-    //b = StorageSpecifier_Print(&pDeclarationSpecifiers->StorageSpecifiers, b, fp);
-    //b = TTypeQualifierList_Print(&pDeclarationSpecifiers->TypeQualifiers, b, fp);
-    //b/ = TTypeSpecifier_Print(pDeclarationSpecifiers->pTypeSpecifierOpt, b, fp);
+    
+
+    
+
+    
+
+    
+
     return b;
 }
 
@@ -4537,7 +4597,8 @@ bool TAnyDeclaration_Print(TAnyDeclaration * pDeclaration, bool b, FILE * fp)
             break;
 
         default:
-            //assert(false);
+            
+
             break;
     }
 
@@ -4611,7 +4672,8 @@ void TProgram_PrintAstToFile(TProgram * pProgram,
                              const char * inputFileName)
 {
     FILE * fp = fopen(fileName, "w");
-    //TDeclarations_Print(&pProgram->Declarations, false, fp);
+    
+
 
 
     bool b = false;
@@ -4652,7 +4714,8 @@ bool IsAutoToken(Tokens token)
 
 bool IsSizeToken(Tokens token)
 {
-    // [Size]
+    
+
     return token == TK_LEFT_SQUARE_BRACKET;
 }
 
@@ -5570,7 +5633,16 @@ void TEnumSpecifier_Delete(TEnumSpecifier * p) /*@default*/
     }
 }
 
+bool TEnumSpecifier_CompareTagName(TEnumSpecifier * p1, TEnumSpecifier * p2)
+{
+    bool result = false;
 
+    if (p1->Name && p2->Name && strcmp(p1->Name, p2->Name) == 0)
+    {
+        result = true;
+    }
+    return result;
+}
 
 TUnionSetItem * TUnionSetItem_Create() /*@default*/
 {
@@ -5609,7 +5681,8 @@ void TUnionSet_Init(TUnionSet * p) /*@default*/
 
 void TUnionSet_Destroy(TUnionSet * p)
 {
-    //TUnionSetItem_Delete(p->pHead);
+    
+
     TUnionSetItem * pCurrent = p->pHead;
     while (pCurrent)
     {
@@ -5671,28 +5744,24 @@ void TStructUnionSpecifier_Delete(TStructUnionSpecifier * p) /*@default*/
     }
 }
 
-int TStructUnionSpecifier_GetSpecialMemberType(TStructUnionSpecifier * p, const char* funcName)
+bool TStructUnionSpecifier_CompareTagName(TStructUnionSpecifier * p1, TStructUnionSpecifier * p2)
 {
-  //if (strcomp funcName)
-    return 0;
+    bool result = false;
+    if (p1->Token == p2->Token)
+    {
+        if (p1->TagName && p2->TagName && strcmp(p1->TagName, p2->TagName) == 0)
+        {
+            result = true;
+        }
+    }
+    return result;
 }
 
-const char * TStructUnionSpecifier_GetSpecialMemberName(TStructUnionSpecifier * p, enum SpecialMemberType type)
+int StrCmpNull(char const * s1, char const * s2)
 {
-    switch (type)
-    {
-        case SpecialMemberType_Init:
-            break;
-        case SpecialMemberType_Destroy:
-            break;
-        case SpecialMemberType_Create:
-            break;
-        case SpecialMemberType_Delete:
-            break;
-        default:
-            break;
-    }
-    return "";
+    if (s1 == 0)
+        return -1;
+    return strcmp(s1, s2);
 }
 
 
@@ -5722,6 +5791,19 @@ void TSingleTypeSpecifier_Delete(TSingleTypeSpecifier * p) /*@default*/
     }
 }
 
+bool TSingleTypeSpecifier_Compare(TSingleTypeSpecifier * p1, TSingleTypeSpecifier * p2)
+{
+    bool result = false;
+    if (p1->Token2 == p2->Token2)
+    {
+        if (p1->TypedefName && p2->TypedefName &&
+            strcmp(p1->TypedefName, p2->TypedefName) == 0)
+        {
+            result = true;
+        }
+    }
+    return result;
+}
 
 const char * TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier * p)
 {
@@ -5729,6 +5811,35 @@ const char * TSingleTypeSpecifier_GetTypedefName(TSingleTypeSpecifier * p)
     if (p->Token2 == TK_IDENTIFIER)
     {
         result = p->TypedefName;
+    }
+    return result;
+}
+
+bool TTypeSpecifier_Compare(TTypeSpecifier * p1, TTypeSpecifier * p2)
+{
+    bool result = false;
+
+    if (p1->Type != p2->Type)
+    {
+        return false;
+    }
+
+    switch (p1->Type)
+    {
+    case TStructUnionSpecifier_ID:
+        result = TStructUnionSpecifier_CompareTagName((TStructUnionSpecifier *)p1, (TStructUnionSpecifier *)p2);
+        break;
+    case TAtomicTypeSpecifier_ID:
+        result = TAtomicTypeSpecifier_Compare((TAtomicTypeSpecifier *)p1, (TAtomicTypeSpecifier *)p2);
+        break;
+    case TSingleTypeSpecifier_ID:
+        result = TSingleTypeSpecifier_Compare((TSingleTypeSpecifier *)p1, (TSingleTypeSpecifier *)p2);
+        break;
+    case TEnumSpecifier_ID:
+        result = TEnumSpecifier_CompareTagName((TEnumSpecifier *)p1, (TEnumSpecifier *)p2);
+        break;
+    default:
+        break;
     }
     return result;
 }
@@ -5918,6 +6029,37 @@ void TParameterTypeList_GetArgsString(TParameterTypeList * p, StrBuilder * sb)
 TParameter * TParameterTypeList_GetParameterByIndex(TParameterTypeList * p, int index)
 {
     TParameter * pParameterResult = NULL;
+
+
+    if (index == 0)
+    {
+        
+
+        
+
+        
+
+        if (p->ParameterList.pHead)
+        {
+            if (p->ParameterList.pHead->Specifiers.Size == 1 &&
+                p->ParameterList.pHead->Specifiers.pData[0]->Type == TSingleTypeSpecifier_ID)
+            {
+                TSingleTypeSpecifier * pSingleTypeSpecifier =
+                    p->ParameterList.pHead->Specifiers.pData[0];
+                if (pSingleTypeSpecifier)
+                {
+                    if (pSingleTypeSpecifier->Token2 == TK_VOID)
+                    {
+                        if (p->ParameterList.pHead->Declarator.PointerList.pHead == 0)
+                        {
+                            return NULL;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     int indexLocal = 0;
 
     ForEachListItem(TParameter, pParameter, &p->ParameterList)
@@ -5940,7 +6082,8 @@ TParameter * TParameterTypeList_FindParameterByName(TParameterTypeList * p, cons
     {
         ForEachListItem(TParameter, pParameter, &p->ParameterList)
         {
-            //F(void) neste caso nao tem nome
+            
+
             const char * parameterName = TParameter_GetName(pParameter);
             if (parameterName && strcmp(parameterName, name) == 0)
             {
@@ -5995,7 +6138,8 @@ TDeclarationSpecifier * TSpecifierQualifierList_GetMainSpecifier(TSpecifierQuali
             pSpecifierQualifier->Type == TStructUnionSpecifier_ID ||
             pSpecifierQualifier->Type == TEnumSpecifier_ID)
         {
-            //ATENCAO
+            
+
             pSpecifier = (TDeclarationSpecifier *)pSpecifierQualifier;
             break;
         }
@@ -6022,6 +6166,83 @@ const char * TSpecifierQualifierList_GetTypedefName(TSpecifierQualifierList * p)
         }
     }
     return typedefName;
+}
+
+bool TSpecifierQualifierList_Compare(TSpecifierQualifierList * p1, TSpecifierQualifierList * p2)
+{
+    if (p1->Size != p2->Size)
+    {
+        return false;
+    }
+
+    bool bResult = false;
+    for (int i = 0; i < p1->Size; i++)
+    {
+        if (p1->pData[i]->Type == p2->pData[i]->Type)
+        {
+            switch (p1->pData[i]->Type)
+            {
+
+                CASE(TSingleTypeSpecifier) :
+                    if (!TSingleTypeSpecifier_Compare((TSingleTypeSpecifier *)p1->pData[i],
+                        (TSingleTypeSpecifier *)p2->pData[i]))
+                    {
+                        return false;
+                    }
+                break;
+
+                CASE(TStorageSpecifier) :
+                    if (!TStorageSpecifier_Compare((TStorageSpecifier *)p1->pData[i],
+                        (TStorageSpecifier *)p2->pData[i]))
+                    {
+                        return false;
+                    }
+                break;
+                CASE(TTypeQualifier) :
+                    if (!TTypeQualifier_Compare((TTypeQualifier *)p1->pData[i],
+                        (TTypeQualifier *)p2->pData[i]))
+                    {
+                        return false;
+                    }
+                break;
+                CASE(TFunctionSpecifier) :
+                    if (!TFunctionSpecifier_Compare((TFunctionSpecifier *)p1->pData[i],
+                        (TFunctionSpecifier *)p2->pData[i]))
+                    {
+                        return false;
+                    }
+                break;
+
+
+                CASE(TStructUnionSpecifier) :
+                    if (!TStructUnionSpecifier_CompareTagName((TStructUnionSpecifier *)p1->pData[i],
+                        (TStructUnionSpecifier *)p2->pData[i]))
+                    {
+                        return false;
+                    }
+                break;
+
+                CASE(TEnumSpecifier) :
+                    if (!TEnumSpecifier_CompareTagName((TEnumSpecifier *)p1->pData[i],
+                        (TEnumSpecifier *)p2->pData[i]))
+                    {
+                        return false;
+                    }
+                break;
+
+            default:
+                
+
+                break;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 bool TSpecifierQualifierList_IsTypedefQualifier(TSpecifierQualifierList * p)
@@ -6072,14 +6293,14 @@ bool TSpecifierQualifierList_IsAnyInteger(TSpecifierQualifierList * p)
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
         if (pSingleTypeSpecifier &&
             (pSingleTypeSpecifier->Token2 == TK_INT ||
-            pSingleTypeSpecifier->Token2 == TK_SHORT ||
-            pSingleTypeSpecifier->Token2 == TK_SIGNED ||
-            pSingleTypeSpecifier->Token2 == TK_UNSIGNED ||
-            pSingleTypeSpecifier->Token2 == TK__INT8 ||
-            pSingleTypeSpecifier->Token2 == TK__INT16 ||
-            pSingleTypeSpecifier->Token2 == TK__INT32 ||
-            pSingleTypeSpecifier->Token2 == TK__INT64 ||
-            pSingleTypeSpecifier->Token2 == TK__WCHAR_T)
+                pSingleTypeSpecifier->Token2 == TK_SHORT ||
+                pSingleTypeSpecifier->Token2 == TK_SIGNED ||
+                pSingleTypeSpecifier->Token2 == TK_UNSIGNED ||
+                pSingleTypeSpecifier->Token2 == TK__INT8 ||
+                pSingleTypeSpecifier->Token2 == TK__INT16 ||
+                pSingleTypeSpecifier->Token2 == TK__INT32 ||
+                pSingleTypeSpecifier->Token2 == TK__INT64 ||
+                pSingleTypeSpecifier->Token2 == TK__WCHAR_T)
             )
         {
             bResult = true;
@@ -6100,7 +6321,7 @@ bool TSpecifierQualifierList_IsAnyFloat(TSpecifierQualifierList * p)
             TSpecifierQualifier_As_TSingleTypeSpecifier(pSpecifierQualifier);
         if (pSingleTypeSpecifier &&
             (pSingleTypeSpecifier->Token2 == TK_DOUBLE ||
-            pSingleTypeSpecifier->Token2 == TK_FLOAT))
+                pSingleTypeSpecifier->Token2 == TK_FLOAT))
         {
             bResult = true;
             break;
@@ -6160,7 +6381,8 @@ const char * TDeclarator_GetName(TDeclarator * p)
 
 const char * TInitDeclarator_FindName(TInitDeclarator * p)
 {
-    //assert(p->pDeclarator != NULL);
+    
+
     return TDeclarator_GetName(p->pDeclarator);
 }
 
@@ -6281,9 +6503,11 @@ bool TPointerList_IsAutoPointer(TPointerList * pPointerlist)
     {
         bIsPointer = (pPointerlist->pHead != NULL);
 
-        //ForEachListItem(TPointer, pItem, pPointerlist)
+        
+
         TPointer * pItem = pPointerlist->pHead;
-        //for (T * var = (list)->pHead; var != NULL; var = var->pNext)
+        
+
         while (pItem)
         {
             for (int i = 0; i < pItem->Qualifier.Size; i++)
@@ -6397,7 +6621,8 @@ bool TPointerList_IsPointer(TPointerList * pPointerlist)
 
 const char * TPointerList_GetSize(TPointerList * pPointerlist)
 {
-    //Esta definicao esta estranha..tem que pegar o size de 1 cara so
+    
+
 
     const char * pszResult = NULL;
 
@@ -6457,13 +6682,16 @@ bool TPointerList_IsPointerToObject(TPointerList * pPointerlist)
 
 bool TPointerList_IsAutoPointerToObject(TPointerList * pPointerlist)
 {
-    //retorna true se tem 1 ponteiro qualificado auto
+    
+
     bool bResult = false;
     TPointer * pPointer = pPointerlist->pHead;
     if (pPointer != NULL && pPointer->pNext == NULL)
     {
-        //so tem 1 ponteiro
-        //procura se tem algum qualificador auto
+        
+
+        
+
         for (int i = 0; i < pPointer->Qualifier.Size; i++)
         {
             if (IsAutoToken(pPointer->Qualifier.Data[i]->Token))
@@ -6488,9 +6716,9 @@ bool TPointerList_IsAutoPointerSizeToObject(TPointerList * pPointerlist)
             pPointer->pNext == NULL)
         {
             bResult = (IsAutoToken(pPointer->Qualifier.Data[0]->Token) &&
-                       IsSizeToken(pPointer->Qualifier.Data[1]->Token)) ||
-                       (IsSizeToken(pPointer->Qualifier.Data[0]->Token) &&
-                        IsAutoToken(pPointer->Qualifier.Data[0]->Token));
+                IsSizeToken(pPointer->Qualifier.Data[1]->Token)) ||
+                (IsSizeToken(pPointer->Qualifier.Data[0]->Token) &&
+                    IsAutoToken(pPointer->Qualifier.Data[0]->Token));
         }
     }
 
@@ -6542,8 +6770,10 @@ bool TPointerList_IsAutoPointerToAutoPointer(TPointerList * pPointerlist)
                 }
                 else if (pPointer->Qualifier.Size == 2)
                 {
-                    //auto _size()
-                    // _size() auto
+                    
+
+                    
+
                     bResult = IsAutoToken(pPointer->Qualifier.Data[0]->Token) ||
                         IsAutoToken(pPointer->Qualifier.Data[1]->Token);
                 }
@@ -6556,7 +6786,7 @@ bool TPointerList_IsAutoPointerToAutoPointer(TPointerList * pPointerlist)
 
 
 
-void TTypeQualifierList_Destroy(TTypeQualifierList * p)  /*custom*/
+void TTypeQualifierList_Destroy(TTypeQualifierList * p)   
 {
     for (int i = 0; i < p->Size; i++)
     {
@@ -6589,7 +6819,8 @@ void TTypeQualifierList_PushBack(TTypeQualifierList * p, TTypeQualifier * pItem)
 
     if (p->Size + 1 > 4)
     {
-        //nao eh p acontecer!
+        
+
 
     }
     else
@@ -6630,10 +6861,24 @@ void TTypeQualifier_Copy(TTypeQualifier * dest, TTypeQualifier * src)
 {
     PTR_STRING_REPLACE(dest->SizeIdentifier, src->SizeIdentifier);
     dest->Token = src->Token;
-    //dest->ClueList0 nao vamos copiar
-    //dest->Type nao precisa copiar
+    
+
+    
+
 }
 
+bool TTypeQualifier_Compare(TTypeQualifier * p1, TTypeQualifier * p2)
+{
+    bool result = false;
+    if (p1->Token == p2->Token)
+    {
+        if (p1->SizeIdentifier == p2->SizeIdentifier)
+        {
+            result = true;
+        }
+    }
+    return result;
+}
 
 TStorageSpecifier * TStorageSpecifier_Create(void) /*@default*/
 {
@@ -6659,7 +6904,15 @@ void TStorageSpecifier_Delete(TStorageSpecifier * p) /*@default*/
     }
 }
 
-
+bool TStorageSpecifier_Compare(TStorageSpecifier * p1, TStorageSpecifier * p2)
+{
+    bool result = false;
+    if (p1->Token == p2->Token)
+    {
+        result = true;
+    }
+    return result;
+}
 void TAtomicTypeSpecifier_Delete(TAtomicTypeSpecifier * p) /*@default*/
 {
     if (p != NULL)
@@ -6671,7 +6924,26 @@ void TAtomicTypeSpecifier_Delete(TAtomicTypeSpecifier * p) /*@default*/
         Free((void*)p);
     }
 }
+bool TAtomicTypeSpecifier_Compare(TAtomicTypeSpecifier * p1, TAtomicTypeSpecifier * p2)
+{
+    
 
+    
+
+      
+
+    
+
+      
+
+    
+
+    
+
+    assert(false);
+    return true;
+
+}
 void TSpecifierQualifierList_Destroy(TSpecifierQualifierList * pDeclarationSpecifiers) /*@default*/
 {
     for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
@@ -6733,18 +7005,19 @@ bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList * p, Tokens token, c
                 (TSingleTypeSpecifier *)pSpecifier;
             switch (pTSingleTypeSpecifier->Token2)
             {
-                case TK_INT:
-                    bInt = true;
-                    break;
-                case TK_DOUBLE:
-                    break;
+            case TK_INT:
+                bInt = true;
+                break;
+            case TK_DOUBLE:
+                break;
 
-                case TK_IDENTIFIER:
-                    bTypeDef = true;
-                    break;
-                default:
-                    //assert(false);
-                    break;
+            case TK_IDENTIFIER:
+                bTypeDef = true;
+                break;
+            default:
+                
+
+                break;
             }
             }
             break;
@@ -6769,9 +7042,10 @@ bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList * p, Tokens token, c
             CASE(TAlignmentSpecifier) :
 
                 break;
-            default:
-                //assert(false);
-                break;
+        default:
+            
+
+            break;
         }
     }
 
@@ -6780,25 +7054,48 @@ bool TSpecifierQualifierList_CanAdd(TSpecifierQualifierList * p, Tokens token, c
     {
         if (!bTypeDef && !bInt)
         {
-            //Exemplo que se quer evitar
-            //typedef int X;
-            //void F(int X)
-            //nao pode ter nada antes
+            
+
+            
+
+            
+
+            
+
             bResult = true;
         }
     }
     else
     {
-        //verificar combinacoes unsigned float etc.
+        
+
         bResult = true;
     }
     return bResult;
 
 }
 
+
+TDeclarationSpecifier * TDeclarationSpecifiers_GetMainSpecifier(TDeclarationSpecifiers * p, enum EType type)
+{
+    TDeclarationSpecifier * pSpecifier = NULL;
+    for (int i = 0; i < p->Size; i++)
+    {
+        TDeclarationSpecifier * pSpecifierQualifier = p->pData[i];
+        if (pSpecifierQualifier->Type == type)
+        {
+            
+
+            pSpecifier = (TDeclarationSpecifier *)pSpecifierQualifier;
+            break;
+        }
+    }
+    return pSpecifier;
+}
+
 bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers * pDeclarationSpecifiers,
-                                            Tokens token,
-                                            const char * lexeme)
+    Tokens token,
+    const char * lexeme)
 {
     bool bResult = false;
     bool bStruct = false;
@@ -6820,20 +7117,26 @@ bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers * pDeclaratio
                 (TSingleTypeSpecifier *)pSpecifier;
             switch (pTSingleTypeSpecifier->Token2)
             {
-                //case TK_INT:				
-                //case TK_DOUBLE:
-                    //..etc...
-                    //bOther = true;
-                    //break; 
+                
 
-                case TK_IDENTIFIER:
-                    bTypeDef = true;
-                    break;
-                default:
-                    bOther = true;
-                    break;
-                    ////assert(false);
-                    break;
+                
+
+                    
+
+                    
+
+                    
+
+
+            case TK_IDENTIFIER:
+                bTypeDef = true;
+                break;
+            default:
+                bOther = true;
+                break;
+                
+
+                break;
             }
             }
             break;
@@ -6861,9 +7164,10 @@ bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers * pDeclaratio
 
                 break;
 
-            default:
-                //assert(false);
-                break;
+        default:
+            
+
+            break;
         }
     }
 
@@ -6872,11 +7176,13 @@ bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers * pDeclaratio
     {
         if (pTStructUnionSpecifier)
         {
-            //ja tem uma struct
+            
+
             if (pTStructUnionSpecifier->TagName &&
                 strcmp(pTStructUnionSpecifier->TagName, lexeme) == 0)
             {
-                //typedef struct X X;
+                
+
             }
             else
             {
@@ -6885,11 +7191,13 @@ bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers * pDeclaratio
         }
         else if (pEnumSpecifier)
         {
-            //ja tem uma struct
+            
+
             if (pEnumSpecifier->Name &&
                 strcmp(pEnumSpecifier->Name, lexeme) == 0)
             {
-                //typedef enum X X;
+                
+
             }
             else
             {
@@ -6898,19 +7206,85 @@ bool TDeclarationSpecifiers_CanAddSpeficier(TDeclarationSpecifiers * pDeclaratio
         }
         else if (!bTypeDef && !bOther)
         {
-            //Exemplo que se quer evitar
-            //typedef int X;
-            //void F(int X)
-            //nao pode ter nada antes
+            
+
+            
+
+            
+
+            
+
             bResult = true;
         }
     }
     else
     {
-        //verificar combinacoes unsigned float etc.
+        
+
         bResult = true;
     }
     return bResult;
+}
+
+TStructUnionSpecifier * TDeclarationSpecifiers_GetCompleteStructUnionSpecifier(struct SymbolMap * pSymbolMap,
+    TDeclarationSpecifiers * pDeclarationSpecifiers)
+{
+    TStructUnionSpecifier * pStructUnionSpecifier = NULL;
+
+    TDeclarationSpecifier * pFirstArgSpecifier =
+        TDeclarationSpecifiers_GetMainSpecifier(pDeclarationSpecifiers, TStructUnionSpecifier_ID);
+
+    if (pFirstArgSpecifier == NULL)
+    {
+        pFirstArgSpecifier = TDeclarationSpecifiers_GetMainSpecifier(pDeclarationSpecifiers, TSingleTypeSpecifier_ID);
+    }
+
+    if (pFirstArgSpecifier)
+    {
+        pStructUnionSpecifier =
+            TDeclarationSpecifier_As_TStructUnionSpecifier(pFirstArgSpecifier);
+
+        if (pStructUnionSpecifier && pStructUnionSpecifier->TagName && pStructUnionSpecifier->StructDeclarationList.Size == 0)
+        {
+            
+
+            pStructUnionSpecifier =
+                SymbolMap_FindStructUnion(pSymbolMap, pStructUnionSpecifier->TagName);
+        }
+        else
+        {
+            TDeclarator declarator;
+            TDeclarator_Init(&declarator);
+
+
+            TSingleTypeSpecifier * pSingleTypeSpecifier =
+                TDeclarationSpecifier_As_TSingleTypeSpecifier(pFirstArgSpecifier);
+            if (pSingleTypeSpecifier)
+            {
+                if (pSingleTypeSpecifier->TypedefName)
+                {
+                    TDeclarationSpecifiers * p2 =
+                        SymbolMap_FindTypedefTarget(pSymbolMap, pSingleTypeSpecifier->TypedefName, &declarator);
+
+                    if (p2)
+                    {
+                        pStructUnionSpecifier =
+                            TDeclarationSpecifiers_GetMainSpecifier(p2, TStructUnionSpecifier_ID);
+
+                        if (pStructUnionSpecifier &&
+                            pStructUnionSpecifier->StructDeclarationList.Size == 0 &&
+                            pStructUnionSpecifier->TagName != NULL)
+                        {
+                            pStructUnionSpecifier =
+                                SymbolMap_FindStructUnion(pSymbolMap, pStructUnionSpecifier->TagName);
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+    return pStructUnionSpecifier;
 }
 
 const char * TDeclarationSpecifiers_GetTypedefName(TDeclarationSpecifiers * pDeclarationSpecifiers)
@@ -7098,6 +7472,16 @@ void TFunctionSpecifier_Delete(TFunctionSpecifier * p) /*@default*/
     }
 }
 
+bool TFunctionSpecifier_Compare(TFunctionSpecifier * p1, TFunctionSpecifier * p2)
+{
+    bool result = false;
+    if (p1->Token == p2->Token)
+    {
+        result = true;
+    }
+    return result;
+}
+
 
 
 bool TDeclaration_Is_StructOrUnionDeclaration(TDeclaration * p)
@@ -7144,6 +7528,9 @@ void TDeclaration_Delete(TDeclaration * p) /*@default*/
         TInitDeclaratorList_Destroy(&p->InitDeclaratorList);
         TCompoundStatement_Delete(p->pCompoundStatementOpt);
         TScannerItemList_Destroy(&p->ClueList0);
+        TScannerItemList_Destroy(&p->ClueList00);
+        TScannerItemList_Destroy(&p->ClueList001);
+        Free((void*)p->FunctionTag);
         TScannerItemList_Destroy(&p->ClueList1);
         Free((void*)p);
     }
@@ -7160,7 +7547,11 @@ TDeclaration * TDeclaration_Create() /*@default*/
         p->FileIndex = 0;
         p->Line = 0;
         TScannerItemList_Init(&p->ClueList0);
+        TScannerItemList_Init(&p->ClueList00);
+        TScannerItemList_Init(&p->ClueList001);
         p->bDefault = false;
+        p->FunctionTag = NULL;
+        p->bAutoTag = false;
         TScannerItemList_Init(&p->ClueList1);
     }
     return p;
@@ -7193,7 +7584,8 @@ const char * TDeclarationSpecifier_GetTypedefName(TDeclarationSpecifiers * p)
 
 const char * TParameter_GetName(TParameter * p)
 {
-    //F(void) neste caso nao tem nome
+    
+
     return TDeclarator_GetName(&p->Declarator);
 }
 
@@ -7296,9 +7688,10 @@ bool TDeclarationSpecifiers_IsStatic(TDeclarationSpecifiers * pDeclarationSpecif
             }
 
             break;
-            default:
-                //assert(false);
-                break;
+        default:
+            
+
+            break;
         }
 
         if (bResult)
@@ -7329,9 +7722,10 @@ bool TDeclarationSpecifiers_IsTypedef(TDeclarationSpecifiers * pDeclarationSpeci
             }
 
             break;
-            default:
-                //assert(false);
-                break;
+        default:
+            
+
+            break;
         }
 
         if (bResult)
@@ -7347,15 +7741,16 @@ bool TAnyDeclaration_IsTypedef(TAnyDeclaration * pDeclaration)
     bool bResult = false;
     switch (pDeclaration->Type)
     {
-        case TDeclaration_ID:
-        {
-            TDeclaration * p = (TDeclaration *)pDeclaration;
-            bResult = TDeclarationSpecifiers_IsTypedef(&p->Specifiers);
-        }
+    case TDeclaration_ID:
+    {
+        TDeclaration * p = (TDeclaration *)pDeclaration;
+        bResult = TDeclarationSpecifiers_IsTypedef(&p->Specifiers);
+    }
+    break;
+    default:
+        
+
         break;
-        default:
-            //assert(false);
-            break;
     }
     return bResult;
 }
@@ -7365,14 +7760,15 @@ int TAnyDeclaration_GetFileIndex(TAnyDeclaration * pDeclaration)
     int result = -1;
     switch (pDeclaration->Type)
     {
-        case TDeclaration_ID:
-            result = ((TDeclaration *)pDeclaration)->FileIndex;
-            break;
-        case TStaticAssertDeclaration_ID:
-            break;
-        default:
-            //assert(false);
-            break;
+    case TDeclaration_ID:
+        result = ((TDeclaration *)pDeclaration)->FileIndex;
+        break;
+    case TStaticAssertDeclaration_ID:
+        break;
+    default:
+        
+
+        break;
     }
     return result;
 }
@@ -7597,7 +7993,8 @@ TDeclaration * TProgram_FindDeclaration(TProgram * p, const char * name)
         return (TDeclaration *)pt;
     }
     return NULL;
-    //return DeclarationsMap_FindDeclaration(&p->Symbols, name);
+    
+
 }
 
 TDeclaration * TProgram_FindFunctionDeclaration(TProgram * p, const char * name)
@@ -7613,7 +8010,8 @@ TDeclaration * TProgram_FindFunctionDeclaration(TProgram * p, const char * name)
 
 
 
-//Retorna a declaracao final do tipo entrando em cada typedef. 
+
+
 TDeclaration * TProgram_GetFinalTypeDeclaration(TProgram * p, const char * typeName)
 {
     return SymbolMap_FindTypedefDeclarationTarget(&p->GlobalScope, typeName);
@@ -7641,10 +8039,11 @@ void TProgram_Destroy(TProgram * p) /*@default*/
 
 
 
-///////////////////////////////////////////
+
+
 
 static bool TPostfixExpressionCore_CodePrint2(TPostfixExpressionCore * p,
-                                              int * pResult)
+    int * pResult)
 {
 
     int result = *pResult;
@@ -7655,50 +8054,65 @@ static bool TPostfixExpressionCore_CodePrint2(TPostfixExpressionCore * p,
         EvaluateConstantExpression(p->pExpressionLeft, &left);
     }
 
-    //if (p->pInitializerList)
+    
+
     {
-        //falta imprimeir typename
-        //TTypeName_Print*
-        //b = TInitializerList_CodePrint(p->pInitializerList, b, fp);
+        
+
+        
+
+        
+
     }
 
     switch (p->token)
     {
-        case TK_FULL_STOP:
-            //fprintf(fp, ".%s", p->Identifier);
-            //assert(false);
-            break;
-        case TK_ARROW:
-            //fprintf(fp, "->%s", p->Identifier);
-            //b = true;
-            //assert(false);
-            break;
+    case TK_FULL_STOP:
+        
 
-        case TK_LEFT_SQUARE_BRACKET:
-        {
-            int index;
-            //fprintf(fp, "[");
-            EvaluateConstantExpression(p->pExpressionRight, &index);
-            //fprintf(fp, "]");
-            //assert(false);
-        }
+        
+
+        break;
+    case TK_ARROW:
+        
+
+        
+
+        
+
         break;
 
-        case TK_LEFT_PARENTHESIS:
-        {
-            EvaluateConstantExpression(p->pExpressionRight, &result);
-        }
-        break;
+    case TK_LEFT_SQUARE_BRACKET:
+    {
+        int index;
+        
 
-        case TK_PLUSPLUS:
-            //assert(false);
-            break;
-        case TK_MINUSMINUS:
-            //assert(false);
-            break;
-        default:
-            //assert(false);
-            break;
+        EvaluateConstantExpression(p->pExpressionRight, &index);
+        
+
+        
+
+    }
+    break;
+
+    case TK_LEFT_PARENTHESIS:
+    {
+        EvaluateConstantExpression(p->pExpressionRight, &result);
+    }
+    break;
+
+    case TK_PLUSPLUS:
+        
+
+        break;
+    case TK_MINUSMINUS:
+        
+
+        break;
+    default:
+        
+
+        break;
     }
 
 
@@ -7713,8 +8127,10 @@ static bool TPostfixExpressionCore_CodePrint2(TPostfixExpressionCore * p,
     return true;
 }
 
-//Criado para avaliacao do #if
-//Tem que arrumar para fazer os casts do enum
+
+
+
+
 bool EvaluateConstantExpression(TExpression * p, int * pResult)
 {
     int result = -987654321;
@@ -7740,89 +8156,93 @@ bool EvaluateConstantExpression(TExpression * p, int * pResult)
 
             switch (pBinaryExpression->token)
             {
-                case TK_ASTERISK:
-                    result = (left * right);
-                    b = true;
-                    break;
-                case TK_PLUS_SIGN:
-                    result = (left + right);
-                    b = true;
-                    break;
-                case TK_HYPHEN_MINUS:
-                    result = (left - right);
-                    b = true;
-                    break;
-                case TK_ANDAND:
-                    result = (left && right);
-                    b = true;
-                    break;
-                case TK_OROR:
-                    result = (left || right);
-                    b = true;
-                    break;
-                case TK_NOTEQUAL:
-                    result = (left != right);
-                    b = true;
-                    break;
-                case TK_EQUALEQUAL:
-                    result = (left == right);
-                    b = true;
-                    break;
-                case TK_GREATEREQUAL:
-                    result = (left >= right);
-                    b = true;
-                    break;
-                case TK_LESSEQUAL:
-                    result = (left <= right);
-                    b = true;
-                    break;
-                case TK_GREATER_THAN_SIGN:
-                    result = (left > right);
-                    b = true;
-                    break;
-                case TK_LESS_THAN_SIGN:
-                    result = (left < right);
-                    b = true;
-                    break;
-                case TK_AMPERSAND:
-                    result = (left & right);
-                    b = true;
-                    break;
-                case TK_GREATERGREATER:
-                    result = (left >> right);
-                    b = true;
-                    break;
-                case TK_LESSLESS:
-                    result = (left << right);
-                    b = true;
-                    break;
-                case TK_VERTICAL_LINE:
-                    result = (left | right);
-                    b = true;
-                    break;
+            case TK_ASTERISK:
+                result = (left * right);
+                b = true;
+                break;
+            case TK_PLUS_SIGN:
+                result = (left + right);
+                b = true;
+                break;
+            case TK_HYPHEN_MINUS:
+                result = (left - right);
+                b = true;
+                break;
+            case TK_ANDAND:
+                result = (left && right);
+                b = true;
+                break;
+            case TK_OROR:
+                result = (left || right);
+                b = true;
+                break;
+            case TK_NOTEQUAL:
+                result = (left != right);
+                b = true;
+                break;
+            case TK_EQUALEQUAL:
+                result = (left == right);
+                b = true;
+                break;
+            case TK_GREATEREQUAL:
+                result = (left >= right);
+                b = true;
+                break;
+            case TK_LESSEQUAL:
+                result = (left <= right);
+                b = true;
+                break;
+            case TK_GREATER_THAN_SIGN:
+                result = (left > right);
+                b = true;
+                break;
+            case TK_LESS_THAN_SIGN:
+                result = (left < right);
+                b = true;
+                break;
+            case TK_AMPERSAND:
+                result = (left & right);
+                b = true;
+                break;
+            case TK_GREATERGREATER:
+                result = (left >> right);
+                b = true;
+                break;
+            case TK_LESSLESS:
+                result = (left << right);
+                b = true;
+                break;
+            case TK_VERTICAL_LINE:
+                result = (left | right);
+                b = true;
+                break;
 
-                case TK_SOLIDUS:
-                    if (right != 0)
-                    {
-                        result = (left / right);
-                        b = true;
-                    }
-                    else
-                    {
-                        b = false;
-                        //SetError
-                    }
-                    break;
-
-
-                default:
-                    //TODO ADD THE OPERADOR?
-                    //assert(false);
+            case TK_SOLIDUS:
+                if (right != 0)
+                {
+                    result = (left / right);
+                    b = true;
+                }
+                else
+                {
                     b = false;
-                    break;
+                    
+
+                }
+                break;
+
+
+            default:
+                
+
+                
+
+                b = false;
+                break;
             }
 
-            //if (pBinaryExpression->)
+            
+
         }
         break;
 
@@ -7834,7 +8254,8 @@ bool EvaluateConstantExpression(TExpression * p, int * pResult)
             b = EvaluateConstantExpression(((TTernaryExpression *)p)->pExpressionMiddle, &e2);
 
             b = EvaluateConstantExpression(((TTernaryExpression *)p)->pExpressionRight, &e3);
-            //assert(false);
+            
+
         }
         break;
 
@@ -7851,37 +8272,40 @@ bool EvaluateConstantExpression(TExpression * p, int * pResult)
             {
                 switch (pPrimaryExpressionValue->token)
                 {
-                    case TK_IDENTIFIER:
-                        result = 0; //para macro
-                        b = true;
-                        break;
+                case TK_IDENTIFIER:
+                    result = 0; 
 
-                    case TK_DECIMAL_INTEGER:
-                        result = atoi(pPrimaryExpressionValue->lexeme);
-                        b = true;
-                        break;
+                    b = true;
+                    break;
 
-                    case TK_HEX_INTEGER:
-                        result = strtol(pPrimaryExpressionValue->lexeme, NULL, 16);
-                        b = true;
-                        break;
+                case TK_DECIMAL_INTEGER:
+                    result = atoi(pPrimaryExpressionValue->lexeme);
+                    b = true;
+                    break;
 
-                    case TK_CHAR_LITERAL:
-                        if (pPrimaryExpressionValue->lexeme != NULL)
-                        {
-                            //vem com 'A'
-                            result = pPrimaryExpressionValue->lexeme[1];
-                            b = true;
-                        }
-                        else
-                        {
-                            result = 0;
-                        }
-                        break;
-                    default:
-                        b = false;
-                        //assert(0);
-                        break;
+                case TK_HEX_INTEGER:
+                    result = strtol(pPrimaryExpressionValue->lexeme, NULL, 16);
+                    b = true;
+                    break;
+
+                case TK_CHAR_LITERAL:
+                    if (pPrimaryExpressionValue->lexeme != NULL)
+                    {
+                        
+
+                        result = pPrimaryExpressionValue->lexeme[1];
+                        b = true;
+                    }
+                    else
+                    {
+                        result = 0;
+                    }
+                    break;
+                default:
+                    b = false;
+                    
+
+                    break;
                 }
 
             }
@@ -7893,7 +8317,8 @@ bool EvaluateConstantExpression(TExpression * p, int * pResult)
             TPostfixExpressionCore * pPostfixExpressionCore =
                 (TPostfixExpressionCore *)p;
             b = TPostfixExpressionCore_CodePrint2(pPostfixExpressionCore, &result);
-            //assert(false);
+            
+
         }
         break;
 
@@ -7906,16 +8331,21 @@ bool EvaluateConstantExpression(TExpression * p, int * pResult)
             if (pTUnaryExpressionOperator->token == TK_SIZEOF)
             {
 
-                //if (TDeclarationSpecifiers_IsTypedef(pTUnaryExpressionOperator->TypeName.SpecifierQualifierList))
+                
+
                 {
 
-                    //b = TTypeQualifier_CodePrint2(&pTUnaryExpressionOperator->TypeName.qualifiers, fp);
-                    //b = TTypeSpecifier_CodePrint2(pTUnaryExpressionOperator->TypeName.pTypeSpecifier, b, fp);
-                    // b = TDeclarator_CodePrint(&pTUnaryExpressionOperator->TypeName.declarator, b, fp);
+                    
+
+                    
+
+                    
+
 
 
                 }
-                //else
+                
+
                 {
                     b = EvaluateConstantExpression(pTUnaryExpressionOperator->pExpressionRight, &result);
                 }
@@ -7926,17 +8356,18 @@ bool EvaluateConstantExpression(TExpression * p, int * pResult)
                 b = EvaluateConstantExpression(pTUnaryExpressionOperator->pExpressionRight, &localResult);
                 switch (pTUnaryExpressionOperator->token)
                 {
-                    case TK_EXCLAMATION_MARK:
-                        result = !localResult;
-                        b = true;
-                        break;
-                    case TK_HYPHEN_MINUS:
-                        result = -localResult;
-                        b = true;
-                        break;
-                    default:
-                        //assert(false);
-                        break;
+                case TK_EXCLAMATION_MARK:
+                    result = !localResult;
+                    b = true;
+                    break;
+                case TK_HYPHEN_MINUS:
+                    result = -localResult;
+                    b = true;
+                    break;
+                default:
+                    
+
+                    break;
                 }
             }
 
@@ -7950,22 +8381,28 @@ bool EvaluateConstantExpression(TExpression * p, int * pResult)
                 (TCastExpressionType *)p;
 
 
-            //b = TTypeQualifier_CodePrint2(&pCastExpressionType->TypeName.qualifiers, fp);
-            //b = TTypeSpecifier_CodePrint2(pCastExpressionType->TypeName.pTypeSpecifier, b, fp);
-            //b = TDeclarator_CodePrint(&pCastExpressionType->TypeName.declarator, b, fp);
+            
+
+            
+
+            
+
 
             b = EvaluateConstantExpression(pCastExpressionType->pExpression, &result);
-            //assert(false);
+            
+
 
         }
         break;
 
-        default:
-            //assert(false);
-            break;
+    default:
+        
+
+        break;
     }
 
-    //assert(result != -987654321);
+    
+
     *pResult = result;
     return b;
 }
@@ -8014,8 +8451,36 @@ TParameterTypeList * TDeclaration_GetFunctionArguments(TDeclaration * p)
     return pParameterTypeList;
 }
 
+
+const char * TDeclaration_FindFunctionTagName(TDeclaration * p, struct SymbolMap * pMap)
+{
+    if (p->FunctionTag)
+        return p->FunctionTag;
+    const char * funcName = TDeclaration_GetFunctionName(p);
+    if (funcName)
+    {
+        struct SymbolMapItem * pBucket = SymbolMap_FindBucket(pMap, funcName);
+
+        while (pBucket)
+        {
+            if (pBucket->pValue->Type == TDeclaration_ID &&
+                strcmp(pBucket->Key, funcName) == 0)
+            {
+                TDeclaration * pDeclaration = (TDeclaration *)pBucket->pValue;
+                if (pDeclaration->FunctionTag)
+                    return pDeclaration->FunctionTag;
+            }
+            pBucket = pBucket->pNext;
+        }
+    }
+    return NULL;
+}
+
 const char * TDeclaration_GetFunctionName(TDeclaration * p)
 {
+    if (p == NULL)
+        return NULL;
+
     const char * functionName = NULL;
 
     if (p->InitDeclaratorList.pHead != NULL)
@@ -8308,7 +8773,7 @@ bool Array_Reserve(Array * p, int nelements)
         }
         else
         {
-            result = false /*nomem*/;
+            result = false  ;
         }
     }
     return result;
@@ -8342,7 +8807,8 @@ void * Array_PopGet(Array * p)
     }
     else
     {
-        //assert(false);
+        
+
     }
     return pItem;
 }
@@ -8358,7 +8824,8 @@ void Array_Pop(Array * p, void(*pfDestroyData)(void *))
 
 void * Array_Top(Array * p)
 {
-    //assert(p->size > 0);
+    
+
     return p->pItems[p->size - 1];
 }
 
@@ -8435,7 +8902,8 @@ bool StrArray_Push(struct StrArray * p, const char * pItem)
 static void Array_DeleteStrVoid(void * p)
 {
     Free(p);
-    //String_Destroy((char**)(&p));
+    
+
 }
 
 void StrArray_Clear(struct StrArray * p)
@@ -8465,7 +8933,8 @@ void StrArray_Swap(struct StrArray * p1, struct StrArray * p2)
 void * Array_PopFront(Array * p)
 {
     void * pItem = NULL;
-    //assert(p->size > 0);
+    
+
     if (p->size > 0)
     {
         pItem = p->pItems[0];
@@ -8482,6 +8951,8 @@ void * Array_PopFront(Array * p)
 
 
 
+
+#include <ctype.h>
 
 
 char * StrDup(const char * p)
@@ -8503,6 +8974,78 @@ char * StrDup(const char * p)
     }
     return a;
 }
+
+int StrIComp(char const* a, char const* b)
+{
+    for (;; a++, b++)
+    {
+        int d = tolower((unsigned char)* a) - tolower((unsigned char)* b);
+        if (d != 0 || !*a)
+            return d;
+    }
+}
+
+char* StrIStr(const char* str1, const char* str2)
+{
+    const char* p1 = str1;
+    const char* p2 = str2;
+    const char* r = *p2 == 0 ? str1 : 0;
+
+    while (*p1 != 0 && *p2 != 0)
+    {
+        if (tolower((unsigned char)* p1) == tolower((unsigned char)* p2))
+        {
+            if (r == 0)
+            {
+                r = p1;
+            }
+
+            p2++;
+        }
+        else
+        {
+            p2 = str2;
+            if (r != 0)
+            {
+                p1 = r + 1;
+            }
+
+            if (tolower((unsigned char)* p1) == tolower((unsigned char)* p2))
+            {
+                r = p1;
+                p2++;
+            }
+            else
+            {
+                r = 0;
+            }
+        }
+
+        p1++;
+    }
+
+    return *p2 == 0 ? (char*)r : 0;
+}
+
+bool IsSuffix(const char * s, const char * suffix)
+{
+    bool bResult = false;
+    int len = (int)strlen(s);
+    int len2 = (int)strlen(suffix);
+    if (len > len2)
+    {
+        const char * pEndPart = &s[len - len2];
+        if (StrIComp(pEndPart, suffix) == 0) 
+
+        {
+            bResult = true;
+        }
+    }
+    return bResult;
+
+}
+
+
 
 
 
@@ -8567,7 +9110,8 @@ struct FileNode * FileNode_Create(const char * key)
 
 void FileNode_Free(struct FileNode * p)
 {
-    //so delete esta item e nao todos os proximos
+    
+
     if (p != NULL)
     {
         Free((void *)p->Key);
@@ -8597,8 +9141,10 @@ void FileNodeMap_Destroy(struct FileNodeMap * p) /*@default*/
 
 static unsigned int HashCode(const char * Key)
 {
-    // hash key to unsigned int value by pseudorandomizing transform
-    // (algorithm copied from STL string hash in xfunctional)
+    
+
+    
+
     unsigned int uHashVal = 2166136261U;
     unsigned int uFirst = 0;
     unsigned int uLast = (unsigned int)strlen(Key);
@@ -8649,7 +9195,8 @@ void FileNodeMap_Insert(struct FileNodeMap * t, struct FileNode * pNewNode)
         }
         else
         {
-            //out of mem
+            
+
             return;
         }
     }
@@ -8741,14 +9288,17 @@ enum PPTokenType TokenToPPToken(Tokens token)
         case TK_IF:
         case TK_INT:
         case TK_LONG:
-        ////////////////
-        //Microsoft - specific
+        
+
+        
+
         case TK__INT8:
         case TK__INT16:
         case TK__INT32:
         case TK__INT64:
         case TK__WCHAR_T:
-        ////////////////
+        
+
         case TK_REGISTER:
         case TK_RETURN:
         case TK_SHORT:
@@ -8770,8 +9320,10 @@ enum PPTokenType TokenToPPToken(Tokens token)
         case TK_RESTRICT:
         case TK__STATIC_ASSERT:
         case TK_INLINE:
-        case TK__INLINE://ms
-        case TK__FORCEINLINE: //ms
+        case TK__INLINE:
+
+        case TK__FORCEINLINE: 
+
         case TK__NORETURN:
         case TK__ALIGNAS:
         case TK__GENERIC:
@@ -8833,48 +9385,82 @@ enum PPTokenType TokenToPPToken(Tokens token)
         case TK_LESSLESSEQUAL:
         case TK_PERCENTCOLONPERCENTCOLON:
 
-        case     TK_EXCLAMATION_MARK:// = '!';
-        case    TK_QUOTATION_MARK:// = '\"';
-        case    TK_NUMBER_SIGN:// = '#';
+        case     TK_EXCLAMATION_MARK:
 
-        case    TK_DOLLAR_SIGN:// = '$';
-        case     TK_PERCENT_SIGN:// = '%';
-        case    TK_AMPERSAND:// = '&';
-        case     TK_APOSTROPHE:// = '\'';
-        case    TK_LEFT_PARENTHESIS:// = '(';
-        case    TK_RIGHT_PARENTHESIS:// = ')';
-        case    TK_ASTERISK:// = '*';
-        case    TK_PLUS_SIGN:// = '+';
-        case    TK_COMMA:// = ':';
-        case    TK_HYPHEN_MINUS:// = '-';
-        case    TK_HYPHEN_MINUS_NEG:// = '-'; //nao retorna no basic string mas eh usado para saber se eh - unario
-        case    TK_FULL_STOP:// = '.';
-        case    TK_SOLIDUS:// = '/';
+        case    TK_QUOTATION_MARK:
 
-        case    TK_COLON:// = ':';
-        case    TK_SEMICOLON:// = ';';
-        case    TK_LESS_THAN_SIGN:// = '<';
-        case    TK_EQUALS_SIGN:// = '=';
-        case    TK_GREATER_THAN_SIGN:// = '>';
-        case    TK_QUESTION_MARK:// = '\?';
-        case    TK_COMMERCIAL_AT:// = '@';
+        case    TK_NUMBER_SIGN:
 
-        case     TK_LEFT_SQUARE_BRACKET:// = '[';
-        case    REVERSE_SOLIDUS:// = '\\';
-        case     TK_RIGHT_SQUARE_BRACKET:// = ']';
-        case    TK_CIRCUMFLEX_ACCENT:// = '^';
-        case    TK_LOW_LINE:// = '_';
-        case    TK_GRAVE_ACCENT:// = '`';
 
-        case    TK_LEFT_CURLY_BRACKET:// = '{';
-        case    TK_VERTICAL_LINE:// = '|';
-        case    TK_RIGHT_CURLY_BRACKET:// = '}';
-        case    TK_TILDE: // ~
+        case    TK_DOLLAR_SIGN:
+
+        case     TK_PERCENT_SIGN:
+
+        case    TK_AMPERSAND:
+
+        case     TK_APOSTROPHE:
+
+        case    TK_LEFT_PARENTHESIS:
+
+        case    TK_RIGHT_PARENTHESIS:
+
+        case    TK_ASTERISK:
+
+        case    TK_PLUS_SIGN:
+
+        case    TK_COMMA:
+
+        case    TK_HYPHEN_MINUS:
+
+        case    TK_HYPHEN_MINUS_NEG:
+
+        case    TK_FULL_STOP:
+
+        case    TK_SOLIDUS:
+
+
+        case    TK_COLON:
+
+        case    TK_SEMICOLON:
+
+        case    TK_LESS_THAN_SIGN:
+
+        case    TK_EQUALS_SIGN:
+
+        case    TK_GREATER_THAN_SIGN:
+
+        case    TK_QUESTION_MARK:
+
+        case    TK_COMMERCIAL_AT:
+
+
+        case     TK_LEFT_SQUARE_BRACKET:
+
+        case    REVERSE_SOLIDUS:
+
+        case     TK_RIGHT_SQUARE_BRACKET:
+
+        case    TK_CIRCUMFLEX_ACCENT:
+
+        case    TK_LOW_LINE:
+
+        case    TK_GRAVE_ACCENT:
+
+
+        case    TK_LEFT_CURLY_BRACKET:
+
+        case    TK_VERTICAL_LINE:
+
+        case    TK_RIGHT_CURLY_BRACKET:
+
+        case    TK_TILDE: 
+
 
         result = PPTokenType_Punctuator;
         break;
         default:
-        //assert(false);
+        
+
         result = PPTokenType_Punctuator;
         break;
     }
@@ -8968,10 +9554,14 @@ void TFileArray_PushBack(TFileArray * p, TFile * pItem) /*@default*/
 
 bool TFileMap_Set(TFileMap * map, const char * key, TFile * pFile)
 {
-    // tem que ser case insensitive!
-    //assert(IsFullPath(key));
-    // converter
-    // Ajusta o file index de acordo com a entrada dele no mapa
+    
+
+    
+
+    
+
+    
+
     pFile->FileIndex = map->Size;
     bool result = Map_Set(map, key, pFile);
     PTR_STRING_REPLACE(pFile->FullPath, key);
@@ -8980,7 +9570,8 @@ bool TFileMap_Set(TFileMap * map, const char * key, TFile * pFile)
 
 TFile * TFileMap_Find(TFileMap * map, const char * key)
 {
-    // tem que ser case insensitive!
+    
+
     return (TFile *)Map_Find2(map, key);
 }
 
@@ -9019,8 +9610,8 @@ void StackInts_Reserve(StackInts * p, int n) /*@default*/
 {
     if (n > p->Capacity)
     {
-        enumPPState* pnew = p->pItems;
-        pnew = (enumPPState*)Realloc(pnew, n * sizeof(enumPPState));
+        enum PPState* pnew = p->pItems;
+        pnew = (enum PPState*)Realloc(pnew, n * sizeof(enum PPState));
         if (pnew)
         {
             p->pItems = pnew;
@@ -9138,7 +9729,8 @@ static bool AddStandardMacro(Scanner * pScanner, const char * name,
 {
     struct Macro * pDefine1 = Macro_Create();
     PTR_STRING_REPLACE(pDefine1->Name, name);
-    // TODO tipo do token
+    
+
     TokenArray_PushBack(&pDefine1->TokenSequence,
         PPToken_Create(value, PPTokenType_Other));
     pDefine1->FileIndex = 0;
@@ -9153,8 +9745,10 @@ static bool Scanner_InitCore(Scanner * pScanner)
 
     TScannerItemList_Init(&pScanner->AcumulatedTokens);
     pScanner->pOptions = NULL;
-    // TFileMap_init
-    // pScanner->IncludeDir
+    
+
+    
+
     Map_Init(&pScanner->FilesIncluded, 100);
     MacroMap_Init(&pScanner->Defines2);
     StrBuilder_Init(&pScanner->DebugString);
@@ -9169,22 +9763,31 @@ static bool Scanner_InitCore(Scanner * pScanner)
     StrArray_Init(&pScanner->IncludeDir);
     FileNodeList_Init(&pScanner->Sources);
 
-    // Indica que foi feita uma leitura especulativa
-    // pScanner->bHasLookAhead = false;
-    //  pScanner->pLookAheadPreviousScanner = NULL;
+    
 
-    // Valor lido na leitura especulativa
-    // ScannerItem_Init(&pScanner->LookAhead);
-    //__FILE__ __LINE__ __DATE__ __STDC__  __STD_HOSTED__  __TIME__
-    //__STD_VERSION__
-    //
+    
+
+    
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
     AddStandardMacro(pScanner, "__LINE__", "0");
     AddStandardMacro(pScanner, "__FILE__", "\"__FILE__\"");
     AddStandardMacro(pScanner, "__DATE__", "\"__DATE__\"");
     AddStandardMacro(pScanner, "__TIME__", "\"__TIME__\"");
     AddStandardMacro(pScanner, "__STDC__", "1");
     AddStandardMacro(pScanner, "__COUNTER__", "0");
-    // AddStandardMacro(pScanner, "__STD_HOSTED__", "1");
+    
+
 
     Scanner_PushToken(pScanner, TK_BOF, "", true);
 
@@ -9214,13 +9817,14 @@ bool PushExpandedMacro(Scanner * pScanner,
     }
 
     BasicScanner * pNewScanner;
-    bool result = BasicScanner_Create(&pNewScanner, callString, /*defineName*/
+    bool result = BasicScanner_Create(&pNewScanner, callString,  
         defineContent, BasicScannerType_Macro);
 
     if (result == true)
     {
         pNewScanner->bMacroExpanded = true;
-        BasicScanner_Match(pNewScanner); // inicia
+        BasicScanner_Match(pNewScanner); 
+
         BasicScannerStack_Push(&pScanner->stack, pNewScanner);
     }
 
@@ -9237,27 +9841,23 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char * fileName,
 
     bool bFullPathFound = false;
 
-    // https://msdn.microsoft.com/en-us/library/36k2cdd4.aspx
-    /*
-    bQuotedForm
-    The preprocessor searches for include files in this order:
-    1) In the same directory as the file that contains the #include statement.
-    2) In the directories of the currently opened include files, in the reverse
-    order in which they were opened. The search begins in the directory of the
-    parent include file and continues upward through the directories of any
-    grandparent include files. 3) Along the path that's specified by each /I
-    compiler option. 4) Along the paths that are specified by the INCLUDE
-    environment variable.
-    */
+    
+
+     
     if (bQuotedForm)
     {
-        // String s = NULL;
-        // GetFullPath(fileName, &s);
-        // Free(s);
+        
+
+        
+
+        
+
         if (IsFullPath(fileName))
         {
-            // Se ja vier com fullpath?? este caso esta cobrindo
-            // mas deve ter uma maneira melhor de verificar se eh um fullpath ja
+            
+
+            
+
             bFullPathFound = true;
             PTR_STRING_REPLACE(*fullPathOut, fileName);
         }
@@ -9265,13 +9865,16 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char * fileName,
         {
             if (pScanner->stack != NULL)
             {
-                // tenta nos diretorios ja abertos
+                
+
                 StrBuilder path = STRBUILDER_INIT;
 
-                // for (int i = (int)pScanner->stack.size - 1; i >= 0; i--)
+                
+
                 ForEachBasicScanner(p, pScanner->stack)
                 {
-                    // BasicScanner* p = (BasicScanner*)pScanner->stack.pItems[i];
+                    
+
                     StrBuilder_Set(&path, p->stream.FullDir2);
                     StrBuilder_Append(&path, fileName);
                     bool bFileExists = FileExists(path.c_str);
@@ -9279,7 +9882,8 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char * fileName,
                     if (bFileExists)
                     {
                         GetFullPath(path.c_str, fullPathOut);
-                        // String_Set(fullPathOut, StrBuilder_Release(&path));
+                        
+
                         bFullPathFound = true;
                         break;
                     }
@@ -9289,7 +9893,8 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char * fileName,
             }
             else
             {
-                // nao abriu nenhum, faz o full path do nome do arquivo
+                
+
                 String * /*@auto*/ fullPath = NULL;
 
                 GetFullPath(fileName, &fullPath);
@@ -9306,13 +9911,7 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char * fileName,
         }
     }
 
-    /*
-    Angle-bracket form
-    The preprocessor searches for include files in this order:
-    1) Along the path that's specified by each /I compiler option.
-    2) When compiling occurs on the command line, along the paths that are
-    specified by the INCLUDE environment variable.
-    */
+     
     if (!bFullPathFound)
     {
         StrBuilder path = STRBUILDER_INIT;
@@ -9323,8 +9922,10 @@ bool Scanner_GetFullPath(Scanner * pScanner, const char * fileName,
             const char * pItem = pScanner->IncludeDir.pItems[i];
             StrBuilder_Set(&path, pItem);
 
-            //barra para o outro lado funciona
-            //windows e linux
+            
+
+            
+
             StrBuilder_Append(&path, "/");
 
             StrBuilder_Append(&path, fileName);
@@ -9394,9 +9995,12 @@ void Scanner_IncludeFile(Scanner * pScanner,
 
     String * /*@auto*/ fullPath = NULL;
 
-    // Faz a procura nos diretorios como se tivesse adicinando o include
-    // seguindo as mesmas regras. Caso o include seja possivel ele retorna o path
-    // completo  este path completo que eh usado para efeitos do pragma once.
+    
+
+    
+
+    
+
     bool bHasFullPath = false;
 
     switch (fileIncludeType)
@@ -9420,11 +10024,14 @@ void Scanner_IncludeFile(Scanner * pScanner,
 
         if (pFile != NULL && pFile->PragmaOnce)
         {
-            // foi marcado como pragma once.. nao faz nada
-            // tenho q enviar um comando
+            
+
+            
+
             if (pScanner->pOptions->bAmalgamate)
             {
-                //no mondo amalgamation nao eh p cair aqui
+                
+
                 assert(false);
             }
 
@@ -9439,7 +10046,8 @@ void Scanner_IncludeFile(Scanner * pScanner,
                 pFile->bSystemLikeInclude =
                     (fileIncludeType == FileIncludeTypeIncludes);
                 PTR_STRING_REPLACE(pFile->IncludePath, includeFileName);
-                TFileMap_Set(&pScanner->FilesIncluded, fullPath, pFile); // pfile Moved
+                TFileMap_Set(&pScanner->FilesIncluded, fullPath, pFile); 
+
             }
 
             BasicScanner * pNewScanner = NULL;
@@ -9507,31 +10115,46 @@ void Scanner_Destroy(Scanner * pScanner) /*@default*/
 
 void Scanner_Reset(Scanner * pScanner)
 {
-    //Basically this function was created to allow
-    //inclusion of new file Scanner_IncludeFile
-    //after scanner reach EOF  (See GetSources)
-    //After eof we need to Reset. The reset
-    //is not general.
-    //A better aprouch would be just make this work
-    //correclty without reset.
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
 
     BasicScannerStack_Destroy(&pScanner->stack);
     BasicScannerStack_Init(&pScanner->stack);
 
-    //mantem
-    //MacroMap_Destroy(&pScanner->Defines2);
+    
+
+    
+
 
     StackInts_Destroy(&pScanner->StackIfDef);
     StackInts_Init(&pScanner->StackIfDef);
 
-    //mantem
-    //TFileMap_Destroy(&pScanner->FilesIncluded);
+    
 
-    //mantem
-    //StrArray_Destroy(&pScanner->IncludeDir);
+    
 
-    //FileNodeList_Destroy(&pScanner->Sources);
-    //FileNodeList_Init(&pScanner->Sources);
+
+    
+
+    
+
+
+    
+
+    
+
 
     StrBuilder_Destroy(&pScanner->DebugString);
     StrBuilder_Init(&pScanner->DebugString);
@@ -9545,34 +10168,7 @@ void Scanner_Reset(Scanner * pScanner)
     pScanner->bError = false;
 }
 
-/*int Scanner_GetCurrentLine(Scanner* pScanner)
-{
-    //assert(!pScanner->bHasLookAhead);
-
-    if (pScanner->bError)
-    {
-        return -1;
-    }
-
-
-    int currentLine = -1;
-    int fileIndex = -1;
-
-
-    ForEachBasicScanner(pBasicScanner, pScanner->stack)
-    {
-        fileIndex = pBasicScanner->FileIndex;
-
-        if (fileIndex >= 0) //macro eh -1
-        {
-            currentLine = pBasicScanner->stream.currentLine;
-            break;
-        }
-    }
-
-    return currentLine;
-}
-*/
+ 
 
 int Scanner_GetFileIndex(Scanner * pScanner)
 {
@@ -9593,42 +10189,39 @@ int Scanner_GetFileIndex(Scanner * pScanner)
         }
     }
 
-    // //assert(fileIndex >= 0);
+    
+
     return fileIndex;
 }
 
-/*const char* Scanner_LexemeAt(Scanner* pScanner)
-{
-    if (pScanner->bHasLookAhead)
-    {
-        return pScanner->LookAhead.lexeme.c_str;
-    }
-    else
-    {
-        BasicScanner* pBasicScanner = pScanner->stack;
-
-        return pBasicScanner ?
-            pBasicScanner->currentItem.lexeme.c_str :
-            "";
-    }
-}*/
+ 
 
 BasicScanner * Scanner_Top(Scanner * pScanner)
 {
     return pScanner->stack;
 }
 
-// int Scanner_Line(Scanner* pScanner)
-//{
-//  //assert(!pScanner->bHasLookAhead);
-// return Scanner_Top(pScanner)->stream.currentLine;
-//}
 
-// int Scanner_Col(Scanner* pScanner)
-//{
-//  //assert(!pScanner->bHasLookAhead);
-//    return Scanner_Top(pScanner)->stream.currentCol;
-//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void IgnorePreProcessorv2(BasicScanner * pBasicScanner, StrBuilder * strBuilder)
 {
@@ -9638,7 +10231,8 @@ void IgnorePreProcessorv2(BasicScanner * pBasicScanner, StrBuilder * strBuilder)
     {
         if (pBasicScanner->currentItem.token == TK_BREAKLINE)
         {
-            // StrBuilder_Append(strBuilder, pTop->currentItem.lexeme.c_str);
+            
+
             BasicScanner_Match(pBasicScanner);
             break;
         }
@@ -9660,8 +10254,10 @@ void GetDefineString(Scanner * pScanner, StrBuilder * strBuilder)
 
         if (token == TK_BREAKLINE)
         {
-            // deixa o break line
-            // BasicScanner_Match(Scanner_Top(pScanner));
+            
+
+            
+
             break;
         }
 
@@ -9670,7 +10266,8 @@ void GetDefineString(Scanner * pScanner, StrBuilder * strBuilder)
             token == TK_COMMENT ||
             token == TK_LINE_COMMENT)
         {
-            // transforma em espaços
+            
+
             StrBuilder_Append(strBuilder, " ");
         }
         else
@@ -9695,12 +10292,16 @@ bool Scanner_IsLexeme(Scanner * pScanner, const char * psz)
 
 int PreprocessorExpression(Parser * parser)
 {
-    // Faz o parser da expressão
+    
+
     TExpression * pExpression = NULL;
     ConstantExpression(parser, &pExpression);
-    //..a partir da arvore da expressão
-    // calcula o valor
-    // TODO pegar error
+    
+
+    
+
+    
+
     int r;
     if (!EvaluateConstantExpression(pExpression, &r))
     {
@@ -9714,23 +10315,29 @@ int PreprocessorExpression(Parser * parser)
 int EvalExpression(const char * s, Scanner * pScanner)
 {
     struct MacroMap * pDefines = &pScanner->Defines2;
-    // printf("%s = ", s);
-    // TODO avaliador de expressoes para pre processador
-    // https://gcc.gnu.org/onlinedocs/gcc-3.0.2/cpp_4.html#SEC38
+    
+
+    
+
+    
+
     Parser parser;
     Parser_InitString(&parser, "eval expression", s);
     parser.bPreprocessorEvalFlag = true;
 
     if (pDefines)
     {
-        // usa o mapa de macros para o pre-processador
+        
+
         MacroMap_Swap(&parser.Scanner.Defines2, pDefines);
     }
 
-    //    Scanner_Match(&parser.Scanner);
+    
+
     int iRes = PreprocessorExpression(&parser);
 
-    // printf(" %d\n", iRes);
+    
+
     if (pDefines)
     {
         MacroMap_Swap(&parser.Scanner.Defines2, pDefines);
@@ -9754,24 +10361,31 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
     struct Macro * pMacro, struct TokenArray * ppTokenArray,
     StrBuilder * strBuilder)
 {
-    // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
-    // TODO aqui nao pode ser o current
+    
+
+    
+
     const char * lexeme = pBasicScanner->currentItem.lexeme.c_str;
     Tokens token = pBasicScanner->currentItem.token;
 
-    // verificar se tem parametros
-    int nArgsExpected = pMacro->FormalArguments.Size; // pMacro->bIsFunction;
+    
+
+    int nArgsExpected = pMacro->FormalArguments.Size; 
+
     int nArgsFound = 0;
 
-    // fazer uma lista com os parametros
+    
+
 
     if (token == TK_LEFT_PARENTHESIS)
     {
-        // Adiciona o nome da macro
+        
+
         struct PPToken * ppTokenName = PPToken_Create(pMacro->Name, PPTokenType_Identifier);
         TokenArray_PushBack(ppTokenArray, ppTokenName);
 
-        // Match do (
+        
+
         struct PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
         TokenArray_PushBack(ppTokenArray, ppToken);
 
@@ -9781,7 +10395,8 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
         token = pBasicScanner->currentItem.token;
         lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
-        // comeca com 1
+        
+
         nArgsFound = 1;
         int iInsideParentesis = 1;
 
@@ -9837,10 +10452,12 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
                 }
                 else
                 {
-                    // continuar...
+                    
+
                 }
 
-                // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
+                
+
                 struct PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
                 TokenArray_PushBack(ppTokenArray, ppToken);
 
@@ -9851,7 +10468,8 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
             }
             else
             {
-                // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
+                
+
                 struct PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
                 TokenArray_PushBack(ppTokenArray, ppToken);
 
@@ -9867,31 +10485,43 @@ static void GetMacroArguments(Scanner * pScanner, BasicScanner * pBasicScanner,
     {
         if (nArgsFound == 0 && nArgsExpected > 0)
         {
-            // erro
+            
+
         }
         else
         {
             if (nArgsExpected > nArgsFound)
             {
-                // Scanner_SetError(pScanner, "Illegal macro call. Too few arguments
-                // error");
+                
+
+                
+
             }
             else
             {
-                // Scanner_SetError(pScanner, "Illegal macro call. Too many arguments
-                // error.");
+                
+
+                
+
             }
-            //assert(false);
-            // JObj_PrintDebug(pMacro);
-            // Scanner_PrintDebug(pScanner);
+            
+
+            
+
+            
+
         }
     }
 
-    // tODO se nao for macro tem que pegar todo
-    // o match feito e devolver.
-    // nome da macro e espacos..
+    
 
-    // return false;
+    
+
+    
+
+
+    
+
 }
 
 Tokens FindPreToken(const char * lexeme)
@@ -9954,14 +10584,16 @@ void GetPPTokens(BasicScanner * pBasicScanner, struct TokenArray * pptokens,
     Tokens token = pBasicScanner->currentItem.token;
     const char * lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
-    // Corpo da macro
+    
+
     while (token != TK_BREAKLINE && token != TK_EOF && token != TK_FILE_EOF)
     {
         StrBuilder_Append(strBuilder, lexeme);
 
         if (token != TK_BACKSLASHBREAKLINE)
         {
-            // TODO comentarios entram como espaco
+            
+
             struct       PPToken * ppToken = PPToken_Create(lexeme, TokenToPPToken(token));
             TokenArray_PushBack(pptokens, ppToken);
         }
@@ -9970,7 +10602,8 @@ void GetPPTokens(BasicScanner * pBasicScanner, struct TokenArray * pptokens,
         lexeme = pBasicScanner->currentItem.lexeme.c_str;
     }
 
-    // Remove os espaços do fim
+    
+
     while (pptokens->Size > 0 &&
         pptokens->pItems[pptokens->Size - 1]->Token == PPTokenType_Spaces)
     {
@@ -9998,7 +10631,8 @@ void ParsePreDefinev2(Scanner * pScanner, StrBuilder * strBuilder)
 {
     BasicScanner * pBasicScanner = Scanner_Top(pScanner);
 
-    // objetivo eh montar a macro e colocar no mapa
+    
+
     struct Macro * pNewMacro = Macro_Create();
 
     Tokens token = pBasicScanner->currentItem.token;
@@ -10007,20 +10641,23 @@ void ParsePreDefinev2(Scanner * pScanner, StrBuilder * strBuilder)
     PTR_STRING_REPLACE(pNewMacro->Name, lexeme);
     StrBuilder_Append(strBuilder, lexeme);
 
-    // Match nome da macro
+    
+
     BasicScanner_Match(pBasicScanner);
 
     token = pBasicScanner->currentItem.token;
     lexeme = pBasicScanner->currentItem.lexeme.c_str;
 
-    // Se vier ( é macro com parâmetros
+    
+
     if (token == TK_LEFT_PARENTHESIS)
     {
         pNewMacro->bIsFunction = true;
 
         StrBuilder_Append(strBuilder, lexeme);
 
-        // Match (
+        
+
         BasicScanner_Match(pBasicScanner);
 
         for (;;)
@@ -10032,7 +10669,8 @@ void ParsePreDefinev2(Scanner * pScanner, StrBuilder * strBuilder)
 
             if (token == TK_RIGHT_PARENTHESIS)
             {
-                // Match )
+                
+
                 StrBuilder_Append(strBuilder, lexeme);
                 BasicScanner_Match(pBasicScanner);
                 break;
@@ -10040,7 +10678,8 @@ void ParsePreDefinev2(Scanner * pScanner, StrBuilder * strBuilder)
 
             if (token == TK_BREAKLINE || token == TK_EOF)
             {
-                // oopss
+                
+
                 break;
             }
 
@@ -10060,10 +10699,12 @@ void ParsePreDefinev2(Scanner * pScanner, StrBuilder * strBuilder)
 
             if (token == TK_COMMA)
             {
-                // Match ,
+                
+
                 StrBuilder_Append(strBuilder, lexeme);
                 BasicScanner_Match(pBasicScanner);
-                // tem mais
+                
+
             }
         }
     }
@@ -10078,7 +10719,8 @@ void ParsePreDefinev2(Scanner * pScanner, StrBuilder * strBuilder)
 
     MacroMap_SetAt(&pScanner->Defines2, pNewMacro->Name, pNewMacro);
 
-    // breakline ficou...
+    
+
 }
 
 int EvalPre(Scanner * pScanner, StrBuilder * sb)
@@ -10088,9 +10730,12 @@ int EvalPre(Scanner * pScanner, StrBuilder * sb)
         return 0;
     }
 
-    // pega todos os tokens ate o final da linha expande e
-    // avalia
-    // usado no #if #elif etc.
+    
+
+    
+
+    
+
     BasicScanner * pBasicScanner = Scanner_Top(pScanner);
 
     struct TokenArray pptokens = TOKENARRAY_INIT;
@@ -10105,20 +10750,11 @@ int EvalPre(Scanner * pScanner, StrBuilder * sb)
 
     if (pScanner->bError)
     {
-        //assert(false);
+        
+
     }
 
-    /*StrBuilder sb1 = STRBUILDER_INIT;
-    Scanner_GetFilePositionString(pScanner, &sb1);
-    printf("%s \n", sb1.c_str);
-    printf("#if ");
-    for (int i = 0; i < pptokens.Size; i++)
-    {
-      printf("%s", pptokens.pItems[i]->Lexeme);
-    }
-    printf(" == %d \n\n",iRes);
-    StrBuilder_Destroy(&sb1);
-    */
+     
     StrBuilder_Destroy(&strBuilder);
     TokenArray_Destroy(&pptokens);
     return iRes;
@@ -10135,26 +10771,36 @@ static void Scanner_PushToken(Scanner * pScanner, Tokens token,
     struct ScannerItem * pNew = ScannerItem_Create();
     LocalStrBuilder_Set(&pNew->lexeme, lexeme);
     pNew->token = token;
-    pNew->bActive = bActive; //;
+    pNew->bActive = bActive; 
+
     TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
 }
 
-// Atencao
-// Esta funcao eh complicada.
-//
-// Ela faz uma parte da expansao da macro que pode virar um "tetris"
-// aonde o colapso de uma expansao vira outra expansao
-// a unica garantia sao os testes.
-//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
 {
     enum PPState state = StateTop(pScanner);
     BasicScanner * pBasicScanner = Scanner_Top(pScanner);
-    //assert(pBasicScanner != NULL);
+    
+
 
     Tokens token = pBasicScanner->currentItem.token;
     const char * lexeme = pBasicScanner->currentItem.lexeme.c_str;
-    //assert(token == TK_IDENTIFIER);
+    
+
 
     if (!IsIncludeState(state))
     {
@@ -10164,7 +10810,8 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
         pNew->bActive = false;
         TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
 
-        // Match do identificador
+        
+
         BasicScanner_Match(pBasicScanner);
         return;
     }
@@ -10172,14 +10819,16 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
     struct Macro * pMacro2 = Scanner_FindPreprocessorItem2(pScanner, lexeme);
     if (pMacro2 == NULL)
     {
-        // nao eh macro
+        
+
         struct ScannerItem * pNew = ScannerItem_Create();
         LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
         pNew->token = pBasicScanner->currentItem.token;
         pNew->bActive = true;
         TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
 
-        // Match do identificador
+        
+
         BasicScanner_Match(pBasicScanner);
         return;
     }
@@ -10187,22 +10836,26 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
     if (pBasicScanner->bMacroExpanded &&
         strcmp(pMacro2->Name, pBasicScanner->stream.NameOrFullPath) == 0)
     {
-        // ja estou expandindo esta mesma macro
-        // nao eh macro
+        
+
+        
+
         struct ScannerItem * pNew = ScannerItem_Create();
         LocalStrBuilder_Swap(&pNew->lexeme, &pBasicScanner->currentItem.lexeme);
         pNew->token = pBasicScanner->currentItem.token;
         pNew->bActive = true;
         TScannerItemList_PushBack(&pScanner->AcumulatedTokens, pNew);
 
-        // Match do identificador
+        
+
         BasicScanner_Match(pBasicScanner);
         return;
     }
 
     struct Macro * pFirstMacro = pMacro2;
 
-    // Match do identificador do nome da macro funcao
+    
+
     BasicScanner_Match(pBasicScanner);
 
     bool bExitLoop = false;
@@ -10212,7 +10865,8 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
         if (!pMacro2->bIsFunction)
         {
             struct TokenArray ppTokenArray = TOKENARRAY_INIT;
-            // o nome eh a propria expansao
+            
+
             struct       PPToken * ppTokenName =
                 PPToken_Create(pMacro2->Name, TokenToPPToken(TK_IDENTIFIER));
             TokenArray_PushBack(&ppTokenArray, ppTokenName);
@@ -10222,8 +10876,10 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
             ExpandMacroToText(&ppTokenArray, &pScanner->Defines2, false, false, false, NULL,
                 &strExpanded);
 
-            // se expandir para identificador e ele for uma macro do tipo funcao
-            // pode ser tetris
+            
+
+            
+
             struct Macro * pMacro3 = NULL;
 
             if (strExpanded.size > 0)
@@ -10235,12 +10891,14 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
             {
                 if (pMacro3->bIsFunction)
                 {
-                    // Expandiu para uma identificador que é macro funcao
+                    
+
                     pMacro2 = pMacro3;
                 }
                 else
                 {
-                    // ok expandiu
+                    
+
 
                     PushExpandedMacro(pScanner, pMacro2->Name, strExpanded.c_str);
 
@@ -10251,7 +10909,8 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
             }
             else
             {
-                // ok expandiu
+                
+
 
                 PushExpandedMacro(pScanner, pMacro2->Name, strExpanded.c_str);
 
@@ -10264,9 +10923,11 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
         }
         else
         {
-            //é uma função
+            
 
-            // Procurar pelo (
+
+            
+
 
             TScannerItemList LocalAcumulatedTokens = { 0 };
             token = pBasicScanner->currentItem.token;
@@ -10276,15 +10937,18 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                 token == TK_OPEN_COMMENT ||
                 token == TK_CLOSE_COMMENT)
             {
-                // StrBuilder_Append(strBuilder, lexeme);
+                
 
-                /////////////
+
+                
+
                 struct ScannerItem * pNew = ScannerItem_Create();
                 LocalStrBuilder_Set(&pNew->lexeme, lexeme);
                 pNew->token = token;
                 pNew->bActive = true;
                 TScannerItemList_PushBack(&LocalAcumulatedTokens, pNew);
-                ////////////
+                
+
 
                 BasicScanner_Match(pBasicScanner);
                 token = pBasicScanner->currentItem.token;
@@ -10298,8 +10962,10 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                 struct TokenArray ppTokenArray = TOKENARRAY_INIT;
 
                 StrBuilder_Set(&strCallString, pFirstMacro->Name);
-                // eh uma chamada da macro funcao
-                // coletar argumentos e expandir
+                
+
+                
+
                 GetMacroArguments(pScanner,
                     pBasicScanner,
                     pMacro2,
@@ -10314,9 +10980,12 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                     NULL,
                     &strExpanded);
 
-                /////////////////////////////////
-                // se expandir para identificador e ele for uma macro do tipo funcao
-                // pode ser tetris
+                
+
+                
+
+                
+
                 struct Macro * pMacro3 = NULL;
                 if (strExpanded.size > 0)
                 {
@@ -10327,12 +10996,14 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                 {
                     if (pMacro3->bIsFunction)
                     {
-                        // Expandiu para uma identificador que é macro funcao
+                        
+
                         pMacro2 = pMacro3;
                     }
                     else
                     {
-                        // ok expandiu
+                        
+
 
                         PushExpandedMacro(pScanner, pMacro2->Name, strExpanded.c_str);
 
@@ -10341,27 +11012,34 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                 }
                 else
                 {
-                    // ok expandiu
+                    
+
 
                     PushExpandedMacro(pScanner, pMacro2->Name, strExpanded.c_str);
 
                     Scanner_PushToken(pScanner, TK_MACRO_CALL, strCallString.c_str, true);
                     bExitLoop = true;
                 }
-                ///////////////////////
+                
+
                 TokenArray_Destroy(&ppTokenArray);
                 StrBuilder_Destroy(&strExpanded);
                 StrBuilder_Destroy(&strCallString);
             }
             else
             {
-                // macro call
-                // B
-                // endcall
-                // espacos
+                
+
+                
+
+                
+
+                
+
                 if (pFirstMacro != pMacro2)
                 {
-                    // nao era uma chamada da macro funcao
+                    
+
                     struct ScannerItem * pNew = ScannerItem_Create();
                     LocalStrBuilder_Append(&pNew->lexeme, pFirstMacro->Name);
                     pNew->token = TK_MACRO_CALL;
@@ -10389,10 +11067,13 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
                     LocalAcumulatedTokens.pHead = NULL;
                     LocalAcumulatedTokens.pTail = NULL;
                 }
-                // tODO espacos
+                
 
-                // a macro eh uma funcao mas isso nao eh a chamada da macro
-                // pq nao foi encontrado (
+
+                
+
+                
+
                 bExitLoop = true;
             }
 
@@ -10407,11 +11088,16 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(Scanner * pScanner)
 
 void Scanner_BuyTokens(Scanner * pScanner)
 {
-    // Sempre compra uma carta nova do monte do baralho.
-    // se a carta servir ele coloca na mesa.
-    // se comprar uma carta macro expande e coloca em cima
-    // do baralho novas cartas sou coloca na mesa
-    //(sim eh complicado)
+    
+
+    
+
+    
+
+    
+
+    
+
 
     if (pScanner->bError)
     {
@@ -10421,7 +11107,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
     BasicScanner * pBasicScanner = Scanner_Top(pScanner);
     if (pBasicScanner == NULL)
     {
-        // acabaram todos os montes de tokens (cartas do baralho)
+        
+
         return;
     }
 
@@ -10437,15 +11124,18 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
     while (token == TK_EOF)
     {
-        // ok remove este baralho vazio
+        
+
         BasicScannerStack_Pop(&pScanner->stack);
 
-        // proximo baralho
+        
+
         pBasicScanner = Scanner_Top(pScanner);
 
         if (pBasicScanner != NULL)
         {
-            // vai removendo enquanto sao baralhos vazios
+            
+
             token = pBasicScanner->currentItem.token;
             lexeme = pBasicScanner->currentItem.lexeme.c_str;
         }
@@ -10459,14 +11149,16 @@ void Scanner_BuyTokens(Scanner * pScanner)
     {
         if (pScanner->stack->pPrevious == NULL)
         {
-            // se eh o unico arquivo TK_FILE_EOF vira eof
+            
+
             token = TK_EOF;
         }
     }
 
     if (token == TK_EOF)
     {
-        // não sobrou nenhum baralho nao tem o que comprar
+        
+
         struct ScannerItem * pNew = ScannerItem_Create();
         pNew->token = TK_EOF;
         pNew->bActive = true;
@@ -10482,11 +11174,13 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
     if (token == TK_PREPROCESSOR)
     {
-        // Match #
+        
+
         StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
         BasicScanner_Match(pBasicScanner);
 
-        // Match ' '
+        
+
         Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
 
         lexeme = pBasicScanner->currentItem.lexeme.c_str;
@@ -10496,7 +11190,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
         if (preToken == TK_PRE_INCLUDE)
         {
-            // Match include
+            
+
             StrBuilder_Append(&strBuilder, lexeme);
             BasicScanner_Match(pBasicScanner);
 
@@ -10505,7 +11200,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
             if (IsIncludeState(state))
             {
-                // Match espacos
+                
+
                 Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
 
                 lexeme = pBasicScanner->currentItem.lexeme.c_str;
@@ -10521,7 +11217,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
                     fileName[strlen(fileName) - 1] = 0;
 
-                    // tem que ser antes de colocar o outro na pilha
+                    
+
                     IgnorePreProcessorv2(pBasicScanner, &strBuilder);
                     if (pScanner->pOptions->bAmalgamate)
                     {
@@ -10541,7 +11238,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
                         Scanner_IncludeFile(pScanner, fileName, FileIncludeTypeQuoted, true);
                     }
                     Free(fileName);
-                    // break;
+                    
+
                 }
                 else if (token == TK_LESS_THAN_SIGN)
                 {
@@ -10567,7 +11265,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
 
                         if (token == TK_BREAKLINE)
                         {
-                            // oopps
+                            
+
                             break;
                         }
 
@@ -10604,13 +11303,15 @@ void Scanner_BuyTokens(Scanner * pScanner)
             }
             else
             {
-                // TODO active
+                
+
                 Scanner_PushToken(pScanner, TK_SPACES, strBuilder.c_str, false);
             }
         }
         else if (preToken == TK_PRE_PRAGMA)
         {
-            // Match pragma
+            
+
             StrBuilder_Append(&strBuilder, lexeme);
             BasicScanner_Match(pBasicScanner);
 
@@ -10633,13 +11334,15 @@ void Scanner_BuyTokens(Scanner * pScanner)
                     {
                         pFile->PragmaOnce = true;
                     }
-                    //
+                    
+
                     IgnorePreProcessorv2(pBasicScanner, &strBuilder);
                     Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
                 }
                 else if (BasicScanner_IsLexeme(Scanner_Top(pScanner), "message"))
                 {
-                    // Match message
+                    
+
                     StrBuilder_Append(&strBuilder, lexeme);
                     BasicScanner_Match(pBasicScanner);
 
@@ -10669,7 +11372,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
                     fileName[strlen(fileName) - 1] = 0;
                     StrArray_Push(&pScanner->IncludeDir, fileName);
                     Free(fileName);
-                    //
+                    
+
                     IgnorePreProcessorv2(pBasicScanner, &strBuilder);
                     Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
                 }
@@ -10692,7 +11396,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
                         String * fullPath = 0;
                         bHasFullPath = Scanner_GetFullPath(pScanner, fileName, true, &fullPath);
                         Free(fileName);
-                        fileName = fullPath;//moved
+                        fileName = fullPath;
+
                         BasicScanner_Match(pBasicScanner);
                     }
                     else
@@ -10707,7 +11412,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
                     FileNodeList_PushBack(&pScanner->Sources, fileName);
 
                     Free(fileName);
-                    //
+                    
+
                     IgnorePreProcessorv2(pBasicScanner, &strBuilder);
                     Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
                 }
@@ -10734,7 +11440,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
                     }
                     else
                     {
-                        //
+                        
+
                         IgnorePreProcessorv2(pBasicScanner, &strBuilder);
                         Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
                     }
@@ -10752,14 +11459,16 @@ void Scanner_BuyTokens(Scanner * pScanner)
                     }
                     else
                     {
-                        //
+                        
+
                         IgnorePreProcessorv2(pBasicScanner, &strBuilder);
                         Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
                     }
                 }
                 else
                 {
-                    //
+                    
+
                     IgnorePreProcessorv2(pBasicScanner, &strBuilder);
                     Scanner_PushToken(pScanner, TK_PRE_PRAGMA, strBuilder.c_str, true);
                 }
@@ -10801,7 +11510,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
                         {
                             iRes = bFound ? 1 : 0;
                         }
-                        else // if (preToken == TK_PRE_IFNDEF)
+                        else 
+
                         {
                             iRes = !bFound ? 1 : 0;
                         }
@@ -10835,7 +11545,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
         }
         else if (preToken == TK_PRE_ELIF)
         {
-            // Match elif
+            
+
             StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
 
             BasicScanner_Match(pBasicScanner);
@@ -10879,7 +11590,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
                 break;
 
                 case PPState_E1:
-                //assert(0);
+                
+
                 break;
             }
 
@@ -10891,7 +11603,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
         }
         else if (preToken == TK_PRE_ENDIF)
         {
-            // Match elif
+            
+
             StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
 
             BasicScanner_Match(pBasicScanner);
@@ -10908,14 +11621,16 @@ void Scanner_BuyTokens(Scanner * pScanner)
         else if (preToken == TK_PRE_ELSE)
         {
 
-            // Match else
+            
+
             StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
             BasicScanner_Match(pBasicScanner);
 
             switch (state)
             {
                 case PPState_NONE:
-                //assert(0);
+                
+
                 break;
 
                 case PPState_I1:
@@ -10944,7 +11659,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
                 break;
 
                 case PPState_E1:
-                //assert(false);
+                
+
                 break;
             }
 
@@ -10956,7 +11672,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
         }
         else if (preToken == TK_PRE_ERROR)
         {
-            // Match error
+            
+
             StrBuilder_Append(&strBuilder, lexeme);
             BasicScanner_Match(pBasicScanner);
 
@@ -10980,7 +11697,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
         {
             if (IsIncludeState(state))
             {
-                // Match line
+                
+
                 StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
                 BasicScanner_Match(pBasicScanner);
 
@@ -10996,7 +11714,8 @@ void Scanner_BuyTokens(Scanner * pScanner)
         {
             if (IsIncludeState(state))
             {
-                // Match undef
+                
+
                 StrBuilder_Append(&strBuilder, pBasicScanner->currentItem.lexeme.c_str);
                 BasicScanner_Match(pBasicScanner);
 
@@ -11014,11 +11733,13 @@ void Scanner_BuyTokens(Scanner * pScanner)
         }
         else if (preToken == TK_PRE_DEFINE)
         {
-            // Match define
+            
+
             StrBuilder_Append(&strBuilder, lexeme);
             BasicScanner_Match(pBasicScanner);
 
-            // Match all ' '
+            
+
             Scanner_MatchAllPreprocessorSpaces(pBasicScanner, &strBuilder);
             bool bActive = IsIncludeState(state);
             if (bActive)
@@ -11030,11 +11751,14 @@ void Scanner_BuyTokens(Scanner * pScanner)
             Scanner_PushToken(pScanner, TK_PRE_DEFINE, strBuilder.c_str, bActive);
         }
 
-        // break;
-    } //#
+        
+
+    } 
+
     else if (token == TK_IDENTIFIER)
     {
-        // codigo complicado tetris
+        
+
         Scanner_BuyIdentifierThatCanExpandAndCollapse(pScanner);
     }
     else
@@ -11048,10 +11772,13 @@ void Scanner_BuyTokens(Scanner * pScanner)
         BasicScanner_Match(pBasicScanner);
     }
     StrBuilder_Destroy(&strBuilder);
-    //}//for
+    
 
-    // state = StateTop(pScanner);
-    // pTopScanner->currentItem.bActive = IsIncludeState(state);
+
+    
+
+    
+
 }
 
 void PrintPreprocessedToFileCore(FILE * fp, Scanner * scanner)
@@ -11064,7 +11791,8 @@ void PrintPreprocessedToFileCore(FILE * fp, Scanner * scanner)
         {
             switch (token)
             {
-                // Tokens para linhas do pre processador
+                
+
                 case TK_PRE_INCLUDE:
                 case TK_PRE_PRAGMA:
                 case TK_PRE_IF:
@@ -11080,7 +11808,8 @@ void PrintPreprocessedToFileCore(FILE * fp, Scanner * scanner)
                 fprintf(fp, "\n");
                 break;
 
-                // fim tokens preprocessador
+                
+
                 case TK_LINE_COMMENT:
                 case TK_COMMENT:
                 case TK_OPEN_COMMENT:
@@ -11129,12 +11858,14 @@ void PrintPreprocessedToFile(const char * fileIn, const char * configFileName)
         Free(configFullPath);
     }
 
-    ///
+    
+
     char drive[CPRIME_MAX_DRIVE];
     char dir[CPRIME_MAX_DIR];
     char fname[CPRIME_MAX_FNAME];
     char ext[CPRIME_MAX_EXT];
-    SplitPath(fullFileNamePath, drive, dir, fname, ext); // C4996
+    SplitPath(fullFileNamePath, drive, dir, fname, ext); 
+
 
     char fileNameOut[CPRIME_MAX_DRIVE + CPRIME_MAX_DIR + CPRIME_MAX_FNAME + CPRIME_MAX_EXT + 1];
     strcat(fname, "_pre");
@@ -11158,7 +11889,8 @@ void PrintPreprocessedToStringCore2(StrBuilder * fp, Scanner * scanner)
         {
             switch (token)
             {
-                // Tokens para linhas do pre processador
+                
+
                 case TK_PRE_INCLUDE:
                 case TK_PRE_PRAGMA:
                 case TK_PRE_IF:
@@ -11174,7 +11906,8 @@ void PrintPreprocessedToStringCore2(StrBuilder * fp, Scanner * scanner)
                 StrBuilder_Append(fp, "\n");
                 break;
 
-                // fim tokens preprocessador
+                
+
                 case TK_LINE_COMMENT:
                 case TK_COMMENT:
 
@@ -11377,7 +12110,8 @@ void PrintPreprocessedToConsole(const char * fileIn,
 
 int Scanner_GetNumberOfScannerItems(Scanner * pScanner)
 {
-    int nCount = 1; // contando com o "normal"
+    int nCount = 1; 
+
     ForEachListItem(struct ScannerItem, pItem, &pScanner->AcumulatedTokens)
     {
         nCount++;
@@ -11388,34 +12122,41 @@ int Scanner_GetNumberOfScannerItems(Scanner * pScanner)
 struct ScannerItem * Scanner_ScannerItemAt(Scanner * pScanner, int index)
 {
 
-    // item0 item1 ..itemN
-    //^
-    // posicao atual
+    
+
+    
+
+    
+
 
     struct ScannerItem * pScannerItem = NULL;
 
     if (!pScanner->bError)
     {
-        // conta o numero de itens empilhados
+        
+
         int nCount = 0;
         ForEachListItem(struct ScannerItem, pItem, &pScanner->AcumulatedTokens)
         {
             nCount++;
         }
 
-        // precisa comprar tokens?
+        
+
         if (index >= nCount)
         {
             for (int i = nCount; i <= index; i++)
             {
-                // comprar mais tokens
+                
+
                 Scanner_BuyTokens(pScanner);
             }
             pScannerItem = pScanner->AcumulatedTokens.pTail;
         }
         else
         {
-            // nao precisa comprar eh so pegar
+            
+
             int n = 0;
             ForEachListItem(struct ScannerItem, pItem, &pScanner->AcumulatedTokens)
             {
@@ -11520,7 +12261,8 @@ void Scanner_MatchDontExpand(Scanner * pScanner)
 
             while (token == TK_EOF && pScanner->stack->pPrevious != NULL)
             {
-                //assert(pScanner->AcumulatedTokens.pHead == NULL);
+                
+
                 BasicScannerStack_PopIfNotLast(&pScanner->stack);
                 pTopScanner = Scanner_Top(pScanner);
                 token = pTopScanner->currentItem.token;
@@ -11657,70 +12399,102 @@ const char * TokenToString(Tokens tk)
         case CHARACTER_TABULATION:
             return "CHARACTER_TABULATION";
         case TK_EXCLAMATION_MARK:
-            return "!";// = '!';
+            return "!";
+
         case TK_QUOTATION_MARK:
-            return "\"";//,// = '\"';
+            return "\"";
+
         case TK_NUMBER_SIGN:
-            return "#";//,// = '#';
+            return "#";
+
         case TK_DOLLAR_SIGN:
-            return "$";//,// = '$';
+            return "$";
+
         case TK_PERCENT_SIGN:
-            return "%";//,// = '%';
+            return "%";
+
         case TK_AMPERSAND:
-            return "&";//,// = '&';
+            return "&";
+
         case TK_APOSTROPHE:
-            return "'";//,// = '\'';
+            return "'";
+
         case TK_LEFT_PARENTHESIS:
-            return "(";//,// = '(';
+            return "(";
+
         case TK_RIGHT_PARENTHESIS:
-            return ")";//,// = ')';
+            return ")";
+
         case TK_ASTERISK:
-            return "*";//,// = '*';
+            return "*";
+
         case TK_PLUS_SIGN:
-            return "+";//,// = '+';
+            return "+";
+
         case TK_COMMA:
-            return ",";//,// = ',';
+            return ",";
+
         case TK_HYPHEN_MINUS:
-            return "-";//,// = '-';
+            return "-";
+
         case TK_FULL_STOP:
-            return ".";//,// = '.';
+            return ".";
+
         case TK_SOLIDUS:
-            return "/";//,// = '/';
+            return "/";
+
         case TK_COLON:
-            return ":";//,// = ':';
+            return ":";
+
         case TK_SEMICOLON:
-            return ";";//,// = ';';
+            return ";";
+
         case TK_LESS_THAN_SIGN:
-            return "<";//,// = '<';
+            return "<";
+
         case TK_EQUALS_SIGN:
-            return "=";//,// = '=';
+            return "=";
+
         case TK_GREATER_THAN_SIGN:
-            return ">";//,// = '>';
+            return ">";
+
         case TK_QUESTION_MARK:
-            return "?";//,// = '\?';
+            return "?";
+
         case TK_COMMERCIAL_AT:
-            return "@";//,// = '@';
+            return "@";
+
         case TK_LEFT_SQUARE_BRACKET:
-            return "[";//,// = '[';
+            return "[";
+
         case REVERSE_SOLIDUS:
-            return "\\";//,// = '\\';
+            return "\\";
+
         case TK_RIGHT_SQUARE_BRACKET:
-            return "]";//,// = ']';
+            return "]";
+
         case TK_CIRCUMFLEX_ACCENT:
-            return "^";// = '^';
+            return "^";
+
         case TK_LOW_LINE:
-            return "_";//,// = '_';
+            return "_";
+
         case TK_GRAVE_ACCENT:
-            return "`";//,// = '`';
+            return "`";
+
         case TK_LEFT_CURLY_BRACKET:
-            return "{";//,// = '{';
+            return "{";
+
         case TK_VERTICAL_LINE:
-            return "|";//,// = '|';
+            return "|";
+
         case TK_RIGHT_CURLY_BRACKET:
-            return "}";//,// = '}';
+            return "}";
+
 
         case TK_TILDE:
-            return "~";//,// = '~';
+            return "~";
+
             break;
         case TK_AUTO:
             return "auto";
@@ -11875,7 +12649,8 @@ const char * TokenToString(Tokens tk)
 
         case TK_PRE_DEFINE:
             return "TK_PRE_DEFINE";
-            //
+            
+
         case TK_MACRO_CALL:
             return "TK_MACRO_CALL";
 
@@ -11885,7 +12660,8 @@ const char * TokenToString(Tokens tk)
         case TK_FILE_EOF:
             return "TK_FILE_EOF";
         default:
-            //assert(false);
+            
+
             break;
     }
     return "???";
@@ -11984,7 +12760,7 @@ bool BasicScanner_Create(BasicScanner ** pp,
                          const char * Text,
                          BasicScannerType Type)
 {
-    bool result = false /*nomem*/;
+    bool result = false  ;
     BasicScanner * p = (BasicScanner *)Malloc(sizeof(BasicScanner));
     if (p)
     {
@@ -12003,7 +12779,7 @@ bool BasicScanner_Create(BasicScanner ** pp,
 
 bool BasicScanner_CreateFile(const char * fileName, BasicScanner ** pp)
 {
-    bool result = false /*nomem*/;
+    bool result = false  ;
     BasicScanner * p = (BasicScanner *)Malloc(sizeof(BasicScanner));
     if (p)
     {
@@ -12044,9 +12820,11 @@ struct TkPair
 
 static struct TkPair singleoperators[] =
 {
-    //punctuator: one of
+    
 
-    {"[", TK_LEFT_SQUARE_BRACKET }, //0
+
+    {"[", TK_LEFT_SQUARE_BRACKET }, 
+
     {"]",  TK_RIGHT_SQUARE_BRACKET},
     {"(", TK_LEFT_PARENTHESIS},
     {")", TK_RIGHT_PARENTHESIS},
@@ -12070,16 +12848,22 @@ static struct TkPair singleoperators[] =
     {"=", TK_EQUALS_SIGN},
     {",", TK_COMMA},
     { "$", TK_DOLLAR_SIGN},
-    { "@", TK_COMMERCIAL_AT } //pode ser usado em macros pp-tokens
-    //  {"...", TK_DOTDOTDOT},//50
-    //  {"%:%:", TK_PERCENTCOLONPERCENTCOLON},
-    //  {"<<=", TK_LESSLESSEQUAL},
-    //{">>=", TK_GREATERGREATEREQUAL},
+    { "@", TK_COMMERCIAL_AT } 
+
+    
+
+    
+
+    
+
+    
+
 };
 
 static struct TkPair doubleoperators[] =
 {
-    { "->", TK_ARROW },//25
+    { "->", TK_ARROW },
+
     { "++", TK_PLUSPLUS },
     { "--", TK_MINUSMINUS },
     { "<<", TK_LESSLESS },
@@ -12105,7 +12889,8 @@ static struct TkPair doubleoperators[] =
     { "%>", TK_PERCENTGREATER },
     { "%:", TK_PERCENTCOLON },
 
-    { "...", TK_DOTDOTDOT },//50
+    { "...", TK_DOTDOTDOT },
+
     { "%:%:", TK_PERCENTCOLONPERCENTCOLON },
     { "<<=", TK_LESSLESSEQUAL },
     { ">>=", TK_GREATERGREATEREQUAL }
@@ -12113,7 +12898,8 @@ static struct TkPair doubleoperators[] =
 
 static struct TkPair keywords[] =
 {
-    //keywords
+    
+
     { "auto", TK_AUTO },
     { "break", TK_BREAK },
     { "case", TK_CASE },
@@ -12135,13 +12921,15 @@ static struct TkPair keywords[] =
     {"__forceinline", TK__FORCEINLINE },
     { "int", TK_INT },
     { "long", TK_LONG },
-    //
+    
+
     { "__int8", TK__INT8},
     { "__int16", TK__INT16 },
     { "__int32", TK__INT32 },
     { "__int64", TK__INT64 },
     { "__wchar_t", TK__WCHAR_T},
-    //
+    
+
     { "register", TK_REGISTER },
     { "restrict", TK_RESTRICT },
     { "return", TK_RETURN },
@@ -12169,8 +12957,10 @@ static struct TkPair keywords[] =
     { "_Noreturn", TK__NORETURN },
     { "_Static_assert", TK__STATIC_ASSERT },
     { "_Thread_local", TK__THREAD_LOCAL },
-    //
-    { "__asm", TK__ASM } //visual studio
+    
+
+    { "__asm", TK__ASM } 
+
 
 };
 void BasicScanner_Next(BasicScanner * scanner);
@@ -12221,8 +13011,10 @@ void BasicScanner_Next(BasicScanner * scanner)
     scanner->currentItem.Line = scanner->stream.Line;
     scanner->currentItem.FileIndex = scanner->FileIndex;
 
-    //bool bLineStart = scanner->bLineStart;
-    //scanner->bLineStart = false;
+    
+
+    
+
     wchar_t ch = '\0';
     ScannerItem_Reset(&scanner->currentItem);
     ch = scanner->stream.Character;
@@ -12239,7 +13031,8 @@ void BasicScanner_Next(BasicScanner * scanner)
         scanner->currentItem.token = TK_DOTDOTDOT;
         return;
     }
-    //procura por puncturares com 2 caracteres
+    
+
     for (int i = 0; i < sizeof(doubleoperators) / sizeof(doubleoperators[0]); i++)
     {
         if (doubleoperators[i].lexeme[0] == ch &&
@@ -12262,7 +13055,8 @@ void BasicScanner_Next(BasicScanner * scanner)
         return;
     }
 
-    //procura por puncturtorscom 1 caracteres
+    
+
     for (int i = 0; i < sizeof(singleoperators) / sizeof(singleoperators[0]); i++)
     {
         if (singleoperators[i].lexeme[0] == ch)
@@ -12273,17 +13067,23 @@ void BasicScanner_Next(BasicScanner * scanner)
             return;
         }
     }
-    //U'
-    //u
-    //L
-    //Devido ao L' tem que vir antes do identificador
-    //literal string
+    
+
+    
+
+    
+
+    
+
+    
+
     if (ch == L'"' ||
         (ch == L'L' && ch1 == L'"'))
     {
         if (ch == 'L')
         {
-            ch = BasicScanner_MatchChar(scanner); //L
+            ch = BasicScanner_MatchChar(scanner); 
+
         }
         scanner->currentItem.token = TK_STRING_LITERAL;
         ch = BasicScanner_MatchChar(scanner);
@@ -12296,13 +13096,15 @@ void BasicScanner_Next(BasicScanner * scanner)
             }
             else if (ch == '\\')
             {
-                //escape
+                
+
                 ch = BasicScanner_MatchChar(scanner);
                 ch = BasicScanner_MatchChar(scanner);
             }
             else if (ch == '\0')
             {
-                //oops
+                
+
                 scanner->currentItem.token = TK_EOF;
                 break;
             }
@@ -12314,32 +13116,42 @@ void BasicScanner_Next(BasicScanner * scanner)
         scanner->bLineStart = false;
         return;
     }
-    //Devido ao L' tem que vir antes do identificador
-    //literal
+    
+
+    
+
     if (ch == L'\'' ||
         (ch == L'L' && ch1 == L'\''))
     {
         if (ch == 'L')
         {
-            ch = BasicScanner_MatchChar(scanner); //L
+            ch = BasicScanner_MatchChar(scanner); 
+
         }
         scanner->currentItem.token = TK_CHAR_LITERAL;
-        ch = BasicScanner_MatchChar(scanner); //'
+        ch = BasicScanner_MatchChar(scanner); 
+
         if (ch == '\\')
         {
-            //escape
-            ch = BasicScanner_MatchChar(scanner); //
-            ch = BasicScanner_MatchChar(scanner); //caractere
+            
+
+            ch = BasicScanner_MatchChar(scanner); 
+
+            ch = BasicScanner_MatchChar(scanner); 
+
         }
         else
         {
-            ch = BasicScanner_MatchChar(scanner);//caractere
+            ch = BasicScanner_MatchChar(scanner);
+
         }
-        ch = BasicScanner_MatchChar(scanner);//'
+        ch = BasicScanner_MatchChar(scanner);
+
         scanner->bLineStart = false;
         return;
     }
-    //Identificador
+    
+
     if ((ch >= 'a' && ch <= 'z') ||
         (ch >= 'A' && ch <= 'Z') ||
         ch == '_')
@@ -12353,14 +13165,17 @@ void BasicScanner_Next(BasicScanner * scanner)
         {
             ch = BasicScanner_MatchChar(scanner);
         }
-        //v� se � keywords e corrige o token
+        
+
         for (int i = 0; i < sizeof(keywords) / sizeof(keywords[0]); i++)
         {
             if (BasicScanner_IsLexeme(scanner, keywords[i].lexeme))
             {
                 scanner->currentItem.token = keywords[i].token;
-                //StrBuilder_Append(&scanner->currentItem.lexeme, keywords[i].lexeme);
-                //Stream_Next(&scanner->stream);
+                
+
+                
+
                 break;
             }
         }
@@ -12368,12 +13183,15 @@ void BasicScanner_Next(BasicScanner * scanner)
         return;
     }
 
-    //TODO binarios
+    
+
 
     if (ch == '0' &&
         (
-        (ch1 == 'x' || ch1 == 'X') || //hex 
-        (ch1 >= '0' && ch1 <= '9')) //octal
+        (ch1 == 'x' || ch1 == 'X') || 
+
+        (ch1 >= '0' && ch1 <= '9')) 
+
         )
     {
         ch = BasicScanner_MatchChar(scanner);
@@ -12399,7 +13217,8 @@ void BasicScanner_Next(BasicScanner * scanner)
             ch = BasicScanner_MatchChar(scanner);
         }
 
-        //integer suffix
+        
+
         if (ch == 'u' || ch == 'U')
         {
             ch = BasicScanner_MatchChar(scanner);
@@ -12417,7 +13236,8 @@ void BasicScanner_Next(BasicScanner * scanner)
             }
             else
             {
-                //error
+                
+
             }
         }
         else if (ch == 'i' || ch == 'I')
@@ -12432,7 +13252,8 @@ void BasicScanner_Next(BasicScanner * scanner)
                 }
                 else
                 {
-                    //error 
+                    
+
                 }
             }
             else if (ch == '1')
@@ -12444,7 +13265,8 @@ void BasicScanner_Next(BasicScanner * scanner)
                 }
                 else
                 {
-                    //error 
+                    
+
                 }
             }
             else if (ch == '6')
@@ -12456,7 +13278,8 @@ void BasicScanner_Next(BasicScanner * scanner)
                 }
                 else
                 {
-                    //error 
+                    
+
                 }
             }
             else if (ch == '8')
@@ -12467,7 +13290,8 @@ void BasicScanner_Next(BasicScanner * scanner)
 
         return;
     }
-    //numero
+    
+
     if (ch >= '0' && ch <= '9')
     {
         scanner->currentItem.token = TK_DECIMAL_INTEGER;
@@ -12477,7 +13301,8 @@ void BasicScanner_Next(BasicScanner * scanner)
             ch = BasicScanner_MatchChar(scanner);
         }
 
-        //integer suffix
+        
+
         if (ch == 'u' || ch == 'U')
         {
             ch = BasicScanner_MatchChar(scanner);
@@ -12495,7 +13320,8 @@ void BasicScanner_Next(BasicScanner * scanner)
             }
             else
             {
-                //error
+                
+
             }
         }
         else if (ch == 'i' || ch == 'I')
@@ -12510,7 +13336,8 @@ void BasicScanner_Next(BasicScanner * scanner)
                 }
                 else
                 {
-                    //error 
+                    
+
                 }
             }
             else if (ch == '1')
@@ -12522,7 +13349,8 @@ void BasicScanner_Next(BasicScanner * scanner)
                 }
                 else
                 {
-                    //error 
+                    
+
                 }
             }
             else if (ch == '6')
@@ -12534,7 +13362,8 @@ void BasicScanner_Next(BasicScanner * scanner)
                 }
                 else
                 {
-                    //error 
+                    
+
                 }
             }
             else if (ch == '8')
@@ -12578,13 +13407,15 @@ void BasicScanner_Next(BasicScanner * scanner)
         scanner->bLineStart = false;
         return;
     }
-    //quebra de linha
+    
+
     if (ch == '\n' || ch == L'\r')
     {
         scanner->currentItem.token = TK_BREAKLINE;
         if (ch == L'\r' && ch1 == L'\n')
         {
-            //so coloca \n
+            
+
             Stream_Match(&scanner->stream);
             ch = scanner->stream.Character;
             ch = BasicScanner_MatchChar(scanner);
@@ -12593,7 +13424,8 @@ void BasicScanner_Next(BasicScanner * scanner)
         {
             ch = BasicScanner_MatchChar(scanner);
             LocalStrBuilder_Clear(&scanner->currentItem.lexeme);
-            //normaliza para windows?
+            
+
             LocalStrBuilder_Append(&scanner->currentItem.lexeme, "\r\n");
         }
         scanner->bLineStart = true;
@@ -12619,7 +13451,8 @@ void BasicScanner_Next(BasicScanner * scanner)
         BasicScanner_MatchChar(scanner);
         return;
     }
-    //espacos
+    
+
     if (ch == ' ' || ch == '\t')
     {
         scanner->currentItem.token = TK_SPACES;
@@ -12628,14 +13461,16 @@ void BasicScanner_Next(BasicScanner * scanner)
         {
             ch = BasicScanner_MatchChar(scanner);
         }
-        //continua com scanner->bLineStart
+        
+
         return;
     }
     if (ch < 32)
     {
         scanner->currentItem.token = TK_SPACES;
     }
-    //
+    
+
     if (scanner->stream.Character == '#')
     {
         ch = BasicScanner_MatchChar(scanner);
@@ -12652,7 +13487,8 @@ void BasicScanner_Next(BasicScanner * scanner)
 
 
 
-    //comentario de linha
+    
+
     if (ch == '/')
     {
         if (ch1 == '/')
@@ -12692,7 +13528,8 @@ void BasicScanner_Next(BasicScanner * scanner)
                     }
                     else if (ch == L'\r')
                     {
-                        //so coloca \n
+                        
+
                         Stream_Match(&scanner->stream);
                         ch = scanner->stream.Character;
                         if (ch == L'\n')
@@ -12725,19 +13562,29 @@ void BasicScanner_Next(BasicScanner * scanner)
         }
         return;
     }
-    //junta linha
+    
+
     if (ch == L'\\' &&
         (ch1 == L'\n' || ch1 == L'\r'))
     {
-        //1) Whenever backslash appears at the end of 
-        //a line(immediately followed by the newline character), both 
-        //backslash and newline are deleted,
-        //combining two physical source lines into one logical 
-        //source line.This is a single - pass operation; 
-        //a line ending in two backslashes followed by an empty 
-        //line does not combine three lines into one.
-        //If a universal character name(\uXXX) is formed in this 
-        //phase, the behavior is undefined.
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
 
         ch = BasicScanner_MatchChar(scanner);
 
@@ -12755,16 +13602,19 @@ void BasicScanner_Next(BasicScanner * scanner)
             BasicScanner_MatchChar(scanner);
         }
 
-        //homogeiniza \r\n para \n
+        
+
         LocalStrBuilder_Set(&scanner->currentItem.lexeme, "\\\n");
 
         scanner->currentItem.token = TK_BACKSLASHBREAKLINE;
         scanner->bLineStart = false;
-        //BasicScanner_Match(scanner);
+        
+
 
         return;
     }
-    if (ch == 2)  //peguei um
+    if (ch == 2)  
+
     {
         ch = BasicScanner_MatchChar(scanner);
         scanner->currentItem.token = TK_MACROPLACEHOLDER;
@@ -12782,7 +13632,8 @@ void BasicScanner_Next(BasicScanner * scanner)
     {
         printf("invalid char, scanner");
     }
-    //assert(false);
+    
+
 }
 
 
@@ -12809,7 +13660,8 @@ wchar_t BasicScanner_MatchChar(BasicScanner * scanner)
     return scanner->stream.Character;
 }
 
-//////////////////////////////////////////////
+
+
 
 
 
@@ -12844,7 +13696,8 @@ BasicScanner * BasicScannerStack_PopGet(BasicScannerStack * stack)
 
 void BasicScannerStack_PopIfNotLast(BasicScannerStack * stack)
 {
-    //assert(*stack != NULL);
+    
+
     if ((*stack)->pPrevious != NULL)
     {
         BasicScanner_Delete(BasicScannerStack_PopGet(stack));
@@ -12879,7 +13732,6 @@ void BasicScannerStack_Destroy(BasicScannerStack * stack)
 
 
 
-#include <ctype.h>
 
 
 #ifdef USE_UTF8
@@ -12937,7 +13789,7 @@ bool StrBuilder_Reserve(StrBuilder * p, int nelements)
 
         else
         {
-            r = false /*nomem*/;
+            r = false  ;
         }
     }
 
@@ -12971,7 +13823,7 @@ bool StrBuilder_SetN(StrBuilder * p,
 
     if (r)
     {
-        strncpy(p->c_str, /*p->capacity + 1,*/ source, nelements);
+        strncpy(p->c_str,   source, nelements);
         p->c_str[nelements] = '\0';
         p->size = nelements;
     }
@@ -13014,7 +13866,7 @@ bool StrBuilder_AppendN(StrBuilder * p,
     if (r == true)
     {
         strncpy(p->c_str + p->size,
-            /*(p->capacity + 1) - p->size,*/
+             
             source,
             nelements);
         p->c_str[p->size + nelements] = '\0';
@@ -13076,7 +13928,8 @@ void StrBuilder_Attach(StrBuilder * pStrBuilder,
 {
     if (psz != NULL)
     {
-        //assert(nBytes > 0);
+        
+
         StrBuilder_Destroy(pStrBuilder);
         pStrBuilder->c_str = psz;
         pStrBuilder->capacity = nBytes - 1;
@@ -13138,7 +13991,8 @@ void StrBuilder_Trim(StrBuilder * p)
 
         if (!bCopy && ch != ' ')
         {
-            //a partir de agora copia
+            
+
             bCopy = true;
         }
 
@@ -13146,7 +14000,8 @@ void StrBuilder_Trim(StrBuilder * p)
             StrBuilder_AppendChar(&temp, ch);
     }
 
-    //indice do ultimo que nao eh espaco
+    
+
     int k = ((int)(temp.size)) - 1;
 
     for (; k >= 0; k--)
@@ -13265,16 +14120,18 @@ bool LoadFile(const char * filename, const char ** out, int * szOut)
 
         if (buffer)
         {
-            /*int fr =*/ fread(buffer, 1, lSize, fp);
+              fread(buffer, 1, lSize, fp);
 
             if (feof(fp))
             {
-                //ok leu tudo
+                
+
             }
 
             if (!ferror(fp))
             {
-                //ok
+                
+
                 buffer[lSize] = '\0';
                 *out = buffer;
                 buffer = NULL;
@@ -13295,7 +14152,8 @@ bool LoadFile(const char * filename, const char ** out, int * szOut)
 bool Stream_InitFile(struct Stream * pStream,
                      const char * fullPath)
 {
-    //assert(IsFullPath(fullPath));
+    
+
     pStream->NameOrFullPath = StrDup(fullPath);
     pStream->FullDir2 = NULL;
     pStream->Line = 1;
@@ -13306,13 +14164,15 @@ bool Stream_InitFile(struct Stream * pStream,
 
     if (result)
     {
-        //O objetivo aqui eh pegar o diretorio
+        
+
         GetFullDir(fullPath, &pStream->FullDir2);
 
         if (pStream->Text != NULL &&
             pStream->Text[0] != '\0')
         {
-            //unicode?
+            
+
             pStream->Character = pStream->Text[0];
         }
 
@@ -13347,7 +14207,8 @@ bool Stream_Init(struct Stream * pStream, const char * name, const char * Text)
     if (pStream->Text != NULL &&
         pStream->Text[0] != '\0')
     {
-        //unicode?
+        
+
         pStream->Character = pStream->Text[0];
     }
 
@@ -13562,13 +14423,11 @@ void LocalStrBuilder_AppendChar(struct LocalStrBuilder * p, char ch)
 
 
 
-/**
-* Simple Bob Jenkins's hash algorithm taken from the
-* wikipedia description.
-*/
+ 
 static uint32_t HashFunc(const char * a)
 {
-    //assert(a != NULL);
+    
+
     int len = strlen(a);
     const char * key = a;
     uint32_t hash = 0;
@@ -13592,7 +14451,7 @@ bool Bucket_Reserve(Bucket * p, int nelements);
 
 bool BucketItem_InitMoveKey(struct BucketItem * node,
                             int hash,
-                            String * *key /*in out*/,
+                            String * *key  ,
                             void * data)
 {
     node->data = data;
@@ -13621,7 +14480,7 @@ bool BucketItem_CreateMoveKey(struct BucketItem ** pp,
                               String * *key,
                               void * data)
 {
-    bool result = false /*nomem*/;
+    bool result = false  ;
     struct BucketItem * node = (struct BucketItem *)Malloc(sizeof(struct BucketItem) * 1);
     if (node)
     {
@@ -13677,7 +14536,7 @@ bool Bucket_Init(Bucket * p, int capacity)
 
 bool Bucket_Create(Bucket * *pp)
 {
-    bool result = false /*nomem*/;
+    bool result = false  ;
     Bucket * p = (Bucket *)Malloc(sizeof(Bucket) * 1);
     if (p)
     {
@@ -13734,8 +14593,9 @@ bool Bucket_Reserve(Bucket * p, int nelements)
         }
         else
         {
-            //assert(false);
-            r = false /*nomem*/;
+            
+
+            r = false  ;
         }
     }
 
@@ -13775,7 +14635,8 @@ bool Bucket_Append(Bucket * p, struct BucketItem * pItem)
 
 static int FindNodeIndex(Bucket * bucket, uint32_t hash, const char * key)
 {
-    //assert(key != NULL);
+    
+
     for (int i = 0; i < bucket->size; i++)
     {
         struct BucketItem * node = bucket->data[i];
@@ -13794,20 +14655,24 @@ bool RemoveBucketItem(Bucket * bucket,
                       const char * key,
                       void ** ppData)
 {
-    //assert(key != NULL);
-    *ppData = NULL; //out
+    
+
+    *ppData = NULL; 
+
 
     int index = FindNodeIndex(bucket, hash, key);
     bool result = index != -1 ? true : false;
 
     if (result == true)
     {
-        //ponteiro de item que vai ser removido (out)
+        
+
         *ppData = bucket->data[index]->data;
 
         if (index != (int)(bucket->size) - 1)
         {
-            //swap  dos ponteiros de [index] e [size - 1]
+            
+
             struct BucketItem * pTemp = bucket->data[bucket->size - 1];
             bucket->data[bucket->size - 1] = bucket->data[index];
             bucket->data[index] = pTemp;
@@ -13825,7 +14690,7 @@ bool RemoveBucketItem(Bucket * bucket,
 bool Buckets_Init(Buckets * p,
                   int size)
 {
-    bool result = false /*nomem*/;
+    bool result = false  ;
     p->data = NULL;
     p->size = size;
 
@@ -13865,7 +14730,7 @@ bool Map_Init(Map * map, int nBuckets)
 
 bool Map_Create(Map * *pp, int nBuckets)
 {
-    bool result = false /*nomem*/;
+    bool result = false  ;
     Map * p = (Map *)Malloc(sizeof(Map));
     if (p)
     {
@@ -13900,7 +14765,8 @@ struct BucketItem * Map_FindNode(Map * map, const char * key)
         return NULL;
     }
 
-    //assert(key != NULL);
+    
+
     uint32_t hash = HashFunc(key);
     int bucket_n = hash % map->buckets.size;
 
@@ -13923,7 +14789,8 @@ struct BucketItem * Map_FindNode(Map * map, const char * key)
 
 bool Map_SetMoveKey(Map * map, String * *key, void * data)
 {
-    //assert(key != NULL);
+    
+
     bool result;
 
     struct BucketItem * pNode = Map_FindNode(map, *key);
@@ -13963,7 +14830,7 @@ bool Map_SetMoveKey(Map * map, String * *key, void * data)
                                           data);
         if (result == true)
         {
-            result = Bucket_Append(bucket, node /*moved*/);
+            result = Bucket_Append(bucket, node  );
         }
     }
 
@@ -13977,17 +14844,20 @@ bool Map_SetMoveKey(Map * map, String * *key, void * data)
 
 bool Map_Set(Map * map, const char * key, void * data)
 {
-    //assert(key != NULL);
+    
+
     void * pv;
     bool result = Map_Find(map, key, &pv);
     if (result == true)
     {
         return false;
-        ////assert(false);
+        
+
     }
 
 
-    //assert(key != NULL);
+    
+
     String * /*@auto*/ localkey = StrDup(key);
     result = Map_SetMoveKey(map, &localkey, data);
     Free(localkey);
@@ -13997,7 +14867,8 @@ bool Map_Set(Map * map, const char * key, void * data)
 
 bool Map_Find(Map * map, const char * key, void ** pp)
 {
-    //assert(key != NULL);
+    
+
     struct BucketItem * pNode = Map_FindNode(map, key);
     bool result = pNode ? true : false;
 
@@ -14019,7 +14890,8 @@ void * Map_Find2(Map * map, const char * key)
 
 bool Map_DeleteEx(Map * map, const char * key, void ** pp)
 {
-    //assert(key != NULL);
+    
+
     uint32_t hash = HashFunc(key);
     int bucket_n = hash % map->buckets.size;
 
@@ -14041,7 +14913,8 @@ bool Map_DeleteEx(Map * map, const char * key, void ** pp)
 
 bool Map_DeleteItemOpt(Map * map, const char * key, void(*pfDestroyData)(void *))
 {
-    //assert(key != NULL);
+    
+
     void * p;
     bool result = Map_DeleteEx(map, key, &p);
     if (result == true)
@@ -14058,10 +14931,12 @@ bool Map_DeleteItem(Map * map, const char * key, void(*pfDestroyData)(void *))
 {
     bool result = Map_DeleteItemOpt(map, key, pfDestroyData);
     void * p;
-    ////assert(Map_Find(map, key, &p) != true);
+    
+
     if (Map_Find(map, key, &p) == true)
     {
-        //assert(false);
+        
+
         Map_DeleteItemOpt(map, key, pfDestroyData);
     }
     return result;
@@ -14103,11 +14978,13 @@ void Map_Swap(Map * map, Map * map2)
     Map temp = *map2;
     *map2 = *map;
     *map = temp;
-    //Buckets_Swap(&map->buckets, &map2->buckets);
+    
+
 }
 
 
-////
+
+
 
 bool MultiMap_Init(MultiMap * map, int nBuckets)
 {
@@ -14126,7 +15003,8 @@ void MultiMap_Destroy(MultiMap * map, void(*pfDestroyData)(void *))
 
 bool MultiMap_Add(MultiMap * map, const char * key, void * data)
 {
-    //assert(key != NULL);
+    
+
     bool result;
 
     uint32_t hash = HashFunc(key);
@@ -14135,7 +15013,8 @@ bool MultiMap_Add(MultiMap * map, const char * key, void * data)
 
     if (bucket == NULL)
     {
-        //N�o existia..criar
+        
+
         result = Bucket_Create(&bucket);
         if (result == true)
         {
@@ -14149,7 +15028,8 @@ bool MultiMap_Add(MultiMap * map, const char * key, void * data)
 
     if (result == true)
     {
-        //Adiciona no fim - n�o verifica se ja existe
+        
+
         String * /*@auto*/stemp = StrDup(key);
 
         struct BucketItem * node;
@@ -14162,7 +15042,7 @@ bool MultiMap_Add(MultiMap * map, const char * key, void * data)
 
         if (result == true)
         {
-            result = Bucket_Append(bucket, node /*moved*/);
+            result = Bucket_Append(bucket, node  );
         }
     }
 
@@ -14182,7 +15062,8 @@ Bucket * MultiMap_FindBucket(MultiMap * map, const char * key)
         return NULL;
     }
 
-    //assert(key != NULL);
+    
+
     uint32_t hash = HashFunc(key);
     int bucket_n = hash % map->buckets.size;
 
@@ -14202,10 +15083,7 @@ void MultiMap_Swap(MultiMap * map, MultiMap * map2)
     *map2 = *map;
     *map = temp;
 }
-/*
-  based on
-  https://github.com/dspinellis/cscout/blob/084d64dc7a0c5466dc2d505c1ca16fb303eb2bf1/src/macro.cpp
-*/
+ 
 
 
 
@@ -14258,7 +15136,8 @@ void Glue(const struct TokenArray * lsI,
           const struct TokenArray * rsI,
           struct TokenArray * out);
 
-// Return a new token sequence with hs added to the hide set of every element of ts
+
+
 void HidenSetAdd(const TokenSet * hs,
                  const struct TokenArray * ts,
                  struct TokenArray * pOut)
@@ -14278,9 +15157,11 @@ void HidenSetAdd(const TokenSet * hs,
         TokenArray_PushBack(pOut, PPToken_Clone(t));
     }
 
-    //printf("hsadd returns: ");
+    
+
     TokenArray_Print(pOut);
-    //printf("\n");
+    
+
 }
 
 void ExpandMacro(const struct TokenArray * pTokenSequence,
@@ -14291,11 +15172,7 @@ void ExpandMacro(const struct TokenArray * pTokenSequence,
                  struct Macro * caller,
                  struct TokenArray * pOutputSequence);
 
-/*
-Retorna o indice do primeiro token que não for espaço
-a partir e incluindo o indice start.
-Return -1 se não achar.
-*/
+ 
 int FindNoSpaceIndex(const struct TokenArray * pArray, int start)
 {
     int result = -1;
@@ -14312,7 +15189,8 @@ int FindNoSpaceIndex(const struct TokenArray * pArray, int start)
     return result;
 }
 
-// Return s with all \ and " characters \ escaped
+
+
 void AppendEscaped(StrBuilder * strBuilder,
                    const char * source)
 {
@@ -14324,7 +15202,8 @@ void AppendEscaped(StrBuilder * strBuilder,
             case '"':
                 StrBuilder_AppendChar(strBuilder, '\\');
 
-                // FALTHROUGH
+                
+
             default:
                 StrBuilder_AppendChar(strBuilder, *source);
         }
@@ -14333,27 +15212,17 @@ void AppendEscaped(StrBuilder * strBuilder,
     }
 }
 
-/*
-* Convert a list of tokens into a string as specified by the # operator
-* Multiple spaces are converted to a single space, \ and " are
-* escaped
-*/
+ 
 void AppendStringize(StrBuilder * strBuilder, const struct TokenArray * ts)
 {
-    /*
-    Each occurrence of white space between the arguments
-    preprocessing tokens becomes a single space character in
-    the character string literal.
-    */
+     
 
-    /*
-    White space before the first preprocessing token and after the
-    last preprocessing token composing the argument is deleted.
-    */
+     
 
     StrBuilder_Append(strBuilder, "\"");
 
-    bool seen_space = true;   // To delete leading spaces
+    bool seen_space = true;   
+
 
     for (int i = 0; i < ts->Size; i++)
     {
@@ -14395,19 +15264,17 @@ void AppendStringize(StrBuilder * strBuilder, const struct TokenArray * ts)
 
     StrBuilder_Append(strBuilder, "\"");
 
-    // Remove trailing spaces
+    
+
     StrBuilder_Trim(strBuilder);
 }
 
 
-/*
-* Substitute the arguments args appearing in the input sequence is
-* Result is created in the output sequence os and finally has the specified
-* hide set added to it, before getting returned.
-*/
+ 
 void SubstituteArgs(struct Macro * pMacro,
                     const struct MacroMap * macros,
-                    const struct TokenArray * isOriginal,   //macro
+                    const struct TokenArray * isOriginal,   
+
                     const TokenArrayMap * args,
                     TokenSet * hs,
                     bool skip_defined,
@@ -14417,7 +15284,8 @@ void SubstituteArgs(struct Macro * pMacro,
 {
     TokenArray_Clear(pOutputSequence);
 
-    //Trabalha com uma copia
+    
+
     struct TokenArray is = TOKENARRAY_INIT;
     TokenArray_AppendCopy(&is, isOriginal);
 
@@ -14427,24 +15295,25 @@ void SubstituteArgs(struct Macro * pMacro,
     while (is.Size > 0)
     {
 
-        //printf("subst: is=");
-        TokenArray_Print(&is);
-        //printf(" os=");
-        TokenArray_Print(&os);
-        //printf("\n");
+        
 
-        //assert(head == NULL);
+        TokenArray_Print(&is);
+        
+
+        TokenArray_Print(&os);
+        
+
+
+        
+
         head = TokenArray_PopFront(&is);
 
         if (PPToken_IsStringizingOp(head))
         {
-            /*
-            Each # preprocessing token in the replacement list for
-            a function-like macro shall be followed by a parameter
-            as the next preprocessing token in the replacement list.
-            */
+             
 
-            // Stringizing operator
+            
+
             int idx = FindNoSpaceIndex(&is, 0);
             struct TokenArray * aseq;
 
@@ -14452,18 +15321,13 @@ void SubstituteArgs(struct Macro * pMacro,
                 args != NULL &&
                 TokenArrayMap_Lookup(args, is.pItems[idx]->Lexeme, &aseq))
             {
-                /*
-                If, in the replacement list, a parameter is immediately
-                preceded by a # preprocessing token, both are replaced
-                by a single character string literal preprocessing token that
-                contains the spelling of the preprocessing token sequence
-                for the corresponding argument.
-                */
+                 
                 StrBuilder strBuilder = STRBUILDER_INIT;
                 AppendStringize(&strBuilder, aseq);
                 TokenArray_Erase(&is, 0, idx + 1);
 
-                //TODO token tipo?
+                
+
                 TokenArray_PushBack(&os, PPToken_Create(strBuilder.c_str, PPTokenType_Other));
                 StrBuilder_Destroy(&strBuilder);
 
@@ -14477,12 +15341,7 @@ void SubstituteArgs(struct Macro * pMacro,
         else if (PPToken_IsConcatOp(head))
         {
 
-            /*
-            If, in the replacement list of a function-like macro,
-            a parameter is immediately preceded or followed by
-            a ## preprocessing token, the parameter is replaced by
-            the corresponding arguments preprocessing token sequence;
-            */
+             
             int idx = FindNoSpaceIndex(&is, 0);
 
             if (idx != -1)
@@ -14493,7 +15352,8 @@ void SubstituteArgs(struct Macro * pMacro,
                 {
                     TokenArray_Erase(&is, 0, idx + 1);
 
-                    // Only if actuals can be empty
+                    
+
                     if (aseq->Size > 0)
                     {
                         struct TokenArray os2 = TOKENARRAY_INIT;
@@ -14530,44 +15390,29 @@ void SubstituteArgs(struct Macro * pMacro,
             if (idx != -1 &&
                 PPToken_IsConcatOp(is.pItems[idx]))
             {
-                /*
-                * Implement the following gcc extension:
-                *  "`##' before a
-                *   rest argument that is empty discards the preceding sequence of
-                *   non-whitespace characters from the macro definition.  (If another macro
-                *   argument precedes, none of it is discarded.)"
-                * Otherwise, break to process a non-formal argument in the default way
-                */
+                 
                 struct TokenArray * aseq;
 
                 if (!TokenArrayMap_Lookup(args, head->Lexeme, &aseq))
                 {
-                    /*
-                    if (m.get_is_vararg())
-                    {
-                    ti2 = find_nonspace(ti + 1, is.end());
+                     
+                    
 
-                    if (ti2 != is.end() && (ai = find_formal_argument(args, *ti2)) != args.end() && ai->second.size() == 0)
-                    {
-                    // All conditions satisfied; discard elements:
-                    // <non-formal> <##> <empty-formal>
-                    is.erase(is.begin(), ++ti2);
-                    continue;
-                    }
-                    }
-                    */
-                    // Non-formal arguments don't deserve special treatment
                     TokenArray_PushBack(&os, head);
-                    head = NULL; //moved
+                    head = NULL; 
+
                 }
                 else
                 {
-                    // Paste but not expand LHS, RHS
+                    
 
-                    // Only if actuals can be empty
+
+                    
+
                     if (aseq->Size == 0)
                     {
-                        // Erase including ##
+                        
+
                         TokenArray_Erase(&is, 0, idx + 1);
 
                         int idx2 = FindNoSpaceIndex(&is, 0);
@@ -14578,7 +15423,8 @@ void SubstituteArgs(struct Macro * pMacro,
 
                             if (!TokenArrayMap_Lookup(args, is.pItems[idx2]->Lexeme, &aseq2))
                             {
-                                // Erase the ## RHS
+                                
+
                                 TokenArray_Erase(&is, 0, idx + 1);
                                 TokenArray_AppendCopy(&os, aseq);
                             }
@@ -14587,12 +15433,15 @@ void SubstituteArgs(struct Macro * pMacro,
 
                     else
                     {
-                        // Erase up to ##
+                        
+
                         TokenArray_Print(&is);
-                        //printf("-\n");
+                        
+
                         TokenArray_Erase(&is, 0, idx);
                         TokenArray_Print(&is);
-                        //printf("-\n");
+                        
+
                         TokenArray_AppendCopy(&os, aseq);
                     }
                 }
@@ -14608,7 +15457,8 @@ void SubstituteArgs(struct Macro * pMacro,
             if (args != NULL &&
                 TokenArrayMap_Lookup(args, head->Lexeme, &argseq))
             {
-                //expand head
+                
+
                 struct TokenArray expanded = TOKENARRAY_INIT;
                 ExpandMacro(argseq, macros, false, skip_defined, evalmode, pCaller, &expanded);
                 TokenArray_AppendMove(&os, &expanded);
@@ -14622,9 +15472,11 @@ void SubstituteArgs(struct Macro * pMacro,
         }
 
         TokenArray_PushBack(&os, head);
-        head = NULL; //moved
+        head = NULL; 
+
     }
-    //assert(head == NULL);
+    
+
     struct TokenArray os2 = TOKENARRAY_INIT;
     HidenSetAdd(hs, &os, &os2);
 
@@ -14635,14 +15487,7 @@ void SubstituteArgs(struct Macro * pMacro,
     TokenArray_Destroy(&is);
 }
 
-/*
-* Return a macro argument token from tokens
-* Used by gather_args.
-* If get_more is true when tokens is exhausted read using pdtoken::getnext_noexpand
-* (see explanation on that method's comment for why we use pdtoken, rather than pltoken)
-* Leave in tokens the first token not gathered.
-* If want_space is true return spaces, otherwise discard them
-*/
+ 
 void ArgToken(struct TokenArray * tokens,
               bool get_more,
               bool want_space,
@@ -14653,77 +15498,10 @@ void ArgToken(struct TokenArray * tokens,
     PPToken_Delete(pToken);
     pToken = NULL;
 
-    /*  if (want_space)
-      {
-        if (tokens->Size > 0)
-        {
-        Token *pToken = TokenArray_PopFront(tokens);
-        PPToken_Swap(pToken, token);
-        PPToken_Destroy(pToken);
-          return;
-        }
-
-        else if (get_more)
-        {
-          //Pdtoken t;
-          //t.getnext_noexpand();
-          //return (t);
-        }
-
-      else
-      {
-        String2_Set(&token->Lexeme, NULL);
-        //return Ptoken(EOF, "");
-      }
-      }
-
-      else
-      {
-        while (tokens->Size > 0 && PPToken_IsSpace(tokens->pItems[0]))
-        {
-        Token* p = TokenArray_PopFront(tokens);
-        PPToken_Delete(p);
-        }
-
-        if (tokens->Size > 0)
-        {
-        Token* p = TokenArray_PopFront(tokens);
-        PPToken_Swap(p, token);
-        PPToken_Delete(p);
-
-          return;
-        }
-
-        else if (get_more)
-        {
-          //Pdtoken t;
-
-          //do
-          //{
-            //t.getnext_noexpand_nospc();
-          //}
-          //while (t.get_code() != EOF && t.is_space());
-
-          //return (t);
-        }
-
-      else
-      {
-        String2_Set(&token->Lexeme, NULL);
-        //return Ptoken(EOF, "");
-      }
-      }  */
+     
 }
 
-/*
-* Get the macro arguments specified in formal_args, initiallly by
-* removing them from tokens, then, if get_more is true,
-from pdtoken.getnext_noexpand.
-* The opening bracket has already been gathered.
-* Build the map from formal name to argument value args.
-* Return in close the closing bracket token (used for its hideset)
-* Return true if ok, false on error.
-*/
+ 
 bool GatherArgs(const char * name,
                 struct TokenArray * tokens,
                 const struct TokenArray * formal_args,
@@ -14751,7 +15529,8 @@ bool GatherArgs(const char * name,
 
         else if (is_vararg && i + 2 == formal_args->Size)
         {
-            // Vararg last argument is optional; terminate with ) or ,
+            
+
             terminate = '.';
         }
 
@@ -14762,13 +15541,16 @@ bool GatherArgs(const char * name,
 
         int bracket = 0;
 
-        // Get a single argument
+        
+
         for (;;)
         {
             ArgToken(tokens, get_more, true, &t);
-            //printf("tokens=");
+            
+
             TokenArray_Print(tokens);
-            //printf("\n");
+            
+
 
             if (bracket == 0 && (
                 (terminate == '.' && (PPToken_IsChar(&t, ',') || PPToken_IsChar(&t, ')'))) ||
@@ -14787,14 +15569,12 @@ bool GatherArgs(const char * name,
                 bracket--;
             }
 
-            else if (PPToken_IsChar(&t, '\0')) //EOF
+            else if (PPToken_IsChar(&t, '\0')) 
+
             {
-                /*
-                * @error
-                * The end of file was reached while
-                * gathering a macro's arguments
-                */
-                //printf("macro [%s] EOF while reading function macro arguments", name);
+                 
+                
+
                 return (false);
             }
 
@@ -14806,11 +15586,14 @@ bool GatherArgs(const char * name,
             TokenArray_PushBack(pV, PPToken_Clone(&t));
         }
 
-        //printf("Gather args returns: ");
-        TokenArray_Print(pV);
-        //printf("\n");
+        
 
-        // Check if varargs last optional argument was not supplied
+        TokenArray_Print(pV);
+        
+
+
+        
+
         if (terminate == '.' && PPToken_IsChar(&t, ')'))
         {
             i++;
@@ -14820,8 +15603,10 @@ bool GatherArgs(const char * name,
                                 formal_args->pItems[i]->Lexeme,
                                 pV2);
 
-            // Instantiate argument with an empty value list
-            //args[(*i).get_val()];
+            
+
+            
+
             break;
         }
 
@@ -14835,12 +15620,9 @@ bool GatherArgs(const char * name,
 
         if (PPToken_IsChar(&t, ')'))
         {
-            /*
-            * @error
-            * The arguments to a function-like macro did
-            * not terminate with a closing bracket
-            */
-            //printf("macro [%s] close bracket expected for function-like macro", name);
+             
+            
+
             return (false);
         }
     }
@@ -14851,19 +15633,18 @@ bool GatherArgs(const char * name,
     return (true);
 }
 
-/*
-* Remove from tokens and return the elements comprising the arguments to the defined
-* operator, * such as "defined X" or "defined(X)"
-* This is the rule when processing #if #elif expressions
-*/
+ 
 void GatherDefinedOperator(struct TokenArray * tokens,
                            const struct MacroMap * macros,
                            struct TokenArray * result)
 {
-    //struct TokenArray tokens = TOKENARRAY_INIT;
-    //TokenArray_AppendCopy(&tokens, tokensIn);
+    
 
-    // Skip leading space
+    
+
+
+    
+
     while (PPToken_IsSpace(tokens->pItems[0]))
     {
         struct PPToken * pp = TokenArray_PopFront(tokens);
@@ -14872,7 +15653,8 @@ void GatherDefinedOperator(struct TokenArray * tokens,
 
     if ((PPToken_IsIdentifier(tokens->pItems[0])))
     {
-        // defined X form
+        
+
         if (MacroMap_Find(macros, tokens->pItems[0]->Lexeme) != NULL)
         {
             struct PPToken * pp0 = TokenArray_PopFront(tokens);
@@ -14898,7 +15680,8 @@ void GatherDefinedOperator(struct TokenArray * tokens,
 
     else if ((PPToken_IsChar(tokens->pItems[0], '(')))
     {
-        // defined (X) form
+        
+
 
 
         PPToken_Delete(TokenArray_PopFront(tokens));
@@ -14906,7 +15689,8 @@ void GatherDefinedOperator(struct TokenArray * tokens,
 
 
 
-        // Skip spaces
+        
+
         while (PPToken_IsSpace(tokens->pItems[0]))
         {
             struct PPToken * pp = TokenArray_PopFront(tokens);
@@ -14915,7 +15699,8 @@ void GatherDefinedOperator(struct TokenArray * tokens,
 
         if (!PPToken_IsIdentifier(tokens->pItems[0]))
         {
-            //goto error;
+            
+
         }
 
         if (MacroMap_Find(macros, tokens->pItems[0]->Lexeme) != NULL)
@@ -14938,10 +15723,13 @@ void GatherDefinedOperator(struct TokenArray * tokens,
             TokenArray_PushBack(result, pp0);
         }
 
-        //PPToken* pp = TokenArray_PopFront(&tokens);
-        //TokenArray_PushBack(result, pp);
+        
 
-        // Skip spaces
+        
+
+
+        
+
         while (PPToken_IsSpace(tokens->pItems[0]))
         {
             struct PPToken * pp = TokenArray_PopFront(tokens);
@@ -14950,11 +15738,13 @@ void GatherDefinedOperator(struct TokenArray * tokens,
 
         if (!PPToken_IsChar(tokens->pItems[0], ')'))
         {
-            //goto error;
+            
+
         }
 
         PPToken_Delete(TokenArray_PopFront(tokens));
-        //TokenArray_PushBack(result, pp);
+        
+
 
         return;
     }
@@ -14980,25 +15770,32 @@ void ExpandMacro(const struct TokenArray * tsOriginal,
     struct TokenArray ts = TOKENARRAY_INIT;
     TokenArray_AppendCopy(&ts, tsOriginal);
 
-    //printf("Expanding: ");
-    TokenArray_Print(&ts);
-    //printf("\n");
+    
 
-    struct PPToken * pHead = NULL; //muito facil ter leaks
+    TokenArray_Print(&ts);
+    
+
+
+    struct PPToken * pHead = NULL; 
+
     while (ts.Size > 0)
     {
-        //printf("r = ");
-        TokenArray_Print(&r);
-        //printf("\n");
+        
 
-        //assert(pHead == NULL);
+        TokenArray_Print(&r);
+        
+
+
+        
+
         pHead =
             TokenArray_PopFront(&ts);
 
         if (!PPToken_IsIdentifier(pHead))
         {
             TokenArray_PushBack(&r, pHead);
-            pHead = NULL; //moved
+            pHead = NULL; 
+
             continue;
         }
 
@@ -15021,17 +15818,21 @@ void ExpandMacro(const struct TokenArray * tsOriginal,
 
         if (pMacro == NULL)
         {
-            //if eval mode se nao achar a macro
-            //ela vira zero
+            
+
+            
+
             if (evalmode)
             {
                 Free(pHead->Lexeme);
                 pHead->Lexeme = StrDup("0");
                 pHead->Token = PPTokenType_Number;
             }
-            // Nothing to do if the identifier is not a macro
+            
+
             TokenArray_PushBack(&r, pHead);
-            pHead = NULL; //moved
+            pHead = NULL; 
+
             continue;
         }
 
@@ -15040,37 +15841,46 @@ void ExpandMacro(const struct TokenArray * tsOriginal,
 
         if (pFound)
         {
-            // Skip the head token if it is in the hideset
-            //printf("Skipping (head is in HS)\n");
+            
+
+            
+
             TokenArray_PushBack(&r, pHead);
-            pHead = NULL;//moved
+            pHead = NULL;
+
             continue;
         }
 
         struct TokenArray removed_spaces = TOKENARRAY_INIT;
 
-        //printf("replacing for %s tokens=", pMacro->Name);
+        
+
         TokenArray_Print(&ts);
-        //printf("\n");
+        
+
 
         if (!pMacro->bIsFunction)
         {
-            // Object-like macro
-            //printf("Object-like macro\n");
+            
+
+            
+
 
             TokenSet hiddenSet = TOKENSET_INIT;
             TokenSetAppendCopy(&hiddenSet, &pHead->HiddenSet);
             TokenSet_PushBack(&hiddenSet, PPToken_Create(pHead->Lexeme, pHead->Token));
 
             PPToken_Delete(pHead);
-            pHead = NULL; //usado deletado
+            pHead = NULL; 
+
 
             struct TokenArray s = TOKENARRAY_INIT;
 
             SubstituteArgs(pMacro,
                            macros,
                            &pMacro->TokenSequence,
-                           NULL, //empty args
+                           NULL, 
+
                            &hiddenSet,
                            skip_defined,
                            evalmode,
@@ -15089,9 +15899,11 @@ void ExpandMacro(const struct TokenArray * tsOriginal,
         else if (FillIn(&ts, get_more, &removed_spaces) &&
                  PPToken_IsOpenPar(ts.pItems[0]))
         {
-            //printf("Application of a function-like macro\n");
+            
 
-            // Map from formal name to value
+
+            
+
             TokenArrayMap args = TOKENARRAYMAP_INIT;
 
             PPToken_Delete(TokenArray_PopFront(&ts));
@@ -15103,31 +15915,32 @@ void ExpandMacro(const struct TokenArray * tsOriginal,
                 &pMacro->FormalArguments,
                 &args,
                 get_more,
-                false, /*m.is_vararg,*/
+                false,  
                 &close))
             {
                 PPToken_Destroy(&close);
                 PPToken_Delete(pHead);
-                pHead = NULL;//deletado
-                continue; // Attempt to bail-out on error
+                pHead = NULL;
+
+                continue; 
+
             }
 
 
-            /*
-            After the arguments for the invocation of a function-like
-            macro have been identified, argument substitution takes place.
-            */
+             
 
             TokenSet hs = TOKENSET_INIT;
 
-            //merge head and close
+            
+
             SetIntersection(&pHead->HiddenSet,
                             &close.HiddenSet,
                             &hs);
             TokenSet_PushBack(&hs, PPToken_Create(pMacro->Name, PPTokenType_Identifier));
 
             PPToken_Delete(pHead);
-            pHead = NULL;//deletado
+            pHead = NULL;
+
 
             struct TokenArray s = TOKENARRAY_INIT;
 
@@ -15154,21 +15967,27 @@ void ExpandMacro(const struct TokenArray * tsOriginal,
 
         else
         {
-            // Function-like macro name lacking a (
-            //printf("splicing: [");
+            
+
+            
+
             TokenArray_Print(&removed_spaces);
-            //printf("]\n");
+            
+
             TokenArray_AppendMove(&removed_spaces, &ts);
             TokenArray_Swap(&removed_spaces, &ts);
             TokenArray_PushBack(&r, pHead);
-            pHead = NULL; //moved
+            pHead = NULL; 
+
         }
 
-        //TokenArray_Contains(pHead->HiddenSet, pMacro->Name);
+        
+
         TokenArray_Destroy(&removed_spaces);
     }
 
-    //assert(pHead == NULL);
+    
+
 
     TokenArray_Swap(&r, pOutputSequence2);
 
@@ -15177,11 +15996,7 @@ void ExpandMacro(const struct TokenArray * tsOriginal,
 }
 
 
-/*
-* Try to ensure that ts has at least one non-space token
-* Return true if this is the case
-* Return any discarded space tokens in removed
-*/
+ 
 bool FillIn(struct TokenArray * ts, bool get_more, struct TokenArray * removed)
 {
     while (ts->Size > 0 &&
@@ -15195,27 +16010,7 @@ bool FillIn(struct TokenArray * ts, bool get_more, struct TokenArray * removed)
         return true;
     }
 
-    /*if (get_more)
-    {
-    Pdtoken t;
-
-    for (;;)
-    {
-    t.getnext_noexpand();
-
-    if (t.get_code() == EOF)
-    return (false);
-
-    else if (t.is_space())
-    removed.push_back(t);
-
-    else
-    break;
-    }
-
-    ts.push_back(t);
-    return (true);
-    }*/
+     
 
     return (false);
 }
@@ -15223,7 +16018,8 @@ bool FillIn(struct TokenArray * ts, bool get_more, struct TokenArray * removed)
 
 
 
-// Paste last of left side with first of right side
+
+
 
 void Glue(const struct TokenArray * lsI,
           const struct TokenArray * rsI,
@@ -15266,16 +16062,21 @@ void Glue(const struct TokenArray * lsI,
 
         else
         {
-            //Junta o ultimo token do lado esquerdo
-            //com o primeiro do lado direito
+            
+
+            
+
 
             StrBuilder strNewLexeme = STRBUILDER_INIT;
 
             if (ls.Size > 0)
             {
-                //printf("glue LS: ");
-                //printf("%s", ls.pItems[ls.Size - 1]->Lexeme);
-                //printf("\n");
+                
+
+                
+
+                
+
 
                 StrBuilder_Append(&strNewLexeme, ls.pItems[ls.Size - 1]->Lexeme);
                 TokenArray_Pop(&ls);
@@ -15283,14 +16084,18 @@ void Glue(const struct TokenArray * lsI,
 
             if (rs.Size > 0)
             {
-                //printf("glue RS: ");
-                //printf("%s", rs.pItems[0]->Lexeme);
-                //printf("\n");
+                
+
+                
+
+                
+
                 StrBuilder_Append(&strNewLexeme, rs.pItems[0]->Lexeme);
                 TokenArray_Pop(&rs);
             }
 
-            //tipo?
+            
+
             TokenArray_PushBack(&ls, PPToken_Create(strNewLexeme.c_str, PPTokenType_Other));
             StrBuilder_Destroy(&strNewLexeme);
 
@@ -15299,9 +16104,11 @@ void Glue(const struct TokenArray * lsI,
         }
     }
 
-    //printf("glue returns: ");
+    
+
     TokenArray_Print(out);
-    //printf("\n");
+    
+
 
     TokenArray_Destroy(&ls);
     TokenArray_Destroy(&rs);
@@ -15451,7 +16258,8 @@ struct PPToken * PPToken_Create(const char * s, enum PPTokenType token)
     }
     else
     {
-        //assert(false);
+        
+
     }
 
     return p;
@@ -15697,16 +16505,22 @@ void TokenArray_Print(const struct TokenArray * tokens)
 {
     if (tokens->Size == 0)
     {
-        //printf("(empty)");
+        
+
     }
 
-    //for (int i = 0; i < tokens->Size; i++)
-    //{
+    
 
-      //printf(" '%s' ", tokens->pItems[i]->Lexeme);
+    
 
-    //}
-    //printf("\n");
+
+      
+
+
+    
+
+    
+
 
 }
 
@@ -15793,7 +16607,7 @@ void TokenArrayMap_Swap(TokenArrayMap * pA, TokenArrayMap * pB)
     *pB = t;
 }
 
-void TokenSet_PushBack(TokenSet * p, struct PPToken * pItem) /*custom*/
+void TokenSet_PushBack(TokenSet * p, struct PPToken * pItem)  
 {
     int r = 0;
     struct PPToken * pTk = TokenSet_Find(p, pItem->Lexeme);
@@ -15872,7 +16686,8 @@ void SetIntersection(const TokenSet * p1,
 
         while (first1 != last1 && first2 != last2)
         {
-            //if (comp(*first1, *first2))
+            
+
             if (strcmp(first1->Lexeme, first2->Lexeme) == 0)
             {
                 ++first1;
@@ -15880,14 +16695,18 @@ void SetIntersection(const TokenSet * p1,
 
             else
             {
-                //if (!comp(*first2, *first1))
+                
+
                 if (strcmp(first2->Lexeme, first1->Lexeme) != 0)
                 {
-                    //*d_first++ = *first1++;
+                    
+
                     TokenSet_PushBack(pResult, PPToken_Clone(first1));
                     first1++;
-                    //*d_first++ = *first1++;
-                    //d_first
+                    
+
+                    
+
                 }
 
                 ++first2;
@@ -15908,31 +16727,13 @@ void SetIntersection(const TokenSet * p1,
 
 }
 
-/*
-http://en.cppreference.com/w/cpp/algorithm/set_intersection
-template<class InputIt1, class InputIt2,
-class OutputIt, class Compare>
-OutputIt set_intersection(InputIt1 first1, InputIt1 last1,
-InputIt2 first2, InputIt2 last2,
-OutputIt d_first, Compare comp)
-{
-while (first1 != last1 && first2 != last2) {
-if (comp(*first1, *first2)) {
-++first1;
-} else {
-if (!comp(*first2, *first1)) {
-*d_first++ = *first1++;
-}
-++first2;
-}
-}
-return d_first;
-}
-*/
-//#include "Map.h"
+ 
 
 
-//#include "stdafx.h"
+
+
+
+
 
 
 
@@ -15957,8 +16758,10 @@ static MapItem2 * Map2_GetAssocAt(
 
 unsigned int String2_HashKey(const char * Key)
 {
-    // hash key to unsigned int value by pseudorandomizing transform
-    // (algorithm copied from STL string hash in xfunctional)
+    
+
+    
+
     unsigned int uHashVal = 2166136261U;
     unsigned int uFirst = 0;
     unsigned int uLast = (unsigned int)strlen(Key);
@@ -16107,7 +16910,8 @@ bool Map2_RemoveKey(Map2 * pMap,
             if ((pKeyValue->HashValue == HashValue) &&
                 (strcmp(pKeyValue->Key, Key) == 0))
             {
-                // remove from list
+                
+
                 *ppKeyValuePrev = pKeyValue->pNext;
                 *ppValue = pKeyValue->pValue;
                 KeyValue_Delete(pKeyValue);
@@ -16219,13 +17023,15 @@ void Map2_Delete(Map2 * p, void(*DeleteFunc)(void *))
 
 
 
-void Options_Destroy(struct Options * options) /*default*/
+void Options_Destroy(struct Options * options)  
 {
 }
-//#include "Map.h"
 
 
-//#include "stdafx.h"
+
+
+
+
 
 
 
@@ -16243,7 +17049,7 @@ static void SymbolMap_KeyValue_Delete(struct SymbolMapItem * p)
     }
 }
 
-static struct SymbolMapItem * SymbolMap_GetAssocAt(
+struct SymbolMapItem * SymbolMap_GetAssocAt(
     struct SymbolMap * pMap,
     const char * Key,
     unsigned int * nHashBucket,
@@ -16252,8 +17058,10 @@ static struct SymbolMapItem * SymbolMap_GetAssocAt(
 
 static unsigned int SymbolMap_String2_HashKey(const char * Key)
 {
-    // hash key to unsigned int value by pseudorandomizing transform
-    // (algorithm copied from STL string hash in xfunctional)
+    
+
+    
+
     unsigned int uHashVal = 2166136261U;
     unsigned int uFirst = 0;
     unsigned int uLast = (unsigned int)strlen(Key);
@@ -16273,8 +17081,8 @@ void SymbolMap_RemoveAll(struct SymbolMap * pMap)
     if (pMap->pHashTable != NULL)
     {
         for (int nHash = 0;
-             nHash < pMap->nHashTableSize;
-             nHash++)
+            nHash < pMap->nHashTableSize;
+            nHash++)
         {
             struct SymbolMapItem * pKeyValue =
                 pMap->pHashTable[nHash];
@@ -16315,7 +17123,7 @@ struct SymbolMapItem * SymbolMap_FindBucket(struct SymbolMap * pMap, const char 
     return pKeyValue;
 }
 
-static struct SymbolMapItem * SymbolMap_GetAssocAt(
+struct SymbolMapItem * SymbolMap_GetAssocAt(
     struct SymbolMap * pMap,
     const char * Key,
     unsigned int * nHashBucket,
@@ -16350,14 +17158,14 @@ static struct SymbolMapItem * SymbolMap_GetAssocAt(
 }
 
 TTypePointer * SymbolMap_Find(struct SymbolMap * pMap,
-                              const char * Key)
+    const char * Key)
 {
     TTypePointer * pTypePointer = NULL;
     unsigned int nHashBucket, HashValue;
     struct SymbolMapItem * pKeyValue = SymbolMap_GetAssocAt(pMap,
-                                                            Key,
-                                                            &nHashBucket,
-                                                            &HashValue);
+        Key,
+        &nHashBucket,
+        &HashValue);
 
     if (pKeyValue != NULL)
     {
@@ -16374,16 +17182,16 @@ TTypePointer * SymbolMap_Find(struct SymbolMap * pMap,
 }
 
 bool SymbolMap_LookupKey(struct SymbolMap * pMap,
-                         const char * Key,
-                         const char ** rKey)
+    const char * Key,
+    const char ** rKey)
 {
     bool bResult = false;
 
     unsigned int nHashBucket, HashValue;
     struct SymbolMapItem * pKeyValue = SymbolMap_GetAssocAt(pMap,
-                                                            Key,
-                                                            &nHashBucket,
-                                                            &HashValue);
+        Key,
+        &nHashBucket,
+        &HashValue);
 
     if (pKeyValue != NULL)
     {
@@ -16395,8 +17203,8 @@ bool SymbolMap_LookupKey(struct SymbolMap * pMap,
 }
 
 bool SymbolMap_RemoveKey(struct SymbolMap * pMap,
-                         const char * Key,
-                         TTypePointer ** ppValue)
+    const char * Key,
+    TTypePointer ** ppValue)
 {
     *ppValue = 0;
     bool bResult = false;
@@ -16416,7 +17224,8 @@ bool SymbolMap_RemoveKey(struct SymbolMap * pMap,
             if ((pKeyValue->HashValue == HashValue) &&
                 (strcmp(pKeyValue->Key, Key) == 0))
             {
-                // remove from list
+                
+
                 *ppKeyValuePrev = pKeyValue->pNext;
                 *ppValue = pKeyValue->pValue;
                 SymbolMap_KeyValue_Delete(pKeyValue);
@@ -16432,8 +17241,8 @@ bool SymbolMap_RemoveKey(struct SymbolMap * pMap,
 }
 
 int SymbolMap_SetAt(struct SymbolMap * pMap,
-                    const char * Key,
-                    TTypePointer * newValue)
+    const char * Key,
+    TTypePointer * newValue)
 {
     int result = 0;
 
@@ -16460,11 +17269,12 @@ int SymbolMap_SetAt(struct SymbolMap * pMap,
         unsigned int nHashBucket, HashValue;
         struct SymbolMapItem * pKeyValue =
             SymbolMap_GetAssocAt(pMap,
-                                 Key,
-                                 &nHashBucket,
-                                 &HashValue);
+                Key,
+                &nHashBucket,
+                &HashValue);
 
-        //if (pKeyValue == NULL)
+        
+
         {
             pKeyValue = (struct SymbolMapItem *)Malloc(sizeof(struct SymbolMapItem) * 1);
             pKeyValue->HashValue = HashValue;
@@ -16476,12 +17286,18 @@ int SymbolMap_SetAt(struct SymbolMap * pMap,
             result = 0;
         }
 
-        //else
-        //{
-        //    result = 1;
-        //    pKeyValue->pValue = newValue;
-        //    strset(pKeyValue->Key, Key);
-        //}
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
     }
 
     return result;
@@ -16527,52 +17343,52 @@ const char * PrintType(EType type)
 
     switch (type)
     {
-        case TypeNull:
-        case TDeclaration_ID:
-            return "TDeclaration_ID";
-        case TStaticAssertDeclaration_ID:
-        case TEofDeclaration_ID:
+    case TypeNull:
+    case TDeclaration_ID:
+        return "TDeclaration_ID";
+    case TStaticAssertDeclaration_ID:
+    case TEofDeclaration_ID:
 
-        case TSingleTypeSpecifier_ID:
-            return "TSingleTypeSpecifier_ID";
-        case TEnumSpecifier_ID:
-            return "TEnumSpecifier_ID";
-        case TStructUnionSpecifier_ID:
-            return "TStructUnionSpecifier_ID";
+    case TSingleTypeSpecifier_ID:
+        return "TSingleTypeSpecifier_ID";
+    case TEnumSpecifier_ID:
+        return "TEnumSpecifier_ID";
+    case TStructUnionSpecifier_ID:
+        return "TStructUnionSpecifier_ID";
 
-        case TStorageSpecifier_ID:
-        case TAtomicTypeSpecifier_ID:
-        case TTemplateTypeSpecifier_ID:
-        case TStructDeclaration_ID:
-        case TAlignmentSpecifier_ID:
-        case TTypeQualifier_ID:
-        case TFunctionSpecifier_ID:
-        case TCompoundStatement_ID:
-        case TExpressionStatement_ID:
-        case TSwitchStatement_ID:
-        case TLabeledStatement_ID:
-        case TForStatement_ID:
-        case TJumpStatement_ID:
-        case TAsmStatement_ID:
-        case TWhileStatement_ID:
-        case TDoStatement_ID:
-        case TIfStatement_ID:
-        case TypeName_ID:
+    case TStorageSpecifier_ID:
+    case TAtomicTypeSpecifier_ID:
+    case TTemplateTypeSpecifier_ID:
+    case TStructDeclaration_ID:
+    case TAlignmentSpecifier_ID:
+    case TTypeQualifier_ID:
+    case TFunctionSpecifier_ID:
+    case TCompoundStatement_ID:
+    case TExpressionStatement_ID:
+    case TSwitchStatement_ID:
+    case TLabeledStatement_ID:
+    case TForStatement_ID:
+    case TJumpStatement_ID:
+    case TAsmStatement_ID:
+    case TWhileStatement_ID:
+    case TDoStatement_ID:
+    case TIfStatement_ID:
+    case TypeName_ID:
 
-        case TInitializerListType_ID:
+    case TInitializerListType_ID:
 
-        case TPrimaryExpression_ID:
-        case TUnaryExpressionOperator_ID:
-        case TCastExpressionType_ID:
-        case TPrimaryExpressionValue_ID:
-        case TPrimaryExpressionLiteral_ID:
-        case TPostfixExpressionCore_ID:
-        case TBinaryExpression_ID:
-        case TTernaryExpression_ID:
-        case TEnumerator_ID:
-            break;
-        default:
-            break;
+    case TPrimaryExpression_ID:
+    case TUnaryExpressionOperator_ID:
+    case TCastExpressionType_ID:
+    case TPrimaryExpressionValue_ID:
+    case TPrimaryExpressionLiteral_ID:
+    case TPostfixExpressionCore_ID:
+    case TBinaryExpression_ID:
+    case TTernaryExpression_ID:
+    case TEnumerator_ID:
+        break;
+    default:
+        break;
     }
     return "";
 }
@@ -16675,13 +17491,14 @@ TDeclaration * SymbolMap_FindFunction(struct SymbolMap * pMap, const char * func
         unsigned int nHashBucket, HashValue;
         struct SymbolMapItem * pKeyValue =
             SymbolMap_GetAssocAt(pMap,
-                                 funcName,
-                                 &nHashBucket,
-                                 &HashValue);
+                funcName,
+                &nHashBucket,
+                &HashValue);
 
         while (pKeyValue != NULL)
         {
-            //Obs enum struct e union compartilham um mapa unico
+            
+
             if (pKeyValue->pValue->Type == TDeclaration_ID)
             {
                 if (strcmp(pKeyValue->Key, funcName) == 0)
@@ -16699,9 +17516,12 @@ TDeclaration * SymbolMap_FindFunction(struct SymbolMap * pMap, const char * func
     return pDeclaration;
 }
 
-TDeclaration * SymbolMap_FindObjFunction(struct SymbolMap * pMap,
-                                         const char * objName,
-                                         const char * funcName)
+
+
+
+TDeclaration * SymbolMap_FindObjFunction2(struct SymbolMap * pMap,
+    const char * objName,
+    const char * funcName)
 {
     if (objName == NULL || funcName == NULL)
     {
@@ -16725,13 +17545,14 @@ TStructUnionSpecifier * SymbolMap_FindStructUnion(struct SymbolMap * pMap, const
         unsigned int nHashBucket, HashValue;
         struct SymbolMapItem * pKeyValue =
             SymbolMap_GetAssocAt(pMap,
-                                 structTagName,
-                                 &nHashBucket,
-                                 &HashValue);
+                structTagName,
+                &nHashBucket,
+                &HashValue);
 
         while (pKeyValue != NULL)
         {
-            //Obs enum struct e union compartilham um mapa unico
+            
+
             if (pKeyValue->pValue->Type == TStructUnionSpecifier_ID)
             {
                 if (strcmp(pKeyValue->Key, structTagName) == 0)
@@ -16741,9 +17562,12 @@ TStructUnionSpecifier * SymbolMap_FindStructUnion(struct SymbolMap * pMap, const
                     if (pStructUnionSpecifier->StructDeclarationList.Size > 0 ||
                         pStructUnionSpecifier->UnionSet.pHead != NULL)
                     {
-                        //Se achou definicao completa pode sair
-                        //se achou um _union pode sair tb
-                        //pois nao tem definicao completa de union
+                        
+
+                        
+
+                        
+
                         break;
                     }
                 }
@@ -16765,13 +17589,14 @@ TEnumSpecifier * SymbolMap_FindEnum(struct SymbolMap * pMap, const char * enumTa
         unsigned int nHashBucket, HashValue;
         struct SymbolMapItem * pKeyValue =
             SymbolMap_GetAssocAt(pMap,
-                                 enumTagName,
-                                 &nHashBucket,
-                                 &HashValue);
+                enumTagName,
+                &nHashBucket,
+                &HashValue);
 
         while (pKeyValue != NULL)
         {
-            //Obs enum struct e union compartilham um mapa unico
+            
+
             if (pKeyValue->pValue->Type == TEnumSpecifier_ID)
             {
                 if (strcmp(pKeyValue->Key, enumTagName) == 0)
@@ -16780,7 +17605,8 @@ TEnumSpecifier * SymbolMap_FindEnum(struct SymbolMap * pMap, const char * enumTa
                         (TEnumSpecifier *)pKeyValue->pValue;
                     if (pEnumSpecifier->EnumeratorList.pHead != NULL)
                     {
-                        //Se achou definicao completa pode sair
+                        
+
                         break;
                     }
                 }
@@ -16794,7 +17620,7 @@ TEnumSpecifier * SymbolMap_FindEnum(struct SymbolMap * pMap, const char * enumTa
 
 
 TDeclaration * SymbolMap_FindTypedefDeclarationTarget(struct SymbolMap * pMap,
-                                                      const char * typedefName)
+    const char * typedefName)
 {
     TDeclaration * pDeclarationResult = NULL;
 
@@ -16804,9 +17630,9 @@ TDeclaration * SymbolMap_FindTypedefDeclarationTarget(struct SymbolMap * pMap,
         unsigned int nHashBucket, HashValue;
         struct SymbolMapItem * pKeyValue =
             SymbolMap_GetAssocAt(pMap,
-                                 typedefName,
-                                 &nHashBucket,
-                                 &HashValue);
+                typedefName,
+                &nHashBucket,
+                &HashValue);
 
         while (pKeyValue != NULL)
         {
@@ -16816,7 +17642,8 @@ TDeclaration * SymbolMap_FindTypedefDeclarationTarget(struct SymbolMap * pMap,
                 TDeclaration * pDeclaration =
                     (TDeclaration *)pKeyValue->pValue;
 
-                //typedef X Y;
+                
+
                 bool bIsTypedef = false;
                 const char * indirectTypedef = NULL;
                 for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
@@ -16826,48 +17653,52 @@ TDeclaration * SymbolMap_FindTypedefDeclarationTarget(struct SymbolMap * pMap,
 
                     switch (pItem->Type)
                     {
-                        case TStorageSpecifier_ID:
+                    case TStorageSpecifier_ID:
+                    {
+                        TStorageSpecifier * pStorageSpecifier =
+                            (TStorageSpecifier *)pItem;
+                        if (pStorageSpecifier->Token == TK_TYPEDEF)
                         {
-                            TStorageSpecifier * pStorageSpecifier =
-                                (TStorageSpecifier *)pItem;
-                            if (pStorageSpecifier->Token == TK_TYPEDEF)
-                            {
-                                bIsTypedef = true;
-                            }
+                            bIsTypedef = true;
                         }
-                        break;
-                        case TSingleTypeSpecifier_ID:
-                        {
-                            TSingleTypeSpecifier * pSingleTypeSpecifier =
-                                (TSingleTypeSpecifier *)pItem;
+                    }
+                    break;
+                    case TSingleTypeSpecifier_ID:
+                    {
+                        TSingleTypeSpecifier * pSingleTypeSpecifier =
+                            (TSingleTypeSpecifier *)pItem;
 
-                            if (pSingleTypeSpecifier->Token2 == TK_IDENTIFIER)
-                            {
-                                indirectTypedef = pSingleTypeSpecifier->TypedefName;
-                            }
+                        if (pSingleTypeSpecifier->Token2 == TK_IDENTIFIER)
+                        {
+                            indirectTypedef = pSingleTypeSpecifier->TypedefName;
                         }
+                    }
+                    break;
+                    default:
+                        
+
                         break;
-                        default:
-                            //assert(false);
-                            break;
                     }
                 }
                 if (!bIsTypedef)
                 {
-                    //Nao eh um typedef
+                    
+
                     break;
                 }
                 else
                 {
                     if (indirectTypedef != NULL)
                     {
-                        //eh um typedef indireto
+                        
+
                         pDeclarationResult =
                             SymbolMap_FindTypedefDeclarationTarget(pMap, indirectTypedef);
                     }
                     else
                     {
-                        //'e um typedef direto - retorna a declaracao que ele aparece
+                        
+
                         pDeclarationResult = pDeclaration;
                     }
                     break;
@@ -16880,15 +17711,20 @@ TDeclaration * SymbolMap_FindTypedefDeclarationTarget(struct SymbolMap * pMap,
     return pDeclarationResult;
 }
 
-//Acha o tipo final de um typedef
-//e vai somando as partes dos declaratos
-//por exemplo no meio do caminho dos typedefs
-//pode ter ponteiros e depois const etc.
+
+
+
+
+
+
+
+
 TDeclarationSpecifiers * SymbolMap_FindTypedefTarget(struct SymbolMap * pMap,
-                                                     const char * typedefName,
-                                                     TDeclarator * declarator)
+    const char * typedefName,
+    TDeclarator * declarator)
 {
-    //TDeclaration* pDeclarationResult = NULL;
+    
+
     TDeclarationSpecifiers * pSpecifiersResult = NULL;
 
 
@@ -16898,9 +17734,9 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefTarget(struct SymbolMap * pMap,
         unsigned int nHashBucket, HashValue;
         struct SymbolMapItem * pKeyValue =
             SymbolMap_GetAssocAt(pMap,
-                                 typedefName,
-                                 &nHashBucket,
-                                 &HashValue);
+                typedefName,
+                &nHashBucket,
+                &HashValue);
 
         while (pKeyValue != NULL)
         {
@@ -16910,7 +17746,8 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefTarget(struct SymbolMap * pMap,
                 TDeclaration * pDeclaration =
                     (TDeclaration *)pKeyValue->pValue;
 
-                //typedef X Y;
+                
+
                 bool bIsTypedef = false;
                 const char * indirectTypedef = NULL;
                 for (int i = 0; i < pDeclaration->Specifiers.Size; i++)
@@ -16919,36 +17756,38 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefTarget(struct SymbolMap * pMap,
 
                     switch (pItem->Type)
                     {
-                        case TStorageSpecifier_ID:
+                    case TStorageSpecifier_ID:
+                    {
+                        TStorageSpecifier * pStorageSpecifier =
+                            (TStorageSpecifier *)pItem;
+                        if (pStorageSpecifier->Token == TK_TYPEDEF)
                         {
-                            TStorageSpecifier * pStorageSpecifier =
-                                (TStorageSpecifier *)pItem;
-                            if (pStorageSpecifier->Token == TK_TYPEDEF)
-                            {
-                                bIsTypedef = true;
-                            }
+                            bIsTypedef = true;
                         }
-                        break;
-                        case TSingleTypeSpecifier_ID:
-                        {
-                            TSingleTypeSpecifier * pSingleTypeSpecifier =
-                                (TSingleTypeSpecifier *)pItem;
+                    }
+                    break;
+                    case TSingleTypeSpecifier_ID:
+                    {
+                        TSingleTypeSpecifier * pSingleTypeSpecifier =
+                            (TSingleTypeSpecifier *)pItem;
 
-                            if (pSingleTypeSpecifier->Token2 == TK_IDENTIFIER)
-                            {
-                                indirectTypedef = pSingleTypeSpecifier->TypedefName;
-                            }
+                        if (pSingleTypeSpecifier->Token2 == TK_IDENTIFIER)
+                        {
+                            indirectTypedef = pSingleTypeSpecifier->TypedefName;
                         }
+                    }
+                    break;
+                    default:
+                        
+
                         break;
-                        default:
-                            //assert(false);
-                            break;
 
                     }
                 }
                 if (!bIsTypedef)
                 {
-                    //Nao eh um typedef
+                    
+
                     break;
                 }
                 else
@@ -16959,7 +17798,8 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefTarget(struct SymbolMap * pMap,
                             TDeclaration_FindDeclarator(pDeclaration, typedefName);
                         if (pDeclarator)
                         {
-                            //copiar o pointer list deste typedef para o outro
+                            
+
                             ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
                             {
                                 TPointer * pNew = TPointer_Create();
@@ -16967,18 +17807,21 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefTarget(struct SymbolMap * pMap,
                                 TPointerList_PushBack(&declarator->PointerList, pNew);
                             }
 
-                            //eh um typedef indireto
+                            
+
                             pSpecifiersResult =
                                 SymbolMap_FindTypedefTarget(pMap, indirectTypedef, declarator);
                         }
                         else
                         {
-                            //assert(false);
+                            
+
                         }
                     }
                     else
                     {
-                        //'e um typedef direto - retorna a declaracao que ele aparece
+                        
+
                         pSpecifiersResult = &pDeclaration->Specifiers;
                     }
                     break;
@@ -16988,18 +17831,22 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefTarget(struct SymbolMap * pMap,
         }
     }
 
-    return pSpecifiersResult;// &pDeclarationResult->Specifiers;
+    return pSpecifiersResult;
+
 }
 
 
 
-//Acha o primeiro typedef
-//somas as partes do declarator
+
+
+
+
 TDeclarationSpecifiers * SymbolMap_FindTypedefFirstTarget(struct SymbolMap * pMap,
-                                                          const char * typedefName,
-                                                          TDeclarator * declarator)
+    const char * typedefName,
+    TDeclarator * declarator)
 {
-    //TDeclaration* pDeclarationResult = NULL;
+    
+
     TDeclarationSpecifiers * pSpecifiersResult = NULL;
 
 
@@ -17009,9 +17856,9 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefFirstTarget(struct SymbolMap * pMa
         unsigned int nHashBucket, HashValue;
         struct SymbolMapItem * pKeyValue =
             SymbolMap_GetAssocAt(pMap,
-                                 typedefName,
-                                 &nHashBucket,
-                                 &HashValue);
+                typedefName,
+                &nHashBucket,
+                &HashValue);
 
         while (pKeyValue != NULL)
         {
@@ -17021,7 +17868,8 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefFirstTarget(struct SymbolMap * pMa
                 TDeclaration * pDeclaration =
                     (TDeclaration *)pKeyValue->pValue;
 
-                //typedef X Y;
+                
+
                 bool bIsTypedef = false;
                 const char * indirectTypedef = NULL;
 
@@ -17032,35 +17880,37 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefFirstTarget(struct SymbolMap * pMa
 
                     switch (pItem->Type)
                     {
-                        case TStorageSpecifier_ID:
+                    case TStorageSpecifier_ID:
+                    {
+                        TStorageSpecifier * pStorageSpecifier =
+                            (TStorageSpecifier *)pItem;
+                        if (pStorageSpecifier->Token == TK_TYPEDEF)
                         {
-                            TStorageSpecifier * pStorageSpecifier =
-                                (TStorageSpecifier *)pItem;
-                            if (pStorageSpecifier->Token == TK_TYPEDEF)
-                            {
-                                bIsTypedef = true;
-                            }
+                            bIsTypedef = true;
                         }
-                        break;
-                        case TSingleTypeSpecifier_ID:
-                        {
-                            TSingleTypeSpecifier * pSingleTypeSpecifier =
-                                (TSingleTypeSpecifier *)pItem;
+                    }
+                    break;
+                    case TSingleTypeSpecifier_ID:
+                    {
+                        TSingleTypeSpecifier * pSingleTypeSpecifier =
+                            (TSingleTypeSpecifier *)pItem;
 
-                            if (pSingleTypeSpecifier->Token2 == TK_IDENTIFIER)
-                            {
-                                indirectTypedef = pSingleTypeSpecifier->TypedefName;
-                            }
+                        if (pSingleTypeSpecifier->Token2 == TK_IDENTIFIER)
+                        {
+                            indirectTypedef = pSingleTypeSpecifier->TypedefName;
                         }
+                    }
+                    break;
+                    default:
+                        
+
                         break;
-                        default:
-                            //assert(false);
-                            break;
                     }
                 }
                 if (!bIsTypedef)
                 {
-                    //Nao eh um typedef
+                    
+
                     break;
                 }
                 else
@@ -17071,7 +17921,8 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefFirstTarget(struct SymbolMap * pMa
                             TDeclaration_FindDeclarator(pDeclaration, typedefName);
                         if (pDeclarator)
                         {
-                            //copiar o pointer list deste typedef para o outro
+                            
+
                             ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
                             {
                                 TPointer * pNew = TPointer_Create();
@@ -17079,23 +17930,29 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefFirstTarget(struct SymbolMap * pMa
                                 TPointerList_PushBack(&declarator->PointerList, pNew);
                             }
 
-                            //eh um typedef indireto
+                            
+
                             pSpecifiersResult = &pDeclaration->Specifiers;
-                            //pSpecifiersResult =
-                                //SymbolMap_FindTypedefTarget(pMap, indirectTypedef, declarator);
+                            
+
+                                
+
                         }
                         else
                         {
-                            //assert(false);
+                            
+
                         }
                     }
                     else
                     {
-                        //'e um typedef direto - retorna a declaracao que ele aparece
+                        
+
                         TDeclarator * pDeclarator =
                             TDeclaration_FindDeclarator(pDeclaration, typedefName);
 
-                        //copiar o pointer list deste typedef para o outro
+                        
+
                         ForEachListItem(TPointer, pItem, &pDeclarator->PointerList)
                         {
                             TPointer * pNew = TPointer_Create();
@@ -17112,18 +17969,14 @@ TDeclarationSpecifiers * SymbolMap_FindTypedefFirstTarget(struct SymbolMap * pMa
         }
     }
 
-    return pSpecifiersResult;// &pDeclarationResult->Specifiers;
+    return pSpecifiersResult;
+
 
 }
 TTypeSpecifier * SymbolMap_FindTypedefSpecifierTarget(struct SymbolMap * pMap,
-                                                      const char * typedefName)
+    const char * typedefName)
 {
-    /*Sample:
-    struct X;
-    typedef struct X X;
-    struct X { int i;  };
-    typedef X Y;
-    */
+     
 
     TTypeSpecifier * pSpecifierTarget = NULL;
 
@@ -17138,60 +17991,63 @@ TTypeSpecifier * SymbolMap_FindTypedefSpecifierTarget(struct SymbolMap * pMap,
 
             switch (pItem->Type)
             {
-                case TSingleTypeSpecifier_ID:
-                    pSpecifierTarget = (TTypeSpecifier *)pItem;
-                    break;
+            case TSingleTypeSpecifier_ID:
+                pSpecifierTarget = (TTypeSpecifier *)pItem;
+                break;
 
-                case TStructUnionSpecifier_ID:
+            case TStructUnionSpecifier_ID:
+            {
+                TStructUnionSpecifier * pStructUnionSpecifier =
+                    (TStructUnionSpecifier *)pItem;
+                if (pStructUnionSpecifier->StructDeclarationList.Size == 0)
                 {
-                    TStructUnionSpecifier * pStructUnionSpecifier =
-                        (TStructUnionSpecifier *)pItem;
-                    if (pStructUnionSpecifier->StructDeclarationList.Size == 0)
+                    if (pStructUnionSpecifier->TagName != NULL)
                     {
-                        if (pStructUnionSpecifier->TagName != NULL)
-                        {
-                            pSpecifierTarget = (TTypeSpecifier *)SymbolMap_FindStructUnion(pMap, pStructUnionSpecifier->TagName);
-                        }
-                        else
-                        {
-                            //assert(false);
-                        }
+                        pSpecifierTarget = (TTypeSpecifier *)SymbolMap_FindStructUnion(pMap, pStructUnionSpecifier->TagName);
                     }
                     else
                     {
-                        pSpecifierTarget = (TTypeSpecifier *)pStructUnionSpecifier;
+                        
+
                     }
                 }
-                break;
-                case TEnumSpecifier_ID:
+                else
                 {
-                    TEnumSpecifier * pEnumSpecifier =
-                        (TEnumSpecifier *)pItem;
-                    if (pEnumSpecifier->EnumeratorList.pHead == NULL)
+                    pSpecifierTarget = (TTypeSpecifier *)pStructUnionSpecifier;
+                }
+            }
+            break;
+            case TEnumSpecifier_ID:
+            {
+                TEnumSpecifier * pEnumSpecifier =
+                    (TEnumSpecifier *)pItem;
+                if (pEnumSpecifier->EnumeratorList.pHead == NULL)
+                {
+                    if (pEnumSpecifier->Name != NULL)
                     {
-                        if (pEnumSpecifier->Name != NULL)
-                        {
-                            pEnumSpecifier = SymbolMap_FindEnum(pMap, pEnumSpecifier->Name);
-                        }
-                        else
-                        {
-                            //assert(false);
-                        }
+                        pEnumSpecifier = SymbolMap_FindEnum(pMap, pEnumSpecifier->Name);
                     }
                     else
                     {
-                        pSpecifierTarget = (TTypeSpecifier *)pEnumSpecifier;
+                        
+
                     }
                 }
-                break;
+                else
+                {
+                    pSpecifierTarget = (TTypeSpecifier *)pEnumSpecifier;
+                }
+            }
+            break;
 
-                default:
-                    break;
+            default:
+                break;
             }
 
             if (pSpecifierTarget != NULL)
             {
-                //ja achou
+                
+
                 break;
             }
         }
@@ -17205,7 +18061,8 @@ TTypeSpecifier * SymbolMap_FindTypedefSpecifierTarget(struct SymbolMap * pMap,
 
 
 
-//Define to include modications
+
+
 
 
 
@@ -17220,16 +18077,17 @@ else {\
       (pList)->pTail = (pItem); \
   }
 
-void Declarator(Parser* ctx, bool bAbstract, TDeclarator** ppTDeclarator2);
+void Declarator(Parser * ctx, bool bAbstract, TDeclarator ** ppTDeclarator2);
 
 
-Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt);
-Tokens Parser_MatchToken(Parser* parser,
+Tokens Parser_Match(Parser * parser, TScannerItemList * listOpt);
+Tokens Parser_MatchToken(Parser * parser,
     Tokens tk,
-    TScannerItemList* listOpt);
-bool TTypeSpecifier_IsFirst(Parser* ctx, Tokens token, const char* lexeme);
-//static bool Is_Type_QualifierFirst(Tokens token);
-void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQualifierList);
+    TScannerItemList * listOpt);
+bool TTypeSpecifier_IsFirst(Parser * ctx, Tokens token, const char * lexeme);
+
+
+void Specifier_Qualifier_List(Parser * ctx, TSpecifierQualifierList * pSpecifierQualifierList);
 static bool TTypeQualifier_IsFirst(Tokens token);
 
 
@@ -17243,7 +18101,8 @@ static bool IsPreprocessorTokenPhase(Tokens token)
         token == TK_LINE_COMMENT ||
         token == TK_BREAKLINE ||
         token == TK_BACKSLASHBREAKLINE ||
-        //Tokens para linhas do pre processador
+        
+
         token == TK_PRE_INCLUDE ||
         token == TK_PRE_PRAGMA ||
         token == TK_PRE_IF ||
@@ -17256,7 +18115,8 @@ static bool IsPreprocessorTokenPhase(Tokens token)
         token == TK_PRE_LINE ||
         token == TK_PRE_UNDEF ||
         token == TK_PRE_DEFINE ||
-        //fim tokens preprocessador
+        
+
         token == TK_MACRO_CALL ||
         token == TK_MACRO_EOF ||
         token == TK_FILE_EOF;
@@ -17265,34 +18125,40 @@ static bool IsPreprocessorTokenPhase(Tokens token)
 
 
 
-bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
+bool Declaration(Parser * ctx, TAnyDeclaration ** ppDeclaration);
 
-int IsTypeName(Parser* ctx, Tokens token, const char* lexeme);
+int IsTypeName(Parser * ctx, Tokens token, const char * lexeme);
 
 
 
-bool Parser_InitString(Parser* parser,
-    const char* name,
-    const char* Text)
+bool Parser_InitString(Parser * parser,
+    const char * name,
+    const char * Text)
 {
+    parser->ParserOptions.bNoImplicitTag = false;
     TScannerItemList_Init(&parser->ClueList);
     parser->IncludeLevel = 0;
-    ///////
+    
+
     SymbolMap_Init(&parser->GlobalScope);
     parser->pCurrentScope = &parser->GlobalScope;
     parser->bPreprocessorEvalFlag = false;
-    /////////
+    
 
-    //Map_Init(&parser->TypeDefNames, SYMBOL_BUCKETS_SIZE);
+
+    
+
     parser->bError = false;
 
     StrBuilder_Init(&parser->ErrorMessage);
 
 
-    /////////
+    
+
     Scanner_InitString(&parser->Scanner, name, Text);
 
-    //sair do BOF
+    
+
     TScannerItemList clueList0 = { 0 };
     Parser_Match(parser, &clueList0);
     TScannerItemList_Destroy(&clueList0);
@@ -17300,20 +18166,23 @@ bool Parser_InitString(Parser* parser,
     return true;
 }
 
-bool Parser_InitFile(Parser* parser, const char* fileName)
+bool Parser_InitFile(Parser * parser, const char * fileName)
 {
 
-
+    parser->ParserOptions.bNoImplicitTag = false;
     parser->IncludeLevel = 0;
     parser->bPreprocessorEvalFlag = false;
     TScannerItemList_Init(&parser->ClueList);
 
-    /////
+    
+
     SymbolMap_Init(&parser->GlobalScope);
     parser->pCurrentScope = &parser->GlobalScope;
 
-    //////
-    //Map_Init(&parser->TypeDefNames, SYMBOL_BUCKETS_SIZE);
+    
+
+    
+
     parser->bError = false;
 
 
@@ -17321,11 +18190,14 @@ bool Parser_InitFile(Parser* parser, const char* fileName)
     Scanner_Init(&parser->Scanner);
 
 
-    ////////
+    
+
     Scanner_IncludeFile(&parser->Scanner, fileName, FileIncludeTypeFullPath, false);
 
-    //Scanner_Match(&parser->Scanner);
-    //sair do BOF
+    
+
+    
+
     TScannerItemList clueList0 = { 0 };
     Parser_Match(parser, &clueList0);
     TScannerItemList_Destroy(&clueList0);
@@ -17333,14 +18205,15 @@ bool Parser_InitFile(Parser* parser, const char* fileName)
     return true;
 }
 
-void Parser_PushFile(Parser* parser, const char* fileName)
+void Parser_PushFile(Parser * parser, const char * fileName)
 {
     Scanner_IncludeFile(&parser->Scanner, fileName, FileIncludeTypeFullPath, false);
 
 
     TScannerItemList clueList0 = { 0 };
     Parser_Match(parser, &clueList0);
-    //assert(clueList0.pHead == NULL);
+    
+
     TScannerItemList_Destroy(&clueList0);
 
 }
@@ -17349,36 +18222,43 @@ void Parser_PushFile(Parser* parser, const char* fileName)
 
 
 
-void Parser_Destroy(Parser* parser)
+void Parser_Destroy(Parser * parser)
 {
     TScannerItemList_Destroy(&parser->ClueList);
 
     SymbolMap_Destroy(&parser->GlobalScope);
 
-    //Map_Destroy(&parser->TypeDefNames, NULL);
+    
+
     StrBuilder_Destroy(&parser->ErrorMessage);
     Scanner_Destroy(&parser->Scanner);
 }
 
-static const char* GetName()
+static const char * GetName()
 {
     static char buffer[2];
     buffer[0] = '\0';
-    //static int i = 0;
-    //strcat(buffer, "__noname");
-    //char bn[20];
-    //_itoa(i, bn, 10);
-    //strcat(buffer, bn);
-    //i++;
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     return buffer;
 }
 
-bool Parser_HasError(Parser* pParser)
+bool Parser_HasError(Parser * pParser)
 {
     return pParser->bError || pParser->Scanner.bError;
 }
 
-void SetWarning(Parser* parser, const char* fmt, ...)
+void SetWarning(Parser * parser, const char * fmt, ...)
 {
     StrBuilder warningMessage = STRBUILDER_INIT;
     Scanner_GetFilePositionString(&parser->Scanner, &warningMessage);
@@ -17392,9 +18272,10 @@ void SetWarning(Parser* parser, const char* fmt, ...)
     StrBuilder_Destroy(&warningMessage);
 }
 
-void SetError(Parser* parser, const char* fmt, ...)
+void SetError(Parser * parser, const char * fmt, ...)
 {
-    //    //assert(false);
+    
+
     if (!Parser_HasError(parser))
     {
         Scanner_GetFilePositionString(&parser->Scanner, &parser->ErrorMessage);
@@ -17407,13 +18288,14 @@ void SetError(Parser* parser, const char* fmt, ...)
 
     else
     {
-        //ja esta com erro entao eh ruido...
+        
+
         parser->bError = true;
     }
 }
 
 
-int GetCurrentLine(Parser* parser)
+int GetCurrentLine(Parser * parser)
 {
     if (Parser_HasError(parser))
     {
@@ -17423,7 +18305,7 @@ int GetCurrentLine(Parser* parser)
     return Scanner_LineAt(&parser->Scanner, 0);
 }
 
-int GetFileIndex(Parser* parser)
+int GetFileIndex(Parser * parser)
 {
     if (Parser_HasError(parser))
     {
@@ -17433,14 +18315,15 @@ int GetFileIndex(Parser* parser)
     return Scanner_FileIndexAt(&parser->Scanner, 0);
 }
 
-static void GetPosition(Parser* ctx, TPosition* pPosition)
+static void GetPosition(Parser * ctx, TPosition * pPosition)
 {
     pPosition->Line = GetCurrentLine(ctx);
     pPosition->FileIndex = GetFileIndex(ctx);
-    ////assert(pPosition->FileIndex >= 0);
+    
+
 }
 
-Tokens Parser_LookAheadToken(Parser* parser)
+Tokens Parser_LookAheadToken(Parser * parser)
 {
     Tokens token = TK_ERROR;
 
@@ -17461,14 +18344,14 @@ Tokens Parser_LookAheadToken(Parser* parser)
 }
 
 
-const char* Parser_LookAheadLexeme(Parser* parser)
+const char * Parser_LookAheadLexeme(Parser * parser)
 {
     if (Parser_HasError(parser))
     {
         return "";
     }
 
-    const char* lexeme = NULL;
+    const char * lexeme = NULL;
 
     if (!Parser_HasError(parser))
     {
@@ -17488,7 +18371,7 @@ const char* Parser_LookAheadLexeme(Parser* parser)
 }
 
 
-Tokens Parser_CurrentToken(Parser* parser)
+Tokens Parser_CurrentToken(Parser * parser)
 {
     if (Parser_HasError(parser))
     {
@@ -17504,9 +18387,10 @@ Tokens Parser_CurrentToken(Parser* parser)
     return token;
 }
 
-Tokens Parser_MatchEx(Parser* parser, TScannerItemList* listOpt, bool bKeepComment)
+Tokens Parser_MatchEx(Parser * parser, TScannerItemList * listOpt, bool bKeepComment)
 {
-    ////assert(listOpt != NULL);
+    
+
     Tokens token = TK_EOF;
     if (!Parser_HasError(parser))
     {
@@ -17524,8 +18408,9 @@ Tokens Parser_MatchEx(Parser* parser, TScannerItemList* listOpt, bool bKeepComme
             (!Scanner_IsActiveAt(&parser->Scanner, 0) ||
                 IsPreprocessorTokenPhase(token)))
         {
-            //so adiciona os espacos no cara atual
-            struct ScannerItem* pNew = ScannerItem_Create();
+            
+
+            struct ScannerItem * pNew = ScannerItem_Create();
             LocalStrBuilder_Set(&pNew->lexeme, Scanner_LexemeAt(&parser->Scanner, 0));
             pNew->token = Scanner_TokenAt(&parser->Scanner, 0);
             TScannerItemList_PushBack(&parser->ClueList, pNew);
@@ -17538,14 +18423,14 @@ Tokens Parser_MatchEx(Parser* parser, TScannerItemList* listOpt, bool bKeepComme
 
     return token;
 }
-Tokens Parser_Match(Parser* parser, TScannerItemList* listOpt)
+Tokens Parser_Match(Parser * parser, TScannerItemList * listOpt)
 {
     return Parser_MatchEx(parser, listOpt, true);
 }
 
-Tokens Parser_MatchToken(Parser* parser,
+Tokens Parser_MatchToken(Parser * parser,
     Tokens tk,
-    TScannerItemList* listOpt)
+    TScannerItemList * listOpt)
 {
     if (Parser_HasError(parser))
     {
@@ -17564,9 +18449,9 @@ Tokens Parser_MatchToken(Parser* parser,
     return Parser_CurrentToken(parser);
 }
 
-const char* GetCompletationMessage(Parser* parser)
+const char * GetCompletationMessage(Parser * parser)
 {
-    const char* pMessage = "ok";
+    const char * pMessage = "ok";
 
     if (Parser_HasError(parser))
     {
@@ -17584,33 +18469,37 @@ const char* GetCompletationMessage(Parser* parser)
     return pMessage;
 }
 
-const char* Lexeme(Parser* parser)
+const char * Lexeme(Parser * parser)
 {
     if (Parser_HasError(parser))
     {
-        //assert(false);
+        
+
         return "";
     }
 
     return Scanner_LexemeAt(&parser->Scanner, 0);
 }
 
-bool ErrorOrEof(Parser* parser)
+bool ErrorOrEof(Parser * parser)
 {
     return Parser_HasError(parser) ||
         Parser_CurrentToken(parser) == TK_EOF;
 }
-//////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
 
 
-void Expression0(Parser* ctx, TExpression**);
-void CastExpression(Parser* ctx, TExpression**);
-void GenericSelection(Parser* ctx);
-void ArgumentExpressionList(Parser* ctx, TExpression**);
-void AssignmentExpression(Parser* ctx, TExpression**);
-void Initializer_List(Parser* ctx, TInitializerList* pInitializerList);
+
+
+
+
+
+
+void Expression0(Parser * ctx, TExpression **);
+void CastExpression(Parser * ctx, TExpression **);
+void GenericSelection(Parser * ctx);
+void ArgumentExpressionList(Parser * ctx, TExpression **);
+void AssignmentExpression(Parser * ctx, TExpression **);
+void Initializer_List(Parser * ctx, TInitializerList * pInitializerList);
 
 
 
@@ -17628,12 +18517,17 @@ bool IsFirstOfPrimaryExpression(Tokens token)
     case TK_FLOAT_NUMBER:
     case TK_LEFT_PARENTHESIS:
 
-        //////////
-        //extensions
-    case TK_LEFT_SQUARE_BRACKET: //lambda-expression
-                                 /////////
+        
 
-                                 //desde que nao seja cast
+        
+
+    case TK_LEFT_SQUARE_BRACKET: 
+
+                                 
+
+
+                                 
+
     case TK__GENERIC:
         bResult = true;
         break;
@@ -17645,21 +18539,21 @@ bool IsFirstOfPrimaryExpression(Tokens token)
     return bResult;
 }
 
-void PrimaryExpressionLiteral(Parser* ctx, TExpression** ppPrimaryExpression)
+void PrimaryExpressionLiteral(Parser * ctx, TExpression ** ppPrimaryExpression)
 {
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
-    TPrimaryExpressionLiteral* pPrimaryExpressionLiteral
+    TPrimaryExpressionLiteral * pPrimaryExpressionLiteral
         = TPrimaryExpressionLiteral_Create();
 
-    *ppPrimaryExpression = (TExpression*)pPrimaryExpressionLiteral;
+    *ppPrimaryExpression = (TExpression *)pPrimaryExpressionLiteral;
 
     while (token == TK_STRING_LITERAL)
     {
-        TPrimaryExpressionLiteralItem* pPrimaryExpressionLiteralItem
+        TPrimaryExpressionLiteralItem * pPrimaryExpressionLiteralItem
             = TPrimaryExpressionLiteralItem_Create();
-        const char* lexeme2 = Lexeme(ctx);
+        const char * lexeme2 = Lexeme(ctx);
         PTR_STRING_REPLACE(pPrimaryExpressionLiteralItem->lexeme, lexeme2);
 
         token = Parser_Match(ctx,
@@ -17669,58 +18563,21 @@ void PrimaryExpressionLiteral(Parser* ctx, TExpression** ppPrimaryExpression)
     }
 }
 
-void Compound_Statement(Parser* ctx, TStatement** ppStatement);
+void Compound_Statement(Parser * ctx, TStatement ** ppStatement);
 
-void Parameter_Type_List(Parser* ctx, TParameterTypeList* pParameterList);
+void Parameter_Type_List(Parser * ctx, TParameterTypeList * pParameterList);
 
-void LambdaExpression(Parser* ctx, TExpression** ppPrimaryExpression)
+void LambdaExpression(Parser * ctx, TExpression ** ppPrimaryExpression)
 {
-    //c++
-    /*
-    lambda-expression:
-    lambda-introducer lambda-declaratoropt compound-statement
+    
 
-    lambda-introducer:
-    [ lambda-captureopt]
+     
 
-    lambda-capture:
-    capture-default
-    capture-list
-    capture-default , capture-list
+     
+    TPrimaryExpressionLambda * pPrimaryExpressionLambda = TPrimaryExpressionLambda_Create();
 
-    capture-default:
-    &=
+    *ppPrimaryExpression = (TExpression *)pPrimaryExpressionLambda; 
 
-    capture-list:
-    capture ...opt
-    capture-list , capture ...opt
-
-    capture:
-    simple-capture
-    init-capture
-
-    simple-capture:
-    identifier
-    & identifier
-    this
-
-    init-capture:
-    identifier initializer
-    & identifier initializer
-
-    lambda-declarator:
-    ( parameter-declaration-clause ) mutableopt
-    exception-specificationopt attribute-specifier-seqopt trailing-return-typeopt
-    */
-
-    /*
-    lambda-expression:
-    [] ( parameters opt ) compound-statement
-    [] compound-statement
-    */
-    TPrimaryExpressionLambda* pPrimaryExpressionLambda = TPrimaryExpressionLambda_Create();
-
-    *ppPrimaryExpression = (TExpression*)pPrimaryExpressionLambda; //out
 
     Parser_MatchToken(ctx,
         TK_LEFT_SQUARE_BRACKET,
@@ -17754,28 +18611,26 @@ void LambdaExpression(Parser* ctx, TExpression** ppPrimaryExpression)
     Compound_Statement(ctx, (TStatement * *)& pPrimaryExpressionLambda->pCompoundStatement);
 }
 
-void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
+void PrimaryExpression(Parser * ctx, TExpression ** ppPrimaryExpression)
 {
     *ppPrimaryExpression = NULL;
 
 
 
-    /*
-    (6.5.1) primary-expression:
-    identifier
-    constant
-    string-literal
-    ( expression )
-    generic-selection
-    */
-    * ppPrimaryExpression = NULL; //out
+     
+    * ppPrimaryExpression = NULL; 
+
 
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
-    //PreprocessorTokenIndex(ctx);
-    //-2 nem eh macro
-    //-1 inicio de macro
-    //-3 fim de macro
+    const char * lexeme = Lexeme(ctx);
+    
+
+    
+
+    
+
+    
+
 
 
     if (!IsFirstOfPrimaryExpression(token))
@@ -17802,7 +18657,8 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
             {
                 if (strcmp(lexeme, "__FUNCTION__") == 0)
                 {
-                    //identificador magico
+                    
+
                 }
                 else
                 {
@@ -17811,7 +18667,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
             }
         }
 
-        TPrimaryExpressionValue* pPrimaryExpressionValue
+        TPrimaryExpressionValue * pPrimaryExpressionValue
             = TPrimaryExpressionValue_Create();
 
         pPrimaryExpressionValue->token = token;
@@ -17820,7 +18676,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 
         Parser_Match(ctx,
             &pPrimaryExpressionValue->ClueList0);
-        *ppPrimaryExpression = (TExpression*)pPrimaryExpressionValue;
+        *ppPrimaryExpression = (TExpression *)pPrimaryExpressionValue;
     }
     break;
 
@@ -17829,7 +18685,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
     case TK_HEX_INTEGER:
     case TK_FLOAT_NUMBER:
     {
-        TPrimaryExpressionValue* pPrimaryExpressionValue
+        TPrimaryExpressionValue * pPrimaryExpressionValue
             = TPrimaryExpressionValue_Create();
 
         pPrimaryExpressionValue->token = token;
@@ -17838,22 +18694,23 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 
         Parser_Match(ctx,
             &pPrimaryExpressionValue->ClueList0);
-        *ppPrimaryExpression = (TExpression*)pPrimaryExpressionValue;
+        *ppPrimaryExpression = (TExpression *)pPrimaryExpressionValue;
     }
     break;
 
     case TK_LEFT_PARENTHESIS:
     {
-        TPrimaryExpressionValue* pPrimaryExpressionValue
+        TPrimaryExpressionValue * pPrimaryExpressionValue
             = TPrimaryExpressionValue_Create();
 
         Parser_Match(ctx,
             &pPrimaryExpressionValue->ClueList0);
 
-        TExpression* pExpression;
+        TExpression * pExpression;
         Expression0(ctx, &pExpression);
 
-        //    //TNodeClueList_MoveToEnd(&pPrimaryExpressionValue->ClueList, &ctx->Scanner.ClueList);
+        
+
         Parser_MatchToken(ctx,
             TK_RIGHT_PARENTHESIS,
             &pPrimaryExpressionValue->ClueList1);
@@ -17864,7 +18721,7 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
         pPrimaryExpressionValue->pExpressionOpt = pExpression;
 
 
-        *ppPrimaryExpression = (TExpression*)pPrimaryExpressionValue;
+        *ppPrimaryExpression = (TExpression *)pPrimaryExpressionValue;
     }
     break;
 
@@ -17883,47 +18740,39 @@ void PrimaryExpression(Parser* ctx, TExpression** ppPrimaryExpression)
 
 }
 
-void GenericSelection(Parser* ctx)
+void GenericSelection(Parser * ctx)
 {
-    //_Generic
+    
 
-    /*
-    (6.5.1.1) generic-selection:
-    _Generic ( assignment-expression , generic-assoc-list )
-    */
+
+     
 }
 
-void GenericAssocList(Parser* ctx)
+void GenericAssocList(Parser * ctx)
 {
 
-    //type-name default
+    
 
-    /*
-    (6.5.1.1) generic-assoc-list:
-    generic-association
-    generic-assoc-list , generic-association
-    */
+
+     
 }
 
-void GenericAssociation(Parser* ctx)
+void GenericAssociation(Parser * ctx)
 {
-    //type-name default
+    
 
-    /*
-    (6.5.1.1) generic-association:
-    type-name : assignment-expression
-    default : assignment-expression
-    */
+
+     
 }
 
-void TTypeName_Swap(TTypeName* a, TTypeName* b)
+void TTypeName_Swap(TTypeName * a, TTypeName * b)
 {
     TTypeName temp = *a;
     *a = *b;
     *b = temp;
 }
 
-void TTypeName_Init(TTypeName* p) /*@default*/
+void TTypeName_Init(TTypeName * p) /*@default*/
 {
     p->Type = TypeName_ID;
     p->SpecifierQualifierList.pData = NULL;
@@ -17934,16 +18783,13 @@ void TTypeName_Init(TTypeName* p) /*@default*/
 
 
 
-void TypeName(Parser* ctx, TTypeName* pTypeName)
+void TypeName(Parser * ctx, TTypeName * pTypeName)
 {
-    /*
-    type-name:
-    specifier-qualifier-list abstract-declaratoropt
-    */
+     
 
     Specifier_Qualifier_List(ctx, &pTypeName->SpecifierQualifierList);
 
-    TDeclarator* pDeclarator = NULL;
+    TDeclarator * pDeclarator = NULL;
     Declarator(ctx, true, &pDeclarator);
     if (pDeclarator)
     {
@@ -17953,20 +18799,11 @@ void TypeName(Parser* ctx, TTypeName* pTypeName)
 }
 
 
-static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixExpressionCore)
+static void PostfixExpressionCore(Parser * ctx, TPostfixExpressionCore * pPostfixExpressionCore)
 {
-    //ja entra aqui sendo uma  postfix-expression antes
-    /*
-    (6.5.2) postfix-expression:
+    
 
-    postfix-expression [ expression ]
-    postfix-expression ( argument-expression-listopt )
-    postfix-expression . identifier
-    postfix-expression -> identifier
-    postfix-expression ++
-    postfix-expression --
-
-    */
+     
 
     Tokens token = Parser_CurrentToken(ctx);
 
@@ -17975,12 +18812,14 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
     {
     case TK_LEFT_PARENTHESIS:
     {
-        //aqui eu posso marcar a funcao como usada.
+        
+
 
         pPostfixExpressionCore->token = token;
 
 
-        //  postfix-expression ( argument-expression-listopt )    
+        
+
         token = Parser_Match(ctx,
             &pPostfixExpressionCore->ClueList0);
 
@@ -17997,7 +18836,8 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
     case TK_LEFT_SQUARE_BRACKET:
     {
         pPostfixExpressionCore->token = token;
-        // postfix-expression [ expression ]
+        
+
 
         Parser_MatchToken(ctx, TK_LEFT_SQUARE_BRACKET,
             &pPostfixExpressionCore->ClueList0);
@@ -18010,7 +18850,8 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
 
     case TK_FULL_STOP:
     {
-        // postfix-expression . identifier
+        
+
         pPostfixExpressionCore->token = token;
 
         Parser_Match(ctx, &pPostfixExpressionCore->ClueList0);
@@ -18024,7 +18865,8 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
 
     case TK_ARROW:
     {
-        // postfix-expression -> identifier
+        
+
         pPostfixExpressionCore->token = token;
 
         Parser_Match(ctx, &pPostfixExpressionCore->ClueList0);
@@ -18038,7 +18880,8 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
     case TK_PLUSPLUS:
     {
         pPostfixExpressionCore->token = token;
-        //postfix-expression ++
+        
+
 
         Parser_Match(ctx, &pPostfixExpressionCore->ClueList0);
     }
@@ -18046,14 +18889,16 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
 
     case TK_MINUSMINUS:
     {
-        //  postfix-expression --
+        
+
         pPostfixExpressionCore->token = token;
         Parser_Match(ctx, &pPostfixExpressionCore->ClueList0);
     }
     break;
 
     default:
-        // //assert(false);
+        
+
         break;
     }
 
@@ -18069,7 +18914,7 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
     case TK_PLUSPLUS:
     case TK_MINUSMINUS:
     {
-        TPostfixExpressionCore* pPostfixExpressionCoreNext =
+        TPostfixExpressionCore * pPostfixExpressionCoreNext =
             TPostfixExpressionCore_Create();
         PostfixExpressionCore(ctx, pPostfixExpressionCoreNext);
 
@@ -18081,31 +18926,20 @@ static void PostfixExpressionCore(Parser* ctx, TPostfixExpressionCore* pPostfixE
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
 
 }
 
-void PostfixExpression(Parser* ctx, TExpression** ppExpression)
+void PostfixExpression(Parser * ctx, TExpression ** ppExpression)
 {
-    *ppExpression = NULL;//out
+    *ppExpression = NULL;
 
-                         /*
-                         (6.5.2) postfix-expression:
-                         postfix-expression ( argument-expression-listopt )
-                         ( type-name ) { initializer-list }
-                         ( type-name ) { initializer-list , }
 
-                         primary-expression
-                         postfix-expression [ expression ]
-                         postfix-expression . identifier
-                         postfix-expression -> identifier
-                         postfix-expression ++
-                         postfix-expression --
-
-                         */
+                          
 
     Tokens token = Parser_CurrentToken(ctx);
 
@@ -18113,14 +18947,15 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
 
     if (token == TK_LEFT_PARENTHESIS)
     {
-        const char* lookAheadlexeme = Parser_LookAheadLexeme(ctx);
+        const char * lookAheadlexeme = Parser_LookAheadLexeme(ctx);
         Tokens lookAheadToken = Parser_LookAheadToken(ctx);
 
         if (IsTypeName(ctx, lookAheadToken, lookAheadlexeme))
         {
-            // ( type-name ) { initializer-list }
+            
 
-            TPostfixExpressionCore* pTPostfixExpressionCore =
+
+            TPostfixExpressionCore * pTPostfixExpressionCore =
                 TPostfixExpressionCore_Create();
 
             Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pTPostfixExpressionCore->ClueList0);
@@ -18144,24 +18979,28 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
                 Parser_Match(ctx, &pTPostfixExpressionCore->ClueList4);
             }
 
-            *ppExpression = (TExpression*)pTPostfixExpressionCore;
+            *ppExpression = (TExpression *)pTPostfixExpressionCore;
         }
 
         else
         {
-            //primary-expression
-            TExpression* pPrimaryExpression;
+            
+
+            TExpression * pPrimaryExpression;
             PrimaryExpression(ctx, &pPrimaryExpression);
             *ppExpression = pPrimaryExpression;
         }
     }
     else
     {
-        //tem que ser?
-        //assert(IsFirstOfPrimaryExpression(token));
+        
 
-        //primary-expression
-        TExpression* pPrimaryExpression;
+        
+
+
+        
+
+        TExpression * pPrimaryExpression;
         PrimaryExpression(ctx, &pPrimaryExpression);
         *ppExpression = pPrimaryExpression;
     }
@@ -18170,13 +19009,14 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
     if (IsFirstOfPrimaryExpression(token))
     {
 
-        // //assert(false); //pergunta deve continuar? ta certo?
+        
 
-        TPostfixExpressionCore* pPostfixExpressionCore =
+
+        TPostfixExpressionCore * pPostfixExpressionCore =
             TPostfixExpressionCore_Create();
         pPostfixExpressionCore->pExpressionLeft = *ppExpression;
         PostfixExpressionCore(ctx, pPostfixExpressionCore);
-        *ppExpression = (TExpression*)pPostfixExpressionCore;
+        *ppExpression = (TExpression *)pPostfixExpressionCore;
     }
     else
     {
@@ -18184,20 +19024,20 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
         {
         case TK_LEFT_PARENTHESIS:
         {
-            TPostfixExpressionCore* pPostfixExpressionCore =
+            TPostfixExpressionCore * pPostfixExpressionCore =
                 TPostfixExpressionCore_Create();
             pPostfixExpressionCore->pExpressionLeft = *ppExpression;
 
-            String* /*@auto*/ lexemeCopy = NULL;
+            String * /*@auto*/ lexemeCopy = NULL;
 
-            TPrimaryExpressionValue* ppri =
+            TPrimaryExpressionValue * ppri =
                 TExpression_As_TPrimaryExpressionValue(*ppExpression);
             if (ppri)
             {
                 PTR_STRING_REPLACE(lexemeCopy, ppri->lexeme);
             }
             PostfixExpressionCore(ctx, pPostfixExpressionCore);
-            *ppExpression = (TExpression*)pPostfixExpressionCore;
+            *ppExpression = (TExpression *)pPostfixExpressionCore;
 
 
 
@@ -18210,15 +19050,16 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
         case TK_PLUSPLUS:
         case TK_MINUSMINUS:
         {
-            TPostfixExpressionCore* pPostfixExpressionCore =
+            TPostfixExpressionCore * pPostfixExpressionCore =
                 TPostfixExpressionCore_Create();
             pPostfixExpressionCore->pExpressionLeft = *ppExpression;
             PostfixExpressionCore(ctx, pPostfixExpressionCore);
-            *ppExpression = (TExpression*)pPostfixExpressionCore;
+            *ppExpression = (TExpression *)pPostfixExpressionCore;
         }
         break;
         default:
-            //assert(false);
+            
+
             break;
         }
 
@@ -18226,13 +19067,10 @@ void PostfixExpression(Parser* ctx, TExpression** ppExpression)
 
 }
 
-void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
+void ArgumentExpressionList(Parser * ctx, TExpression ** ppExpression)
 {
-    /*(6.5.2) argument-expression-list:
-    assignment-expression
-    argument-expression-list , assignment-expression
-    */
-    TExpression* pAssignmentExpression;
+     
+    TExpression * pAssignmentExpression;
     AssignmentExpression(ctx, &pAssignmentExpression);
     *ppExpression = pAssignmentExpression;
 
@@ -18240,12 +19078,13 @@ void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
 
     if (token == TK_COMMA)
     {
-        TBinaryExpression* pExpr =
+        TBinaryExpression * pExpr =
             TBinaryExpression_Create();
 
-        Parser_Match(ctx, &pExpr->ClueList0);// &pAssignmentExpression->ClueList);
+        Parser_Match(ctx, &pExpr->ClueList0);
 
-        TExpression* pAssignmentExpressionRight;
+
+        TExpression * pAssignmentExpressionRight;
         AssignmentExpression(ctx, &pAssignmentExpressionRight);
 
 
@@ -18256,14 +19095,14 @@ void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
 
 
 
-        *ppExpression = (TExpression*)pExpr;
+        *ppExpression = (TExpression *)pExpr;
     }
 
     token = Parser_CurrentToken(ctx);
 
     if (token == TK_COMMA)
     {
-        TBinaryExpression* pExpr =
+        TBinaryExpression * pExpr =
             TBinaryExpression_Create();
 
         Parser_Match(ctx, &pExpr->ClueList0);
@@ -18272,11 +19111,11 @@ void ArgumentExpressionList(Parser* ctx, TExpression** ppExpression)
         pExpr->token = TK_COMMA;
         pExpr->pExpressionLeft = *ppExpression;
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         ArgumentExpressionList(ctx, &pExpressionRight);
         pExpr->pExpressionRight = pExpressionRight;
 
-        *ppExpression = (TExpression*)pExpr;
+        *ppExpression = (TExpression *)pExpr;
     }
 }
 
@@ -18287,17 +19126,20 @@ static bool IsTypeQualifierToken(Tokens token)
     bool bResult = false;
     switch (token)
     {
-        //type-qualifier
+        
+
     case TK_CONST:
     case TK_RESTRICT:
     case TK_VOLATILE:
     case TK__ATOMIC:
-        //
+        
+
         bResult = true;
         break;
 #ifdef LANGUAGE_EXTENSIONS
 
-        //type-qualifier-extensions 
+        
+
 
 
     case TK_AUTO:
@@ -18308,13 +19150,14 @@ static bool IsTypeQualifierToken(Tokens token)
         break;
 #endif
     default:
-        //assert(false);
+        
+
         break;
     }
     return bResult;
 }
 
-int IsTypeName(Parser* ctx, Tokens token, const char* lexeme)
+int IsTypeName(Parser * ctx, Tokens token, const char * lexeme)
 {
 
     int bResult = false;
@@ -18329,10 +19172,12 @@ int IsTypeName(Parser* ctx, Tokens token, const char* lexeme)
 
     case TK_IDENTIFIER:
         bResult = SymbolMap_IsTypeName(ctx->pCurrentScope, lexeme);
-        //        bResult = DeclarationsMap_IsTypeDef(&ctx->Symbols, lexeme);
+        
+
         break;
 
-        //type-qualifier
+        
+
     case TK_CONST:
     case TK_RESTRICT:
     case TK_VOLATILE:
@@ -18345,19 +19190,22 @@ int IsTypeName(Parser* ctx, Tokens token, const char* lexeme)
 
 #endif
 
-        //type-specifier
+        
+
     case TK_VOID:
     case TK_CHAR:
     case TK_SHORT:
     case TK_INT:
     case TK_LONG:
-        //microsoft
+        
+
     case TK__INT8:
     case TK__INT16:
     case TK__INT32:
     case TK__INT64:
     case TK__WCHAR_T:
-        //
+        
+
     case TK_FLOAT:
     case TK_DOUBLE:
     case TK_SIGNED:
@@ -18370,50 +19218,43 @@ int IsTypeName(Parser* ctx, Tokens token, const char* lexeme)
         bResult = true;
         break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
     return bResult;
 }
 
-void UnaryExpression(Parser* ctx, TExpression** ppExpression)
+void UnaryExpression(Parser * ctx, TExpression ** ppExpression)
 {
-    *ppExpression = NULL; //out
+    *ppExpression = NULL; 
 
-                          /*(6.5.3) unary-expression:
-                          postfix-expression
-                          ++ unary-expression
-                          -- unary-expression
-                          unary-operator cast-expression
-                          sizeof unary-expression
-                          sizeof ( type-name )
-                          alignof ( type-name )
 
-                          unary-operator: one of
-                          & * + - ~ !
-                          */
+                           
 
     Tokens token0 = Parser_CurrentToken(ctx);
     Tokens tokenAhead = Parser_LookAheadToken(ctx);
-    const char* lookAheadlexeme = Parser_LookAheadLexeme(ctx);
+    const char * lookAheadlexeme = Parser_LookAheadLexeme(ctx);
 
     if (IsTypeName(ctx, tokenAhead, lookAheadlexeme))
     {
-        //first para postfix-expression
-        TExpression* pPostfixExpression;
+        
+
+        TExpression * pPostfixExpression;
         PostfixExpression(ctx, &pPostfixExpression);
-        *ppExpression = (TExpression*)(pPostfixExpression);
+        *ppExpression = (TExpression *)(pPostfixExpression);
         return;
     }
 
     else if (IsFirstOfPrimaryExpression(token0))
     {
-        //primary-expression é first para postfix-expression
+        
 
-        TExpression* pPostfixExpression;
+
+        TExpression * pPostfixExpression;
         PostfixExpression(ctx, &pPostfixExpression);
-        *ppExpression = (TExpression*)(pPostfixExpression);
+        *ppExpression = (TExpression *)(pPostfixExpression);
         return;
     }
 
@@ -18422,22 +19263,23 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
     case TK_PLUSPLUS:
     case TK_MINUSMINUS:
     {
-        TUnaryExpressionOperator* pUnaryExpressionOperator =
+        TUnaryExpressionOperator * pUnaryExpressionOperator =
             TUnaryExpressionOperator_Create();
 
         Parser_Match(ctx, &pUnaryExpressionOperator->ClueList0);
 
-        TExpression* pUnaryExpression;
+        TExpression * pUnaryExpression;
         UnaryExpression(ctx, &pUnaryExpression);
 
 
         pUnaryExpressionOperator->token = token0;
         pUnaryExpressionOperator->pExpressionRight = pUnaryExpression;
-        *ppExpression = (TExpression*)pUnaryExpressionOperator;
+        *ppExpression = (TExpression *)pUnaryExpressionOperator;
     }
     break;
 
-    //unary-operator cast-expression
+    
+
     case TK_AMPERSAND:
     case TK_ASTERISK:
     case TK_PLUS_SIGN:
@@ -18445,27 +19287,28 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
     case TK_TILDE:
     case TK_EXCLAMATION_MARK:
     {
-        TUnaryExpressionOperator* pUnaryExpressionOperator =
+        TUnaryExpressionOperator * pUnaryExpressionOperator =
             TUnaryExpressionOperator_Create();
 
         Parser_Match(ctx, &pUnaryExpressionOperator->ClueList0);
-        TExpression* pCastExpression;
+        TExpression * pCastExpression;
         CastExpression(ctx, &pCastExpression);
 
         pUnaryExpressionOperator->token = token0;
         pUnaryExpressionOperator->pExpressionRight = pCastExpression;
-        *ppExpression = (TExpression*)pUnaryExpressionOperator;
+        *ppExpression = (TExpression *)pUnaryExpressionOperator;
 
     }
     break;
 
-    //////////////
+    
+
 
     case TK_SIZEOF:
     {
-        TUnaryExpressionOperator* pUnaryExpressionOperator =
+        TUnaryExpressionOperator * pUnaryExpressionOperator =
             TUnaryExpressionOperator_Create();
-        *ppExpression = (TExpression*)pUnaryExpressionOperator;
+        *ppExpression = (TExpression *)pUnaryExpressionOperator;
 
         pUnaryExpressionOperator->token = token0;
 
@@ -18473,28 +19316,31 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
 
         if (Parser_CurrentToken(ctx) == TK_LEFT_PARENTHESIS)
         {
-            const char* lookAheadlexeme = Parser_LookAheadLexeme(ctx);
+            const char * lookAheadlexeme = Parser_LookAheadLexeme(ctx);
             Tokens lookAheadToken = Parser_LookAheadToken(ctx);
 
             if (IsTypeName(ctx, lookAheadToken, lookAheadlexeme))
             {
-                //sizeof(type-name)
+                
+
                 Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pUnaryExpressionOperator->ClueList1);
                 TypeName(ctx, &pUnaryExpressionOperator->TypeName);
                 Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pUnaryExpressionOperator->ClueList2);
             }
             else
             {
-                //sizeof unary-expression
-                TExpression* pTUnaryExpression;
+                
+
+                TExpression * pTUnaryExpression;
                 UnaryExpression(ctx, &pTUnaryExpression);
                 pUnaryExpressionOperator->pExpressionRight = pTUnaryExpression;
             }
         }
         else
         {
-            //sizeof do tipo desta expressao
-            TExpression* pTUnaryExpression;
+            
+
+            TExpression * pTUnaryExpression;
             UnaryExpression(ctx, &pTUnaryExpression);
             pUnaryExpressionOperator->pExpressionRight = pTUnaryExpression;
         }
@@ -18502,36 +19348,39 @@ void UnaryExpression(Parser* ctx, TExpression** ppExpression)
     break;
 
     case TK__ALINGOF:
-        //Match
-        //assert(false);
+        
+
+        
+
         break;
     case TK_EOF:
         break;
-        //TODO ver tudo que pode ser follow
+        
+
     default:
-        ////assert(false);
-        //        SetUnexpectedError(ctx, "Assert", "");
-        //aqui nao eh erro necessariamente
+        
+
+        
+
+        
+
         break;
     }
 
 }
 
-void CastExpression(Parser* ctx, TExpression** ppExpression)
+void CastExpression(Parser * ctx, TExpression ** ppExpression)
 {
-    *ppExpression = NULL; //out
+    *ppExpression = NULL; 
 
-                          /*
-                          cast-expression:
-                          unary-expression
-                          ( type-name ) cast-expression
-                          */
+
+                           
 
     Tokens token = Parser_CurrentToken(ctx);
 
     if (token == TK_LEFT_PARENTHESIS)
     {
-        const char* lookAheadlexeme = Parser_LookAheadLexeme(ctx);
+        const char * lookAheadlexeme = Parser_LookAheadLexeme(ctx);
         Tokens lookAheadToken = Parser_LookAheadToken(ctx);
 
         if (IsTypeName(ctx, lookAheadToken, lookAheadlexeme))
@@ -18548,27 +19397,27 @@ void CastExpression(Parser* ctx, TExpression** ppExpression)
 
             if (token == TK_LEFT_CURLY_BRACKET)
             {
-                //se isso acontecer, quer dizer que eh uma postfix-expression
-                //entao deveria ter sido expandido com
-                //unary-expression -> postfix-expression ->
-                /*
-                (6.5.2) postfix-expression:
-                ...
-                ( type-name ) { initializer-list }
-                ( type-name ) { initializer-list , }
-                */
+                
+
+                
+
+                
+
+                 
 
                 Parser_MatchToken(ctx, TK_LEFT_CURLY_BRACKET, NULL);
 
-                TPostfixExpressionCore* pTPostfixExpressionCore =
+                TPostfixExpressionCore * pTPostfixExpressionCore =
                     TPostfixExpressionCore_Create();
                 pTPostfixExpressionCore->pTypeName = TTypeName_Create();
                 TTypeName_Swap(pTPostfixExpressionCore->pTypeName, &typeName);
 
-                //pTPostfixExpressionCore->pInitializerList = TInitializerList_Create();
+                
+
                 Initializer_List(ctx, &pTPostfixExpressionCore->InitializerList);
 
-                //Initializer_List(ctx, pTPostfixExpressionCore->pInitializerList);
+                
+
 
 
                 if (Parser_CurrentToken(ctx) == TK_COMMA)
@@ -18576,23 +19425,24 @@ void CastExpression(Parser* ctx, TExpression** ppExpression)
                     Parser_Match(ctx, NULL);
                 }
                 Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET, NULL);
-                *ppExpression = (TExpression*)pTPostfixExpressionCore;
-                //PostfixExpressionCore(ctx, pTPostfixExpressionCore);
+                *ppExpression = (TExpression *)pTPostfixExpressionCore;
+                
+
             }
             else
             {
-                TCastExpressionType* pCastExpressionType =
+                TCastExpressionType * pCastExpressionType =
                     TCastExpressionType_Create();
 
                 TScannerItemList_Swap(&tempList0, &pCastExpressionType->ClueList0);
                 TScannerItemList_Swap(&tempList1, &pCastExpressionType->ClueList1);
 
-                TExpression* pCastExpression;
+                TExpression * pCastExpression;
                 CastExpression(ctx, &pCastExpression);
 
                 TTypeName_Swap(&pCastExpressionType->TypeName, &typeName);
                 pCastExpressionType->pExpression = pCastExpression;
-                *ppExpression = (TExpression*)pCastExpressionType;
+                *ppExpression = (TExpression *)pCastExpressionType;
 
             }
 
@@ -18602,14 +19452,14 @@ void CastExpression(Parser* ctx, TExpression** ppExpression)
         }
         else
         {
-            TExpression* pUnaryExpression;
+            TExpression * pUnaryExpression;
             UnaryExpression(ctx, &pUnaryExpression);
             *ppExpression = pUnaryExpression;
         }
     }
     else
     {
-        TExpression* pUnaryExpression;
+        TExpression * pUnaryExpression;
         UnaryExpression(ctx, &pUnaryExpression);
 
         *ppExpression = pUnaryExpression;
@@ -18617,19 +19467,13 @@ void CastExpression(Parser* ctx, TExpression** ppExpression)
 }
 
 
-void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
+void MultiplicativeExpression(Parser * ctx, TExpression ** ppExpression)
 {
 
 
-    /*
-    (6.5.5) multiplicative-expression:
-    cast-expression                                // identifier  constant  string-literal  (  _Generic ++	  -- 	 & * + - ~ ! 		 sizeof 		 sizeof		 alignof
-    multiplicative-expression * cast-expression
-    multiplicative-expression / cast-expression
-    multiplicative-expression % cast-expression
-    */
+     
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     CastExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -18642,7 +19486,7 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
     case TK_SOLIDUS:
     case TK_ASTERISK:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
 
         GetPosition(ctx, &pBinaryExpression->Position);
         pBinaryExpression->token = token;
@@ -18650,14 +19494,15 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         CastExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
@@ -18669,7 +19514,7 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
     case TK_SOLIDUS:
     case TK_ASTERISK:
     {
-        TBinaryExpression* pBinaryExpression =
+        TBinaryExpression * pBinaryExpression =
             TBinaryExpression_Create();
 
         pBinaryExpression->token = token;
@@ -18679,29 +19524,25 @@ void MultiplicativeExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         MultiplicativeExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 }
 
-void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
+void AdditiveExpression(Parser * ctx, TExpression ** ppExpression)
 {
 
-    /*
-    (6.5.6) additive-expression:
-    multiplicative-expression
-    additive-expression + multiplicative-expression
-    additive-expression - multiplicative-expression
-    */
+     
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     MultiplicativeExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -18713,7 +19554,7 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
     case TK_PLUS_SIGN:
     case TK_HYPHEN_MINUS:
     {
-        TBinaryExpression* pBinaryExpression =
+        TBinaryExpression * pBinaryExpression =
             TBinaryExpression_Create();
         GetPosition(ctx, &pBinaryExpression->Position);
         pBinaryExpression->token = token;
@@ -18722,14 +19563,15 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         MultiplicativeExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
@@ -18740,7 +19582,7 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
     case TK_PLUS_SIGN:
     case TK_HYPHEN_MINUS:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -18748,30 +19590,27 @@ void AdditiveExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         AdditiveExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
 }
 
-void ShiftExpression(Parser* ctx, TExpression** ppExpression)
+void ShiftExpression(Parser * ctx, TExpression ** ppExpression)
 {
 
-    /*(6.5.7) shift-expression:
-    additive-expression
-    shift-expression << additive-expression
-    shift-expression >> additive-expression
-    */
+     
 
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     AdditiveExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -18783,7 +19622,7 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
     case TK_GREATERGREATER:
     case TK_LESSLESS:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -18791,14 +19630,15 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         AdditiveExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
@@ -18809,7 +19649,7 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
     case TK_GREATERGREATER:
     case TK_LESSLESS:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -18817,30 +19657,24 @@ void ShiftExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         ShiftExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 }
 
-void RelationalExpression(Parser* ctx, TExpression** ppExpression)
+void RelationalExpression(Parser * ctx, TExpression ** ppExpression)
 {
-    /*
-    (6.5.8) relational-expression:
-    shift-expression
-    relational-expression < shift-expression
-    relational-expression > shift-expression
-    relational-expression <= shift-expression
-    relational-expression >= shift-expression
-    */
+     
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     ShiftExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -18854,7 +19688,7 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
     case TK_GREATEREQUAL:
     case TK_LESSEQUAL:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -18862,14 +19696,15 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         ShiftExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
@@ -18882,7 +19717,7 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
     case TK_GREATEREQUAL:
     case TK_LESSEQUAL:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -18890,28 +19725,25 @@ void RelationalExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         RelationalExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
 }
 
-void EqualityExpression(Parser* ctx, TExpression** ppExpression)
+void EqualityExpression(Parser * ctx, TExpression ** ppExpression)
 {
-    /*(6.5.9) equality-expression:
-    relational-expression
-    equality-expression == relational-expression
-    equality-expression != relational-expression
-    */
+     
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     RelationalExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -18923,7 +19755,7 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
     case TK_EQUALEQUAL:
     case TK_NOTEQUAL:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -18931,14 +19763,15 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         RelationalExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
@@ -18949,7 +19782,7 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
     case TK_EQUALEQUAL:
     case TK_NOTEQUAL:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -18957,26 +19790,24 @@ void EqualityExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         EqualityExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 }
 
-void AndExpression(Parser* ctx, TExpression** ppExpression)
+void AndExpression(Parser * ctx, TExpression ** ppExpression)
 {
-    /*(6.5.10) AND-expression:
-    equality-expression
-    AND-expression & equality-expression
-    */
+     
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     EqualityExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -18987,7 +19818,7 @@ void AndExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_AMPERSAND:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -18995,14 +19826,15 @@ void AndExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         EqualityExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
@@ -19012,7 +19844,7 @@ void AndExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_AMPERSAND:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -19020,27 +19852,24 @@ void AndExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         AndExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 }
 
-void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
+void ExclusiveOrExpression(Parser * ctx, TExpression ** ppExpression)
 {
-    /*
-    (6.5.11) exclusive-OR-expression:
-    AND-expression
-    exclusive-OR-expression ^ AND-expression
-    */
+     
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     AndExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -19051,7 +19880,7 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_CIRCUMFLEX_ACCENT:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -19059,14 +19888,15 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         AndExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
@@ -19076,7 +19906,7 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_CIRCUMFLEX_ACCENT:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -19085,29 +19915,26 @@ void ExclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         ExclusiveOrExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
 }
 
-void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
+void InclusiveOrExpression(Parser * ctx, TExpression ** ppExpression)
 {
 
-    /*
-    (6.5.12) inclusive-OR-expression:
-    exclusive-OR-expression
-    inclusive-OR-expression | exclusive-OR-expression
-    */
+     
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     ExclusiveOrExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -19118,7 +19945,7 @@ void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_VERTICAL_LINE:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -19126,14 +19953,15 @@ void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         ExclusiveOrExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
@@ -19143,7 +19971,7 @@ void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_VERTICAL_LINE:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -19151,28 +19979,25 @@ void InclusiveOrExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         InclusiveOrExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 }
 
-void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
+void LogicalAndExpression(Parser * ctx, TExpression ** ppExpression)
 {
 
-    /*
-    (6.5.13) logical-AND-expression:
-    inclusive-OR-expression
-    logical-AND-expression && inclusive-OR-expression
-    */
+     
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     InclusiveOrExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -19183,7 +20008,7 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_ANDAND:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -19192,14 +20017,15 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         InclusiveOrExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
@@ -19209,7 +20035,7 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_ANDAND:
     {
-        TBinaryExpression* pBinaryExpression =
+        TBinaryExpression * pBinaryExpression =
             TBinaryExpression_Create();
 
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -19219,27 +20045,25 @@ void LogicalAndExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         LogicalAndExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 }
 
-void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
+void LogicalOrExpression(Parser * ctx, TExpression ** ppExpression)
 {
-    /*(6.5.14) logical-OR-expression:
-    logical-AND-expression
-    logical-OR-expression || logical-AND-expression
-    */
+     
 
 
-    TExpression* pExpressionLeft;
+    TExpression * pExpressionLeft;
     LogicalAndExpression(ctx, &pExpressionLeft);
     *ppExpression = pExpressionLeft;
 
@@ -19250,7 +20074,7 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_OROR:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         GetPosition(ctx, &pBinaryExpression->Position);
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
@@ -19258,14 +20082,15 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         LogicalAndExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 
@@ -19275,7 +20100,7 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
     {
     case TK_OROR:
     {
-        TBinaryExpression* pBinaryExpression = TBinaryExpression_Create();
+        TBinaryExpression * pBinaryExpression = TBinaryExpression_Create();
         GetPosition(ctx, &pBinaryExpression->Position);
         pBinaryExpression->token = token;
         pBinaryExpression->pExpressionLeft = *ppExpression;
@@ -19283,42 +20108,40 @@ void LogicalOrExpression(Parser* ctx, TExpression** ppExpression)
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        TExpression* pExpressionRight;
+        TExpression * pExpressionRight;
         LogicalOrExpression(ctx, &pExpressionRight);
         pBinaryExpression->pExpressionRight = pExpressionRight;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
     default:
-        //assert(false);
+        
+
         break;
     }
 }
 
 
-void ConditionalExpression(Parser* ctx, TExpression** ppExpression)
+void ConditionalExpression(Parser * ctx, TExpression ** ppExpression)
 {
-    /*(6.5.15) conditional-expression:
-    logical-OR-expression
-    logical-OR-expression ? expression : conditional-expression
-    */
-    TExpression* pLogicalOrExpressionLeft;
+     
+    TExpression * pLogicalOrExpressionLeft;
     LogicalOrExpression(ctx, &pLogicalOrExpressionLeft);
     *ppExpression = pLogicalOrExpressionLeft;
 
     if (Parser_CurrentToken(ctx) == TK_QUESTION_MARK)
     {
-        TTernaryExpression* pTernaryExpression =
+        TTernaryExpression * pTernaryExpression =
             TTernaryExpression_Create();
 
         Parser_Match(ctx, &pTernaryExpression->ClueList0);
 
-        TExpression* pTExpression;
+        TExpression * pTExpression;
         Expression0(ctx, &pTExpression);
 
         Parser_MatchToken(ctx, TK_COLON, &pTernaryExpression->ClueList1);
 
-        TExpression* pConditionalExpressionRight;
+        TExpression * pConditionalExpressionRight;
         ConditionalExpression(ctx, &pConditionalExpressionRight);
 
 
@@ -19326,28 +20149,26 @@ void ConditionalExpression(Parser* ctx, TExpression** ppExpression)
         pTernaryExpression->pExpressionLeft = pLogicalOrExpressionLeft;
         pTernaryExpression->pExpressionMiddle = pTExpression;
         pTernaryExpression->pExpressionRight = pConditionalExpressionRight;
-        *ppExpression = (TExpression*)pTernaryExpression;
+        *ppExpression = (TExpression *)pTernaryExpression;
     }
 
 
 }
 
-void AssignmentExpression(Parser* ctx, TExpression** ppExpression)
+void AssignmentExpression(Parser * ctx, TExpression ** ppExpression)
 {
-    /*(6.5.16) assignment-expression:
-    conditional-expression
-    unary-expression assignment-operator assignment-expression
-
-    (6.5.16) assignment-operator: one of
-    = *= /= %= += -= <<= >>= &= ^= |=
-    */
+     
 
 
-    //Não sei se eh  conditional-expression ou
-    //unary-expression
-    //Mas a conditional-expression faz tambem a
-    //unary-expression
-    TExpression* pConditionalExpressionLeft;
+    
+
+    
+
+    
+
+    
+
+    TExpression * pConditionalExpressionLeft;
     ConditionalExpression(ctx, &pConditionalExpressionLeft);
     *ppExpression = pConditionalExpressionLeft;
 
@@ -19368,15 +20189,18 @@ void AssignmentExpression(Parser* ctx, TExpression** ppExpression)
     case TK_CARETEQUAL:
     case TK_OREQUAL:
     {
-        TBinaryExpression* pBinaryExpression =
+        TBinaryExpression * pBinaryExpression =
             TBinaryExpression_Create();
 
         Parser_Match(ctx, &pBinaryExpression->ClueList0);
 
-        //Significa que o anterior deve ser do tipo  unary-expression
-        //embora tenhamos feito o parser de conditional-expression
-        //se nao for é erro.
-        TExpression* pAssignmentExpressionRight;
+        
+
+        
+
+        
+
+        TExpression * pAssignmentExpressionRight;
         AssignmentExpression(ctx, &pAssignmentExpressionRight);
 
         GetPosition(ctx, &pBinaryExpression->Position);
@@ -19384,25 +20208,23 @@ void AssignmentExpression(Parser* ctx, TExpression** ppExpression)
         pBinaryExpression->pExpressionLeft = *ppExpression;
         pBinaryExpression->pExpressionRight = pAssignmentExpressionRight;
         pBinaryExpression->token = token;
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
     break;
 
     default:
-        //É apenas conditional-expression
+        
+
         break;
     }
 }
 
-void Expression0(Parser* ctx, TExpression** ppExpression)
+void Expression0(Parser * ctx, TExpression ** ppExpression)
 {
-    *ppExpression = NULL; //out
-                          /*
-                          (6.5.17) expression:
-                          assignment-expression
-                          expression , assignment-expression
-                          */
-    TExpression* pAssignmentExpressionLeft;
+    *ppExpression = NULL; 
+
+                           
+    TExpression * pAssignmentExpressionLeft;
     AssignmentExpression(ctx, &pAssignmentExpressionLeft);
     *ppExpression = pAssignmentExpressionLeft;
 
@@ -19410,66 +20232,65 @@ void Expression0(Parser* ctx, TExpression** ppExpression)
 
     if (token == TK_COMMA)
     {
-        TExpression* pAssignmentExpressionRight;
+        TExpression * pAssignmentExpressionRight;
         Parser_Match(ctx, NULL);
         Expression0(ctx, &pAssignmentExpressionRight);
 
-        TBinaryExpression* pBinaryExpression =
+        TBinaryExpression * pBinaryExpression =
             TBinaryExpression_Create();
         GetPosition(ctx, &pBinaryExpression->Position);
         pBinaryExpression->pExpressionLeft = *ppExpression;
         pBinaryExpression->pExpressionRight = pAssignmentExpressionRight;
         pBinaryExpression->token = TK_COMMA;
 
-        *ppExpression = (TExpression*)pBinaryExpression;
+        *ppExpression = (TExpression *)pBinaryExpression;
     }
 }
 
-void ConstantExpression(Parser* ctx, TExpression** ppExpression)
+void ConstantExpression(Parser * ctx, TExpression ** ppExpression)
 {
-    *ppExpression = NULL; //out
+    *ppExpression = NULL; 
 
-                          /*
-                          (6.6) constant-expression:
-                          conditional-expression
-                          */
+
+                           
     ConditionalExpression(ctx, ppExpression);
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
 
 
-void Designator(Parser* ctx, TDesignator* pDesignator);
-void Designator_List(Parser* ctx, TDesignatorList* pDesignatorList);
-void Designation(Parser* ctx, TDesignatorList* pDesignatorList);
-void Initializer_List(Parser* ctx, TInitializerList* pInitializerList);
-//void Assignment_Expression(Parser* ctx, TExpressionStatement* pExpressionStatement, Tokens endToken1, Tokens endToken2);
-bool Statement(Parser* ctx, TStatement** ppStatement);
-//void Constant_Expression(Parser* ctx, Tokens endToken1, Tokens endToken2, ScannerItemStack* outStack);
-void Compound_Statement(Parser* ctx, TStatement** ppStatement);
-//void Expression(Parser* ctx, TExpression** pExpression, Tokens endToken1, Tokens endToken2);
-void Parameter_Declaration(Parser* ctx, TParameter* pParameterDeclaration);
-bool Declaration(Parser* ctx, TAnyDeclaration** ppDeclaration);
-void Type_Qualifier_List(Parser* ctx, TTypeQualifierList* pQualifiers);
-void Declaration_Specifiers(Parser* ctx, TDeclarationSpecifiers* pDeclarationSpecifiers);
 
-void Type_Specifier(Parser* ctx, TTypeSpecifier** ppTypeSpecifier);
-bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier);
-void Initializer(Parser* ctx,
-    TInitializer** ppInitializer,
+
+void Designator(Parser * ctx, TDesignator * pDesignator);
+void Designator_List(Parser * ctx, TDesignatorList * pDesignatorList);
+void Designation(Parser * ctx, TDesignatorList * pDesignatorList);
+void Initializer_List(Parser * ctx, TInitializerList * pInitializerList);
+
+
+bool Statement(Parser * ctx, TStatement ** ppStatement);
+
+
+void Compound_Statement(Parser * ctx, TStatement ** ppStatement);
+
+
+void Parameter_Declaration(Parser * ctx, TParameter * pParameterDeclaration);
+bool Declaration(Parser * ctx, TAnyDeclaration ** ppDeclaration);
+void Type_Qualifier_List(Parser * ctx, TTypeQualifierList * pQualifiers);
+void Declaration_Specifiers(Parser * ctx, TDeclarationSpecifiers * pDeclarationSpecifiers);
+
+void Type_Specifier(Parser * ctx, TTypeSpecifier ** ppTypeSpecifier);
+bool Type_Qualifier(Parser * ctx, TTypeQualifier * pQualifier);
+void Initializer(Parser * ctx,
+    TInitializer ** ppInitializer,
     Tokens endToken1,
     Tokens endToken2);
 
 
-void Expression_Statement(Parser* ctx, TStatement** ppStatement)
+void Expression_Statement(Parser * ctx, TStatement ** ppStatement)
 {
-    /*
-    expression-statement:
-    expressionopt;
-    */
-    TExpressionStatement* pExpression = TExpressionStatement_Create();
-    *ppStatement = (TStatement*)pExpression;
+     
+    TExpressionStatement * pExpression = TExpressionStatement_Create();
+    *ppStatement = (TStatement *)pExpression;
     Tokens token = Parser_CurrentToken(ctx);
 
     if (token != TK_SEMICOLON)
@@ -19480,22 +20301,17 @@ void Expression_Statement(Parser* ctx, TStatement** ppStatement)
     Parser_MatchToken(ctx, TK_SEMICOLON, &pExpression->ClueList0);
 }
 
-void Selection_Statement(Parser* ctx, TStatement** ppStatement)
+void Selection_Statement(Parser * ctx, TStatement ** ppStatement)
 {
-    /*
-    selection-statement:
-    if ( expression ) statement
-    if ( expression ) statement else statement
-    switch ( expression ) statement
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
 
     switch (token)
     {
     case TK_IF:
     {
-        TIfStatement* pIfStatement = TIfStatement_Create();
-        *ppStatement = (TStatement*)pIfStatement;
+        TIfStatement * pIfStatement = TIfStatement_Create();
+        *ppStatement = (TStatement *)pIfStatement;
 
         Parser_Match(ctx, &pIfStatement->ClueList0);
 
@@ -19519,8 +20335,8 @@ void Selection_Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_SWITCH:
     {
-        TSwitchStatement* pSelectionStatement = TSwitchStatement_Create();
-        *ppStatement = (TStatement*)pSelectionStatement;
+        TSwitchStatement * pSelectionStatement = TSwitchStatement_Create();
+        *ppStatement = (TStatement *)pSelectionStatement;
 
 
         Parser_Match(ctx, &pSelectionStatement->ClueList0);
@@ -19538,30 +20354,26 @@ void Selection_Statement(Parser* ctx, TStatement** ppStatement)
     break;
 
     default:
-        //assert(false);
+        
+
         break;
     }
 }
 
-void Jump_Statement(Parser* ctx, TStatement** ppStatement)
+void Jump_Statement(Parser * ctx, TStatement ** ppStatement)
 {
-    /*
-    jump-statement:
-    goto identifier ;
-    continue ;
-    break ;
-    return expressionopt ;
-    */
-    //jump-statement
+     
+    
+
     Tokens token = Parser_CurrentToken(ctx);
 
     switch (token)
     {
     case TK_GOTO:
     {
-        TJumpStatement* pJumpStatement = TJumpStatement_Create();
+        TJumpStatement * pJumpStatement = TJumpStatement_Create();
         pJumpStatement->token = token;
-        *ppStatement = (TStatement*)pJumpStatement;
+        *ppStatement = (TStatement *)pJumpStatement;
 
         Parser_Match(ctx, &pJumpStatement->ClueList0);
         PTR_STRING_REPLACE(pJumpStatement->Identifier, Lexeme(ctx));
@@ -19572,9 +20384,9 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_CONTINUE:
     {
-        TJumpStatement* pJumpStatement = TJumpStatement_Create();
+        TJumpStatement * pJumpStatement = TJumpStatement_Create();
         pJumpStatement->token = token;
-        *ppStatement = (TStatement*)pJumpStatement;
+        *ppStatement = (TStatement *)pJumpStatement;
         Parser_Match(ctx, &pJumpStatement->ClueList0);
 
         Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList2);
@@ -19583,9 +20395,9 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_BREAK:
     {
-        TJumpStatement* pJumpStatement = TJumpStatement_Create();
+        TJumpStatement * pJumpStatement = TJumpStatement_Create();
         pJumpStatement->token = token;
-        *ppStatement = (TStatement*)pJumpStatement;
+        *ppStatement = (TStatement *)pJumpStatement;
 
         Parser_Match(ctx, &pJumpStatement->ClueList0);
         Parser_MatchToken(ctx, TK_SEMICOLON, &pJumpStatement->ClueList2);
@@ -19594,9 +20406,9 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_RETURN:
     {
-        TJumpStatement* pJumpStatement = TJumpStatement_Create();
+        TJumpStatement * pJumpStatement = TJumpStatement_Create();
         pJumpStatement->token = token;
-        *ppStatement = (TStatement*)pJumpStatement;
+        *ppStatement = (TStatement *)pJumpStatement;
 
         token = Parser_Match(ctx, &pJumpStatement->ClueList0);
 
@@ -19610,28 +20422,23 @@ void Jump_Statement(Parser* ctx, TStatement** ppStatement)
     break;
 
     default:
-        //assert(false);
+        
+
         break;
     }
 }
 
-void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
+void Iteration_Statement(Parser * ctx, TStatement ** ppStatement)
 {
-    /*
-    iteration-statement:
-    while ( expression ) statement
-    do statement while ( expression ) ;
-    for ( expressionopt ; expressionopt ; expressionopt ) statement
-    for ( declaration expressionopt ; expressionopt ) statement
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
 
     switch (token)
     {
     case TK_WHILE:
     {
-        TWhileStatement* pWhileStatement = TWhileStatement_Create();
-        *ppStatement = (TStatement*)pWhileStatement;
+        TWhileStatement * pWhileStatement = TWhileStatement_Create();
+        *ppStatement = (TStatement *)pWhileStatement;
 
         Parser_Match(ctx, &pWhileStatement->ClueList0);
 
@@ -19647,40 +20454,49 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
 
     case TK_DO:
     {
-        TDoStatement* pDoStatement = TDoStatement_Create();
-        *ppStatement = (TStatement*)pDoStatement;
+        TDoStatement * pDoStatement = TDoStatement_Create();
+        *ppStatement = (TStatement *)pDoStatement;
 
-        Parser_Match(ctx, &pDoStatement->ClueList0); //do
+        Parser_Match(ctx, &pDoStatement->ClueList0); 
+
 
         Statement(ctx, &pDoStatement->pStatement);
 
-        Parser_MatchToken(ctx, TK_WHILE, &pDoStatement->ClueList1); //while
+        Parser_MatchToken(ctx, TK_WHILE, &pDoStatement->ClueList1); 
 
-        Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pDoStatement->ClueList2); //(
+
+        Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pDoStatement->ClueList2); 
+
 
         Expression0(ctx, &pDoStatement->pExpression);
 
-        Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pDoStatement->ClueList3); //)
+        Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pDoStatement->ClueList3); 
 
-        Parser_MatchToken(ctx, TK_SEMICOLON, &pDoStatement->ClueList4); //;
+
+        Parser_MatchToken(ctx, TK_SEMICOLON, &pDoStatement->ClueList4); 
+
     }
     break;
 
     case TK_FOR:
     {
-        TForStatement* pIterationStatement = TForStatement_Create();
-        *ppStatement = (TStatement*)pIterationStatement;
+        TForStatement * pIterationStatement = TForStatement_Create();
+        *ppStatement = (TStatement *)pIterationStatement;
 
         Parser_Match(ctx, &pIterationStatement->ClueList0);
 
         token = Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pIterationStatement->ClueList1);
 
-        //primeira expressao do for
+        
+
         if (token != TK_SEMICOLON)
         {
-            //
-            //for (expressionopt; expressionopt; expressionopt) statement
-            //for (declaration expressionopt; expressionopt) statement
+            
+
+            
+
+            
+
 
             bool bHasDeclaration = Declaration(ctx, &pIterationStatement->pInitDeclarationOpt);
 
@@ -19690,14 +20506,16 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
 
                 if (token != TK_SEMICOLON)
                 {
-                    //Esta eh a 2 expressao do for, a declaracao ja comeu 1
+                    
+
                     Expression0(ctx, &pIterationStatement->pExpression2);
 
                     Parser_MatchToken(ctx, TK_SEMICOLON, &pIterationStatement->ClueList2);
                 }
                 else
                 {
-                    //segunda expressao vazia                        
+                    
+
                     Parser_MatchToken(ctx, TK_SEMICOLON, &pIterationStatement->ClueList2);
                 }
             }
@@ -19708,7 +20526,8 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
 
                 if (token != TK_SEMICOLON)
                 {
-                    //primeira expressao do for
+                    
+
                     Expression0(ctx, &pIterationStatement->pExpression1);
 
 
@@ -19719,7 +20538,8 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
 
                 if (token != TK_SEMICOLON)
                 {
-                    //segunda expressao do for
+                    
+
                     Expression0(ctx, &pIterationStatement->pExpression2);
 
                     Parser_MatchToken(ctx, TK_SEMICOLON, &pIterationStatement->ClueList3);
@@ -19727,7 +20547,8 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
 
                 else
                 {
-                    //segunda expressao vazia                        
+                    
+
                     Parser_MatchToken(ctx, TK_SEMICOLON, &pIterationStatement->ClueList3);
                 }
 
@@ -19736,7 +20557,8 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
 
         else
         {
-            //primeira expressao do for vazia
+            
+
 
             Parser_MatchToken(ctx, TK_SEMICOLON, &pIterationStatement->ClueList2);
 
@@ -19744,7 +20566,8 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
 
             if (token != TK_SEMICOLON)
             {
-                //Esta eh a 2 expressao do for, a declaracao ja comeu 1
+                
+
                 Expression0(ctx, &pIterationStatement->pExpression2);
 
 
@@ -19753,14 +20576,16 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
 
             else
             {
-                //segunda expressao do for vazia tb
+                
+
                 Parser_MatchToken(ctx, TK_SEMICOLON, &pIterationStatement->ClueList3);
             }
         }
 
         token = Parser_CurrentToken(ctx);
 
-        //terceira expressao do for
+        
+
         if (token != TK_RIGHT_PARENTHESIS)
         {
             Expression0(ctx, &pIterationStatement->pExpression3);
@@ -19773,28 +20598,25 @@ void Iteration_Statement(Parser* ctx, TStatement** ppStatement)
     break;
 
     default:
-        //assert(false);
+        
+
         break;
     }
 }
 
 
-void Labeled_Statement(Parser* ctx, TStatement** ppStatement)
+void Labeled_Statement(Parser * ctx, TStatement ** ppStatement)
 {
-    /*
-    labeled-statement:
-    identifier : statement (ver Labeled_StatementLabel)
-    case constant-expression : statement
-    default : statement
-    */
-    TLabeledStatement* pLabeledStatement = TLabeledStatement_Create();
-    *ppStatement = (TStatement*)pLabeledStatement;
+     
+    TLabeledStatement * pLabeledStatement = TLabeledStatement_Create();
+    *ppStatement = (TStatement *)pLabeledStatement;
     Tokens token = Parser_CurrentToken(ctx);
     pLabeledStatement->token = token;
 
     if (token == TK_IDENTIFIER)
     {
-        //aqui nao eh um tipo
+        
+
         PTR_STRING_REPLACE(pLabeledStatement->Identifier, Lexeme(ctx));
 
         Parser_Match(ctx, &pLabeledStatement->ClueList0);
@@ -19828,14 +20650,11 @@ void Labeled_Statement(Parser* ctx, TStatement** ppStatement)
     }
 }
 
-void Asm_Statement(Parser* ctx, TStatement** ppStatement)
+void Asm_Statement(Parser * ctx, TStatement ** ppStatement)
 {
-    /*
-    __asm assembly-instruction ;opt
-    __asm { assembly-instruction-list };opt
-    */
-    TAsmStatement* pAsmStatement = TAsmStatement_Create();
-    *ppStatement = (TStatement*)pAsmStatement;
+     
+    TAsmStatement * pAsmStatement = TAsmStatement_Create();
+    *ppStatement = (TStatement *)pAsmStatement;
     Parser_MatchToken(ctx, TK__ASM, NULL);
     Tokens token = Parser_CurrentToken(ctx);
 
@@ -19864,9 +20683,12 @@ void Asm_Statement(Parser* ctx, TStatement** ppStatement)
 
     else
     {
-        //sem ;
-        //    __asm int 0x2c
-        //chato
+        
+
+        
+
+        
+
         token = Parser_CurrentToken(ctx);
 
         for (; ;)
@@ -19880,10 +20702,14 @@ void Asm_Statement(Parser* ctx, TStatement** ppStatement)
 
             if (token == TK_RIGHT_CURLY_BRACKET)
             {
-                //__asm mov al, 2   __asm mov dx, 0xD007   __asm out dx, al
-                //chute na verdade..
-                //dificil saber aonde termina
-                //https://msdn.microsoft.com/en-us/library/45yd4tzz.aspx
+                
+
+                
+
+                
+
+                
+
                 break;
             }
 
@@ -19896,7 +20722,8 @@ void Asm_Statement(Parser* ctx, TStatement** ppStatement)
         }
     }
 
-    //opcional
+    
+
     token = Parser_CurrentToken(ctx);
 
     if (token == TK_SEMICOLON)
@@ -19905,9 +20732,10 @@ void Asm_Statement(Parser* ctx, TStatement** ppStatement)
     }
 }
 
-bool Statement(Parser* ctx, TStatement** ppStatement)
+bool Statement(Parser * ctx, TStatement ** ppStatement)
 {
-    //assert(*ppStatement == NULL);
+    
+
 
     if (Parser_HasError(ctx))
     {
@@ -19916,7 +20744,7 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
 
     bool bResult = false;
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
     switch (token)
     {
@@ -19948,16 +20776,25 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
         Selection_Statement(ctx, ppStatement);
         break;
 
-        //case TK_ELSE:
-        ////assert(false);
-        //Ele tem que estar fazendo os statement do IF!
-        //bResult = true;
-        //Parser_Match(ctx, NULL); //else
-        //poderia retornar uma coisa so  p dizer q eh else
-        //Statement(ctx, obj);
-        //break;
+        
 
-        //iteration-statement
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+
+        
+
     case TK_WHILE:
     case TK_FOR:
     case TK_DO:
@@ -19965,7 +20802,8 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
         Iteration_Statement(ctx, ppStatement);
         break;
 
-        //jump-statement
+        
+
     case TK_GOTO:
     case TK_CONTINUE:
     case TK_BREAK:
@@ -19974,9 +20812,12 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
         Jump_Statement(ctx, ppStatement);
         break;
 
-        //lista de first para expressões
-        //expression-statement
-    case TK_LEFT_SQUARE_BRACKET://lamda todo isprimeiryfirst
+        
+
+        
+
+    case TK_LEFT_SQUARE_BRACKET:
+
     case TK_LEFT_PARENTHESIS:
     case TK_SEMICOLON:
 
@@ -19985,13 +20826,15 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
     case TK_STRING_LITERAL:
 
 
-        //unary
+        
+
     case TK_PLUSPLUS:
     case TK_MINUSMINUS:
 
     case TK_SIZEOF:
 
-        //unary-operator
+        
+
     case TK_AMPERSAND:
     case TK_ASTERISK:
     case TK_PLUS_SIGN:
@@ -19999,8 +20842,10 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
     case TK_TILDE:
     case TK_EXCLAMATION_MARK:
 #ifdef LANGUAGE_EXTENSIONS
-        //unary-operator-extension
-    case TK_ANDAND: //&&
+        
+
+    case TK_ANDAND: 
+
 #endif
         bResult = true;
         Expression_Statement(ctx, ppStatement);
@@ -20010,13 +20855,15 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
 
         if (IsTypeName(ctx, TK_IDENTIFIER, lexeme))
         {
-            //É uma declaracao
+            
+
         }
         else
         {
             if (Parser_LookAheadToken(ctx) == TK_COLON)
             {
-                //era um label..
+                
+
                 Labeled_Statement(ctx, ppStatement);
             }
 
@@ -20031,11 +20878,13 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
         break;
 
     case TK_INLINE:
-    case TK__INLINE: //microscoft
+    case TK__INLINE: 
+
     case TK__NORETURN:
     case TK__ALIGNAS:
 
-        //type-qualifier
+        
+
     case TK_CONST:
     case TK_RESTRICT:
     case TK_VOLATILE:
@@ -20053,13 +20902,15 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
     case TK_SHORT:
     case TK_INT:
     case TK_LONG:
-        //microsoft
+        
+
     case TK__INT8:
     case TK__INT16:
     case TK__INT32:
     case TK__INT64:
     case TK__WCHAR_T:
-        /////////
+        
+
     case TK_FLOAT:
     case TK_DOUBLE:
     case TK_SIGNED:
@@ -20076,57 +20927,59 @@ bool Statement(Parser* ctx, TStatement** ppStatement)
     default:
 
         SetError(ctx, "unexpected error");
-        //bResult = true;
-        //SetType(pStatement, "expression-statement");
-        //Expression_Statement(ctx, pStatement);
+        
+
+        
+
+        
+
         break;
     }
 
     return bResult;
 }
 
-void Block_Item(Parser* ctx, TBlockItem** ppBlockItem)
+void Block_Item(Parser * ctx, TBlockItem ** ppBlockItem)
 {
-    /*
-    block-item:
-    declaration
-    statement
-    */
+     
     *ppBlockItem = NULL;
-    TStatement* pStatement = NULL;
+    TStatement * pStatement = NULL;
 
     if (Statement(ctx, &pStatement))
     {
-        *ppBlockItem = (TBlockItem*)pStatement;
-        //assert(*ppBlockItem != NULL);
+        *ppBlockItem = (TBlockItem *)pStatement;
+        
+
     }
 
     else
     {
 
 
-        TAnyDeclaration* pDeclaration;
+        TAnyDeclaration * pDeclaration;
         Declaration(ctx, &pDeclaration);
-        *ppBlockItem = (TBlockItem*)pDeclaration;
-        //assert(*ppBlockItem != NULL);
+        *ppBlockItem = (TBlockItem *)pDeclaration;
+        
+
     }
 }
 
-void Block_Item_List(Parser* ctx, TBlockItemList* pBlockItemList)
+void Block_Item_List(Parser * ctx, TBlockItemList * pBlockItemList)
 {
     for (; ;)
     {
         if (ErrorOrEof(ctx))
             break;
 
-        TBlockItem* pBlockItem = NULL;
+        TBlockItem * pBlockItem = NULL;
         Block_Item(ctx, &pBlockItem);
         TBlockItemList_PushBack(pBlockItemList, pBlockItem);
         Tokens token = Parser_CurrentToken(ctx);
 
         if (token == TK_RIGHT_CURLY_BRACKET)
         {
-            //terminou
+            
+
             break;
         }
 
@@ -20135,14 +20988,11 @@ void Block_Item_List(Parser* ctx, TBlockItemList* pBlockItemList)
     }
 }
 
-void Compound_Statement(Parser* ctx, TStatement** ppStatement)
+void Compound_Statement(Parser * ctx, TStatement ** ppStatement)
 {
-    /*
-    compound-statement:
-    { block-item-listopt }
-    */
-    TCompoundStatement* pCompoundStatement = TCompoundStatement_Create();
-    *ppStatement = (TStatement*)pCompoundStatement;
+     
+    TCompoundStatement * pCompoundStatement = TCompoundStatement_Create();
+    *ppStatement = (TStatement *)pCompoundStatement;
 
     struct SymbolMap BlockScope = SYMBOLMAP_INIT;
 
@@ -20160,20 +21010,17 @@ void Compound_Statement(Parser* ctx, TStatement** ppStatement)
 
     Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET, &pCompoundStatement->ClueList1);
 
-    //SymbolMap_Print(ctx->pCurrentScope);
+    
+
 
     ctx->pCurrentScope = BlockScope.pPrevious;
     SymbolMap_Destroy(&BlockScope);
 }
 
-void Struct_Or_Union(Parser* ctx,
-    TStructUnionSpecifier* pStructUnionSpecifier)
+void Struct_Or_Union(Parser * ctx,
+    TStructUnionSpecifier * pStructUnionSpecifier)
 {
-    /*
-    struct-or-union:
-    struct
-    union
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
 
     switch (token)
@@ -20189,17 +21036,15 @@ void Struct_Or_Union(Parser* ctx,
         break;
 
     default:
-        //assert(false);
+        
+
         break;
     }
 }
 
-void Static_Assert_Declaration(Parser* ctx, TStaticAssertDeclaration* pStaticAssertDeclaration)
+void Static_Assert_Declaration(Parser * ctx, TStaticAssertDeclaration * pStaticAssertDeclaration)
 {
-    /*
-    static_assert-declaration:
-    _Static_assert ( constant-expression , string-literal ) ;
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
 
     if (token == TK__STATIC_ASSERT)
@@ -20222,24 +21067,22 @@ void Static_Assert_Declaration(Parser* ctx, TStaticAssertDeclaration* pStaticAss
     }
 }
 
-void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQualifierList)
+void Specifier_Qualifier_List(Parser * ctx, TSpecifierQualifierList * pSpecifierQualifierList)
 {
-    /*specifier-qualifier-list:
-    type-specifier specifier-qualifier-listopt
-    type-qualifier specifier-qualifier-listopt
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
     if (TTypeSpecifier_IsFirst(ctx, token, lexeme))
     {
         if (TSpecifierQualifierList_CanAdd(pSpecifierQualifierList, token, lexeme))
         {
-            TTypeSpecifier* pTypeSpecifier = NULL;
+            TTypeSpecifier * pTypeSpecifier = NULL;
             Type_Specifier(ctx, &pTypeSpecifier);
             if (pTypeSpecifier != NULL)
             {
-                //ATENCAO
-                TSpecifierQualifierList_PushBack(pSpecifierQualifierList, (TSpecifierQualifier*)pTypeSpecifier);
+                
+
+                TSpecifierQualifierList_PushBack(pSpecifierQualifierList, (TSpecifierQualifier *)pTypeSpecifier);
             }
         }
         else
@@ -20250,7 +21093,7 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
     }
     else if (TTypeQualifier_IsFirst(token))
     {
-        TTypeQualifier* pTypeQualifier = TTypeQualifier_Create();
+        TTypeQualifier * pTypeQualifier = TTypeQualifier_Create();
         Type_Qualifier(ctx, pTypeQualifier);
         TSpecifierQualifierList_PushBack(pSpecifierQualifierList, TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
     }
@@ -20270,10 +21113,7 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
     {
         if (TSpecifierQualifierList_CanAdd(pSpecifierQualifierList, token, lexeme))
         {
-            /*
-            typedef int X;
-            void F(int X ); //X vai ser variavel e nao tipo
-            */
+             
 
             Specifier_Qualifier_List(ctx, pSpecifierQualifierList);
         }
@@ -20282,31 +21122,30 @@ void Specifier_Qualifier_List(Parser* ctx, TSpecifierQualifierList* pSpecifierQu
 }
 
 
-void Struct_Declarator(Parser* ctx,
+void Struct_Declarator(Parser * ctx,
 
-    TStructDeclarator** ppTDeclarator2)
+    TStructDeclarator ** ppTDeclarator2)
 {
-    /**
-    struct-declarator:
-    declarator
-    declaratoropt : constant-expression
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
 
     if (token == TK_COLON)
     {
-        //AST TODO
-        ////TNodeClueList_MoveToEnd(&ppTDeclarator2->ClueList, &ctx->Scanner.ClueList);
+        
 
-        Parser_Match(ctx, NULL);// &ppTDeclarator2->ClueList);
-        TExpression* p = NULL;
+        
+
+
+        Parser_Match(ctx, NULL);
+
+        TExpression * p = NULL;
         ConstantExpression(ctx, &p);
         TExpression_Delete(p);
     }
 
     else
     {
-        TInitDeclarator* pInitDeclarator =
+        TInitDeclarator * pInitDeclarator =
             TInitDeclarator_Create();
 
         *ppTDeclarator2 = pInitDeclarator;
@@ -20321,7 +21160,7 @@ void Struct_Declarator(Parser* ctx,
         {
             Parser_Match(ctx, &pInitDeclarator->ClueList0);
 
-            TExpression* p = NULL;
+            TExpression * p = NULL;
             ConstantExpression(ctx, &p);
             TExpression_Delete(p);
         }
@@ -20330,7 +21169,8 @@ void Struct_Declarator(Parser* ctx,
 
         if (token == TK_EQUALS_SIGN)
         {
-            Parser_Match(ctx, &pInitDeclarator->ClueList1); //_defval ou =
+            Parser_Match(ctx, &pInitDeclarator->ClueList1); 
+
             Initializer(ctx, &pInitDeclarator->pInitializer, TK_SEMICOLON, TK_SEMICOLON);
 
             token = Parser_CurrentToken(ctx);
@@ -20341,16 +21181,13 @@ void Struct_Declarator(Parser* ctx,
     }
 }
 
-void Struct_Declarator_List(Parser* ctx,
+void Struct_Declarator_List(Parser * ctx,
 
-    TStructDeclaratorList* pStructDeclarationList)
+    TStructDeclaratorList * pStructDeclarationList)
 {
-    /*
-    struct-declarator-list:
-    struct-declarator
-    struct-declarator-list , struct-declarator
-    */
-    TStructDeclarator* pTDeclarator2 = NULL;// TDeclarator_Create();
+     
+    TStructDeclarator * pTDeclarator2 = NULL;
+
 
     Struct_Declarator(ctx, &pTDeclarator2);
     TStructDeclaratorList_Add(pStructDeclarationList, pTDeclarator2);
@@ -20364,16 +21201,20 @@ void Struct_Declarator_List(Parser* ctx,
 
         if (token == TK_COMMA)
         {
-            //Tem mais
+            
+
             Parser_Match(ctx, &pTDeclarator2->ClueList0);
-            //ANNOTATED AQUI TEM O COMENTARIO /*@= 1*/
+            
+
 
             Struct_Declarator_List(ctx, pStructDeclarationList);
         }
         else if (token == TK_SEMICOLON)
         {
-            //em ctx cluelist
-            //ANNOTATED AQUI TEM O COMENTARIO /*@= 1*/
+            
+
+            
+
             break;
         }
         else
@@ -20392,20 +21233,16 @@ void Struct_Declarator_List(Parser* ctx,
     }
 }
 
-void Struct_Declaration(Parser* ctx,
-    TAnyStructDeclaration** ppStructDeclaration)
+void Struct_Declaration(Parser * ctx,
+    TAnyStructDeclaration ** ppStructDeclaration)
 {
-    /**
-    struct-declaration:
-    specifier-qualifier-list struct-declarator-listopt ;
-    static_assert-declaration
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
 
     if (token != TK__STATIC_ASSERT)
     {
-        TStructDeclaration* pStructDeclarationBase = TStructDeclaration_Create();
-        *ppStructDeclaration = (TAnyStructDeclaration*)pStructDeclarationBase;
+        TStructDeclaration * pStructDeclarationBase = TStructDeclaration_Create();
+        *ppStructDeclaration = (TAnyStructDeclaration *)pStructDeclarationBase;
         Specifier_Qualifier_List(ctx,
             &pStructDeclarationBase->SpecifierQualifierList);
         token = Parser_CurrentToken(ctx);
@@ -20416,7 +21253,8 @@ void Struct_Declaration(Parser* ctx,
                 &pStructDeclarationBase->DeclaratorList);
 
             Parser_MatchToken(ctx, TK_SEMICOLON, &pStructDeclarationBase->ClueList1);
-            //TODO AQUI TEM O COMENTARIO /*@= 1*/
+            
+
         }
         else
         {
@@ -20426,26 +21264,22 @@ void Struct_Declaration(Parser* ctx,
 
     else
     {
-        TStaticAssertDeclaration* pStaticAssertDeclaration = TStaticAssertDeclaration_Create();
-        *ppStructDeclaration = (TAnyStructDeclaration*)pStaticAssertDeclaration;
+        TStaticAssertDeclaration * pStaticAssertDeclaration = TStaticAssertDeclaration_Create();
+        *ppStructDeclaration = (TAnyStructDeclaration *)pStaticAssertDeclaration;
         Static_Assert_Declaration(ctx, pStaticAssertDeclaration);
     }
 }
 
-void Struct_Declaration_List(Parser* ctx,
-    TStructDeclarationList* pStructDeclarationList)
+void Struct_Declaration_List(Parser * ctx,
+    TStructDeclarationList * pStructDeclarationList)
 {
-    /*
-    struct-declaration-list:
-    struct-declaration
-    struct-declaration-list struct-declaration
-    */
+     
     if (ErrorOrEof(ctx))
     {
         return;
     }
 
-    TAnyStructDeclaration* pStructDeclaration = NULL;
+    TAnyStructDeclaration * pStructDeclaration = NULL;
     Struct_Declaration(ctx, &pStructDeclaration);
     TStructDeclarationList_PushBack(pStructDeclarationList, pStructDeclaration);
 
@@ -20453,23 +21287,19 @@ void Struct_Declaration_List(Parser* ctx,
     Tokens token = Parser_CurrentToken(ctx);
     if (token != TK_RIGHT_CURLY_BRACKET)
     {
-        //Tem mais?
+        
+
         Struct_Declaration_List(ctx, pStructDeclarationList);
     }
 }
 
-void UnionSetItem(Parser* ctx, TUnionSet* p)
+void UnionSetItem(Parser * ctx, TUnionSet * p)
 {
-    /*
-    _union-set-item:
-    struct Identifier
-    union Identifier
-    Identifier
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
-    TUnionSetItem* pItem = TUnionSetItem_Create();
+    TUnionSetItem * pItem = TUnionSetItem_Create();
 
     if (token == TK_IDENTIFIER)
     {
@@ -20492,13 +21322,9 @@ void UnionSetItem(Parser* ctx, TUnionSet* p)
     }
 }
 
-void UnionSetList(Parser* ctx, TUnionSet* p)
+void UnionSetList(Parser * ctx, TUnionSet * p)
 {
-    /*
-    _union-set-list:
-    _union-set-item
-    _union-set-item | _union-set-list
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
     UnionSetItem(ctx, p);
 
@@ -20511,15 +21337,12 @@ void UnionSetList(Parser* ctx, TUnionSet* p)
     }
 }
 
-void UnionSet(Parser* ctx, TUnionSet* pUnionSet)
+void UnionSet(Parser * ctx, TUnionSet * pUnionSet)
 {
-    /*
-    _union-set:
-    < _union-set-list >
-    */
+     
 
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
 
     if (token == TK_LESS_THAN_SIGN)
@@ -20536,27 +21359,21 @@ void UnionSet(Parser* ctx, TUnionSet* pUnionSet)
 
 }
 
-void Struct_Or_Union_Specifier(Parser* ctx,
-    TStructUnionSpecifier* pStructUnionSpecifier)
+void Struct_Or_Union_Specifier(Parser * ctx,
+    TStructUnionSpecifier * pStructUnionSpecifier)
 {
-    /*
-    struct-or-union-specifier:
-    struct-or-union identifieropt { struct-declaration-list }
-    struct-or-union identifier
-    */
+     
 
-    /*
-    struct-or-union-specifier:
-    struct-or-union )opt identifieropt { struct-declaration-list }
-    struct-or-union )opt identifier
-    */
+     
 
-    //aqui teria que ativar o flag
-    Struct_Or_Union(ctx, pStructUnionSpecifier);//TODO
+    
+
+    Struct_Or_Union(ctx, pStructUnionSpecifier);
+
 
 
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
 
 
@@ -20573,20 +21390,22 @@ void Struct_Or_Union_Specifier(Parser* ctx,
 
     if (token == TK_IDENTIFIER)
     {
-        //ANNOTATED AQUI TEM O COMENTARIO /*Box | Circle*/ antes nome da struct
+        
+
         PTR_STRING_REPLACE(pStructUnionSpecifier->TagName, lexeme);
         Parser_Match(ctx, &pStructUnionSpecifier->ClueList1);
     }
 
     if (pStructUnionSpecifier->TagName != NULL)
     {
-        SymbolMap_SetAt(ctx->pCurrentScope, pStructUnionSpecifier->TagName, (TTypePointer*)pStructUnionSpecifier);
+        SymbolMap_SetAt(ctx->pCurrentScope, pStructUnionSpecifier->TagName, (TTypePointer *)pStructUnionSpecifier);
     }
 
     token = Parser_CurrentToken(ctx);
     if (token == TK_LEFT_CURLY_BRACKET)
     {
-        //ANNOTATED AQUI TEM O COMENTARIO /*Box | Circle*/ antes do {
+        
+
         Parser_Match(ctx, &pStructUnionSpecifier->ClueList2);
 
         Struct_Declaration_List(ctx,
@@ -20597,26 +21416,24 @@ void Struct_Or_Union_Specifier(Parser* ctx,
     }
     else
     {
-        //struct X *
-        // SetError2(ctx, "expected name or {", "");
+        
+
+        
+
     }
 }
 
-void Enumeration_Constant(Parser* ctx,
-    TEnumerator* pEnumerator2)
+void Enumeration_Constant(Parser * ctx,
+    TEnumerator * pEnumerator2)
 {
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
     PTR_STRING_REPLACE(pEnumerator2->Name, lexeme);
     Parser_MatchToken(ctx, TK_IDENTIFIER, &pEnumerator2->ClueList0);
 }
 
-bool EnumeratorC(Parser* ctx, TEnumerator* pEnumerator2)
+bool EnumeratorC(Parser * ctx, TEnumerator * pEnumerator2)
 {
-    /*
-    enumerator:
-    enumeration-constant
-    enumeration-constant = constant-expression
-    */
+     
     bool bValueAssigned = false;
     Enumeration_Constant(ctx, pEnumerator2);
 
@@ -20633,29 +21450,26 @@ bool EnumeratorC(Parser* ctx, TEnumerator* pEnumerator2)
     return bValueAssigned;
 }
 
-void Enumerator_List(Parser* ctx,
-    TEnumeratorList* pEnumeratorList2)
+void Enumerator_List(Parser * ctx,
+    TEnumeratorList * pEnumeratorList2)
 {
     if (ErrorOrEof(ctx))
     {
         return;
     }
 
-    /*
-    enumerator-list:
-    enumerator
-    enumerator-list , enumerator
-    */
+     
 
-    TEnumerator* pEnumerator2 = TEnumerator_Create();
+    TEnumerator * pEnumerator2 = TEnumerator_Create();
     List_Add(pEnumeratorList2, pEnumerator2);
 
     EnumeratorC(ctx, pEnumerator2);
-    SymbolMap_SetAt(ctx->pCurrentScope, pEnumerator2->Name, (TTypePointer*)pEnumerator2);
+    SymbolMap_SetAt(ctx->pCurrentScope, pEnumerator2->Name, (TTypePointer *)pEnumerator2);
 
     Tokens token = Parser_CurrentToken(ctx);
 
-    //tem mais?
+    
+
     if (token == TK_COMMA)
     {
         Parser_Match(ctx, &pEnumerator2->ClueList2);
@@ -20669,14 +21483,9 @@ void Enumerator_List(Parser* ctx,
     }
 }
 
-void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
+void Enum_Specifier(Parser * ctx, TEnumSpecifier * pEnumSpecifier2)
 {
-    /*
-    enum-specifier:
-    enum identifieropt { enumerator-list }
-    enum identifieropt { enumerator-list, }
-    enum identifier
-    */
+     
 
     Parser_MatchToken(ctx, TK_ENUM, &pEnumSpecifier2->ClueList0);
 
@@ -20684,17 +21493,17 @@ void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
 
     if (token == TK_IDENTIFIER)
     {
-        const char* lexeme = Lexeme(ctx);
+        const char * lexeme = Lexeme(ctx);
         PTR_STRING_REPLACE(pEnumSpecifier2->Name, lexeme);
         Parser_Match(ctx, &pEnumSpecifier2->ClueList1);
 
 
-        SymbolMap_SetAt(ctx->pCurrentScope, pEnumSpecifier2->Name, (TTypePointer*)pEnumSpecifier2);
+        SymbolMap_SetAt(ctx->pCurrentScope, pEnumSpecifier2->Name, (TTypePointer *)pEnumSpecifier2);
     }
 
     else
     {
-        const char* name = GetName();
+        const char * name = GetName();
         PTR_STRING_REPLACE(pEnumSpecifier2->Name, name);
         Parser_Match(ctx, &pEnumSpecifier2->ClueList2);
     }
@@ -20702,7 +21511,8 @@ void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
 
     if (token == TK_IDENTIFIER)
     {
-        //Ja fez Match do identifier
+        
+
         token = Parser_CurrentToken(ctx);
 
         if (token == TK_LEFT_CURLY_BRACKET)
@@ -20717,13 +21527,16 @@ void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
 
         else
         {
-            //enum identifier
-            //                  ^
+            
+
+            
+
         }
     }
     else if (token == TK_LEFT_CURLY_BRACKET)
     {
-        //ja foi feito o Match do {
+        
+
         Enumerator_List(ctx, &pEnumSpecifier2->EnumeratorList);
 
         Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET,
@@ -20738,18 +21551,16 @@ void Enum_Specifier(Parser* ctx, TEnumSpecifier* pEnumSpecifier2)
 
 bool TFunctionSpecifier_IsFirst(Tokens token)
 {
-    /*
-    function-specifier:
-    inline
-    _Noreturn
-    */
+     
     bool bResult = false;
 
     switch (token)
     {
     case TK_INLINE:
-    case TK__INLINE://microsoft
-    case TK__FORCEINLINE://microsoft
+    case TK__INLINE:
+
+    case TK__FORCEINLINE:
+
     case TK__NORETURN:
         bResult = true;
         break;
@@ -20761,21 +21572,19 @@ bool TFunctionSpecifier_IsFirst(Tokens token)
     return bResult;
 }
 
-void Function_Specifier(Parser* ctx,
-    TFunctionSpecifier* pFunctionSpecifier)
+void Function_Specifier(Parser * ctx,
+    TFunctionSpecifier * pFunctionSpecifier)
 {
-    /*
-    function-specifier:
-    inline
-    _Noreturn
-    */
+     
 
     Tokens token = Parser_CurrentToken(ctx);
 
     switch (token)
     {
-    case TK__INLINE://microsoft
-    case TK__FORCEINLINE://microsoft
+    case TK__INLINE:
+
+    case TK__FORCEINLINE:
+
     case TK_INLINE:
     case TK__NORETURN:
         pFunctionSpecifier->Token = token;
@@ -20790,15 +21599,7 @@ void Function_Specifier(Parser* ctx,
 bool TStorageSpecifier_IsFirst(Tokens token)
 {
     bool bResult = false;
-    /*
-    storage-class-specifier:
-    typedef
-    extern
-    static
-    _Thread_local
-    auto
-    register
-    */
+     
     switch (token)
     {
     case TK_TYPEDEF:
@@ -20816,19 +21617,11 @@ bool TStorageSpecifier_IsFirst(Tokens token)
     return bResult;
 }
 
-void Storage_Class_Specifier(Parser* ctx,
+void Storage_Class_Specifier(Parser * ctx,
 
-    TStorageSpecifier* pStorageSpecifier)
+    TStorageSpecifier * pStorageSpecifier)
 {
-    /*
-    storage-class-specifier:
-    typedef
-    extern
-    static
-    _Thread_local
-    auto
-    register
-    */
+     
 
     Tokens token = Parser_CurrentToken(ctx);
 
@@ -20849,25 +21642,23 @@ void Storage_Class_Specifier(Parser* ctx,
     }
 }
 
-void Parameter_List(Parser* ctx,
-    TParameterList* pParameterList)
+void Parameter_List(Parser * ctx,
+    TParameterList * pParameterList)
 {
-    /*
-    parameter-list:
-    parameter-declaration
-    parameter-list, parameter-declaration
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
 
-    TParameter* pParameter = TParameter_Create();
+    TParameter * pParameter = TParameter_Create();
     List_Add(pParameterList, pParameter);
     Parameter_Declaration(ctx, pParameter);
 
-    //Tem mais?
+    
+
     token = Parser_CurrentToken(ctx);
     if (token == TK_COMMA)
     {
-        //a virgula fica no anterior
+        
+
         pParameter->bHasComma = true;
         Parser_Match(ctx, &pParameter->ClueList0);
 
@@ -20879,21 +21670,18 @@ void Parameter_List(Parser* ctx,
     }
 }
 
-void Parameter_Declaration(Parser* ctx,
-    TParameter* pParameterDeclaration)
+void Parameter_Declaration(Parser * ctx,
+    TParameter * pParameterDeclaration)
 {
 
-    //ctx->pCurrentParameterScope
+    
 
-    /*
-    parameter-declaration:
-    declaration-specifiers declarator
-    declaration-specifiers abstract-declaratoropt
-    */
+
+     
     Declaration_Specifiers(ctx,
         &pParameterDeclaration->Specifiers);
 
-    TDeclarator* pDeclarator = NULL;
+    TDeclarator * pDeclarator = NULL;
     Declarator(ctx, true, &pDeclarator);
     if (pDeclarator)
     {
@@ -20902,14 +21690,10 @@ void Parameter_Declaration(Parser* ctx,
     }
 }
 
-void Parameter_Type_List(Parser* ctx,
-    TParameterTypeList* pParameterList)
+void Parameter_Type_List(Parser * ctx,
+    TParameterTypeList * pParameterList)
 {
-    /*
-    parameter-type-list:
-    parameter-list
-    parameter-list , ...
-    */
+     
 
     Parameter_List(ctx, &pParameterList->ParameterList);
 
@@ -20918,28 +21702,20 @@ void Parameter_Type_List(Parser* ctx,
     if (token == TK_DOTDOTDOT)
     {
         pParameterList->bVariadicArgs = true;
-        //TODO ADD this parameter
+        
+
         Parser_Match(ctx, &pParameterList->ClueList1);
     }
 }
 
 
-void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclarator2)
+void Direct_Declarator(Parser * ctx, bool bAbstract, TDirectDeclarator ** ppDeclarator2)
 {
-    *ppDeclarator2 = NULL; //out
+    *ppDeclarator2 = NULL; 
 
-                           /*
-                           direct-declarator:
-                           identifier
-                           ( declarator )
-                           direct-declarator [ type-qualifier-listopt assignment-expressionopt ]
-                           direct-declarator [ static type-qualifier-listopt assignment-expression ]
-                           direct-declarator [ type-qualifier-list static assignment-expression ]
-                           direct-declarator [ type-qualifier-listopt * ]
-                           direct-declarator ( parameter-type-list )
-                           direct-declarator ( identifier-listopt )
-                           */
-    TDirectDeclarator* pDirectDeclarator = NULL;
+
+                            
+    TDirectDeclarator * pDirectDeclarator = NULL;
 
     if (ErrorOrEof(ctx))
         return;
@@ -20951,7 +21727,8 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
     {
     case TK_LEFT_PARENTHESIS:
     {
-        //assert(pDirectDeclarator == NULL);
+        
+
         pDirectDeclarator = TDirectDeclarator_Create();
 
         Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pDirectDeclarator->ClueList0);
@@ -20959,22 +21736,26 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
         Declarator(ctx, bAbstract, &pDirectDeclarator->pDeclarator);
         Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pDirectDeclarator->ClueList1);
 
-        //Para indicar que eh uma ( declarator )
+        
+
         pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeDeclarator;
-        // ) para nao confundir com funcao (
+        
+
     }
     break;
 
     case TK_IDENTIFIER:
     {
-        //identifier
+        
+
         pDirectDeclarator = TDirectDeclarator_Create();
 
-        //Para indicar que eh uma identificador
+        
+
 
         pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeIdentifier;
 
-        const char* lexeme = Lexeme(ctx);
+        const char * lexeme = Lexeme(ctx);
         PTR_STRING_REPLACE(pDirectDeclarator->Identifier, lexeme);
         pDirectDeclarator->Position.Line = GetCurrentLine(ctx);
         pDirectDeclarator->Position.FileIndex = GetFileIndex(ctx);
@@ -20983,7 +21764,8 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
     break;
 
     default:
-        ////assert(false);
+        
+
         break;
     }
 
@@ -20991,66 +21773,73 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
 
     if (pDirectDeclarator == NULL)
     {
-        //Por enquanto esta funcao esta sendo usada para
-        //abstract declarator que nao tem nome.
-        //vou criar aqui por enquanto um cara vazio
+        
+
+        
+
+        
+
         pDirectDeclarator = TDirectDeclarator_Create();
         PTR_STRING_REPLACE(pDirectDeclarator->Identifier, "");
         pDirectDeclarator->Position.Line = GetCurrentLine(ctx);
         pDirectDeclarator->Position.FileIndex = GetFileIndex(ctx);
 
-        //Para indicar que eh uma identificador
+        
+
 
         pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeIdentifier;
 
-        //Quando tiver abstract declarator vai ser 
-        //bug cair aqui
+        
+
+        
+
     }
 
     *ppDeclarator2 = pDirectDeclarator;
 
     for (;;)
     {
-        //assert(pDirectDeclarator != NULL);
+        
+
 
         token = Parser_CurrentToken(ctx);
         switch (token)
         {
         case TK_LEFT_PARENTHESIS:
 
-            /*
-            direct-declarator ( parameter-type-list )
-            direct-declarator ( identifier-listopt )
-            */
-            //      pDirectDeclarator->token = token;
-            //      //assert(pDirectDeclarator->pParametersOpt == NULL);
-            //      pDirectDeclarator->pParametersOpt = TParameterList_Create();
+             
+            
+
+            
+
+            
+
             token = Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &pDirectDeclarator->ClueList2);
 
-            //Para indicar que eh uma funcao
+            
+
 
             pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeFunction;
 
             if (token != TK_RIGHT_PARENTHESIS)
             {
-                //opt
+                
+
                 Parameter_Type_List(ctx, &pDirectDeclarator->Parameters);
             }
             Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pDirectDeclarator->ClueList3);
             break;
 
         case TK_LEFT_SQUARE_BRACKET:
-            /*
-            direct-declarator [ type-qualifier-listopt assignment-expressionopt ]
-            direct-declarator [ static type-qualifier-listopt assignment-expression ]
-            direct-declarator [ type-qualifier-list static assignment-expression ]
-            direct-declarator [ type-qualifier-listopt * ]
-            */
+             
 
-            ////assert(pDirectDeclarator->pParametersOpt == NULL);
-            //pDirectDeclarator->pParametersOpt = TParameterList_Create();
+            
 
-            //Para indicar que eh um array
+            
+
+
+            
+
 
             pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeArray;
 
@@ -21062,13 +21851,16 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
             {
                 if (token != TK_RIGHT_SQUARE_BRACKET)
                 {
-                    //assert(pDirectDeclarator->pExpression == NULL);
+                    
+
                     AssignmentExpression(ctx, &pDirectDeclarator->pExpression);
                 }
                 else
                 {
-                    //array vazio é permitido se for o ultimo cara da struct          
-                    //struct X { int ElementCount;  int Elements[]; };           
+                    
+
+                    
+
                 }
             }
 
@@ -21076,7 +21868,8 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
 
             break;
         default:
-            //assert(false);
+            
+
             break;
         }
 
@@ -21087,7 +21880,7 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
         }
         else
         {
-            TDirectDeclarator* pDirectDeclaratorNext = TDirectDeclarator_Create();
+            TDirectDeclarator * pDirectDeclaratorNext = TDirectDeclarator_Create();
             pDirectDeclarator->pDirectDeclarator = pDirectDeclaratorNext;
             pDirectDeclarator = pDirectDeclaratorNext;
         }
@@ -21096,15 +21889,17 @@ void Direct_Declarator(Parser* ctx, bool bAbstract, TDirectDeclarator** ppDeclar
     token = Parser_CurrentToken(ctx);
     if (token == TK_LEFT_PARENTHESIS)
     {
-        //tem mais
-        TDirectDeclarator* pDirectDeclaratorNext = NULL;
+        
+
+        TDirectDeclarator * pDirectDeclaratorNext = NULL;
         Direct_Declarator(ctx, bAbstract, &pDirectDeclaratorNext);
         pDirectDeclarator->pDirectDeclarator = pDirectDeclaratorNext;
     }
     else if (!bAbstract && token == TK_IDENTIFIER)
     {
-        //tem mais
-        TDirectDeclarator* pDirectDeclaratorNext = NULL;
+        
+
+        TDirectDeclarator * pDirectDeclaratorNext = NULL;
         Direct_Declarator(ctx, bAbstract, &pDirectDeclaratorNext);
         pDirectDeclarator->pDirectDeclarator = pDirectDeclaratorNext;
     }
@@ -21127,7 +21922,8 @@ static bool TTypeQualifier_IsFirst(Tokens token)
         break;
 
 #ifdef LANGUAGE_EXTENSIONS
-        //type-qualifier-extensions 
+        
+
     case TK_LEFT_SQUARE_BRACKET:
     case TK_AUTO:
 
@@ -21142,11 +21938,12 @@ static bool TTypeQualifier_IsFirst(Tokens token)
 }
 
 #ifdef LANGUAGE_EXTENSIONS
-void Size_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
+void Size_Qualifier(Parser * ctx, TTypeQualifier * pQualifier)
 {
     Tokens token = Parser_CurrentToken(ctx);
     pQualifier->Token = token;
-    //token = Parser_Match(ctx, );
+    
+
 
     token = Parser_MatchToken(ctx, TK_LEFT_SQUARE_BRACKET, &pQualifier->ClueList0);
 
@@ -21167,27 +21964,19 @@ void Size_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
 #endif
 
 
-bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
+bool Type_Qualifier(Parser * ctx, TTypeQualifier * pQualifier)
 {
-    /*
-    type-qualifier:
-    const
-    restrict
-    volatile
-    _Atomic
-    */
+     
 
-    //extensions
-    /*
-    auto
-    _size(identifier)
-    _size(int)
-    */
+    
+
+     
 
     bool bResult = false;
     Tokens token = Parser_CurrentToken(ctx);
 
-    //const char* lexeme = Lexeme(ctx);
+    
+
     switch (token)
     {
 
@@ -21223,16 +22012,12 @@ bool Type_Qualifier(Parser* ctx, TTypeQualifier* pQualifier)
     return bResult;
 }
 
-void Type_Qualifier_List(Parser* ctx,
-    TTypeQualifierList* pQualifiers)
+void Type_Qualifier_List(Parser * ctx,
+    TTypeQualifierList * pQualifiers)
 {
-    /*
-    type-qualifier-list:
-    type-qualifier
-    type-qualifier-list type-qualifier
-    */
+     
 
-    TTypeQualifier* pTypeQualifier = TTypeQualifier_Create();
+    TTypeQualifier * pTypeQualifier = TTypeQualifier_Create();
     Type_Qualifier(ctx, pTypeQualifier);
     TTypeQualifierList_PushBack(pQualifiers, pTypeQualifier);
 
@@ -21244,34 +22029,33 @@ void Type_Qualifier_List(Parser* ctx,
 }
 
 
-void Pointer(Parser* ctx, TPointerList* pPointerList)
+void Pointer(Parser * ctx, TPointerList * pPointerList)
 {
-    /*
-    pointer:
-    * type-qualifier-listopt
-    * type-qualifier-listopt pointer
-    */
+     
 
-    TPointer* pPointer = TPointer_Create();
+    TPointer * pPointer = TPointer_Create();
 
     Tokens token = Parser_CurrentToken(ctx);
 
     if (token == TK_ASTERISK)
     {
-        //ANNOTATED AQUI VAI TER AUTO SIZEOF
+        
+
         TPointerList_PushBack(pPointerList, pPointer);
         Parser_Match(ctx, &pPointer->ClueList0);
     }
     else
     {
-        //Erro
+        
+
         SetError(ctx, "pointer error");
     }
 
     token = Parser_CurrentToken(ctx);
 
 
-    //Opcional
+    
+
     if (IsTypeQualifierToken(token))
     {
         Type_Qualifier_List(ctx, &pPointer->Qualifier);
@@ -21279,24 +22063,25 @@ void Pointer(Parser* ctx, TPointerList* pPointerList)
 
     token = Parser_CurrentToken(ctx);
 
-    //Tem mais?
+    
+
     if (token == TK_ASTERISK)
     {
         Pointer(ctx, pPointerList);
     }
 }
 
-//pag 123 C
-void Declarator(Parser* ctx, bool bAbstract, TDeclarator** ppTDeclarator2)
-{
-    //assert(*ppTDeclarator2 == NULL);
-    *ppTDeclarator2 = NULL; //out
 
-    TDeclarator* pDeclarator = TDeclarator_Create();
-    /*
-    declarator:
-    pointeropt direct-declarator
-    */
+
+void Declarator(Parser * ctx, bool bAbstract, TDeclarator ** ppTDeclarator2)
+{
+    
+
+    *ppTDeclarator2 = NULL; 
+
+
+    TDeclarator * pDeclarator = TDeclarator_Create();
+     
     Tokens token = Parser_CurrentToken(ctx);
 
     if (token == TK_ASTERISK)
@@ -21304,7 +22089,8 @@ void Declarator(Parser* ctx, bool bAbstract, TDeclarator** ppTDeclarator2)
         Pointer(ctx, &pDeclarator->PointerList);
     }
 
-    //assert(pDeclarator->pDirectDeclarator == NULL);
+    
+
     Direct_Declarator(ctx, bAbstract, &pDeclarator->pDirectDeclarator);
 
     *ppTDeclarator2 = pDeclarator;
@@ -21313,11 +22099,7 @@ void Declarator(Parser* ctx, bool bAbstract, TDeclarator** ppTDeclarator2)
 
 bool TAlignmentSpecifier_IsFirst(Tokens token)
 {
-    /*
-    alignment - specifier:
-    _Alignas(type - name)
-    _Alignas(constant - expression)
-    */
+     
     return (token == TK__ALIGNAS);
 }
 
@@ -21325,17 +22107,14 @@ bool Alignment_Specifier(Parser * ctx,
     TAlignmentSpecifier * pAlignmentSpecifier)
 {
     bool bResult = false;
-    /*
-    alignment - specifier:
-    _Alignas(type - name)
-    _Alignas(constant - expression)
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
 
     if (token == TK__ALIGNAS)
     {
         Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, NULL);
-        //assert(false);//TODO
+        
+
         Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, NULL);
         bResult = true;
     }
@@ -21344,26 +22123,9 @@ bool Alignment_Specifier(Parser * ctx,
 }
 
 
-bool TTypeSpecifier_IsFirst(Parser * ctx, Tokens token, const char* lexeme)
+bool TTypeSpecifier_IsFirst(Parser * ctx, Tokens token, const char * lexeme)
 {
-    /*
-    type-specifier:
-    void
-    char
-    short
-    int
-    long
-    float
-    double
-    signed
-    unsigned
-    _Bool
-    _Complex
-    atomic-type-specifier
-    struct-or-union-specifier
-    enum-specifier
-    typedef-name
-    */
+     
 
     bool bResult = false;
 
@@ -21374,13 +22136,15 @@ bool TTypeSpecifier_IsFirst(Parser * ctx, Tokens token, const char* lexeme)
     case TK_SHORT:
     case TK_INT:
     case TK_LONG:
-        //microsoft
+        
+
     case TK__INT8:
     case TK__INT16:
     case TK__INT32:
     case TK__INT64:
     case TK__WCHAR_T:
-        /////
+        
+
     case TK_FLOAT:
     case TK_DOUBLE:
     case TK_SIGNED:
@@ -21410,12 +22174,10 @@ bool TTypeSpecifier_IsFirst(Parser * ctx, Tokens token, const char* lexeme)
 void AtomicTypeSpecifier(Parser * ctx,
     TTypeSpecifier * *ppTypeSpecifier)
 {
-    //assert(false); //tODO criar TAtomicTypeSpecifier
-                   /*
-                   atomic-type-specifier:
-                   _Atomic ( type-name )
-                   */
-    TAtomicTypeSpecifier* pAtomicTypeSpecifier =
+    
+
+                    
+    TAtomicTypeSpecifier * pAtomicTypeSpecifier =
         TAtomicTypeSpecifier_Create();
 
     *ppTypeSpecifier = TAtomicTypeSpecifier_As_TTypeSpecifier(pAtomicTypeSpecifier);
@@ -21431,46 +22193,32 @@ void AtomicTypeSpecifier(Parser * ctx,
 
 void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
 {
-    /*
-    type-specifier:
-    void
-    char
-    short
-    int
-    long
-    float
-    double
-    signed
-    unsigned
-    _Bool
-    _Complex
-    atomic-type-specifier
-    struct-or-union-specifier
-    enum-specifier
-    typedef-name
-    */
+     
 
 
     bool bResult = false;
 
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
     Tokens token = Parser_CurrentToken(ctx);
 
     switch (token)
     {
-        //type - specifier
+        
+
     case TK_VOID:
     case TK_CHAR:
     case TK_SHORT:
     case TK_INT:
     case TK_LONG:
-        //microsoft
+        
+
     case TK__INT8:
     case TK__INT16:
     case TK__INT32:
     case TK__INT64:
     case TK__WCHAR_T:
-        /////////
+        
+
     case TK_FLOAT:
     case TK_DOUBLE:
     case TK_SIGNED:
@@ -21478,7 +22226,7 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
     case TK__BOOL:
     case TK__COMPLEX:
     {
-        TSingleTypeSpecifier* pSingleTypeSpecifier =
+        TSingleTypeSpecifier * pSingleTypeSpecifier =
             TSingleTypeSpecifier_Create();
 
         pSingleTypeSpecifier->Token2 = token;
@@ -21486,11 +22234,12 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
 
         Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
 
-        *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
+        *ppTypeSpecifier = (TTypeSpecifier *)pSingleTypeSpecifier;
     }
     break;
 
-    //atomic-type-specifier
+    
+
     case TK__ATOMIC:
         bResult = true;
         AtomicTypeSpecifier(ctx, ppTypeSpecifier);
@@ -21499,21 +22248,23 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
     case TK_STRUCT:
     case TK_UNION:
     {
-        //assert(*ppTypeSpecifier == NULL);
-        bResult = true;
-        TStructUnionSpecifier* pStructUnionSpecifier = TStructUnionSpecifier_Create();
+        
 
-        *ppTypeSpecifier = (TTypeSpecifier*)pStructUnionSpecifier;
+        bResult = true;
+        TStructUnionSpecifier * pStructUnionSpecifier = TStructUnionSpecifier_Create();
+
+        *ppTypeSpecifier = (TTypeSpecifier *)pStructUnionSpecifier;
         Struct_Or_Union_Specifier(ctx, pStructUnionSpecifier);
     }
     break;
 
     case TK_ENUM:
     {
-        //assert(*ppTypeSpecifier == NULL);
+        
+
         bResult = true;
-        TEnumSpecifier* pEnumSpecifier2 = TEnumSpecifier_Create();
-        *ppTypeSpecifier = (TTypeSpecifier*)pEnumSpecifier2;
+        TEnumSpecifier * pEnumSpecifier2 = TEnumSpecifier_Create();
+        *ppTypeSpecifier = (TTypeSpecifier *)pEnumSpecifier2;
         Enum_Specifier(ctx, pEnumSpecifier2);
     }
     break;
@@ -21523,13 +22274,13 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
         int bIsTypedef = IsTypeName(ctx, TK_IDENTIFIER, lexeme);
         if (bIsTypedef)
         {
-            TSingleTypeSpecifier* pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
+            TSingleTypeSpecifier * pSingleTypeSpecifier = TSingleTypeSpecifier_Create();
 
-            if (bIsTypedef == 2 /*struct*/)
+            if (bIsTypedef == 2  )
                 pSingleTypeSpecifier->Token2 = TK_STRUCT;
-            else if (bIsTypedef == 3 /*union*/)
+            else if (bIsTypedef == 3  )
                 pSingleTypeSpecifier->Token2 = TK_UNION;
-            else if (bIsTypedef == 4 /*enum*/)
+            else if (bIsTypedef == 4  )
                 pSingleTypeSpecifier->Token2 = TK_ENUM;
 
             else
@@ -21539,12 +22290,13 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
             bResult = true;
 
             Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
-            *ppTypeSpecifier = (TTypeSpecifier*)pSingleTypeSpecifier;
+            *ppTypeSpecifier = (TTypeSpecifier *)pSingleTypeSpecifier;
 
         }
         else
         {
-            //assert(false); //temque chegar aqui limpo ja
+            
+
             SetError(ctx, "internal error 2");
         }
     }
@@ -21554,23 +22306,21 @@ void Type_Specifier(Parser * ctx, TTypeSpecifier * *ppTypeSpecifier)
         break;
     }
 
-    //token = Parser_CurrentToken(ctx);
-    //if (token == TK_VERTICAL_LINE)
-    //{
-    //criar uma lista
-    //}
+    
+
+    
+
+    
+
+    
+
+    
+
 }
 
-bool Declaration_Specifiers_IsFirst(Parser * ctx, Tokens token, const char* lexeme)
+bool Declaration_Specifiers_IsFirst(Parser * ctx, Tokens token, const char * lexeme)
 {
-    /*
-    declaration-specifiers:
-    storage-class-specifier declaration-specifiersopt
-    type-specifier          declaration-specifiersopt
-    type-qualifier          declaration-specifiersopt
-    function-specifier      declaration-specifiersopt
-    alignment-specifier     declaration-specifiersopt
-    */
+     
     bool bResult =
         TStorageSpecifier_IsFirst(token) ||
         TTypeSpecifier_IsFirst(ctx, token, lexeme) ||
@@ -21584,20 +22334,13 @@ bool Declaration_Specifiers_IsFirst(Parser * ctx, Tokens token, const char* lexe
 void Declaration_Specifiers(Parser * ctx,
     TDeclarationSpecifiers * pDeclarationSpecifiers)
 {
-    /*
-    declaration-specifiers:
-    storage-class-specifier declaration-specifiersopt
-    type-specifier          declaration-specifiersopt
-    type-qualifier          declaration-specifiersopt
-    function-specifier      declaration-specifiersopt
-    alignment-specifier     declaration-specifiersopt
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    const char * lexeme = Lexeme(ctx);
 
     if (TStorageSpecifier_IsFirst(token))
     {
-        TStorageSpecifier* pStorageSpecifier = TStorageSpecifier_Create();
+        TStorageSpecifier * pStorageSpecifier = TStorageSpecifier_Create();
 
         Storage_Class_Specifier(ctx, pStorageSpecifier);
 
@@ -21609,10 +22352,11 @@ void Declaration_Specifiers(Parser * ctx,
             token,
             lexeme))
         {
-            TTypeSpecifier* pTypeSpecifier = NULL;
+            TTypeSpecifier * pTypeSpecifier = NULL;
             Type_Specifier(ctx, &pTypeSpecifier);
-            //ATENCAO
-            TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, (TDeclarationSpecifier*)pTypeSpecifier);
+            
+
+            TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, (TDeclarationSpecifier *)pTypeSpecifier);
         }
         else
         {
@@ -21622,22 +22366,26 @@ void Declaration_Specifiers(Parser * ctx,
     }
     else if (TTypeQualifier_IsFirst(token))
     {
-        TTypeQualifier* pTypeQualifier = TTypeQualifier_Create();
+        TTypeQualifier * pTypeQualifier = TTypeQualifier_Create();
         Type_Qualifier(ctx, pTypeQualifier);
-        //ATENCAO
-        TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, (TDeclarationSpecifier*)TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
+        
+
+        TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, (TDeclarationSpecifier *)TTypeQualifier_As_TSpecifierQualifier(pTypeQualifier));
     }
     else if (TFunctionSpecifier_IsFirst(token))
     {
-        TFunctionSpecifier* pFunctionSpecifier = TFunctionSpecifier_Create();
+        TFunctionSpecifier * pFunctionSpecifier = TFunctionSpecifier_Create();
         Function_Specifier(ctx, pFunctionSpecifier);
         TDeclarationSpecifiers_PushBack(pDeclarationSpecifiers, TFunctionSpecifier_As_TDeclarationSpecifier(pFunctionSpecifier));
     }
     else if (TAlignmentSpecifier_IsFirst(token))
     {
-        //assert(false);
-        //TAlignmentSpecifier* pAlignmentSpecifier = TAlignmentSpecifier_Create();
-        //List_Add(pDeclarationSpecifiers, TAlignmentSpecifier_As_TDeclarationSpecifier(pAlignmentSpecifier));
+        
+
+        
+
+        
+
     }
     else
     {
@@ -21647,7 +22395,8 @@ void Declaration_Specifiers(Parser * ctx,
     token = Parser_CurrentToken(ctx);
     lexeme = Lexeme(ctx);
 
-    //Tem mais?
+    
+
     if (Declaration_Specifiers_IsFirst(ctx, token, lexeme))
     {
         if (TDeclarationSpecifiers_CanAddSpeficier(pDeclarationSpecifiers,
@@ -21668,32 +22417,22 @@ void Initializer(Parser * ctx,
     Tokens endToken1,
     Tokens endToken2)
 {
-    //assert(*ppInitializer == NULL);
-    /*
-    initializer:
-    assignment-expression
-    { initializer-list }
-    { initializer-list , }
-    */
+    
 
-    /*
-    initializer:
-    default
-    assignment-expression
-    _defaultopt { initializer-list }
-    _defaultopt { initializer-list , }
-    */
+     
+
+     
 
     Tokens token = Parser_CurrentToken(ctx);
     if (
         token == TK_DEFAULT)
     {
-        TInitializerListType* pTInitializerList =
+        TInitializerListType * pTInitializerList =
             TInitializerListType_Create();
 
         pTInitializerList->bDefault = true;
 
-        *ppInitializer = (TInitializer*)pTInitializerList;
+        *ppInitializer = (TInitializer *)pTInitializerList;
 
         Parser_Match(ctx, &pTInitializerList->ClueList0);
         token = Parser_CurrentToken(ctx);
@@ -21714,14 +22453,15 @@ void Initializer(Parser * ctx,
         if (token == TK_LEFT_CURLY_BRACKET)
         {
 
-            TInitializerListType* pTInitializerList =
+            TInitializerListType * pTInitializerList =
                 TInitializerListType_Create();
 
 
-            *ppInitializer = (TInitializer*)pTInitializerList;
+            *ppInitializer = (TInitializer *)pTInitializerList;
 
             Parser_Match(ctx, &pTInitializerList->ClueList1);
-            //ANNOTATED AQUI DIZ DEFAULT 
+            
+
 
             Initializer_List(ctx, &pTInitializerList->InitializerList);
 
@@ -21731,20 +22471,16 @@ void Initializer(Parser * ctx,
 
         else
         {
-            TExpression* pExpression = NULL;
+            TExpression * pExpression = NULL;
             AssignmentExpression(ctx, &pExpression);
-            *ppInitializer = (TInitializer*)pExpression;
+            *ppInitializer = (TInitializer *)pExpression;
         }
     }
 }
 
 void Initializer_List(Parser * ctx, TInitializerList * pInitializerList)
 {
-    /*
-    initializer-list:
-    designationopt initializer
-    initializer-list , designationopt initializer
-    */
+     
     for (; ;)
     {
         if (ErrorOrEof(ctx))
@@ -21753,11 +22489,12 @@ void Initializer_List(Parser * ctx, TInitializerList * pInitializerList)
         Tokens token = Parser_CurrentToken(ctx);
         if (token == TK_RIGHT_CURLY_BRACKET)
         {
-            //Empty initializer
+            
+
             break;
         }
 
-        TInitializerListItem* pTInitializerListItem = TInitializerListItem_Create();
+        TInitializerListItem * pTInitializerListItem = TInitializerListItem_Create();
         List_Add(pInitializerList, pTInitializerListItem);
 
 #ifdef LANGUAGE_EXTENSIONS
@@ -21770,14 +22507,17 @@ void Initializer_List(Parser * ctx, TInitializerList * pInitializerList)
         }
 
         Initializer(ctx, &pTInitializerListItem->pInitializer, TK_COMMA, TK_RIGHT_CURLY_BRACKET);
-        //push
+        
+
         token = Parser_CurrentToken(ctx);
 
         if (token == TK_COMMA)
         {
-            //TNodeClueList_MoveToEnd(&pTInitializerListItem->ClueList, &ctx->Scanner.ClueList);
+            
+
             Parser_Match(ctx, &pTInitializerListItem->ClueList);
-            //tem mais
+            
+
         }
 
         else
@@ -21789,23 +22529,18 @@ void Initializer_List(Parser * ctx, TInitializerList * pInitializerList)
 
 void Designation(Parser * ctx, TDesignatorList * pDesignatorList)
 {
-    /*
-    designation:
-    designator-list =
-    */
+     
     Designator_List(ctx, pDesignatorList);
-    Parser_MatchToken(ctx, TK_EQUALS_SIGN, NULL);//tODO
+    Parser_MatchToken(ctx, TK_EQUALS_SIGN, NULL);
+
 }
 
 void Designator_List(Parser * ctx, TDesignatorList * pDesignatorList)
 {
-    // http://www.drdobbs.com/the-new-c-declarations-initializations/184401377
-    /*
-    designator-list:
-    designator
-    designator-list designator
-    */
-    TDesignator* pDesignator = TDesignator_Create();
+    
+
+     
+    TDesignator * pDesignator = TDesignator_Create();
     Designator(ctx, pDesignator);
     TDesignatorList_PushBack(pDesignatorList, pDesignator);
 
@@ -21819,7 +22554,7 @@ void Designator_List(Parser * ctx, TDesignatorList * pDesignatorList)
         if (token == TK_LEFT_SQUARE_BRACKET ||
             token == TK_FULL_STOP)
         {
-            TDesignator* pDesignatorNew = TDesignator_Create();
+            TDesignator * pDesignatorNew = TDesignator_Create();
             Designator(ctx, pDesignatorNew);
             List_Add(pDesignatorList, pDesignatorNew);
         }
@@ -21833,11 +22568,7 @@ void Designator_List(Parser * ctx, TDesignatorList * pDesignatorList)
 
 void Designator(Parser * ctx, TDesignator * p)
 {
-    /*
-    designator:
-    [ constant-expression ]
-    . identifier
-    */
+     
     Tokens token = Parser_CurrentToken(ctx);
 
     if (token == TK_LEFT_SQUARE_BRACKET)
@@ -21852,7 +22583,8 @@ void Designator(Parser * ctx, TDesignator * p)
 
     else if (token == TK_FULL_STOP)
     {
-        //TNodeClueList_MoveToEnd(&p->ClueList, &ctx->Scanner.ClueList);
+        
+
         Parser_Match(ctx, &p->ClueList0);
 
         PTR_STRING_REPLACE(p->Name, Lexeme(ctx));
@@ -21863,54 +22595,52 @@ void Designator(Parser * ctx, TDesignator * p)
 void Init_Declarator(Parser * ctx,
     TInitDeclarator * *ppDeclarator2)
 {
-    /*
-    init-declarator:
-    declarator
-    declarator = initializer
-    */
-    TInitDeclarator* pInitDeclarator =
+     
+    TInitDeclarator * pInitDeclarator =
         TInitDeclarator_Create();
 
     Declarator(ctx, false, &pInitDeclarator->pDeclarator);
     Tokens token = Parser_CurrentToken(ctx);
 
-    const char* declaratorName = TInitDeclarator_FindName(pInitDeclarator);
+    const char * declaratorName = TInitDeclarator_FindName(pInitDeclarator);
     if (declaratorName)
     {
-        //Fica em um contexto que vive so durante a declaracao
-        //depois eh substituido
+        
 
-        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer*)pInitDeclarator);
+        
+
+
+        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer *)pInitDeclarator);
     }
 
-    //Antes do =
+    
+
     *ppDeclarator2 = pInitDeclarator;
 
     if (token == TK_EQUALS_SIGN)
     {
-        //assert(*ppDeclarator2 != NULL);
+        
+
 
         Parser_Match(ctx, &pInitDeclarator->ClueList0);
 
         Initializer(ctx, &pInitDeclarator->pInitializer, TK_SEMICOLON, TK_SEMICOLON);
-        ////TNodeClueList_MoveToEnd(&pInitDeclarator->ClueList, &ctx->Scanner.ClueList);
+        
+
     }
 }
 
 void Init_Declarator_List(Parser * ctx,
     TInitDeclaratorList * pInitDeclaratorList)
 {
-    /*
-    init-declarator-list:
-    init-declarator
-    init-declarator-list , init-declarator
-    */
+     
 
-    TInitDeclarator* pInitDeclarator = NULL;
+    TInitDeclarator * pInitDeclarator = NULL;
     Init_Declarator(ctx, &pInitDeclarator);
     List_Add(pInitDeclaratorList, pInitDeclarator);
 
-    //Tem mais?
+    
+
     Tokens token = Parser_CurrentToken(ctx);
     if (token == TK_COMMA)
     {
@@ -21926,20 +22656,18 @@ void Parse_Declarations(Parser * ctx, TDeclarations * declarations);
 void GroupDeclaration(Parser * ctx,
     TGroupDeclaration * *ppGroupDeclaration)
 {
-    /*
-    CPRIME
-    group-declaration:
-    default identifier { declarations opt }
-    */
+     
 
-    TGroupDeclaration* p = TGroupDeclaration_Create();
+    TGroupDeclaration * p = TGroupDeclaration_Create();
     *ppGroupDeclaration = p;
 
-    Parser_Match(ctx, &p->ClueList0);//default
+    Parser_Match(ctx, &p->ClueList0);
+
 
 
     PTR_STRING_REPLACE(p->Identifier, Lexeme(ctx));
-    Parser_MatchToken(ctx, TK_IDENTIFIER, &p->ClueList1);//identifier
+    Parser_MatchToken(ctx, TK_IDENTIFIER, &p->ClueList1);
+
 
     Parser_MatchToken(ctx, TK_LEFT_CURLY_BRACKET, &p->ClueList2);
 
@@ -21950,7 +22678,8 @@ void GroupDeclaration(Parser * ctx,
     }
     else
     {
-        //vazio
+        
+
     }
     Parser_MatchToken(ctx, TK_RIGHT_CURLY_BRACKET, NULL);
 }
@@ -21965,10 +22694,10 @@ void PopBack(TScannerItemList * clueList)
         clueList->pHead->pNext = 0;
     }
 }
-bool HasCommentedKeyword(TScannerItemList * clueList, const char* keyword)
+bool HasCommentedKeyword(TScannerItemList * clueList, const char * keyword)
 {
     bool bResult = false;
-    struct ScannerItem* pCurrent = clueList->pTail;
+    struct ScannerItem * pCurrent = clueList->pTail;
     if (pCurrent &&
         pCurrent->token == TK_COMMENT)
     {
@@ -21977,15 +22706,25 @@ bool HasCommentedKeyword(TScannerItemList * clueList, const char* keyword)
     return bResult;
 }
 
+static bool IsDefaultFunctionTag(const char * functionTag)
+{
+    if (functionTag)
+    {
+        if (strcmp(functionTag, "init") == 0 ||
+            strcmp(functionTag, "delete") == 0 ||
+            strcmp(functionTag, "destroy") == 0 ||
+            strcmp(functionTag, "create") == 0)
+        {
+            return true;
+        }
+    }
+    return false;    
+}
+
 bool  Declaration(Parser * ctx,
     TAnyDeclaration * *ppDeclaration)
 {
-    /*
-    declaration:
-    declaration-specifiers;
-    declaration-specifiers init-declarator-list ;
-    static_assert-declaration
-    */
+     
 
 
 
@@ -21994,28 +22733,31 @@ bool  Declaration(Parser * ctx,
 
     if (token == TK__STATIC_ASSERT)
     {
-        TStaticAssertDeclaration* pStaticAssertDeclaration = TStaticAssertDeclaration_Create();
-        *ppDeclaration = (TAnyDeclaration*)pStaticAssertDeclaration;
+        TStaticAssertDeclaration * pStaticAssertDeclaration = TStaticAssertDeclaration_Create();
+        *ppDeclaration = (TAnyDeclaration *)pStaticAssertDeclaration;
         Static_Assert_Declaration(ctx, pStaticAssertDeclaration);
         bHasDeclaration = true;
 
     }
     else if (token == TK_DEFAULT)
     {
-        TGroupDeclaration* p = NULL;
+        TGroupDeclaration * p = NULL;
         GroupDeclaration(ctx, &p);
-        *ppDeclaration = (TAnyDeclaration*)p;//moved
+        *ppDeclaration = (TAnyDeclaration *)p;
+
         bHasDeclaration = true;
     }
     else
     {
-        TDeclaration* pFuncVarDeclaration = TDeclaration_Create();
+        TDeclaration * pFuncVarDeclaration = TDeclaration_Create();
 
         if (token == TK_SEMICOLON)
         {
-            //declaracao vazia como ;
+            
+
             bHasDeclaration = true;
-            //Match(ctx);
+            
+
         }
         else
         {
@@ -22028,10 +22770,11 @@ bool  Declaration(Parser * ctx,
 
         if (bHasDeclaration)
         {
-            *ppDeclaration = (TAnyDeclaration*)pFuncVarDeclaration;
+            *ppDeclaration = (TAnyDeclaration *)pFuncVarDeclaration;
             pFuncVarDeclaration->FileIndex = GetFileIndex(ctx);
             pFuncVarDeclaration->Line = GetCurrentLine(ctx);
-            ////assert(pFuncVarDeclaration->FileIndex >= 0);
+            
+
 
             token = Parser_CurrentToken(ctx);
 
@@ -22042,16 +22785,24 @@ bool  Declaration(Parser * ctx,
 
             else
             {
-                //Pega os parametros das funcoes mas nao usa
-                //se nao for uma definicao de funcao
+                
+
+                
 
 
-                //////////////////////
-                /////vou criar um escopo para declarators
-                // int* p = malloc(sizeof p);
-                //                        ^
-                //                       p esta no contexto
-                // mas nao tem toda declaracao
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
 
                 struct SymbolMap BlockScope = SYMBOLMAP_INIT;
 
@@ -22059,50 +22810,110 @@ bool  Declaration(Parser * ctx,
                 ctx->pCurrentScope = &BlockScope;
 
 
-                //Agora vem os declaradores que possuem os ponteiros
+                
+
                 Init_Declarator_List(ctx, &pFuncVarDeclaration->InitDeclaratorList);
 
 
                 ctx->pCurrentScope = BlockScope.pPrevious;
                 SymbolMap_Destroy(&BlockScope);
 
-                ////////////////////////
+                
+
 
                 token = Parser_CurrentToken(ctx);
 
-                //colocar os declaradores nos simbolos
-                //agora ele monta a tabela com a declaracao toda
+                
+
+                
+
                 ForEachListItem(TInitDeclarator, pInitDeclarator, &pFuncVarDeclaration->InitDeclaratorList)
                 {
-                    const char* declaratorName = TInitDeclarator_FindName(pInitDeclarator);
+                    const char * declaratorName = TInitDeclarator_FindName(pInitDeclarator);
 
 
 
                     if (declaratorName != NULL)
                     {
-                        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer*)pFuncVarDeclaration);
+                        SymbolMap_SetAt(ctx->pCurrentScope, declaratorName, (TTypePointer *)pFuncVarDeclaration);
                     }
 
-                    //ctx->
+                    
+
                 }
-#if 0
+
                 if (token == TK_COLON)
                 {
-                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList0);
+                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList00);
                     token = Parser_CurrentToken(ctx);
-                    const char * opName = Lexeme(ctx);
-                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList1);
+
+                    assert(pFuncVarDeclaration->FunctionTag == NULL);
+                    pFuncVarDeclaration->FunctionTag = StrDup(Lexeme(ctx));
+
+                    if (!IsDefaultFunctionTag(pFuncVarDeclaration->FunctionTag))
+                    {
+                        SetWarning(ctx, "Unknown tag '%s'", pFuncVarDeclaration->FunctionTag);
+                    }
+
+                    Parser_Match(ctx, &pFuncVarDeclaration->ClueList001);
                     token = Parser_CurrentToken(ctx);
-                    //fazer o set deste nome com a operacao da struct
+
+                    SymbolMap_SetAt(ctx->pCurrentScope,
+                        pFuncVarDeclaration->FunctionTag,
+                        (TTypePointer *)pFuncVarDeclaration);
                 }
-#endif
-                //
+                else if (!ctx->ParserOptions.bNoImplicitTag)
+                {
+                    const char * funcName = TDeclaration_GetFunctionName(pFuncVarDeclaration);
+                    const char * functionTag = NULL;
+
+                    
+
+                    if (funcName && IsSuffix(funcName, "init"))
+                    {
+                        
+
+                        functionTag = "init";
+                    }
+                    else if (funcName && IsSuffix(funcName, "destroy"))
+                    {
+                        
+
+                        functionTag = "destroy";
+                    }
+                    else if (funcName && IsSuffix(funcName, "delete"))
+                    {
+                        
+
+                        functionTag = "delete";
+                    }
+                    else if (funcName && IsSuffix(funcName, "create"))
+                    {
+                        
+
+                        functionTag = "create";
+                    }
+                    else
+                    {
+                        
+                    }
+                    if (functionTag)
+                    {
+                        assert(pFuncVarDeclaration->FunctionTag == NULL);
+                        pFuncVarDeclaration->FunctionTag = StrDup(functionTag);
+                        pFuncVarDeclaration->bAutoTag = true;
+                        SymbolMap_SetAt(ctx->pCurrentScope,
+                            functionTag,
+                            (TTypePointer *)pFuncVarDeclaration);
+                    }
+                  
+                }
+
+                
+
                 if (token == TK_DEFAULT)
                 {
-                    /*
-                    6.9.1) function-definition:
-                    declaration-specifiers declarator declaration-listopt defaultopt compound-statement
-                    */
+                     
 
                     pFuncVarDeclaration->bDefault = true;
                     Parser_Match(ctx, &pFuncVarDeclaration->ClueList0);
@@ -22112,25 +22923,29 @@ bool  Declaration(Parser * ctx,
                 if (token == TK_LEFT_CURLY_BRACKET)
                 {
 
-                    //ANNOTATED AQUI TEM O COMENTARIO /*@default*/ antes do {
+                    
 
-                    //Ativa o escopo dos parametros
-                    //Adiconar os parametros em um escopo um pouco a cima.
+
+                    
+
+                    
+
                     struct SymbolMap BlockScope2 = SYMBOLMAP_INIT;
 
-                    TInitDeclarator* pDeclarator3 =
+                    TInitDeclarator * pDeclarator3 =
                         pFuncVarDeclaration->InitDeclaratorList.pHead;
 
                     ForEachListItem(TParameter, pParameter, &pDeclarator3->pDeclarator->pDirectDeclarator->Parameters.ParameterList)
                     {
-                        const char* parameterName = TDeclarator_GetName(&pParameter->Declarator);
+                        const char * parameterName = TDeclarator_GetName(&pParameter->Declarator);
                         if (parameterName != NULL)
                         {
-                            SymbolMap_SetAt(&BlockScope2, parameterName, (TTypePointer*)pParameter);
+                            SymbolMap_SetAt(&BlockScope2, parameterName, (TTypePointer *)pParameter);
                         }
                         else
                         {
-                            //parametro sem nome
+                            
+
                         }
                     }
 
@@ -22138,34 +22953,36 @@ bool  Declaration(Parser * ctx,
                     ctx->pCurrentScope = &BlockScope2;
 
 
-                    //SymbolMap_Print(ctx->pCurrentScope);
-                    /*
-                    6.9.1) function-definition:
-                    declaration-specifiers declarator declaration-listopt compound-statement
-                    */
-                    TStatement* pStatement;
+                    
+
+                     
+                    TStatement * pStatement;
                     Compound_Statement(ctx, &pStatement);
-                    //TODO cast
+                    
+
 
                     ctx->pCurrentScope = BlockScope2.pPrevious;
                     SymbolMap_Destroy(&BlockScope2);
 
 
-                    pFuncVarDeclaration->pCompoundStatementOpt = (TCompoundStatement*)pStatement;
+                    pFuncVarDeclaration->pCompoundStatementOpt = (TCompoundStatement *)pStatement;
                 }
 
                 else
                 {
 
-                    //ANNOTATED AQUI TEM O COMENTARIO /*@default*/ antes do ;
+                    
+
                     Parser_MatchToken(ctx, TK_SEMICOLON, &pFuncVarDeclaration->ClueList1);
                 }
 
 
             }
 
-            // StrBuilder_Swap(&pFuncVarDeclaration->PreprocessorAndCommentsString,
-            // &ctx->Scanner.PreprocessorAndCommentsString);
+            
+
+            
+
 
 
         }
@@ -22187,22 +23004,29 @@ void Parse_Declarations(Parser * ctx, TDeclarations * declarations)
     while (!ErrorOrEof(ctx))
     {
 
-        TAnyDeclaration* pDeclarationOut = NULL;
+        TAnyDeclaration * pDeclarationOut = NULL;
 
         bool bHasDecl = Declaration(ctx, &pDeclarationOut);
         if (bHasDecl)
         {
 
 
-            //TDeclarations_Destroy(&ctx->Templates);
-            //TDeclarations_Init(&ctx->Templates);
+            
 
-            //printf("%s", ctx->Scanner.PreprocessorAndCommentsString);
-            // StrBuilder_Clear(&ctx->Scanner.PreprocessorAndCommentsString);
+            
 
-            //Cada Declaration poderia ter out uma lista TDeclarations
-            //publica que vai ser inserida aqui.
-            //
+
+            
+
+            
+
+
+            
+
+            
+
+            
+
             TDeclarations_PushBack(declarations, pDeclarationOut);
 
 
@@ -22212,13 +23036,16 @@ void Parse_Declarations(Parser * ctx, TDeclarations * declarations)
         {
             if (Parser_CurrentToken(ctx) == TK_EOF)
             {
-                //ok
+                
+
                 Parser_Match(ctx, NULL);
             }
             else
             {
-                //nao ter mais declaracao nao eh erro
-                //SetError(ctx, "declaration expected");
+                
+
+                
+
             }
             break;
         }
@@ -22234,11 +23061,12 @@ void Parse_Declarations(Parser * ctx, TDeclarations * declarations)
 
     if (Parser_CurrentToken(ctx) == TK_EOF)
     {
-        TEofDeclaration* pEofDeclaration =
+        TEofDeclaration * pEofDeclaration =
             TEofDeclaration_Create();
-        //ok
+        
+
         Parser_Match(ctx, &pEofDeclaration->ClueList0);
-        TDeclarations_PushBack(declarations, (TAnyDeclaration*)pEofDeclaration);
+        TDeclarations_PushBack(declarations, (TAnyDeclaration *)pEofDeclaration);
     }
 
 
@@ -22256,28 +23084,29 @@ static void TFileMapToStrArray(TFileMap * map, TFileArray * arr)
 
     for (int i = 0; i < map->buckets.size; i++)
     {
-        Bucket* data = map->buckets.data[i];
+        Bucket * data = map->buckets.data[i];
 
         if (data != NULL)
         {
             for (int k = 0; k < data->size; k++)
             {
-                struct BucketItem* node = data->data[k];
-                TFile* pFile = (TFile*)node->data;
+                struct BucketItem * node = data->data[k];
+                TFile * pFile = (TFile *)node->data;
 
                 if (pFile->FileIndex >= 0 &&
                     pFile->FileIndex < (int)arr->Size)
                 {
                     arr->pItems[pFile->FileIndex] = pFile;
-                    node->data = NULL; //movido para array
+                    node->data = NULL; 
+
                 }
             }
         }
     }
 }
 
-bool GetAST(const char* filename,
-    const char* configFileName /*optional*/,
+bool GetAST(const char * filename,
+    const char * configFileName  ,
     struct Options * options,
     TProgram * pProgram)
 {
@@ -22288,28 +23117,37 @@ bool GetAST(const char* filename,
 
     if (configFileName != NULL)
     {
-        //opcional   
-        String* /*@auto*/ fullConfigFilePath = NULL;
+        
+
+        String * /*@auto*/ fullConfigFilePath = NULL;
         GetFullPath(configFileName, &fullConfigFilePath);
 
         Parser_InitFile(&parser, fullConfigFilePath);
         Parser_Main(&parser, &pProgram->Declarations);
 
-        //apaga declaracoes eof por ex
+        
+
         TDeclarations_Destroy(&pProgram->Declarations);
         TDeclarations_Init(&pProgram->Declarations);
 
-        //Some com o arquivo de configclea
+        
+
         TScannerItemList_Clear(&parser.ClueList);
         BasicScannerStack_Pop(&parser.Scanner.stack);
-        //Some com o arquivo de config
+        
+
         Free(fullConfigFilePath);
     }
 
-    String* /*@auto*/ fullFileNamePath = NULL;
+    String * /*@auto*/ fullFileNamePath = NULL;
     GetFullPath(filename, &fullFileNamePath);
 
-    parser.Scanner.pOptions = options; //TODO
+    parser.Scanner.pOptions = options; 
+
+
+    
+
+    parser.ParserOptions.bNoImplicitTag = options->bNoImplicitTag;
 
     if (filename != NULL)
     {
@@ -22325,38 +23163,42 @@ bool GetAST(const char* filename,
     }
 
 
-    //all sources...
+    
+
     if (options->bAmalgamate)
     {
         struct FileNodeMap map = { 0 };
 
-        //Inserts the initial file
+        
+
         FileNodeMap_Insert(&map, FileNode_Create(fullFileNamePath));
 
-        
+
         for (;;)
         {
 
 
-            struct FileNode* pSources = parser.Scanner.Sources.pHead;
+            struct FileNode * pSources = parser.Scanner.Sources.pHead;
             parser.Scanner.Sources.pHead = NULL;
             parser.Scanner.Sources.pTail = NULL;
 
-            struct FileNode* pCurrent = pSources;
+            struct FileNode * pCurrent = pSources;
             while (pCurrent)
             {
-                struct FileNode* pNext = pCurrent->pNext;
+                struct FileNode * pNext = pCurrent->pNext;
                 if (FileNodeMap_Lookup(&map, pCurrent->Key) == 0)
                 {
-                    //processar
+                    
 
-                    //inserar na lista ja processados          
+
+                    
+
                     FileNodeMap_Insert(&map, pCurrent);
 
                     TScannerItemList_Destroy(&parser.ClueList);
                     TScannerItemList_Init(&parser.ClueList);
 
-                    struct ScannerItem* pNew = ScannerItem_Create();
+                    struct ScannerItem * pNew = ScannerItem_Create();
                     pNew->token = TK_PRE_INCLUDE;
                     LocalStrBuilder_Append(&pNew->lexeme, "source");
                     TScannerItemList_PushBack(&parser.ClueList, pNew);
@@ -22371,7 +23213,8 @@ bool GetAST(const char* filename,
                 }
                 else
                 {
-                    FileNode_Free(pCurrent); //nao pode deletar os proximos
+                    FileNode_Free(pCurrent); 
+
                 }
 
                 pCurrent = pNext;
@@ -22404,7 +23247,8 @@ bool GetAST(const char* filename,
 
 
 
-bool GetASTFromString(const char* sourceCode,
+bool GetASTFromString(const char * sourceCode,
+    struct Options * options,
     TProgram * pProgram)
 {
     bool bResult = false;
@@ -22412,6 +23256,9 @@ bool GetASTFromString(const char* sourceCode,
     Parser parser;
 
     Parser_InitString(&parser, "source", sourceCode);
+
+    parser.ParserOptions.bNoImplicitTag = options->bNoImplicitTag;
+
     Parser_Main(&parser, &pProgram->Declarations);
 
 
@@ -22477,8 +23324,10 @@ void IntegerStack_Pop(struct IntegerStack * pItems)
 {
     if (pItems->Size > 0)
         pItems->Size--;
-    //else
-      //assert(false);
+    
+
+      
+
 }
 
 
@@ -22503,29 +23352,29 @@ void TSpecifierQualifierList_CodePrint(TProgram * program, PrintCodeOptions * op
 void TTypeName_CodePrint(TProgram * program, PrintCodeOptions * options, TTypeName * p, StrBuilder * fp);
 
 static void TInitializer_CodePrint(TProgram * program,
-                                   PrintCodeOptions * options,
-                                   TDeclarator * pDeclarator,
-                                   TDeclarationSpecifiers * pDeclarationSpecifiers,
-                                   TInitializer * pTInitializer,
+    PrintCodeOptions * options,
+    TDeclarator * pDeclarator,
+    TDeclarationSpecifiers * pDeclarationSpecifiers,
+    TInitializer * pTInitializer,
 
-                                   StrBuilder * fp);
+    StrBuilder * fp);
 
 static void TInitializerList_CodePrint(TProgram * program,
-                                       PrintCodeOptions * options,
-                                       TDeclarationSpecifiers * pDeclarationSpecifiers,
-                                       TDeclarator * pDeclarator,
-                                       TInitializerList * p,
+    PrintCodeOptions * options,
+    TDeclarationSpecifiers * pDeclarationSpecifiers,
+    TDeclarator * pDeclarator,
+    TInitializerList * p,
 
-                                       StrBuilder * fp);
+    StrBuilder * fp);
 
 
 static void TInitializerListItem_CodePrint(TProgram * program,
-                                           PrintCodeOptions * options,
-                                           TDeclarator * pDeclarator,
-                                           TDeclarationSpecifiers * pDeclarationSpecifiers,
-                                           TInitializerListItem * p,
+    PrintCodeOptions * options,
+    TDeclarator * pDeclarator,
+    TDeclarationSpecifiers * pDeclarationSpecifiers,
+    TInitializerListItem * p,
 
-                                           StrBuilder * fp);
+    StrBuilder * fp);
 
 
 static void TTypeQualifierList_CodePrint(TProgram * program, PrintCodeOptions * options, TTypeQualifierList * p, StrBuilder * fp);
@@ -22543,8 +23392,8 @@ static void TPointer_CodePrint(TProgram * program, PrintCodeOptions * options, T
 static void TParameter_CodePrint(TProgram * program, PrintCodeOptions * options, TParameter * p, StrBuilder * fp);
 
 void Output_Append(StrBuilder * p,
-                   PrintCodeOptions * options,
-                   const char * source)
+    PrintCodeOptions * options,
+    const char * source)
 {
     if (options->bInclude)
     {
@@ -22556,18 +23405,22 @@ void Output_Append(StrBuilder * p,
     }
     else
     {
-        //nao eh p include
+        
+
     }
 }
 
 static void TNodeClueList_CodePrint(PrintCodeOptions * options, TScannerItemList * list,
-                                    StrBuilder * fp)
+    StrBuilder * fp)
 {
     if (options->Options.bCannonical)
     {
-        // no modo cannonical quem coloca os espacos
-        //eh a funcao especializada
-        //para que o tipo seja somente ele 
+        
+
+        
+
+        
+
         return;
     };
 
@@ -22575,163 +23428,170 @@ static void TNodeClueList_CodePrint(PrintCodeOptions * options, TScannerItemList
     {
         switch (pNodeClue->token)
         {
-            case TK_PRE_INCLUDE:
-            {
-                bool bIncludeFile = true;
+        case TK_PRE_INCLUDE:
+        {
+            bool bIncludeFile = true;
 
-                if (options->Stack.Size > 0 &&
-                    options->Stack.pData[options->Stack.Size - 1] == 0)
+            if (options->Stack.Size > 0 &&
+                options->Stack.pData[options->Stack.Size - 1] == 0)
+            {
+                bIncludeFile = false;
+            }
+            else
+            {
+                if (options->Options.bAmalgamate)
                 {
-                    bIncludeFile = false;
-                }
-                else
-                {
-                    if (options->Options.bAmalgamate)
-                    {
-                        if (strstr(pNodeClue->lexeme.c_str, "<") != NULL)
-                        {
-                            bIncludeFile = false;
-                        }
-                    }
-                    else
+                    if (strstr(pNodeClue->lexeme.c_str, "<") != NULL)
                     {
                         bIncludeFile = false;
                     }
                 }
-
-
-                if (bIncludeFile)
-                {
-                    IntegerStack_PushBack(&options->Stack, bIncludeFile);
-                }
                 else
                 {
-                    Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                    Output_Append(fp, options, "\n");
-                    IntegerStack_PushBack(&options->Stack, bIncludeFile);
+                    bIncludeFile = false;
                 }
+            }
 
+
+            if (bIncludeFile)
+            {
+                IntegerStack_PushBack(&options->Stack, bIncludeFile);
+            }
+            else
+            {
+                Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                Output_Append(fp, options, "\n");
+                IntegerStack_PushBack(&options->Stack, bIncludeFile);
+            }
+
+        }
+        break;
+
+        case TK_FILE_EOF:
+            IntegerStack_Pop(&options->Stack);
+            
+
+            
+
+            
+
+            if (options->Options.bAmalgamate)
+            {
+                Output_Append(fp, options, "\n");
+            }
+
+            break;
+        case TK_PRE_DEFINE:
+            
+
+            Output_Append(fp, options, pNodeClue->lexeme.c_str);
+            Output_Append(fp, options, "\n");
+            break;
+
+        case TK_PRE_PRAGMA:
+            if (options->Options.bAmalgamate)
+            {
+                
+
+            }
+            else
+            {
+                Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                Output_Append(fp, options, "\n");
+            }
+
+            break;
+        case TK_PRE_UNDEF:
+
+        case TK_PRE_IF:
+        case TK_PRE_ENDIF:
+        case TK_PRE_ELSE:
+        case TK_PRE_IFDEF:
+        case TK_PRE_IFNDEF:
+        case TK_PRE_ELIF:
+            Output_Append(fp, options, pNodeClue->lexeme.c_str);
+            Output_Append(fp, options, "\n");
+            break;
+
+        case TK_OPEN_COMMENT:
+        case TK_CLOSE_COMMENT:
+            
+
+            break;
+
+        case TK_COMMENT:
+            if (options->Options.bIncludeComments)
+            {
+                Output_Append(fp, options, pNodeClue->lexeme.c_str);
+            }
+            else
+            {
+                Output_Append(fp, options, " ");
+            }
+
+            break;
+
+        case TK_LINE_COMMENT:
+            if (options->Options.bIncludeComments)
+            {
+                Output_Append(fp, options, pNodeClue->lexeme.c_str);
+            }
+            else
+            {
+                Output_Append(fp, options, "\n");
             }
             break;
 
-            case TK_FILE_EOF:
-                IntegerStack_Pop(&options->Stack);
-                //options->IncludeLevel--;
-                ////assert(IncludeLevel > 0);
-                //bInclude = true;
-                if (options->Options.bAmalgamate)
-                {
-                    Output_Append(fp, options, "\n");
-                }
+        case TK_BREAKLINE:
+            Output_Append(fp, options, "\n");
 
-                break;
-            case TK_PRE_DEFINE:
-                //TODO gerar macros como init
+            break;
+
+        case TK_MACRO_CALL:
+            if (options->Options.bExpandMacros)
+            {
+
+            }
+            else
+            {
                 Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                Output_Append(fp, options, "\n");
-                break;
-
-            case TK_PRE_PRAGMA:
-                if (options->Options.bAmalgamate)
-                {
-                    //pragma once nao eh p incluir
-                }
-                else
-                {
-                    Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                    Output_Append(fp, options, "\n");
-                }
-
-                break;
-            case TK_PRE_UNDEF:
-
-            case TK_PRE_IF:
-            case TK_PRE_ENDIF:
-            case TK_PRE_ELSE:
-            case TK_PRE_IFDEF:
-            case TK_PRE_IFNDEF:
-            case TK_PRE_ELIF:
-                Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                Output_Append(fp, options, "\n");
-                break;
-
-            case TK_OPEN_COMMENT:
-            case TK_CLOSE_COMMENT:
-                //Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                break;
-
-            case TK_COMMENT:
-                if (options->Options.bIncludeComments)
-                {
-                    Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                }
-                else
-                {
-                    Output_Append(fp, options, " ");
-                }
-
-                break;
-
-            case TK_LINE_COMMENT:
-                if (options->Options.bIncludeComments)
-                {
-                    Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                }
-                else
-                {
-                    Output_Append(fp, options, "\n");
-                }
-                break;
-
-            case TK_BREAKLINE:
-                Output_Append(fp, options, "\n");
-
-                break;
-
-            case TK_MACRO_CALL:
-                if (options->Options.bExpandMacros)
-                {
-
-                }
-                else
-                {
-                    Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                    options->bInclude = false;
-                }
-                break;
+                options->bInclude = false;
+            }
+            break;
 
 
-            case TK_MACRO_EOF:
-                if (options->Options.bExpandMacros)
-                {
+        case TK_MACRO_EOF:
+            if (options->Options.bExpandMacros)
+            {
 
-                }
-                else
-                {
-                    options->bInclude = true;
-                }
+            }
+            else
+            {
+                options->bInclude = true;
+            }
 
 
-                break;
+            break;
 
-            case TK_SPACES:
-                Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                break;
+        case TK_SPACES:
+            Output_Append(fp, options, pNodeClue->lexeme.c_str);
+            break;
 
-                //case NodeClueTypeNone:      
-            default:
-                Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                break;
+            
+
+        default:
+            Output_Append(fp, options, pNodeClue->lexeme.c_str);
+            break;
         }
     }
 
 }
 
 static void TCompoundStatement_CodePrint(TProgram * program,
-                                         PrintCodeOptions * options,
-                                         TCompoundStatement * p,
+    PrintCodeOptions * options,
+    TCompoundStatement * p,
 
-                                         StrBuilder * fp)
+    StrBuilder * fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "{");
@@ -22762,7 +23622,8 @@ static void TLabeledStatement_CodePrint(TProgram * program, PrintCodeOptions * o
         }
         else
         {
-            //assert(false);
+            
+
         }
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         Output_Append(fp, options, ":");
@@ -22886,26 +23747,27 @@ static void TJumpStatement_CodePrint(TProgram * program, PrintCodeOptions * opti
 
     switch (p->token)
     {
-        case TK_GOTO:
-            Output_Append(fp, options, "goto");
-            TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-            Output_Append(fp, options, p->Identifier);
-            break;
-        case  TK_CONTINUE:
-            Output_Append(fp, options, "continue");
-            break;
-        case TK_BREAK:
-            Output_Append(fp, options, "break");
-            break;
-        case TK_RETURN:
-            Output_Append(fp, options, "return");
-            TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-            TExpression_CodePrint(program, options, p->pExpression, "", fp);
-            break;
+    case TK_GOTO:
+        Output_Append(fp, options, "goto");
+        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+        Output_Append(fp, options, p->Identifier);
+        break;
+    case  TK_CONTINUE:
+        Output_Append(fp, options, "continue");
+        break;
+    case TK_BREAK:
+        Output_Append(fp, options, "break");
+        break;
+    case TK_RETURN:
+        Output_Append(fp, options, "return");
+        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+        TExpression_CodePrint(program, options, p->pExpression, "", fp);
+        break;
 
-        default:
-            //assert(false);
-            break;
+    default:
+        
+
+        break;
     }
 
 
@@ -22982,45 +23844,46 @@ static void TStatement_CodePrint(TProgram * program, PrintCodeOptions * options,
 
     switch (p->Type)
     {
-        case TExpressionStatement_ID:
-            TExpressionStatement_CodePrint(program, options, (TExpressionStatement *)p, fp);
-            break;
+    case TExpressionStatement_ID:
+        TExpressionStatement_CodePrint(program, options, (TExpressionStatement *)p, fp);
+        break;
 
-        case TSwitchStatement_ID:
-            TSwitchStatement_CodePrint(program, options, (TSwitchStatement *)p, fp);
-            break;
+    case TSwitchStatement_ID:
+        TSwitchStatement_CodePrint(program, options, (TSwitchStatement *)p, fp);
+        break;
 
-        case TLabeledStatement_ID:
-            TLabeledStatement_CodePrint(program, options, (TLabeledStatement *)p, fp);
-            break;
+    case TLabeledStatement_ID:
+        TLabeledStatement_CodePrint(program, options, (TLabeledStatement *)p, fp);
+        break;
 
-        case TForStatement_ID:
-            TForStatement_CodePrint(program, options, (TForStatement *)p, fp);
-            break;
+    case TForStatement_ID:
+        TForStatement_CodePrint(program, options, (TForStatement *)p, fp);
+        break;
 
-        case TJumpStatement_ID:
-            TJumpStatement_CodePrint(program, options, (TJumpStatement *)p, fp);
-            break;
+    case TJumpStatement_ID:
+        TJumpStatement_CodePrint(program, options, (TJumpStatement *)p, fp);
+        break;
 
-        case TAsmStatement_ID:
-            TAsmStatement_CodePrint(program, options, (TAsmStatement *)p, fp);
-            break;
+    case TAsmStatement_ID:
+        TAsmStatement_CodePrint(program, options, (TAsmStatement *)p, fp);
+        break;
 
-        case TCompoundStatement_ID:
-            TCompoundStatement_CodePrint(program, options, (TCompoundStatement *)p, fp);
-            break;
+    case TCompoundStatement_ID:
+        TCompoundStatement_CodePrint(program, options, (TCompoundStatement *)p, fp);
+        break;
 
-        case TIfStatement_ID:
-            TIfStatement_CodePrint(program, options, (TIfStatement *)p, fp);
-            break;
+    case TIfStatement_ID:
+        TIfStatement_CodePrint(program, options, (TIfStatement *)p, fp);
+        break;
 
-        case TDoStatement_ID:
-            TDoStatement_CodePrint(program, options, (TDoStatement *)p, fp);
-            break;
+    case TDoStatement_ID:
+        TDoStatement_CodePrint(program, options, (TDoStatement *)p, fp);
+        break;
 
-        default:
-            //assert(false);
-            break;
+    default:
+        
+
+        break;
     }
 
 
@@ -23030,86 +23893,89 @@ static void TBlockItem_CodePrint(TProgram * program, PrintCodeOptions * options,
 {
     if (p == NULL)
     {
-        //assert(false);
+        
+
         return;
     }
 
 
     switch (p->Type)
     {
-        case TEofDeclaration_ID:
-            break;
+    case TEofDeclaration_ID:
+        break;
 
-        case TStaticAssertDeclaration_ID:
-            break;
+    case TStaticAssertDeclaration_ID:
+        break;
 
-        case TSwitchStatement_ID:
+    case TSwitchStatement_ID:
 
-            TSwitchStatement_CodePrint(program, options, (TSwitchStatement *)p, fp);
+        TSwitchStatement_CodePrint(program, options, (TSwitchStatement *)p, fp);
 
-            break;
+        break;
 
-        case TJumpStatement_ID:
+    case TJumpStatement_ID:
 
-            TJumpStatement_CodePrint(program, options, (TJumpStatement *)p, fp);
+        TJumpStatement_CodePrint(program, options, (TJumpStatement *)p, fp);
 
-            break;
+        break;
 
-        case TForStatement_ID:
+    case TForStatement_ID:
 
-            TForStatement_CodePrint(program, options, (TForStatement *)p, fp);
+        TForStatement_CodePrint(program, options, (TForStatement *)p, fp);
 
-            break;
+        break;
 
-        case TIfStatement_ID:
+    case TIfStatement_ID:
 
-            TIfStatement_CodePrint(program, options, (TIfStatement *)p, fp);
+        TIfStatement_CodePrint(program, options, (TIfStatement *)p, fp);
 
-            break;
+        break;
 
-        case TWhileStatement_ID:
+    case TWhileStatement_ID:
 
-            TWhileStatement_CodePrint(program, options, (TWhileStatement *)p, fp);
+        TWhileStatement_CodePrint(program, options, (TWhileStatement *)p, fp);
 
-            break;
+        break;
 
-        case TDoStatement_ID:
+    case TDoStatement_ID:
 
-            TDoStatement_CodePrint(program, options, (TDoStatement *)p, fp);
+        TDoStatement_CodePrint(program, options, (TDoStatement *)p, fp);
 
-            break;
+        break;
 
-        case TDeclaration_ID:
-            TDeclaration_CodePrint(program, options, (TDeclaration *)p, fp);
-            //Output_Append(fp, options,  "\n");
-            break;
+    case TDeclaration_ID:
+        TDeclaration_CodePrint(program, options, (TDeclaration *)p, fp);
+        
 
-        case TLabeledStatement_ID:
+        break;
 
-            TLabeledStatement_CodePrint(program, options, (TLabeledStatement *)p, fp);
+    case TLabeledStatement_ID:
 
-            break;
+        TLabeledStatement_CodePrint(program, options, (TLabeledStatement *)p, fp);
 
-        case TCompoundStatement_ID:
-            TCompoundStatement_CodePrint(program, options, (TCompoundStatement *)p, fp);
-            break;
+        break;
 
-        case TExpressionStatement_ID:
+    case TCompoundStatement_ID:
+        TCompoundStatement_CodePrint(program, options, (TCompoundStatement *)p, fp);
+        break;
 
-            TExpressionStatement_CodePrint(program, options, (TExpressionStatement *)p, fp);
+    case TExpressionStatement_ID:
 
-            break;
+        TExpressionStatement_CodePrint(program, options, (TExpressionStatement *)p, fp);
+
+        break;
 
 
-        case TAsmStatement_ID:
+    case TAsmStatement_ID:
 
-            TAsmStatement_CodePrint(program, options, (TAsmStatement *)p, fp);
+        TAsmStatement_CodePrint(program, options, (TAsmStatement *)p, fp);
 
-            break;
+        break;
 
-        default:
-            //assert(false);
-            break;
+    default:
+        
+
+        break;
     }
 
 
@@ -23118,11 +23984,11 @@ static void TBlockItem_CodePrint(TProgram * program, PrintCodeOptions * options,
 
 
 bool GetType(const char * source,
-             StrBuilder * strBuilderType)
+    StrBuilder * strBuilderType)
 {
 
     while (*source &&
-           *source != '_')
+        *source != '_')
     {
         StrBuilder_AppendChar(strBuilderType, *source);
         source++;
@@ -23134,12 +24000,12 @@ bool GetType(const char * source,
 
 
 bool GetTypeAndFunction(const char * source,
-                        StrBuilder * strBuilderType,
-                        StrBuilder * strBuilderFunc)
+    StrBuilder * strBuilderType,
+    StrBuilder * strBuilderFunc)
 {
 
     while (*source &&
-           *source != '_')
+        *source != '_')
     {
         StrBuilder_AppendChar(strBuilderType, *source);
         source++;
@@ -23158,28 +24024,32 @@ static void TParameterTypeList_CodePrint(TProgram * program, PrintCodeOptions * 
 
 
 static void TPrimaryExpressionLambda_CodePrint(TProgram * program,
-                                               PrintCodeOptions * options,
-                                               TPrimaryExpressionLambda * p,
-                                               StrBuilder * fp)
+    PrintCodeOptions * options,
+    TPrimaryExpressionLambda * p,
+    StrBuilder * fp)
 {
 
-    //Output_Append(fp, options, "l1");
+    
+
     StrBuilder_AppendFmt(fp, "_lambda_%d", global_lambda_counter);
 
     StrBuilder sb = STRBUILDER_INIT;
 
     if (p->pParameterTypeListOpt)
     {
-        //TNodeClueList_CodePrint(options, &p->ClueList2, &sb);
+        
+
 
 
         Output_Append(&sb, options, "\n");
         StrBuilder_AppendFmt(&sb, "static void _lambda_%d(", global_lambda_counter);
-        //Output_Append(&sb, options, "static void func_l1(");
+        
+
 
         TParameterTypeList_CodePrint(program, options, p->pParameterTypeListOpt, &sb);
 
-        //TNodeClueList_CodePrint(options, &p->ClueList3, &sb);
+        
+
         Output_Append(&sb, options, ")");
 
     }
@@ -23219,10 +24089,10 @@ static void TPrimaryExpressionLambda_CodePrint(TProgram * program,
 }
 
 static void TPostfixExpressionCore_CodePrint(TProgram * program,
-                                             PrintCodeOptions * options,
-                                             TPostfixExpressionCore * p,
+    PrintCodeOptions * options,
+    TPostfixExpressionCore * p,
 
-                                             StrBuilder * fp)
+    StrBuilder * fp)
 {
 
 
@@ -23243,71 +24113,76 @@ static void TPostfixExpressionCore_CodePrint(TProgram * program,
             TNodeClueList_CodePrint(options, &p->ClueList1, fp);
             Output_Append(fp, options, ")");
 
-            //pSpecifierQualifierList = &p->pTypeName->SpecifierQualifierList;
+            
+
             bIsPointer = TPointerList_IsPointer(&p->pTypeName->Declarator.PointerList);
 
-            //falta imprimeir typename
-            //TTypeName_Print*
-            TInitializerList_CodePrint(program,
-                                       options,
-                                       (TDeclarationSpecifiers *)& p->pTypeName->SpecifierQualifierList,
-                                       NULL,
-                                       &p->InitializerList,
+            
 
-                                       fp);
+            
+
+            TInitializerList_CodePrint(program,
+                options,
+                (TDeclarationSpecifiers *)& p->pTypeName->SpecifierQualifierList,
+                NULL,
+                &p->InitializerList,
+
+                fp);
         }
 
     }
 
     switch (p->token)
     {
-        case TK_FULL_STOP:
-            TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-            Output_Append(fp, options, ".");
-            TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-            Output_Append(fp, options, p->Identifier);
+    case TK_FULL_STOP:
+        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+        Output_Append(fp, options, ".");
+        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+        Output_Append(fp, options, p->Identifier);
 
-            break;
-        case TK_ARROW:
-            TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-            Output_Append(fp, options, "->");
-            TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-            Output_Append(fp, options, p->Identifier);
+        break;
+    case TK_ARROW:
+        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+        Output_Append(fp, options, "->");
+        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+        Output_Append(fp, options, p->Identifier);
 
-            break;
+        break;
 
-        case TK_LEFT_SQUARE_BRACKET:
-            TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-            Output_Append(fp, options, "[");
-            TExpression_CodePrint(program, options, p->pExpressionRight, "r", fp);
-            TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-            Output_Append(fp, options, "]");
-            break;
+    case TK_LEFT_SQUARE_BRACKET:
+        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+        Output_Append(fp, options, "[");
+        TExpression_CodePrint(program, options, p->pExpressionRight, "r", fp);
+        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+        Output_Append(fp, options, "]");
+        break;
 
-        case TK_LEFT_PARENTHESIS:
-            //Do lado esquerdo vem o nome da funcao p->pExpressionLeft
-            TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-            Output_Append(fp, options, "(");
-            TExpression_CodePrint(program, options, p->pExpressionRight, "r", fp);
-            TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-            Output_Append(fp, options, ")");
-            break;
+    case TK_LEFT_PARENTHESIS:
+        
 
-        case TK_PLUSPLUS:
-            TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-            Output_Append(fp, options, "++");
+        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+        Output_Append(fp, options, "(");
+        TExpression_CodePrint(program, options, p->pExpressionRight, "r", fp);
+        TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+        Output_Append(fp, options, ")");
+        break;
 
-            break;
-        case TK_MINUSMINUS:
-            TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-            Output_Append(fp, options, "--");
+    case TK_PLUSPLUS:
+        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+        Output_Append(fp, options, "++");
 
-            break;
+        break;
+    case TK_MINUSMINUS:
+        TNodeClueList_CodePrint(options, &p->ClueList0, fp);
+        Output_Append(fp, options, "--");
+
+        break;
 
 
-        default:
-            //assert(false);
-            break;
+    default:
+        
+
+        break;
     }
 
 
@@ -23322,13 +24197,14 @@ static void TPostfixExpressionCore_CodePrint(TProgram * program,
 }
 
 static void TExpression_CodePrint(TProgram * program, PrintCodeOptions * options, TExpression * p,
-                                  const char * name,
+    const char * name,
 
-                                  StrBuilder * fp)
+    StrBuilder * fp)
 {
     if (p == NULL)
     {
-        ////assert(false);
+        
+
         return;
     }
 
@@ -23402,7 +24278,8 @@ static void TExpression_CodePrint(TProgram * program, PrintCodeOptions * options
                 Output_Append(fp, options, pPrimaryExpressionValue->lexeme);
             }
         }
-        ///true;
+        
+
 
         break;
 
@@ -23474,10 +24351,11 @@ static void TExpression_CodePrint(TProgram * program, PrintCodeOptions * options
         }
         break;
 
-        default:
+    default:
 
-            //assert(false);
-            break;
+        
+
+        break;
     }
 
 
@@ -23503,7 +24381,8 @@ static   void TEnumerator_CodePrint(TProgram * program, PrintCodeOptions * optio
     }
     else
     {
-        //vou criar uma expressionp enum?
+        
+
     }
 
     if (pTEnumerator->bHasComma)
@@ -23517,10 +24396,16 @@ static   void TEnumerator_CodePrint(TProgram * program, PrintCodeOptions * optio
 
 static void TEnumSpecifier_CodePrint(TProgram * program, PrintCodeOptions * options, TEnumSpecifier * p, StrBuilder * fp)
 {
-    //true;
+    
+
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "enum");
+
+    if (options->Options.bCannonical)
+    {
+        Output_Append(fp, options, " ");
+    }
 
     TNodeClueList_CodePrint(options, &p->ClueList1, fp);
     Output_Append(fp, options, p->Name);
@@ -23604,7 +24489,8 @@ static void TStructUnionSpecifier_CodePrint(TProgram * program, PrintCodeOptions
         TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     }
 
-    //true;
+    
+
 
     if (p->StructDeclarationList.Size > 0)
     {
@@ -23627,7 +24513,8 @@ static void TStructUnionSpecifier_CodePrint(TProgram * program, PrintCodeOptions
             TUnionSet_CodePrint(program, options, &p->UnionSet, fp);
         }
 
-        //TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+        
+
 
     }
     else
@@ -23686,39 +24573,10 @@ static void TSingleTypeSpecifier_CodePrint(TProgram * program, PrintCodeOptions 
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
-    //true;
+    
 
-    /*if (p->Token2 == TK_STRUCT)
-    {
-      if (options->Target == CompilerTarget_Annotated)
-      {
-        //acrescenta
-        Output_Append(fp, options, "struct ");
-      }
-      Output_Append(fp, options, p->TypedefName);
-    }
-    else if (p->Token2 == TK_UNION)
-    {
-      if (options->Target == CompilerTarget_Annotated)
-      {
-        //acrescenta
-        Output_Append(fp, options, "union ");
-      }
-      Output_Append(fp, options, p->TypedefName);
 
-    }
-    else if (p->Token2 == TK_ENUM)
-    {
-      if (options->Target == CompilerTarget_Annotated)
-      {
-        //acrescenta
-        Output_Append(fp, options, "enum ");
-      }
-      Output_Append(fp, options, p->TypedefName);
-
-    }
-    else
-    */
+     
     if (p->Token2 == TK_IDENTIFIER)
     {
         Output_Append(fp, options, p->TypedefName);
@@ -23726,7 +24584,7 @@ static void TSingleTypeSpecifier_CodePrint(TProgram * program, PrintCodeOptions 
     else
     {
         Output_Append(fp, options,
-                      TokenToString(p->Token2));
+            TokenToString(p->Token2));
     }
 
 
@@ -23735,14 +24593,18 @@ static void TSingleTypeSpecifier_CodePrint(TProgram * program, PrintCodeOptions 
 
 static void TDesignator_CodePrint(TProgram * program, PrintCodeOptions * options, TDesignator * p, StrBuilder * fp)
 {
-    //    if (b)
-    //      Output_Append(fp, options,  ",");
+    
+
+    
 
 
-    //
+
+    
+
     if (p->Name)
     {
-        //.identifier
+        
+
         TNodeClueList_CodePrint(options, &p->ClueList0, fp);
         Output_Append(fp, options, ".");
         Output_Append(fp, options, p->Name);
@@ -23751,7 +24613,8 @@ static void TDesignator_CodePrint(TProgram * program, PrintCodeOptions * options
     }
     else
     {
-        //[constant-expression]
+        
+
         TNodeClueList_CodePrint(options, &p->ClueList0, fp);
         TExpression_CodePrint(program, options, p->pExpression, "index", fp);
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
@@ -23768,36 +24631,40 @@ static void TDesignator_CodePrint(TProgram * program, PrintCodeOptions * options
   ((pList)->pTail)
 
 static void TInitializerList_CodePrint(TProgram * program,
-                                       PrintCodeOptions * options,
-                                       TDeclarationSpecifiers * pDeclarationSpecifiers, //<- usadao para construir {}
-                                       TDeclarator * pDeclatator,                        //<-dupla para entender o tipo
-                                       TInitializerList * p,
+    PrintCodeOptions * options,
+    TDeclarationSpecifiers * pDeclarationSpecifiers, 
 
-                                       StrBuilder * fp)
+    TDeclarator * pDeclatator,                        
+
+    TInitializerList * p,
+
+    StrBuilder * fp)
 {
     if (List_HasOneItem(p) &&
-        List_Back(p)->pInitializer == NULL/* &&
-                  pSpecifierQualifierList != NULL*/)
+        List_Back(p)->pInitializer == NULL )
     {
         if (options->Options.Target == CompilerTarget_Annotated)
         {
-            //Output_Append(fp, options, COMMENT_KEYWORD_DEFAULT);
+            
+
         }
-        //a partir de {} e um tipo consegue gerar o final  
+        
+
         StrBuilder sb = STRBUILDER_INIT;
         bool bHasInitializers = false;
         InstanciateDestroy2(program,
-                            options,
-                            (TSpecifierQualifierList *)(pDeclarationSpecifiers),
-                            pDeclatator,                        //<-dupla para entender o tipo
-                            NULL,
-                            NULL,/*args*/
-                            "",
-                            NULL /*not used*/,
-                            ActionStaticInit,
-                            SearchNone,
-                            &bHasInitializers,
-                            &sb);
+            options,
+            (TSpecifierQualifierList *)(pDeclarationSpecifiers),
+            pDeclatator,                        
+
+            NULL,
+            NULL, 
+            "",
+            NULL  ,
+            ActionStaticInit,
+            SearchNone,
+            &bHasInitializers,
+            &sb);
         if (bHasInitializers)
         {
             Output_Append(fp, options, sb.c_str);
@@ -23818,34 +24685,34 @@ static void TInitializerList_CodePrint(TProgram * program,
                 Output_Append(fp, options, ",");
 
             TInitializerListItem_CodePrint(program,
-                                           options,
-                                           pDeclatator,
-                                           pDeclarationSpecifiers,
-                                           pItem,
-                                           fp);
+                options,
+                pDeclatator,
+                pDeclarationSpecifiers,
+                pItem,
+                fp);
         }
 
     }
 }
 
 static void TInitializerListType_CodePrint(TProgram * program,
-                                           PrintCodeOptions * options,
-                                           TDeclarator * pDeclarator,
-                                           TDeclarationSpecifiers * pDeclarationSpecifiers,
-                                           TInitializerListType * p,
-                                           StrBuilder * fp)
+    PrintCodeOptions * options,
+    TDeclarator * pDeclarator,
+    TDeclarationSpecifiers * pDeclarationSpecifiers,
+    TInitializerListType * p,
+    StrBuilder * fp)
 {
 
-    /*
-    default { ... }
-    {}
-    */
+     
     if (p->bDefault || p->InitializerList.pHead == NULL)
     {
-        //TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+        
+
         TInitializer * pInitializer = NULL;
-        //p->InitializerList.pHead ?
-        //p->InitializerList.pHead->pInitializer : NULL;
+        
+
+        
+
 
 
         if (options->Options.Target == CompilerTarget_CXX)
@@ -23882,17 +24749,18 @@ static void TInitializerListType_CodePrint(TProgram * program,
             StrBuilder sb = STRBUILDER_INIT;
             bool bHasInitializers = false;
             InstanciateDestroy2(program,
-                                options,
-                                (TSpecifierQualifierList *)(pDeclarationSpecifiers),
-                                pDeclarator,                        //<-dupla para entender o tipo
-                                pInitializer,
-                                NULL,/*args*/
-                                "",
-                                NULL /*not used*/,
-                                ActionStaticInit,
-                                SearchNone,
-                                &bHasInitializers,
-                                &sb);
+                options,
+                (TSpecifierQualifierList *)(pDeclarationSpecifiers),
+                pDeclarator,                        
+
+                pInitializer,
+                NULL, 
+                "",
+                NULL  ,
+                ActionStaticInit,
+                SearchNone,
+                &bHasInitializers,
+                &sb);
 
             if (bHasInitializers)
             {
@@ -23913,12 +24781,12 @@ static void TInitializerListType_CodePrint(TProgram * program,
         Output_Append(fp, options, "{");
 
         TInitializerList_CodePrint(program,
-                                   options,
-                                   pDeclarationSpecifiers,
-                                   pDeclarator,
-                                   &p->InitializerList,
+            options,
+            pDeclarationSpecifiers,
+            pDeclarator,
+            &p->InitializerList,
 
-                                   fp);
+            fp);
 
         TNodeClueList_CodePrint(options, &p->ClueList2, fp);
         Output_Append(fp, options, "}");
@@ -23929,12 +24797,12 @@ static void TInitializerListType_CodePrint(TProgram * program,
 
 
 static void TInitializer_CodePrint(TProgram * program,
-                                   PrintCodeOptions * options,
-                                   TDeclarator * pDeclarator,
-                                   TDeclarationSpecifiers * pDeclarationSpecifiers,
-                                   TInitializer * pTInitializer,
+    PrintCodeOptions * options,
+    TDeclarator * pDeclarator,
+    TDeclarationSpecifiers * pDeclarationSpecifiers,
+    TInitializer * pTInitializer,
 
-                                   StrBuilder * fp)
+    StrBuilder * fp)
 {
     if (pTInitializer == NULL)
     {
@@ -23943,10 +24811,10 @@ static void TInitializer_CodePrint(TProgram * program,
     if (pTInitializer->Type == TInitializerListType_ID)
     {
         TInitializerListType_CodePrint(program,
-                                       options,
-                                       pDeclarator,
-                                       pDeclarationSpecifiers,
-                                       (TInitializerListType *)pTInitializer, fp);
+            options,
+            pDeclarator,
+            pDeclarationSpecifiers,
+            (TInitializerListType *)pTInitializer, fp);
     }
     else
     {
@@ -23973,12 +24841,18 @@ static void TParameterList_CodePrint(TProgram * program, PrintCodeOptions * opti
 
     ForEachListItem(TParameter, pItem, p)
     {
-        //if (!List_IsFirstItem(p, pItem))
-        //{
-        //  TNodeClueList_CodePrint(options, &pItem->ClueList, fp);
-        //            Output_Append(fp, options,  ",");
-        //}
-        //TParameterDeclaration * pItem = p->pItems[i];
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
         TParameter_CodePrint(program, options, pItem, fp);
     }
 
@@ -23988,47 +24862,55 @@ static void TParameterList_CodePrint(TProgram * program, PrintCodeOptions * opti
 
 static void TParameterTypeList_CodePrint(TProgram * program, PrintCodeOptions * options, TParameterTypeList * p, StrBuilder * fp)
 {
-    //Output_Append(fp, options,  "(");
+    
+
     TParameterList_CodePrint(program, options, &p->ParameterList, fp);
 
     if (p->bVariadicArgs)
     {
-        //TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-        //Output_Append(fp, options,  ",");
+        
+
+        
+
 
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         Output_Append(fp, options, "...");
     }
-    //Output_Append(fp, options,  ")");
+    
+
 
 }
 static void TDeclarator_CodePrint(TProgram * program, PrintCodeOptions * options, TDeclarator * p, bool bPrintName, StrBuilder * fp);
 
 static void TDirectDeclarator_CodePrint(TProgram * program, PrintCodeOptions * options, TDirectDeclarator * pDirectDeclarator,
 
-                                        bool bPrintName,
-                                        StrBuilder * fp)
+    bool bPrintName,
+    StrBuilder * fp)
 {
     if (pDirectDeclarator == NULL)
     {
         return;
     }
-    //fprintf(fp, "{");
+    
+
 
 
     if (pDirectDeclarator->Identifier)
     {
-        //identifier
+        
+
         TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList0, fp);
         if (bPrintName)
         {
             Output_Append(fp, options, pDirectDeclarator->Identifier);
         }
-        //true;
+        
+
     }
     else  if (pDirectDeclarator->pDeclarator)
     {
-        //( declarator )
+        
+
         TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList0, fp);
         Output_Append(fp, options, "(");
 
@@ -24040,11 +24922,7 @@ static void TDirectDeclarator_CodePrint(TProgram * program, PrintCodeOptions * o
 
     if (pDirectDeclarator->DeclaratorType == TDirectDeclaratorTypeArray)
     {
-        /*
-        direct-declarator [ type-qualifier-listopt assignment-expressionopt ]
-        direct-declarator [ static type-qualifier-listopt assignment-expression ]
-        direct-declarator [ type-qualifier-list static assignment-expression ]
-        */
+         
         TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList2, fp);
         Output_Append(fp, options, "[");
         if (pDirectDeclarator->pExpression)
@@ -24058,7 +24936,8 @@ static void TDirectDeclarator_CodePrint(TProgram * program, PrintCodeOptions * o
 
     if (pDirectDeclarator->DeclaratorType == TDirectDeclaratorTypeFunction)
     {
-        //( parameter-type-list )
+        
+
         TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList2, fp);
         Output_Append(fp, options, "(");
         TParameterTypeList_CodePrint(program, options, &pDirectDeclarator->Parameters, fp);
@@ -24068,12 +24947,14 @@ static void TDirectDeclarator_CodePrint(TProgram * program, PrintCodeOptions * o
 
     if (pDirectDeclarator->pDirectDeclarator)
     {
-        //fprintf(fp, "\"direct-declarator\":");
+        
+
         TDirectDeclarator_CodePrint(program, options, pDirectDeclarator->pDirectDeclarator, bPrintName, fp);
     }
 
 
-    //fprintf(fp, "}");
+    
+
 
 }
 
@@ -24084,21 +24965,25 @@ static void TDeclarator_CodePrint(TProgram * program, PrintCodeOptions * options
 
 }
 
-//void TInitDeclarator_CodePrint(TProgram* program, 
-//PrintCodeOptions * options, 
-//TI/nitDeclarator* p,    
-//StrBuilder* fp);
+
+
+
+
+
+
+
+
 
 
 
 void TStructDeclarator_CodePrint(TProgram * program,
-                                 PrintCodeOptions * options,
-                                 TSpecifierQualifierList * pSpecifierQualifierList,
-                                 TStructDeclarator * p,
-                                 StrBuilder * fp)
+    PrintCodeOptions * options,
+    TSpecifierQualifierList * pSpecifierQualifierList,
+    TStructDeclarator * p,
+    StrBuilder * fp)
 {
 
-    TDeclarator_CodePrint(program, options, p->pDeclarator, true/*bPrintName*/, fp);
+    TDeclarator_CodePrint(program, options, p->pDeclarator, true , fp);
     if (p->pInitializer)
     {
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
@@ -24116,11 +25001,11 @@ void TStructDeclarator_CodePrint(TProgram * program,
 
 
         TInitializer_CodePrint(program,
-                               &options2,
-                               p->pDeclarator,
-                               (TDeclarationSpecifiers *)pSpecifierQualifierList,
-                               p->pInitializer,
-                               fp);
+            &options2,
+            p->pDeclarator,
+            (TDeclarationSpecifiers *)pSpecifierQualifierList,
+            p->pInitializer,
+            fp);
 
         if (options->Options.Target == CompilerTarget_Annotated)
         {
@@ -24132,10 +25017,10 @@ void TStructDeclarator_CodePrint(TProgram * program,
 }
 
 static void TStructDeclaratorList_CodePrint(TProgram * program,
-                                            PrintCodeOptions * options,
-                                            TSpecifierQualifierList * pSpecifierQualifierList,
-                                            TStructDeclaratorList * p,
-                                            StrBuilder * fp)
+    PrintCodeOptions * options,
+    TSpecifierQualifierList * pSpecifierQualifierList,
+    TStructDeclaratorList * p,
+    StrBuilder * fp)
 {
 
 
@@ -24156,15 +25041,15 @@ static void TStructDeclaratorList_CodePrint(TProgram * program,
 }
 
 static void TStructDeclaration_CodePrint(TProgram * program,
-                                         PrintCodeOptions * options,
-                                         TStructDeclaration * p,
-                                         StrBuilder * fp)
+    PrintCodeOptions * options,
+    TStructDeclaration * p,
+    StrBuilder * fp)
 {
     TSpecifierQualifierList_CodePrint(program, options, &p->SpecifierQualifierList, fp);
     TStructDeclaratorList_CodePrint(program,
-                                    options,
-                                    &p->SpecifierQualifierList,
-                                    &p->DeclaratorList, fp);
+        options,
+        &p->SpecifierQualifierList,
+        &p->DeclaratorList, fp);
 
 
     TNodeClueList_CodePrint(options, &p->ClueList1, fp);
@@ -24177,13 +25062,14 @@ static void TAnyStructDeclaration_CodePrint(TProgram * program, PrintCodeOptions
 {
     switch (p->Type)
     {
-        case TStructDeclaration_ID:
-            TStructDeclaration_CodePrint(program, options, (TStructDeclaration *)p, fp);
-            break;
+    case TStructDeclaration_ID:
+        TStructDeclaration_CodePrint(program, options, (TStructDeclaration *)p, fp);
+        break;
 
-        default:
-            //assert(false);
-            break;
+    default:
+        
+
+        break;
     }
 
 
@@ -24204,7 +25090,8 @@ static void TFunctionSpecifier_CodePrint(TProgram * program, PrintCodeOptions * 
 
 static void TTypeQualifier_CodePrint(TProgram * program, PrintCodeOptions * options, TTypeQualifier * p, StrBuilder * fp)
 {
-    //TODO nao pode colocr isso se veio de comentario
+    
+
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
@@ -24228,7 +25115,8 @@ static void TTypeQualifier_CodePrint(TProgram * program, PrintCodeOptions * opti
         {
             Output_Append(fp, options, "/*@");
         }
-        //TODO espacos
+        
+
         Output_Append(fp, options, "[");
         Output_Append(fp, options, p->SizeIdentifier);
         Output_Append(fp, options, "]");
@@ -24248,14 +25136,19 @@ static void TTypeQualifier_CodePrint(TProgram * program, PrintCodeOptions * opti
 #ifdef LANGUAGE_EXTENSIONS
     if (p->Token == TK_SIZEOF)
     {
-        //tODO ja esta nos comentarios
-        //Output_Append(fp, options, "(");
-        //Output_Append(fp, options, p->SizeIdentifier);
-        //Output_Append(fp, options, ")");
+        
+
+        
+
+        
+
+        
+
 
         if (options->Options.Target == CompilerTarget_Annotated)
         {
-            //Output_Append(fp, options, "@*/");
+            
+
         }
     }
 #endif
@@ -24278,15 +25171,16 @@ static void TPointer_CodePrint(TProgram * program, PrintCodeOptions * options, T
 }
 
 void TSpecifierQualifierList_CodePrint(TProgram * program,
-                                       PrintCodeOptions * options,
-                                       TSpecifierQualifierList * pDeclarationSpecifiers,
-                                       StrBuilder * fp)
+    PrintCodeOptions * options,
+    TSpecifierQualifierList * pDeclarationSpecifiers,
+    StrBuilder * fp)
 {
     for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
     {
         if (i > 0 && options->Options.bCannonical)
         {
-            //gerar espaco entre eles para nao grudar no modo cannonico
+            
+
             Output_Append(fp, options, " ");
         }
 
@@ -24307,9 +25201,12 @@ void TSpecifierQualifierList_CodePrint(TProgram * program,
             CASE(TFunctionSpecifier) :
                 TFunctionSpecifier_CodePrint(program, options, (TFunctionSpecifier *)pItem, fp);
             break;
-            //CASE(TAlignmentSpecifier) : 
-            ///TAlignmentSpecifier_CodePrint(program, options, (TAlignmentSpecifier*)pItem,  fp);
-            //break;
+            
+
+            
+
+            
+
 
             CASE(TStructUnionSpecifier) :
                 TStructUnionSpecifier_CodePrint(program, options, (TStructUnionSpecifier *)pItem, fp);
@@ -24319,9 +25216,10 @@ void TSpecifierQualifierList_CodePrint(TProgram * program,
                 TEnumSpecifier_CodePrint(program, options, (TEnumSpecifier *)pItem, fp);
             break;
 
-            default:
-                //assert(false);
-                break;
+        default:
+            
+
+            break;
         }
     }
 
@@ -24360,13 +25258,17 @@ void TDeclarationSpecifiers_CodePrint(TProgram * program, PrintCodeOptions * opt
                 TFunctionSpecifier_CodePrint(program, options, (TFunctionSpecifier *)pItem, fp);
             break;
 
-            //CASE(TAlignmentSpecifier) : 
-            ///TAlignmentSpecifier_CodePrint(program, options, (TAlignmentSpecifier*)pItem,  fp);
-            //break;
+            
 
-            default:
-                //assert(false);
-                break;
+            
+
+            
+
+
+        default:
+            
+
+            break;
         }
     }
 
@@ -24377,25 +25279,25 @@ void TDeclarationSpecifiers_CodePrint(TProgram * program, PrintCodeOptions * opt
 }
 
 void TInitDeclarator_CodePrint(TProgram * program,
-                               PrintCodeOptions * options,
-                               TDeclarator * pDeclarator,
-                               TDeclarationSpecifiers * pDeclarationSpecifiers,
-                               TInitDeclarator * p,
-                               StrBuilder * fp)
+    PrintCodeOptions * options,
+    TDeclarator * pDeclarator,
+    TDeclarationSpecifiers * pDeclarationSpecifiers,
+    TInitDeclarator * p,
+    StrBuilder * fp)
 {
-    TDeclarator_CodePrint(program, options, p->pDeclarator, true/*bPrintName*/, fp);
+    TDeclarator_CodePrint(program, options, p->pDeclarator, true , fp);
 
     if (p->pInitializer)
     {
         TNodeClueList_CodePrint(options, &p->ClueList0, fp);
         Output_Append(fp, options, "=");
         TInitializer_CodePrint(program,
-                               options,
-                               pDeclarator,
-                               pDeclarationSpecifiers,
-                               p->pInitializer,
+            options,
+            pDeclarator,
+            pDeclarationSpecifiers,
+            p->pInitializer,
 
-                               fp);
+            fp);
     }
 
 }
@@ -24403,15 +25305,16 @@ void TInitDeclarator_CodePrint(TProgram * program,
 
 
 void TInitDeclaratorList_CodePrint(TProgram * program,
-                                   PrintCodeOptions * options,
+    PrintCodeOptions * options,
 
-                                   TDeclarationSpecifiers * pDeclarationSpecifiers,
-                                   TInitDeclaratorList * p,
+    TDeclarationSpecifiers * pDeclarationSpecifiers,
+    TInitDeclaratorList * p,
 
-                                   StrBuilder * fp)
+    StrBuilder * fp)
 {
 
-    //fprintf(fp, "[");
+    
+
     ForEachListItem(TInitDeclarator, pInitDeclarator, p)
     {
         if (!List_IsFirstItem(p, pInitDeclarator))
@@ -24419,14 +25322,15 @@ void TInitDeclaratorList_CodePrint(TProgram * program,
 
 
         TInitDeclarator_CodePrint(program,
-                                  options,
-                                  pInitDeclarator->pDeclarator,
-                                  pDeclarationSpecifiers,
-                                  pInitDeclarator,
-                                  fp);
+            options,
+            pInitDeclarator->pDeclarator,
+            pDeclarationSpecifiers,
+            pInitDeclarator,
+            fp);
     }
 
-    //  fprintf(fp, "]");
+    
+
 
 }
 
@@ -24436,25 +25340,30 @@ TStructUnionSpecifier * GetStructSpecifier(TProgram * program, TDeclarationSpeci
 
 
 static bool FindListStructPattern(TProgram * program,
-                                  TParameter * pParameter,
-                                  bool * pbItemIsPointer,
-                                  bool * pbItemIsAutoPointer,
-                                  StrBuilder * itemTypeName,
-                                  StrBuilder * arrayName)
+    TParameter * pParameter,
+    bool * pbItemIsPointer,
+    bool * pbItemIsAutoPointer,
+    StrBuilder * itemTypeName,
+    StrBuilder * arrayName)
 {
-    //Esta funcao analisa a struct e ve se ela eh compativel com o tipo vector.
-    //ter size, capacity e um vector de items
+    
+
+    
+
 
     bool bHasHead = false;
     bool bHasTail = false;
 
-    //O primeiro parametro tem que ser struct or typedef para struct
+    
+
     TStructUnionSpecifier * pStructUnionSpecifier =
         GetStructSpecifier(program, &pParameter->Specifiers);
     if (pStructUnionSpecifier)
     {
-        //Vou analisar a "digital" da struct
-        //ok tem a definicao completa da struct
+        
+
+        
+
         for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
         {
             TAnyStructDeclaration * pAnyStructDeclaration =
@@ -24501,25 +25410,30 @@ static bool FindListStructPattern(TProgram * program,
 }
 
 static bool FindVectorStructPattern(TProgram * program,
-                                    TParameter * pParameter,
-                                    bool * pbItemIsPointer,
-                                    bool * pbItemIsAutoPointer,
-                                    StrBuilder * itemTypeName,
-                                    StrBuilder * arrayName)
+    TParameter * pParameter,
+    bool * pbItemIsPointer,
+    bool * pbItemIsAutoPointer,
+    StrBuilder * itemTypeName,
+    StrBuilder * arrayName)
 {
-    //Esta funcao analisa a struct e ve se ela eh compativel com o tipo vector.
-    //ter size, capacity e um vector de items
+    
+
+    
+
     bool bHasVector = false;
     bool bHasSize = false;
     bool bHasCapacity = false;
 
-    //O primeiro parametro tem que ser struct or typedef para struct
+    
+
     TStructUnionSpecifier * pStructUnionSpecifier =
         GetStructSpecifier(program, &pParameter->Specifiers);
     if (pStructUnionSpecifier)
     {
-        //Vou analisar a "digital" da struct
-        //ok tem a definicao completa da struct
+        
+
+        
+
         for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
         {
             TAnyStructDeclaration * pAnyStructDeclaration =
@@ -24549,27 +25463,34 @@ static bool FindVectorStructPattern(TProgram * program,
                         bHasVector = true;
                         StrBuilder_Set(arrayName, structDeclaratorName);
 
-                        //se eh um array de ponteiros 
+                        
+
                         bool bItemIsPointer =
                             TPointerList_IsPointer(&pStructDeclarator->pDeclarator->PointerList);
 
                         *pbItemIsPointer = bIsPointer2;
 
-                        //se eh um array de ponteiros  donos
+                        
+
                         bool bItemIsAutoPointer =
                             TPointerList_IsAutoPointer(&pStructDeclarator->pDeclarator->PointerList);
 
                         *pbItemIsAutoPointer = bItemIsPointer;
 
-                        //este eh array
-                        //vamos ver o tipo do item e se ele eh auto
-                        //pStructDeclaration->SpecifierQualifierList
-                        // StrBuilder itemTypeStr = STRBUILDER_INIT;
+                        
+
+                        
+
+                        
+
+                        
+
                         TTypeName * pTypeName = NULL;
                         PrintCodeOptions  options = CODE_PRINT_OPTIONS_INIT;
                         options.Options.bCannonical = true;
                         TSpecifierQualifierList_CodePrint(program, &options, &pStructDeclaration->SpecifierQualifierList, itemTypeName);
-                        //StrBuilder_Destroy(&itemTypeStr);
+                        
+
                     }
                     else  if (TSpecifierQualifierList_IsAnyInteger(&pStructDeclaration->SpecifierQualifierList))
                     {
@@ -24613,22 +25534,24 @@ const char * FindValue(const char * name, int namesize, struct TemplateVar * arg
 }
 
 void StrBuilder_Template(StrBuilder * p,
-                         const char * tmpt,
-                         struct TemplateVar * vars,
-                         int size,
-                         int identationLevel)
+    const char * tmpt,
+    struct TemplateVar * vars,
+    int size,
+    int identationLevel)
 {
 
 
     const char * pch = tmpt;
 
-    //Move tudo para o lado de acordo com a identacao
+    
+
     for (int i = 0; i < identationLevel * 4; i++)
     {
         StrBuilder_AppendChar(p, ' ');
     }
 
-    //agora nove de acordo com os espacos
+    
+
     while (*pch == ' ')
     {
         for (int j = 0; j < 4; j++)
@@ -24657,9 +25580,10 @@ void StrBuilder_Template(StrBuilder * p,
 
                 while (*pch &&
                     (*pch >= 'a' && *pch <= 'z') ||
-                       (*pch >= 'A' && *pch <= 'Z') ||
-                       (*pch >= '0' && *pch <= '9') ||
-                       (*pch >= '_')) //$X_X
+                    (*pch >= 'A' && *pch <= 'Z') ||
+                    (*pch >= '0' && *pch <= '9') ||
+                    (*pch >= '_')) 
+
                 {
                     pch++;
                     namesize++;
@@ -24672,10 +25596,14 @@ void StrBuilder_Template(StrBuilder * p,
         }
         else
         {
-            //Este \b eh usado para juntar identificador
-            //$part1_part2
-            //$part1\b_part2
-            //
+            
+
+            
+
+            
+
+            
+
 
             if (*pch == '\n')
             {
@@ -24683,14 +25611,17 @@ void StrBuilder_Template(StrBuilder * p,
                 pch++;
 
 
-                if (*pch != '\0') //se for o ultimo nao move
-                {//Move tudo para o lado de acordo com a identacao
+                if (*pch != '\0') 
+
+                {
+
                     for (int i = 0; i < identationLevel * 4; i++)
                     {
                         StrBuilder_AppendChar(p, ' ');
                     }
 
-                    //agora nove de acordo com os espacos
+                    
+
                     while (*pch == ' ')
                     {
                         for (int j = 0; j < 4; j++)
@@ -24732,24 +25663,27 @@ void GetPrefixSuffix(const char * psz, StrBuilder * prefix, StrBuilder * suffix)
 }
 
 static int FindRuntimeID(TProgram * program,
-                         const char * structOrTypeName,
-                         StrBuilder * idname)
+    const char * structOrTypeName,
+    StrBuilder * idname)
 {
-    ////////////
+    
+
     TDeclaration * pFinalDecl =
         TProgram_GetFinalTypeDeclaration(program, structOrTypeName);
     int typeInt = 0;
     TStructUnionSpecifier * pStructUnionSpecifier = NULL;
     if (pFinalDecl)
     {
-        typeInt = 1; //typefef
+        typeInt = 1; 
+
         if (pFinalDecl->Specifiers.Size > 1)
         {
             pStructUnionSpecifier =
                 TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
             if (pStructUnionSpecifier->TagName)
             {
-                //procura a mais completa
+                
+
                 pStructUnionSpecifier =
                     SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
             }
@@ -24757,11 +25691,13 @@ static int FindRuntimeID(TProgram * program,
     }
     else
     {
-        typeInt = 2; //struct
+        typeInt = 2; 
+
         pStructUnionSpecifier =
             SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);
     }
-    //////////////
+    
+
 
     if (pStructUnionSpecifier &&
         pStructUnionSpecifier->UnionSet.pHead != NULL)
@@ -24775,12 +25711,14 @@ static int FindRuntimeID(TProgram * program,
                 TStructDeclarator * pStructDeclarator =
                     pStructDeclaration->DeclaratorList.pHead;
 
-                //o primeiro item tem que ser o ID
+                
+
                 if (pStructDeclarator)
                 {
                     const char * structDeclaratorName =
                         TDeclarator_GetName(pStructDeclarator->pDeclarator);
-                    //if (TSpecifierQualifierList_IsAnyInteger(&pStructDeclaration->SpecifierQualifierList))
+                    
+
                     {
                         StrBuilder_Set(idname, structDeclaratorName);
                     }
@@ -24793,24 +25731,27 @@ static int FindRuntimeID(TProgram * program,
 
 
 static int FindIDValue(TProgram * program,
-                       const char * structOrTypeName,
-                       StrBuilder * idname)
+    const char * structOrTypeName,
+    StrBuilder * idname)
 {
-    ////////////
+    
+
     TDeclaration * pFinalDecl =
         TProgram_GetFinalTypeDeclaration(program, structOrTypeName);
     int typeInt = 0;
     TStructUnionSpecifier * pStructUnionSpecifier = NULL;
     if (pFinalDecl)
     {
-        typeInt = 1; //typefef
+        typeInt = 1; 
+
         if (pFinalDecl->Specifiers.Size > 1)
         {
             pStructUnionSpecifier =
                 TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
             if (pStructUnionSpecifier->TagName)
             {
-                //procura a mais completa
+                
+
                 pStructUnionSpecifier =
                     SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
             }
@@ -24818,11 +25759,13 @@ static int FindIDValue(TProgram * program,
     }
     else
     {
-        typeInt = 2; //struct
+        typeInt = 2; 
+
         pStructUnionSpecifier =
             SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);
     }
-    //////////////
+    
+
 
     if (pStructUnionSpecifier)
     {
@@ -24835,19 +25778,22 @@ static int FindIDValue(TProgram * program,
                 TStructDeclarator * pStructDeclarator =
                     pStructDeclaration->DeclaratorList.pHead;
 
-                //o primeiro item tem que ser o ID
+                
+
                 if (pStructDeclarator)
                 {
                     const char * structDeclaratorName =
                         TDeclarator_GetName(pStructDeclarator->pDeclarator);
-                    //if (TSpecifierQualifierList_IsAnyInteger(&pStructDeclaration->SpecifierQualifierList))
+                    
+
                     {
                         PrintCodeOptions options2 = CODE_PRINT_OPTIONS_INIT;
                         TInitializer_CodePrint(program, &options2, pStructDeclarator->pDeclarator,
                             (TDeclarationSpecifiers *)& pStructDeclaration->SpecifierQualifierList,
-                                               pStructDeclarator->pInitializer, idname);
+                            pStructDeclarator->pInitializer, idname);
 
-                        //StrBuilder_Set(idname, structDeclaratorName);
+                        
+
                     }
                 }
             }
@@ -24858,8 +25804,8 @@ static int FindIDValue(TProgram * program,
 
 
 void FindUnionSetOf(TProgram * program,
-                    const char * structOrTypeName,
-                    Map2 * map)
+    const char * structOrTypeName,
+    Map2 * map)
 {
     TDeclaration * pFinalDecl =
         TProgram_GetFinalTypeDeclaration(program, structOrTypeName);
@@ -24867,14 +25813,16 @@ void FindUnionSetOf(TProgram * program,
     TStructUnionSpecifier * pStructUnionSpecifier = NULL;
     if (pFinalDecl)
     {
-        typeInt = 1; //typefef
+        typeInt = 1; 
+
         if (pFinalDecl->Specifiers.Size > 1)
         {
             pStructUnionSpecifier =
                 TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
             if (pStructUnionSpecifier->TagName)
             {
-                //procura a mais completa
+                
+
                 pStructUnionSpecifier =
                     SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
             }
@@ -24882,7 +25830,8 @@ void FindUnionSetOf(TProgram * program,
     }
     else
     {
-        typeInt = 2; //struct
+        typeInt = 2; 
+
         pStructUnionSpecifier =
             SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);
     }
@@ -24906,21 +25855,25 @@ void FindUnionSetOf(TProgram * program,
 }
 
 void UnionTypeDefault(TProgram * program,
-                      PrintCodeOptions * options,
-                      const char * structName,
-                      TParameterTypeList * pArgsOpt, //parametros
-                      const char * parameterName,
-                      const char * functionSuffix,
-                      StrBuilder * fp);
+    PrintCodeOptions * options,
+    const char * structName,
+    TParameterTypeList * pArgsOpt, 
+
+    const char * parameterName,
+    const char * functionSuffix,
+    StrBuilder * fp);
 static const char * GetNullStr(TProgram * program);
 
+
+
 static void DefaultFunctionDefinition_CodePrint(TProgram * program,
-                                                PrintCodeOptions * options,
-                                                TDeclaration * p,
-                                                StrBuilder * fp)
+    PrintCodeOptions * options,
+    TDeclaration * p,
+    StrBuilder * fp)
 {
 
-    //Retorno da funcao
+    
+
     TDeclarationSpecifiers * pSpecifiers =
         &p->Specifiers;
 
@@ -24932,7 +25885,8 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
 
     GetPrefixSuffix(funcName, &functionPrefix, &functionSuffix);
 
-    //parametros
+    
+
 
 
     TParameterTypeList * pArgs =
@@ -24940,119 +25894,121 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
 
     TParameter * pFirstParameter =
         TParameterTypeList_GetParameterByIndex(pArgs, 0);
-#if 0
 
-    //TODO descobre se esta func eh alguma das especiais do tipo
-    if (pFirstParameter)
-    {
-        TDeclarationSpecifier * pFirstArgSpecifier = 
-            TSpecifierQualifierList_GetMainSpecifier(&pFirstParameter->Specifiers);
-        if (pFirstArgSpecifier)
-        {
-            TStructUnionSpecifier* pStructUnionSpecifier = 
-                TDeclarationSpecifier_As_TStructUnionSpecifier(pFirstArgSpecifier);
-            if (pStructUnionSpecifier)
-            {
-                
-               pStructUnionSpecifier = 
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
 
-               if (pStructUnionSpecifier)
-               {
-                   int r = TStructUnionSpecifier_GetSpecialMemberType(pStructUnionSpecifier, funcName);                  
-               }
-            }
-        }
-    }
-#endif
+    const char * functionTagName = TDeclaration_FindFunctionTagName(p, &program->GlobalScope);
+
 
     TParameter * pSecondParameter =
         TParameterTypeList_GetParameterByIndex(pArgs, 1);
 
 
-    if (IsSuffix(funcName, "_Create"))
+    if (functionTagName && strcmp(functionTagName, "create") == 0)
     {
         options->IdentationLevel++;
 
         InstanciateDestroy2(program,
-                            options,
-                            (TSpecifierQualifierList *)(pSpecifiers),
-                            p->InitDeclaratorList.pHead->pDeclarator,
-                            NULL,
-                            pArgs,
-                            "p",
-                            NULL /*not used*/,
-                            ActionCreate,
-                            SearchInit,
-                            NULL,
-                            fp);
+            options,
+            (TSpecifierQualifierList *)(pSpecifiers),
+            p->InitDeclaratorList.pHead->pDeclarator,
+            NULL,
+            pArgs,
+            "p",
+            NULL  ,
+            ActionCreate,
+            SearchInit,
+            NULL,
+            fp);
         options->IdentationLevel--;
     }
-    else if (IsSuffix(funcName, "_Init") && pFirstParameter != NULL)
+    else if (functionTagName && strcmp(functionTagName, "init") == 0 && pFirstParameter != NULL)
     {
         options->IdentationLevel++;
         InstanciateDestroy2(program,
-                            options,
-                            (TSpecifierQualifierList *)(&pFirstParameter->Specifiers),
-                            &pFirstParameter->Declarator,
-                            NULL,
-                            pArgs,/*args fazer inicializacao conforme parametro*/
-                            TParameter_GetName(pFirstParameter),
-                            NULL /*not used*/,
-                            ActionInitContent,
-                            SearchNone,
-                            NULL,
-                            fp);
+            options,
+            (TSpecifierQualifierList *)(&pFirstParameter->Specifiers),
+            &pFirstParameter->Declarator,
+            NULL,
+            pArgs, 
+            TParameter_GetName(pFirstParameter),
+            NULL  ,
+            ActionInitContent,
+            SearchNone,
+            NULL,
+            fp);
         options->IdentationLevel--;
     }
-    else if (IsSuffix(funcName, "_Destroy") && pFirstParameter != NULL)
-    {
-
-        options->IdentationLevel++;
-        InstanciateDestroy2(program,
-                            options,
-                            (TSpecifierQualifierList *)(&pFirstParameter->Specifiers),
-                            &pFirstParameter->Declarator,
-                            NULL,
-                            NULL,/*args*/
-                            TParameter_GetName(pFirstParameter),
-                            NULL /*not used*/,
-                            ActionDestroyContent,
-                            SearchNone,
-                            NULL,
-                            fp);
-        options->IdentationLevel--;
-    }
-    else if (IsSuffix(funcName, "_Delete") && pFirstParameter != NULL)
+    else if (functionTagName && strcmp(functionTagName, "destroy") == 0 && pFirstParameter != NULL)
     {
 
         options->IdentationLevel++;
         InstanciateDestroy2(program,
-                            options,
-                            (TSpecifierQualifierList *)(&pFirstParameter->Specifiers),
-                            &pFirstParameter->Declarator,
-                            NULL,
-                            NULL,/*args*/
-                            TParameter_GetName(pFirstParameter),
-                            NULL /*not used*/,
-                            ActionDelete,
-                            SearchDestroy,
-                            NULL,
-                            fp);
+            options,
+            (TSpecifierQualifierList *)(&pFirstParameter->Specifiers),
+            &pFirstParameter->Declarator,
+            NULL,
+            NULL, 
+            TParameter_GetName(pFirstParameter),
+            NULL  ,
+            ActionDestroyContent,
+            SearchNone,
+            NULL,
+            fp);
+        options->IdentationLevel--;
+    }
+    else if (functionTagName && strcmp(functionTagName, "delete") == 0 && pFirstParameter != NULL)
+    {
+
+        options->IdentationLevel++;
+        InstanciateDestroy2(program,
+            options,
+            (TSpecifierQualifierList *)(&pFirstParameter->Specifiers),
+            &pFirstParameter->Declarator,
+            NULL,
+            NULL, 
+            TParameter_GetName(pFirstParameter),
+            NULL  ,
+            ActionDelete,
+            SearchDestroy,
+            NULL,
+            fp);
         options->IdentationLevel--;
     }
     else
     {
-        if (pFirstParameter != NULL &&
-            pSecondParameter != NULL &&
-            IsSuffix(funcName, "_Reserve"))
+        
+
+        const char * functionTag =
+            TDeclaration_FindFunctionTagName(p, &program->GlobalScope);
+
+        if (functionTag == NULL && !options->Options.bNoImplicitTag)
+        {
+            
+
+
+            if (pFirstParameter != NULL &&
+                pSecondParameter != NULL &&
+                IsSuffix(funcName, "_Reserve"))
+            {
+                functionTag = "reserve";
+            }
+            else if (pFirstParameter != NULL &&
+                pSecondParameter != NULL &&
+                IsSuffix(funcName, "_PushBack"))
+            {
+                functionTag = "push";
+            }
+        }
+
+        if (functionTag && strcmp(functionTag, "reserve") == 0)
         {
             bool bItemIsPointer;
             bool bItemIsAutoPointer;
             StrBuilder itemType = STRBUILDER_INIT;
             StrBuilder arrayName = STRBUILDER_INIT;
 
-            //Implemetancao para vector
+            
+
             if (FindVectorStructPattern(program,
                 pFirstParameter,
                 &bItemIsPointer,
@@ -25096,25 +26052,24 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
                 };
 
                 StrBuilder_Template(fp,
-                                    pszTemplate,
-                                    vars,
-                                    sizeof(vars) / sizeof(vars[0]),
-                                    1 /*options->IdentationLevel*/);
+                    pszTemplate,
+                    vars,
+                    sizeof(vars) / sizeof(vars[0]),
+                    1  );
             }
 
             StrBuilder_Destroy(&itemType);
             StrBuilder_Destroy(&arrayName);
         }
-        else if (pFirstParameter != NULL &&
-                 pSecondParameter != NULL &&
-                 IsSuffix(funcName, "_PushBack"))
+        else if (functionTag && strcmp(functionTag, "push") == 0)
         {
             bool bItemIsPointer;
             bool bItemIsAutoPointer;
             StrBuilder itemType = STRBUILDER_INIT;
             StrBuilder arrayName = STRBUILDER_INIT;
 
-            //Implemetancao para vector
+            
+
             if (FindVectorStructPattern(program,
                 pFirstParameter,
                 &bItemIsPointer,
@@ -25122,8 +26077,10 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
                 &itemType,
                 &arrayName))
             {
+                
+
                 bool bHasReserve =
-                    SymbolMap_FindObjFunction(&program->GlobalScope, functionPrefix.c_str, "Reserve") != 0;
+                    SymbolMap_FindObjFunction2(&program->GlobalScope, functionPrefix.c_str, "Reserve") != 0;
                 const char * pszTemplate = "";
 
                 if (bHasReserve)
@@ -25196,17 +26153,17 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
                 };
 
                 StrBuilder_Template(fp,
-                                    pszTemplate,
-                                    vars,
-                                    sizeof(vars) / sizeof(vars[0]),
-                                    1/*options->IdentationLevel*/);
+                    pszTemplate,
+                    vars,
+                    sizeof(vars) / sizeof(vars[0]),
+                    1 );
             }
             else if (FindListStructPattern(program,
-                     pFirstParameter,
-                     &bItemIsPointer,
-                     &bItemIsAutoPointer,
-                     &itemType,
-                     &arrayName))
+                pFirstParameter,
+                &bItemIsPointer,
+                &bItemIsAutoPointer,
+                &itemType,
+                &arrayName))
             {
                 struct TemplateVar vars[] = {
                   { "pList", TParameter_GetName(pFirstParameter) },
@@ -25216,8 +26173,10 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
                 { "prefix", functionPrefix.c_str },
                 { "null", GetNullStr(program)}
                 };
-                //o item apontado tem que ter pNext verificar isso
-                //e colocar erro se nao tiver
+                
+
+                
+
                 const char * pszTemplate =
                     "if ($pList->pHead == $null)\n"
                     "{\n"
@@ -25230,10 +26189,10 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
                     "$pList->pTail = $pItem; \n";
 
                 StrBuilder_Template(fp,
-                                    pszTemplate,
-                                    vars,
-                                    sizeof(vars) / sizeof(vars[0]),
-                                    1/*options->IdentationLevel*/);
+                    pszTemplate,
+                    vars,
+                    sizeof(vars) / sizeof(vars[0]),
+                    1 );
             }
 
             StrBuilder_Destroy(&itemType);
@@ -25250,12 +26209,12 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
                 {
                     options->IdentationLevel++;
                     UnionTypeDefault(program,
-                                     options,
-                                     pStructUnionSpecifier->TagName,
-                                     pArgs,
-                                     TParameter_GetName(pFirstParameter),
-                                     functionSuffix.c_str,
-                                     fp);
+                        options,
+                        pStructUnionSpecifier->TagName,
+                        pArgs,
+                        TParameter_GetName(pFirstParameter),
+                        functionSuffix.c_str,
+                        fp);
                     options->IdentationLevel--;
                 }
             }
@@ -25268,25 +26227,41 @@ static void DefaultFunctionDefinition_CodePrint(TProgram * program,
 }
 
 static void TDeclaration_CodePrint(TProgram * program,
-                                   PrintCodeOptions * options,
-                                   TDeclaration * p,
+    PrintCodeOptions * options,
+    TDeclaration * p,
 
-                                   StrBuilder * fp)
+    StrBuilder * fp)
 {
     TDeclarationSpecifiers_CodePrint(program, options, &p->Specifiers, fp);
 
     TInitDeclaratorList_CodePrint(program,
-                                  options,
-                                  &p->Specifiers,
-                                  &p->InitDeclaratorList, fp);
+        options,
+        &p->Specifiers,
+        &p->InitDeclaratorList, fp);
+
+    if (p->FunctionTag && !p->bAutoTag)
+    {
+        TNodeClueList_CodePrint(options, &p->ClueList00, fp);
+
+        if (options->Options.Target == CompilerTarget_Annotated)
+        {
+            StrBuilder_Append(fp, "/*@");
+        }
+
+        StrBuilder_Append(fp, ":");
+        TNodeClueList_CodePrint(options, &p->ClueList001, fp);
+        StrBuilder_Append(fp, p->FunctionTag);
+
+
+        if (options->Options.Target == CompilerTarget_Annotated)
+        {
+            StrBuilder_Append(fp, "*/");
+        }
+    }
 
     if (p->pCompoundStatementOpt != NULL)
     {
-        /*
-        typedef struct Array { int data; ... } Items;
-        void Items_Add(Items* p,int i) {...}
-        void Items_Delete(Items* p,int i) {...}
-        */
+         
 
         if (p->bDefault)
         {
@@ -25311,10 +26286,10 @@ static void TDeclaration_CodePrint(TProgram * program,
                 Output_Append(fp, options, "{\n");
 
                 DefaultFunctionDefinition_CodePrint(program,
-                                                    options,
-                                                    p,
+                    options,
+                    p,
 
-                                                    fp);
+                    fp);
 
                 Output_Append(fp, options, "}");
             }
@@ -25330,17 +26305,19 @@ static void TDeclaration_CodePrint(TProgram * program,
         {
             if (p->pCompoundStatementOpt != NULL)
             {
-                //normal
-                TCompoundStatement_CodePrint(program,
-                                             options,
-                                             p->pCompoundStatementOpt,
+                
 
-                                             fp);
+                TCompoundStatement_CodePrint(program,
+                    options,
+                    p->pCompoundStatementOpt,
+
+                    fp);
             }
         }
     }
     else
     {
+
 
         if (p->bDefault)
         {
@@ -25364,10 +26341,10 @@ static void TDeclaration_CodePrint(TProgram * program,
                 Output_Append(fp, options, "\n{\n");
 
                 DefaultFunctionDefinition_CodePrint(program,
-                                                    options,
-                                                    p,
+                    options,
+                    p,
 
-                                                    fp);
+                    fp);
 
                 Output_Append(fp, options, "}");
             }
@@ -25378,8 +26355,6 @@ static void TDeclaration_CodePrint(TProgram * program,
                 Output_Append(fp, options, ";");
             }
 
-            //TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-            //Output_Append(fp, options, ";");
 
             return;
         }
@@ -25399,19 +26374,19 @@ void TTypeName_CodePrint(TProgram * program, PrintCodeOptions * options, TTypeNa
 
     TSpecifierQualifierList_CodePrint(program, options, &p->SpecifierQualifierList, fp);
 
-    TDeclarator_CodePrint(program, options, &p->Declarator, true/*bPrintName*/, fp);
+    TDeclarator_CodePrint(program, options, &p->Declarator, true , fp);
 
 
 }
 
 static void TParameter_CodePrint(TProgram * program,
-                                 PrintCodeOptions * options,
-                                 TParameter * p,
+    PrintCodeOptions * options,
+    TParameter * p,
 
-                                 StrBuilder * fp)
+    StrBuilder * fp)
 {
     TDeclarationSpecifiers_CodePrint(program, options, &p->Specifiers, fp);
-    TDeclarator_CodePrint(program, options, &p->Declarator, true/*bPrintName*/, fp);
+    TDeclarator_CodePrint(program, options, &p->Declarator, true , fp);
 
     if (p->bHasComma)
     {
@@ -25423,19 +26398,19 @@ static void TParameter_CodePrint(TProgram * program,
 }
 
 static void TEofDeclaration_CodePrint(TProgram * program,
-                                      PrintCodeOptions * options,
-                                      TEofDeclaration * p,
+    PrintCodeOptions * options,
+    TEofDeclaration * p,
 
-                                      StrBuilder * fp)
+    StrBuilder * fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 }
 
 static void TStaticAssertDeclaration_CodePrint(TProgram * program,
-                                               PrintCodeOptions * options,
-                                               TStaticAssertDeclaration * p,
+    PrintCodeOptions * options,
+    TStaticAssertDeclaration * p,
 
-                                               StrBuilder * fp)
+    StrBuilder * fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "_StaticAssert");
@@ -25479,8 +26454,8 @@ static void TGroupDeclaration_CodePrint(TProgram * program, PrintCodeOptions * o
         StrBuilder idname = STRBUILDER_INIT;
 
         int ir = FindRuntimeID(program,
-                               p->Identifier,
-                               &idname);
+            p->Identifier,
+            &idname);
 
         for (int i = 0; i < (int)map.nHashTableSize; i++)
         {
@@ -25492,8 +26467,8 @@ static void TGroupDeclaration_CodePrint(TProgram * program, PrintCodeOptions * o
                 StrBuilder idnamelocal = STRBUILDER_INIT;
 
                 int ir2 = FindIDValue(program,
-                                      derivedName,
-                                      &idnamelocal);
+                    derivedName,
+                    &idnamelocal);
 
                 struct TemplateVar vars0[] = {
                   { "base", baseName },
@@ -25511,31 +26486,31 @@ static void TGroupDeclaration_CodePrint(TProgram * program, PrintCodeOptions * o
                     if (ir == 2)
                     {
                         StrBuilder_Template(fp,
-                                            "inline struct $derived* $base\b_As_$derived(struct $base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
-                                            "inline struct $base* $derived\b_As_$base(struct $derived* p) { return (struct $base*) p; }\n",
-                                            vars0,
-                                            sizeof(vars0) / sizeof(vars0[0]),
-                                            options->IdentationLevel);
+                            "inline struct $derived* $base\b_As_$derived(struct $base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
+                            "inline struct $base* $derived\b_As_$base(struct $derived* p) { return (struct $base*) p; }\n",
+                            vars0,
+                            sizeof(vars0) / sizeof(vars0[0]),
+                            options->IdentationLevel);
                     }
                     else
                     {
                         if (ir == 2)
                         {
                             StrBuilder_Template(fp,
-                                                "inline struct $derived* $base\b_As_$derived(struct $base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
-                                                "inline struct $base* $derived\b_As_$base(struct $derived* p) { return (struct $base*) p; }\n",
-                                                vars0,
-                                                sizeof(vars0) / sizeof(vars0[0]),
-                                                options->IdentationLevel);
+                                "inline struct $derived* $base\b_As_$derived(struct $base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
+                                "inline struct $base* $derived\b_As_$base(struct $derived* p) { return (struct $base*) p; }\n",
+                                vars0,
+                                sizeof(vars0) / sizeof(vars0[0]),
+                                options->IdentationLevel);
                         }
                         else
                         {
                             StrBuilder_Template(fp,
-                                                "inline struct $derived* $base\b_As_$derived($base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
-                                                "inline $base* $derived\b_As_$base(struct $derived* p) { return ($base*) p; }\n",
-                                                vars0,
-                                                sizeof(vars0) / sizeof(vars0[0]),
-                                                options->IdentationLevel);
+                                "inline struct $derived* $base\b_As_$derived($base* p) { return p->$id == $idvalue ? (struct $derived*) p : 0;}\n"
+                                "inline $base* $derived\b_As_$base(struct $derived* p) { return ($base*) p; }\n",
+                                vars0,
+                                sizeof(vars0) / sizeof(vars0[0]),
+                                options->IdentationLevel);
                         }
                     }
 
@@ -25543,11 +26518,11 @@ static void TGroupDeclaration_CodePrint(TProgram * program, PrintCodeOptions * o
                 else
                 {
                     StrBuilder_Template(fp,
-                                        "inline $derived* $base\b_As_$derived($base* p) { return p->$id == $idvalue ? ($derived*) p : 0;}\n"
-                                        "inline $base* $derived\b_As_$base($derived* p) { return ($base*) p; }\n",
-                                        vars0,
-                                        sizeof(vars0) / sizeof(vars0[0]),
-                                        options->IdentationLevel);
+                        "inline $derived* $base\b_As_$derived($base* p) { return p->$id == $idvalue ? ($derived*) p : 0;}\n"
+                        "inline $base* $derived\b_As_$base($derived* p) { return ($base*) p; }\n",
+                        vars0,
+                        sizeof(vars0) / sizeof(vars0[0]),
+                        options->IdentationLevel);
                 }
 
                 StrBuilder_Destroy(&idnamelocal);
@@ -25559,11 +26534,16 @@ static void TGroupDeclaration_CodePrint(TProgram * program, PrintCodeOptions * o
 
     }
 
-    //for (int i = 0; i < p->Declarations.Size; i++)
-    //{
-      //TAnyDeclaration_CodePrint(program, options, p->Declarations.pItems[i], fp);
-    //}
-    //TNodeClueList_CodePrint(options, &p->ClueList1, fp);
+    
+
+    
+
+      
+
+    
+
+    
+
     Output_Append(fp, options, "#pragma endregion cprime\n");
 }
 
@@ -25571,25 +26551,26 @@ static void TAnyDeclaration_CodePrint(TProgram * program, PrintCodeOptions * opt
 {
     switch (pDeclaration->Type)
     {
-        case TGroupDeclaration_ID:
-            TGroupDeclaration_CodePrint(program, options, (TGroupDeclaration *)pDeclaration, fp);
-            break;
+    case TGroupDeclaration_ID:
+        TGroupDeclaration_CodePrint(program, options, (TGroupDeclaration *)pDeclaration, fp);
+        break;
 
-        case TEofDeclaration_ID:
-            TEofDeclaration_CodePrint(program, options, (TEofDeclaration *)pDeclaration, fp);
-            break;
+    case TEofDeclaration_ID:
+        TEofDeclaration_CodePrint(program, options, (TEofDeclaration *)pDeclaration, fp);
+        break;
 
-        case TStaticAssertDeclaration_ID:
-            TStaticAssertDeclaration_CodePrint(program, options, (TStaticAssertDeclaration *)pDeclaration, fp);
-            break;
+    case TStaticAssertDeclaration_ID:
+        TStaticAssertDeclaration_CodePrint(program, options, (TStaticAssertDeclaration *)pDeclaration, fp);
+        break;
 
-        case TDeclaration_ID:
-            TDeclaration_CodePrint(program, options, (TDeclaration *)pDeclaration, fp);
-            break;
+    case TDeclaration_ID:
+        TDeclaration_CodePrint(program, options, (TDeclaration *)pDeclaration, fp);
+        break;
 
-        default:
-            //assert(false);
-            break;
+    default:
+        
+
+        break;
     }
 
 
@@ -25615,12 +26596,12 @@ static void TDesignatorList_CodePrint(TProgram * program, PrintCodeOptions * opt
 
 
 static void TInitializerListItem_CodePrint(TProgram * program,
-                                           PrintCodeOptions * options,
-                                           TDeclarator * pDeclarator,
-                                           TDeclarationSpecifiers * pDeclarationSpecifiers,
-                                           TInitializerListItem * p,
+    PrintCodeOptions * options,
+    TDeclarator * pDeclarator,
+    TDeclarationSpecifiers * pDeclarationSpecifiers,
+    TInitializerListItem * p,
 
-                                           StrBuilder * fp)
+    StrBuilder * fp)
 {
     if (p->DesignatorList.pHead != NULL)
     {
@@ -25628,11 +26609,11 @@ static void TInitializerListItem_CodePrint(TProgram * program,
     }
 
     TInitializer_CodePrint(program,
-                           options,
-                           pDeclarator,
-                           pDeclarationSpecifiers,
-                           p->pInitializer,
-                           fp);
+        options,
+        pDeclarator,
+        pDeclarationSpecifiers,
+        p->pInitializer,
+        fp);
 
     TNodeClueList_CodePrint(options, &p->ClueList, fp);
 }
@@ -25640,9 +26621,9 @@ static void TInitializerListItem_CodePrint(TProgram * program,
 
 
 void TProgram_PrintCodeToFile(TProgram * pProgram,
-                              struct Options * options0,
-                              const char * outFileName,
-                              const char * inputFileName)
+    struct Options * options0,
+    const char * outFileName,
+    const char * inputFileName)
 {
     PrintCodeOptions options = CODE_PRINT_OPTIONS_INIT;
     options.Options = *options0;
@@ -25661,11 +26642,16 @@ void TProgram_PrintCodeToFile(TProgram * pProgram,
 
     int k = 0;
 
-    //for (int i = 0; i < pProgram->Files2.size; i++)
-    //{
-    //  TFile *pFile = pProgram->Files2.pItems[i];
-    //  printf("\"%s\"\n", pFile->FullPath);
-    //}
+    
+
+    
+
+    
+
+    
+
+    
+
 
     StrBuilder sb = STRBUILDER_INIT;
     StrBuilder_Reserve(&sb, 80 * 5000);
@@ -25696,8 +26682,8 @@ void TProgram_PrintCodeToFile(TProgram * pProgram,
 }
 
 void TProgram_PrintCodeToString(TProgram * pProgram,
-                                struct Options * options0,
-                                StrBuilder * output)
+    struct Options * options0,
+    StrBuilder * output)
 {
     PrintCodeOptions options = CODE_PRINT_OPTIONS_INIT;
     options.Options = *options0;
@@ -25780,9 +26766,10 @@ static const char * GetNullStr(TProgram * program)
 
 
 static void PrintIfNotNullLn(TProgram * program,
-                             PrintCodeOptions * options,
-                             const char * pInitExpressionText, //(x->p->i = 0)    
-                             StrBuilder * fp)
+    PrintCodeOptions * options,
+    const char * pInitExpressionText, 
+
+    StrBuilder * fp)
 {
     bool bHasNULL =
         MacroMap_Find(&program->Defines, "NULL") != NULL;
@@ -25790,34 +26777,133 @@ static void PrintIfNotNullLn(TProgram * program,
     if (bHasNULL)
     {
         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                               "if (%s != NULL)",
-                               pInitExpressionText);
+            "if (%s != NULL)",
+            pInitExpressionText);
     }
     else
     {
         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                               "if (%s)",
-                               pInitExpressionText);
+            "if (%s)",
+            pInitExpressionText);
     }
 }
 
+static TDeclaration * FindHighLevelFunctionCore(struct SymbolMap * pMap,
+    TSpecifierQualifierList * pSpecifierQualifierList,
+
+    TDeclarator * pDeclatator,                        
+
+    const char * functionTagName)
+{
+    TDeclaration * pResult = NULL;
+
+    if (functionTagName == NULL)
+    {
+        return NULL;
+    }
+
+    if (pMap->pHashTable != NULL)
+    {
+        unsigned int nHashBucket, HashValue;
+        struct SymbolMapItem * pKeyValue =
+            SymbolMap_GetAssocAt(pMap,
+                functionTagName,
+                &nHashBucket,
+                &HashValue);
+
+        while (pKeyValue != NULL)
+        {
+            
+
+            if (pKeyValue->pValue->Type == TDeclaration_ID)
+            {
+                if (strcmp(pKeyValue->Key, functionTagName) == 0)
+                {
+                    
+
+                    TDeclaration * pDeclaration =
+                        (TDeclaration *)pKeyValue->pValue;
+
+                    if (pDeclaration->FunctionTag &&
+                        strcmp(pDeclaration->FunctionTag, functionTagName) == 0)
+                    {
+                        TDeclarationSpecifiers * pDeclarationSpecifiersOfArg1 =
+                            TDeclaration_GetArgTypeSpecifier(pDeclaration, 0);
+
+                        if (pDeclarationSpecifiersOfArg1)
+                        {
+                            if (TSpecifierQualifierList_Compare(pDeclarationSpecifiersOfArg1, pSpecifierQualifierList))
+                            {
+                                pResult = pDeclaration;
+                                break;
+                            }
+                            else
+                            {
+                                
+
+                                
+
+                                const char * typedefName = TDeclarationSpecifiers_GetTypedefName(pDeclarationSpecifiersOfArg1);
+                                if (typedefName)
+                                {
+                                    TTypeSpecifier * p = SymbolMap_FindTypedefSpecifierTarget(pMap, typedefName);
+                                    if (TTypeSpecifier_Compare(p, pSpecifierQualifierList->pData[0]))
+                                    {
+                                        pResult = pDeclaration;
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    const char * typedefName = TDeclarationSpecifiers_GetTypedefName(pSpecifierQualifierList);
+                                    if (typedefName)
+                                    {
+                                        TTypeSpecifier * p = SymbolMap_FindTypedefSpecifierTarget(pMap, typedefName);
+                                        if (TTypeSpecifier_Compare(p, pDeclarationSpecifiersOfArg1->pData[0]))
+                                        {
+                                            pResult = pDeclaration;
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+
+                                pResult = 0;
+                            }
+                        }
+                    }
+                }
+            }
+            pKeyValue = pKeyValue->pNext;
+        }
+    }
+
+
+
+    return pResult;
+}
 
 static bool FindHighLevelFunction(TProgram * program,
-                                  PrintCodeOptions * options,
-                                  TSpecifierQualifierList * pSpecifierQualifierList,//<-dupla para entender o tipo
-                                  TDeclarator * pDeclatator,                        //<-dupla para entender o tipo
-                                  TParameterTypeList * pArgsOpt, //parametros do create /init
-                                  TInitializer * pInitializerOpt,
-                                  const char * pInitExpressionText, //(x->p->i = 0)    
-                                  const char * pszAutoPointerLenExpressionOpt,
-                                  const Action action,
-                                  Search search,
-                                  const char * nameToFind,
-                                  StrBuilder * fp)
+    PrintCodeOptions * options,
+    TSpecifierQualifierList * pSpecifierQualifierList,
+
+    TDeclarator * pDeclatator,                        
+
+    TParameterTypeList * pArgsOpt, 
+
+    TInitializer * pInitializerOpt,
+    const char * pInitExpressionText, 
+
+    const char * pszAutoPointerLenExpressionOpt,
+    const Action action,
+    Search search,
+    const char * nameToFind,
+    StrBuilder * fp)
 {
     if (nameToFind == NULL)
     {
-        //pode ser null struct sem nome
+        
+
         return false;
     }
 
@@ -25826,9 +26912,11 @@ static bool FindHighLevelFunction(TProgram * program,
 
     bool bComplete = false;
 
-    //TPointerList_Printf(&pDeclatator->PointerList);
+    
 
-    //TODO FAZER FLAGS e OLHAR P TIPO E DECLARATOR AMBOS
+
+    
+
     bool bIsPointerToObject = TPointerList_IsPointerToObject(&pDeclatator->PointerList);
     bool bIsAutoPointerToObject = TPointerList_IsAutoPointerToObject(&pDeclatator->PointerList);
     bool bIsAutoPointerToAutoPointer = TPointerList_IsAutoPointerToAutoPointer(&pDeclatator->PointerList);
@@ -25842,24 +26930,29 @@ static bool FindHighLevelFunction(TProgram * program,
         {
             if (bIsAutoPointerSizeToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
             {
-                //nao procurar delete bIsAutoPointerSizeToObject
-                //nao eh ponteiro
+                
+
+                
+
                 if (search == SearchAll ||
                     search == SearchDelete)
                 {
-                    //vamos procurar pela funcao conceito _Delete
+                    
+
                     TDeclaration * pDeclarationDestroy =
-                        SymbolMap_FindObjFunction(&program->GlobalScope,
-                                                  nameToFind,
-                                                  "Delete");
+                        FindHighLevelFunctionCore(&program->GlobalScope,
+                            pSpecifierQualifierList,
+                            pDeclatator,
+                            "delete");
                     if (pDeclarationDestroy)
                     {
+                        const char * funcName = TDeclaration_GetFunctionName(pDeclarationDestroy);
                         if (bIsAutoPointerToObject)
                         {
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                   "%s_Delete(%s);",
-                                                   nameToFind,
-                                                   pInitExpressionText);
+                                "%s(%s);",
+                                funcName,
+                                pInitExpressionText);
                             bComplete = true;
                         }
                         else if (bIsAutoPointerToAutoPointer)
@@ -25873,30 +26966,31 @@ static bool FindHighLevelFunction(TProgram * program,
                                 options->IdentationLevel++;
 
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                       "%s_Delete(%s[i]);",
-                                                       nameToFind,
-                                                       pInitExpressionText);
+                                    "%s(%s[i]);",
+                                    funcName,
+                                    pInitExpressionText);
 
                                 options->IdentationLevel--;
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                       "%s((void*)%s);",
-                                                       GetFreeStr(program),
-                                                       pInitExpressionText);
+                                    "%s((void*)%s);",
+                                    GetFreeStr(program),
+                                    pInitExpressionText);
                             }
                             else
                             {
-                                //1 auto pointer para 1 autopointer
-                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                       "%s_Delete(%s[0]);",
-                                                       nameToFind,
-                                                       pInitExpressionText);
+                                
 
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                       "%s((void*)%s);",
-                                                       GetFreeStr(program),
-                                                       pInitExpressionText);
+                                    "%s(%s[0]);",
+                                    funcName,
+                                    pInitExpressionText);
+
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                    "%s((void*)%s);",
+                                    GetFreeStr(program),
+                                    pInitExpressionText);
                             }
 
                             bComplete = true;
@@ -25907,25 +27001,30 @@ static bool FindHighLevelFunction(TProgram * program,
                         if (search == SearchAll ||
                             search == SearchDestroy)
                         {
-                            //se nao achou delete procura a destroy 
-                            //e depois chama free
+                            
+
+                            
+
                             TDeclaration * pDeclarationDestroy2 =
-                                SymbolMap_FindObjFunction(&program->GlobalScope,
-                                                          nameToFind,
-                                                          "Destroy");
+                                FindHighLevelFunctionCore(&program->GlobalScope,
+                                    pSpecifierQualifierList,
+                                    pDeclatator,
+                                    "destroy");
                             if (pDeclarationDestroy2)
                             {
+                                const char * funcName = TDeclaration_GetFunctionName(pDeclarationDestroy2);
+
                                 if (bIsAutoPointerToObject)
                                 {
                                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                           "%s_Destroy(%s);",
-                                                           nameToFind,
-                                                           pInitExpressionText);
+                                        "%s(%s);",
+                                        funcName,
+                                        pInitExpressionText);
 
                                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                           "%s((void*)%s);",
-                                                           GetFreeStr(program),
-                                                           pInitExpressionText);
+                                        "%s((void*)%s);",
+                                        GetFreeStr(program),
+                                        pInitExpressionText);
                                 }
                                 else if (bIsAutoPointerToAutoPointer)
                                 {
@@ -25937,41 +27036,42 @@ static bool FindHighLevelFunction(TProgram * program,
                                         options->IdentationLevel++;
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                               "%s_Destroy(%s[i]);",
-                                                               nameToFind,
-                                                               pInitExpressionText);
+                                            "%s(%s[i]);",
+                                            funcName,
+                                            pInitExpressionText);
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                               "%s((void*)%s[i]);",
-                                                               GetFreeStr(program),
-                                                               pInitExpressionText);
+                                            "%s((void*)%s[i]);",
+                                            GetFreeStr(program),
+                                            pInitExpressionText);
 
                                         options->IdentationLevel--;
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                               "%s((void*)%s);",
-                                                               GetFreeStr(program),
-                                                               pInitExpressionText);
+                                            "%s((void*)%s);",
+                                            GetFreeStr(program),
+                                            pInitExpressionText);
                                     }
                                     else
                                     {
-                                        //1 auto pointer para 1 auto pointer
+                                        
+
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                               "%s_Destroy(%s[0]);",
-                                                               nameToFind,
-                                                               pInitExpressionText);
+                                            "%s(%s[0]);",
+                                            funcName,
+                                            pInitExpressionText);
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                               "%s((void*)%s[0]);",
-                                                               GetFreeStr(program),
-                                                               pInitExpressionText);
+                                            "%s((void*)%s[0]);",
+                                            GetFreeStr(program),
+                                            pInitExpressionText);
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                               "%s((void*)%s);",
-                                                               GetFreeStr(program),
-                                                               pInitExpressionText);
+                                            "%s((void*)%s);",
+                                            GetFreeStr(program),
+                                            pInitExpressionText);
                                     }
 
                                 }
@@ -25985,39 +27085,46 @@ static bool FindHighLevelFunction(TProgram * program,
                                         options->IdentationLevel++;
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                               "%s_Destroy(%s[i]);",
-                                                               nameToFind,
-                                                               pInitExpressionText);
+                                            "%s(%s[i]);",
+                                            funcName,
+                                            pInitExpressionText);
 
-                                        // StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                        //   "free((void*)%s[i]);",
-                                        // pInitExpressionText);
+                                        
+
+                                        
+
+                                        
+
 
                                         options->IdentationLevel--;
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                               "%s((void*)%s);",
-                                                               GetFreeStr(program),
-                                                               pInitExpressionText);
+                                            "%s((void*)%s);",
+                                            GetFreeStr(program),
+                                            pInitExpressionText);
                                     }
                                     else
                                     {
-                                        //1 auto pointer para 1 auto pointer
+                                        
+
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                               "%s_Destroy(%s[0]);",
-                                                               nameToFind,
-                                                               pInitExpressionText);
+                                            "%s(%s[0]);",
+                                            funcName,
+                                            pInitExpressionText);
 
-                                        // StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                        //   "free((void*)%s[0]);",
-                                        //   pInitExpressionText);
+                                        
+
+                                        
+
+                                        
+
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                                               "%s((void*)%s);",
-                                                               GetFreeStr(program),
-                                                               pInitExpressionText);
+                                            "%s((void*)%s);",
+                                            GetFreeStr(program),
+                                            pInitExpressionText);
                                     }
                                 }
 
@@ -26030,18 +27137,20 @@ static bool FindHighLevelFunction(TProgram * program,
             else if (bIsAutoPointerToPointer)
             {
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                       "%s((void*)%s);",
-                                       GetFreeStr(program),
-                                       pInitExpressionText);
+                    "%s((void*)%s);",
+                    GetFreeStr(program),
+                    pInitExpressionText);
 
-                //nada
+                
+
                 bComplete = true;
             }
             else
             {
                 if (action != ActionDestroyContent)
                 {
-                    //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = NULL;", pInitExpressionText);
+                    
+
                     bComplete = true;
                 }
             }
@@ -26049,23 +27158,54 @@ static bool FindHighLevelFunction(TProgram * program,
         }
         else
         {
-            //nao eh ponteiro
+            
+
             if (!bIsAutoPointerToPointer)
             {
                 if (search == SearchAll ||
                     search == SearchDestroy)
                 {
-                    //vamos procurar pela funcao conceito _Destroy
                     TDeclaration * pDeclarationDestroy =
-                        SymbolMap_FindObjFunction(&program->GlobalScope,
-                                                  nameToFind,
-                                                  "Destroy");
+                        FindHighLevelFunctionCore(&program->GlobalScope,
+                            pSpecifierQualifierList,
+                            pDeclatator,
+                            "destroy"
+                        );
+
+                    
+
+                    
+
+                      
+
+                        
+
+                          
+
                     if (pDeclarationDestroy)
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                               "%s_Destroy(&%s);",
-                                               nameToFind,
-                                               pInitExpressionText);
+                        const char * destroyFuncName =
+                            TDeclaration_GetFunctionName(pDeclarationDestroy);
+                        if (destroyFuncName)
+                        {
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
+                                "%s(&%s);",
+                                destroyFuncName,
+                                pInitExpressionText);
+                        }
+                        else
+                        {
+                            assert(false);
+                        }
+
+                        
+
+                          
+
+                            
+
+                            
+
                         bComplete = true;
                     }
                 }
@@ -26075,21 +27215,25 @@ static bool FindHighLevelFunction(TProgram * program,
     }
     else if (action == ActionDelete)
     {
-        //nao eh ponteiro
+        
+
         if (search == SearchAll ||
             search == SearchDelete)
         {
-            //vamos procurar pela funcao conceito _Delete
+            
+
             TDeclaration * pDeclarationDestroy =
-                SymbolMap_FindObjFunction(&program->GlobalScope,
-                                          nameToFind,
-                                          "Delete");
+                FindHighLevelFunctionCore(&program->GlobalScope,
+                    pSpecifierQualifierList,
+                    pDeclatator,
+                    "delete");
             if (pDeclarationDestroy)
             {
+                const char * funcName = TDeclaration_GetFunctionName(pDeclarationDestroy);
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                       "%s_Delete(%s);",
-                                       nameToFind,
-                                       pInitExpressionText);
+                    "%s(%s);",
+                    funcName,
+                    pInitExpressionText);
                 bComplete = true;
             }
             else
@@ -26097,23 +27241,27 @@ static bool FindHighLevelFunction(TProgram * program,
                 if (search == SearchAll ||
                     search == SearchDestroy)
                 {
-                    //se nao achou delete procura a destroy 
-                    //e depois chama free
+                    
+
+                    
+
                     TDeclaration * pDeclarationDestroy2 =
-                        SymbolMap_FindObjFunction(&program->GlobalScope,
-                                                  nameToFind,
-                                                  "Destroy");
+                        FindHighLevelFunctionCore(&program->GlobalScope,
+                            pSpecifierQualifierList,
+                            pDeclatator,
+                            "destroy");
                     if (pDeclarationDestroy2)
                     {
+                        const char * funcName = TDeclaration_GetFunctionName(pDeclarationDestroy2);
                         StrBuilder_AppendFmtLn(fp, 4 * 1,
-                                               "%s_Destroy(%s);",
-                                               nameToFind,
-                                               pInitExpressionText);
+                            "%s(%s);",
+                            funcName,
+                            pInitExpressionText);
 
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                               "%s((void*)%s);",
-                                               GetFreeStr(program),
-                                               pInitExpressionText);
+                            "%s((void*)%s);",
+                            GetFreeStr(program),
+                            pInitExpressionText);
                         bComplete = true;
                     }
                 }
@@ -26122,39 +27270,46 @@ static bool FindHighLevelFunction(TProgram * program,
         }
         else
         {
-            //nao procurar pela delete mas procurar pela destroy
-            //posso procurar pela destroy
-            //se nao achou delete procura a destroy 
-            //e depois chama free
+            
+
+            
+
+            
+
+            
+
             if (search == SearchAll ||
                 search == SearchDestroy)
             {
                 TDeclaration * pDeclarationDestroy =
-                    SymbolMap_FindObjFunction(&program->GlobalScope,
-                                              nameToFind,
-                                              "Destroy");
+                    FindHighLevelFunctionCore(&program->GlobalScope,
+                        pSpecifierQualifierList,
+                        pDeclatator,
+                        "destroy");
                 if (pDeclarationDestroy)
                 {
+                    const char * funcName = TDeclaration_GetFunctionName(pDeclarationDestroy);
+
                     PrintIfNotNullLn(program, options, pInitExpressionText, fp);
 
 
 
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "{");
+                        "{");
 
                     options->IdentationLevel++;
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "%s_Destroy(%s);",
-                                           nameToFind,
-                                           pInitExpressionText);
+                        "%s(%s);",
+                        funcName,
+                        pInitExpressionText);
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "%s((void*)%s);",
-                                           GetFreeStr(program),
-                                           pInitExpressionText);
+                        "%s((void*)%s);",
+                        GetFreeStr(program),
+                        pInitExpressionText);
                     options->IdentationLevel--;
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "}",
-                                           pInitExpressionText);
+                        "}",
+                        pInitExpressionText);
 
                     bComplete = true;
                 }
@@ -26167,9 +27322,9 @@ static bool FindHighLevelFunction(TProgram * program,
         if (bIsPointer)
         {
             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                   "%s = %s;",
-                                   pInitExpressionText,
-                                   GetNullStr(program));
+                "%s = %s;",
+                pInitExpressionText,
+                GetNullStr(program));
             bComplete = true;
         }
         else
@@ -26177,20 +27332,25 @@ static bool FindHighLevelFunction(TProgram * program,
             if (search == SearchAll ||
                 search == SearchInit)
             {
-                //pega o nome
-                //const char * TStructUnionSpecifier_GetSpecialMemberName(TStructUnionSpecifier * p, enum SpecialMemberType type)
+                
+
+                
+
 
 
                 TDeclaration * pDeclarationInit =
-                    SymbolMap_FindObjFunction(&program->GlobalScope,
-                                              nameToFind,
-                                              "Init");
+                    FindHighLevelFunctionCore(&program->GlobalScope,
+                        pSpecifierQualifierList,
+                        pDeclatator,
+                        "init");
                 if (pDeclarationInit)
                 {
+                    const char * funcName = TDeclaration_GetFunctionName(pDeclarationInit);
+
                     StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel,
-                                              "%s_Init(&%s",
-                                              nameToFind,
-                                              pInitExpressionText);
+                        "%s(&%s",
+                        funcName,
+                        pInitExpressionText);
 
                     TParameterTypeList_GetArgsString(pArgsOpt, fp);
 
@@ -26208,25 +27368,27 @@ static bool FindHighLevelFunction(TProgram * program,
             search == SearchInit)
         {
             TDeclaration * pDeclarationInit =
-                SymbolMap_FindObjFunction(&program->GlobalScope,
-                                          nameToFind,
-                                          "Init");
+                FindHighLevelFunctionCore(&program->GlobalScope,
+                    pSpecifierQualifierList,
+                    pDeclatator,
+                    "init");
             if (pDeclarationInit)
             {
+                const char * funcName = TDeclaration_GetFunctionName(pDeclarationInit);
 
                 if (bIsPointer)
                 {
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "%s_Init(%s);",
-                                           nameToFind,
-                                           pInitExpressionText);
+                        "%s(%s);",
+                        funcName,
+                        pInitExpressionText);
                 }
                 else
                 {
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "%s_Init(&%s);",
-                                           nameToFind,
-                                           pInitExpressionText);
+                        "%s(&%s);",
+                        funcName,
+                        pInitExpressionText);
                 }
                 bComplete = true;
             }
@@ -26239,28 +27401,32 @@ static bool FindHighLevelFunction(TProgram * program,
             search == SearchInit)
         {
             TDeclaration * pDeclarationInit =
-                SymbolMap_FindObjFunction(&program->GlobalScope,
-                                          nameToFind,
-                                          "Init");
+                FindHighLevelFunctionCore(&program->GlobalScope,
+                    pSpecifierQualifierList,
+                    pDeclatator,
+                    "init");
             if (pDeclarationInit)
             {
+                const char * funcName = TDeclaration_GetFunctionName(pDeclarationInit);
+
+
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                       "struct %s *p = (struct %s *) %s(sizeof * p);",
-                                       nameToFind,
-                                       nameToFind,
-                                       GetMallocStr(program));
+                    "struct %s *p = (struct %s *) %s(sizeof * p);",
+                    nameToFind,
+                    nameToFind,
+                    GetMallocStr(program));
 
 
                 PrintIfNotNullLn(program, options, "p", fp);
 
 
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                       "{");
+                    "{");
                 options->IdentationLevel++;
 
                 StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel,
-                                          "%s_Init(p",
-                                          nameToFind);
+                    "%s(p",
+                    funcName);
 
                 if (TParameterTypeList_HasNamedArgs(pArgsOpt))
                 {
@@ -26274,10 +27440,10 @@ static bool FindHighLevelFunction(TProgram * program,
                 options->IdentationLevel--;
 
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                       "}");
+                    "}");
 
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                       "return p;");
+                    "return p;");
 
                 bComplete = true;
             }
@@ -26305,7 +27471,8 @@ static bool FindHighLevelFunction(TProgram * program,
 }
 
 
-//Verifica se tem "cara" de ser o vector
+
+
 static bool IsVector(TStructUnionSpecifier * pStructUnionSpecifier)
 {
     bool bHasVector = false;
@@ -26314,8 +27481,10 @@ static bool IsVector(TStructUnionSpecifier * pStructUnionSpecifier)
 
     if (pStructUnionSpecifier)
     {
-        //Vou analisar a "digital" da struct
-        //ok tem a definicao completa da struct
+        
+
+        
+
         for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
         {
             TAnyStructDeclaration * pAnyStructDeclaration =
@@ -26362,12 +27531,13 @@ static bool IsVector(TStructUnionSpecifier * pStructUnionSpecifier)
 }
 
 void UnionTypeDefault(TProgram * program,
-                      PrintCodeOptions * options,
-                      const char * structName,
-                      TParameterTypeList * pArgsOpt, //parametros
-                      const char * parameterName0,
-                      const char * functionSuffix,
-                      StrBuilder * fp)
+    PrintCodeOptions * options,
+    const char * structName,
+    TParameterTypeList * pArgsOpt, 
+
+    const char * parameterName0,
+    const char * functionSuffix,
+    StrBuilder * fp)
 {
     Map2 map = MAPSTRINGTOPTR_INIT;
     FindUnionSetOf(program, structName, &map);
@@ -26379,7 +27549,8 @@ void UnionTypeDefault(TProgram * program,
 
     if (pArgsOpt != NULL)
     {
-        //lista argumentos separados por virgula
+        
+
         TParameterTypeList_GetArgsString(pArgsOpt, &args);
     }
     else
@@ -26393,11 +27564,11 @@ void UnionTypeDefault(TProgram * program,
     };
 
     StrBuilder_Template(fp,
-                        "switch ($p->$id)\n"
-                        "{\n",
-                        vars0,
-                        sizeof(vars0) / sizeof(vars0[0]),
-                        options->IdentationLevel);
+        "switch ($p->$id)\n"
+        "{\n",
+        vars0,
+        sizeof(vars0) / sizeof(vars0[0]),
+        options->IdentationLevel);
 
     StrBuilder_Destroy(&strid);
 
@@ -26409,7 +27580,7 @@ void UnionTypeDefault(TProgram * program,
 
             FindIDValue(program,
                 (const char *)map.pHashTable[i]->Key,
-                        &idvalue);
+                &idvalue);
 
             struct TemplateVar vars[] = {
             { "type", (const char *)map.pHashTable[i]->Key },
@@ -26419,56 +27590,66 @@ void UnionTypeDefault(TProgram * program,
             };
             if ((int)map.pHashTable[i]->pValue == 2)
             {
-                //2 is struct
+                
+
                 StrBuilder_Template(fp,
-                                    " case $value:\n"
-                                    "  $type\b_$suffix((struct $type*)$args);\n"
-                                    " break;\n",
-                                    vars,
-                                    sizeof(vars) / sizeof(vars[0]),
-                                    options->IdentationLevel);
+                    " case $value:\n"
+                    "  $type\b_$suffix((struct $type*)$args);\n"
+                    " break;\n",
+                    vars,
+                    sizeof(vars) / sizeof(vars[0]),
+                    options->IdentationLevel);
             }
             else
             {
-                //1 is typedef
+                
+
                 StrBuilder_Template(fp,
-                                    " case $value:\n"
-                                    "  $type\b_$suffix(($type*)$args);\n"
-                                    " break;\n",
-                                    vars,
-                                    sizeof(vars) / sizeof(vars[0]),
-                                    options->IdentationLevel);
+                    " case $value:\n"
+                    "  $type\b_$suffix(($type*)$args);\n"
+                    " break;\n",
+                    vars,
+                    sizeof(vars) / sizeof(vars[0]),
+                    options->IdentationLevel);
             }
             StrBuilder_Destroy(&idvalue);
         }
     }
 
     StrBuilder_Template(fp,
-                        " default:\n"
-                        " break;\n"
-                        "}\n",
-                        NULL,
-                        0,
-                        options->IdentationLevel);
+        " default:\n"
+        " break;\n"
+        "}\n",
+        NULL,
+        0,
+        options->IdentationLevel);
 
     StrBuilder_Destroy(&args);
 
-    Map2_Destroy(&map, NULL); //LEAK?
+    Map2_Destroy(&map, NULL); 
+
 }
 
 void InstanciateDestroy2(TProgram * program,
-                         PrintCodeOptions * options,
-                         TSpecifierQualifierList * pSpecifierQualifierList,//<-dupla para entender o tipo
-                         TDeclarator * pDeclatator,                        //<-dupla para entender o tipo
-                         TInitializer * pInitializerOpt, //usado para inicializacao estatica
-                         TParameterTypeList * pArgsOpt, //parametros do create /init
-                         const char * pInitExpressionText, //(x->p->i = 0)    
-                         const char * pszAutoPointerLenExpressionOpt, //expressao usada para definir o tamanho de um spaw de auto pointers
-                                     //se passar null eh pq nao interessa
-                         const Action action,
-                         Search search,
-                         bool * pbHasInitializers,
-                         StrBuilder * fp)
+    PrintCodeOptions * options,
+    TSpecifierQualifierList * pSpecifierQualifierList,
+
+    TDeclarator * pDeclatator,                        
+
+    TInitializer * pInitializerOpt, 
+
+    TParameterTypeList * pArgsOpt, 
+
+    const char * pInitExpressionText, 
+
+    const char * pszAutoPointerLenExpressionOpt, 
+
+                
+
+    const Action action,
+    Search search,
+    bool * pbHasInitializers,
+    StrBuilder * fp)
 {
     if (pInitializerOpt && pbHasInitializers)
     {
@@ -26487,7 +27668,8 @@ void InstanciateDestroy2(TProgram * program,
 
     if (pMainSpecifier == NULL)
     {
-        //error
+        
+
         return;
     }
 
@@ -26501,15 +27683,20 @@ void InstanciateDestroy2(TProgram * program,
             bool bComplete = false;
             TDeclarator declarator;
             TDeclarator_Init(&declarator);
-            //Pode ter uma cadeia de typdefs
-            //ele vai entrandando em cada uma ...
-            //ate que chega no fim recursivamente
-            //enquanto ele vai andando ele vai tentando
-            //algo com o nome do typedef
+            
+
+            
+
+            
+
+            
+
+            
+
             TDeclarationSpecifiers * pDeclarationSpecifiers =
                 SymbolMap_FindTypedefFirstTarget(&program->GlobalScope,
-                                                 pSingleTypeSpecifier->TypedefName,
-                                                 &declarator);
+                    pSingleTypeSpecifier->TypedefName,
+                    &declarator);
             if (pDeclarationSpecifiers)
             {
                 ForEachListItem(TPointer, pItem, &pDeclatator->PointerList)
@@ -26519,44 +27706,74 @@ void InstanciateDestroy2(TProgram * program,
                     TPointerList_PushBack(&declarator.PointerList, pNew);
                 }
 
-                //TPointerList_Printf(&declarator.PointerList);
+                
+
 
                 if (action == ActionCreate)
                 {
-                    //create do typedef eh um pouco difernet
-                    //das outras
+                    
 
-                    //vou deixar o malloc aqui fora
-                    //existe typedef p struct sem nome
-                    //entao queremos usar o nome do typedef
-                    //typedef struct { int i; } X; X* X_Create();
-                    //para poder fazer 
+                    
+
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "%s *p = (%s*) %s(sizeof * p);",
-                                           pSingleTypeSpecifier->TypedefName,
-                                           pSingleTypeSpecifier->TypedefName,
-                                           GetMallocStr(program));
+                        "%s *p = (%s*) %s(sizeof * p);",
+                        pSingleTypeSpecifier->TypedefName,
+                        pSingleTypeSpecifier->TypedefName,
+                        GetMallocStr(program));
 
                     PrintIfNotNullLn(program, options, "p", fp);
 
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "{");
+                        "{");
 
                     options->IdentationLevel++;
 
-                    /////////////////
-                    //vou ver se tem init para typedef
+                    
+
+                    
+
 
                     TDeclaration * pDeclarationInit =
-                        SymbolMap_FindObjFunction(&program->GlobalScope,
-                                                  pSingleTypeSpecifier->TypedefName,
-                                                  "Init");
+                        FindHighLevelFunctionCore(&program->GlobalScope,
+                            pSpecifierQualifierList,
+                            pDeclatator,
+                            "init");
+
+                    
+
+                      
+
+                        
+
+                          
+
 
                     if (pDeclarationInit)
                     {
+                        const char * funcName = TDeclaration_GetFunctionName(pDeclarationInit);
+
+
                         StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel,
-                                                  "%s_Init(p",
-                                                  pSingleTypeSpecifier->TypedefName);
+                            "%s(p",
+                            funcName);
+
+                        
+
+                            
+
+                            
+
 
                         if (TParameterTypeList_HasNamedArgs(pArgsOpt))
                         {
@@ -26568,68 +27785,76 @@ void InstanciateDestroy2(TProgram * program,
 
                         bComplete = true;
                     }
-                    ////////////////
+                    
+
 
 
                     if (!bComplete)
                     {
 
-                        //passa a informacao do tipo correto agora
+                        
+
                         InstanciateDestroy2(program,
-                                            options,
-                                            (TSpecifierQualifierList *)pDeclarationSpecifiers,
-                                            &declarator,
-                                            NULL,
-                                            pArgsOpt,
-                                            "p",
-                                            NULL /*not used*/,
-                                            ActionInitContent,
-                                            SearchNone, //se tivesse init ja tinha achado
-                                            pbHasInitializers,
-                                            fp);
+                            options,
+                            (TSpecifierQualifierList *)pDeclarationSpecifiers,
+                            &declarator,
+                            NULL,
+                            pArgsOpt,
+                            "p",
+                            NULL  ,
+                            ActionInitContent,
+                            SearchNone, 
+
+                            pbHasInitializers,
+                            fp);
                     }
 
                     options->IdentationLevel--;
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "}");
+                        "}");
 
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "return p;");
+                        "return p;");
 
                 }
                 else
                 {
                     bComplete = FindHighLevelFunction(program,
-                                                      options,
-                                                      pSpecifierQualifierList,//<-dupla para entender o tipo
-                                                      pDeclatator,                        //<-dupla para entender o tipo
-                                                      pArgsOpt, //parametros do create /init
-                                                      pInitializerOpt,
-                                                      pInitExpressionText, //(x->p->i = 0)    
-                                                      pszAutoPointerLenExpressionOpt,
-                                                      action,
-                                                      search,
-                                                      pSingleTypeSpecifier->TypedefName,
-                                                      fp);
+                        options,
+                        pSpecifierQualifierList,
+
+                        pDeclatator,                        
+
+                        pArgsOpt, 
+
+                        pInitializerOpt,
+                        pInitExpressionText, 
+
+                        pszAutoPointerLenExpressionOpt,
+                        action,
+                        search,
+                        pSingleTypeSpecifier->TypedefName,
+                        fp);
 
 
                     if (!bComplete)
                     {
                         Action action2 = action;
 
-                        //passa a informacao do tipo correto agora
+                        
+
                         InstanciateDestroy2(program,
-                                            options,
-                                            (TSpecifierQualifierList *)pDeclarationSpecifiers,
-                                            &declarator,
-                                            pInitializerOpt,
-                                            pArgsOpt,
-                                            pInitExpressionText,
-                                            pszAutoPointerLenExpressionOpt,
-                                            action2,
-                                            search,
-                                            pbHasInitializers,
-                                            fp);
+                            options,
+                            (TSpecifierQualifierList *)pDeclarationSpecifiers,
+                            &declarator,
+                            pInitializerOpt,
+                            pArgsOpt,
+                            pInitExpressionText,
+                            pszAutoPointerLenExpressionOpt,
+                            action2,
+                            search,
+                            pbHasInitializers,
+                            fp);
                     }
                 }
 
@@ -26637,51 +27862,68 @@ void InstanciateDestroy2(TProgram * program,
             }
             else
             {
-                //nao achou a declaracao
-                //assert(false);
+                
+
+                
+
             }
 
         }
         else if (pSingleTypeSpecifier->Token2 == TK_STRUCT ||
-                 pSingleTypeSpecifier->Token2 == TK_UNION)
+            pSingleTypeSpecifier->Token2 == TK_UNION)
         {
             TStructUnionSpecifier * pStructUnionSpecifier = NULL;
 
-            //Indica se consegui fazer sem entrar na struct
+            
+
             bool bComplete = false;
 
             bComplete = FindHighLevelFunction(program,
-                                              options,
-                                              pSpecifierQualifierList,//<-dupla para entender o tipo
-                                              pDeclatator,                        //<-dupla para entender o tipo
-                                              pArgsOpt,
-                                              pInitializerOpt,
-                                              pInitExpressionText, //(x->p->i = 0)    
-                                              pszAutoPointerLenExpressionOpt,
-                                              action,
-                                              search,
-                                              pSingleTypeSpecifier->TypedefName,
-                                              fp);
+                options,
+                pSpecifierQualifierList,
 
-            //Exemplos
-            //struct Y *pY e � para destruir o conteudo
-            //struct Y *pY e NAO � para destruir o conteudo
-            //struct Y * auto pY; e � para destruir o conteudo ou nao
-            //struct Y y; //eh para destruir o conteudo
-            if (!bComplete) //se for para entrar na struct
+                pDeclatator,                        
+
+                pArgsOpt,
+                pInitializerOpt,
+                pInitExpressionText, 
+
+                pszAutoPointerLenExpressionOpt,
+                action,
+                search,
+                pSingleTypeSpecifier->TypedefName,
+                fp);
+
+            
+
+            
+
+            
+
+            
+
+            
+
+            if (!bComplete) 
+
             {
                 if (pSingleTypeSpecifier &&
                     pSingleTypeSpecifier->TypedefName != NULL)
                 {
-                    //se nao eh completa tenta achar
-                    //vou procurar a definicao completa da struct
+                    
+
+                    
+
                     pStructUnionSpecifier =
                         SymbolMap_FindStructUnion(&program->GlobalScope, pSingleTypeSpecifier->TypedefName);
                 }
 
-                /////////////////////////////////////////////////////////////////////////////////////////////
-                //DAQUI para baixo o codigo eh todo igual ao da struct
-                //COMPARTILHAR        
+                
+
+                
+
+                
+
                 bool bIsUnionTypes = pStructUnionSpecifier &&
                     pStructUnionSpecifier->UnionSet.pHead != NULL;
 
@@ -26717,7 +27959,8 @@ void InstanciateDestroy2(TProgram * program,
                             }
                             else
                             {
-                                ////assert(false);
+                                
+
                             }
 
                         }
@@ -26725,19 +27968,22 @@ void InstanciateDestroy2(TProgram * program,
                     }
                     else if (action == ActionCreate)
                     {
-                        //struct sem nome tem que ser criada
-                        //com typedef que chama outro codigo
-                        //assert(pStructUnionSpecifier->Name != NULL);
+                        
+
+                        
+
+                        
+
 
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                               "struct %s* p = (struct %s*) %s(sizeof * p);",
-                                               pStructUnionSpecifier->TagName,
-                                               pStructUnionSpecifier->TagName,
-                                               GetMallocStr(program));
+                            "struct %s* p = (struct %s*) %s(sizeof * p);",
+                            pStructUnionSpecifier->TagName,
+                            pStructUnionSpecifier->TagName,
+                            GetMallocStr(program));
 
                         PrintIfNotNullLn(program, options, pInitExpressionText, fp);
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                               "{");
+                            "{");
                         options->IdentationLevel++;
                     }
                     else if (action == ActionStaticInit)
@@ -26751,25 +27997,25 @@ void InstanciateDestroy2(TProgram * program,
                         {
                             options->IdentationLevel++;
                             UnionTypeDefault(program,
-                                             options,
-                                             pStructUnionSpecifier->TagName,
-                                             NULL, /*args*/
-                                             pInitExpressionText,
-                                             "Delete",
-                                             fp);
+                                options,
+                                pStructUnionSpecifier->TagName,
+                                NULL,  
+                                pInitExpressionText,
+                                "Delete",
+                                fp);
                             options->IdentationLevel--;
                         }
                         else if (action == ActionDestroyContent ||
-                                 action == ActionDestroy)
+                            action == ActionDestroy)
                         {
                             options->IdentationLevel++;
                             UnionTypeDefault(program,
-                                             options,
-                                             pStructUnionSpecifier->TagName,
-                                             NULL, /*args*/
-                                             pInitExpressionText,
-                                             "Destroy",
-                                             fp);
+                                options,
+                                pStructUnionSpecifier->TagName,
+                                NULL,  
+                                pInitExpressionText,
+                                "Destroy",
+                                fp);
                             options->IdentationLevel--;
                         }
                         else
@@ -26780,7 +28026,8 @@ void InstanciateDestroy2(TProgram * program,
                     else
                     {
                         int variableCount = 0;
-                        //ok tem a definicao completa da struct
+                        
+
                         for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
                         {
 
@@ -26811,7 +28058,8 @@ void InstanciateDestroy2(TProgram * program,
                                     }
 
                                     variableCount++;
-                                    //O padrao eh ser o inicializador do tipo
+                                    
+
                                     TInitializer * pStructMemberInitializer =
                                         pStructDeclarator->pInitializer;
 
@@ -26863,7 +28111,8 @@ void InstanciateDestroy2(TProgram * program,
                                     if (action == ActionDestroyContent ||
                                         action == ActionDelete)
                                     {
-                                        //destroy normal
+                                        
+
                                         action2 = ActionDestroy;
                                     }
                                     else if (action == ActionInitContent)
@@ -26903,12 +28152,18 @@ void InstanciateDestroy2(TProgram * program,
                                     if (action2 == ActionDestroy)
                                     {
 
-                                        //Tem que detectar isso aqui!
-                                        // String * /*@auto*/ pItems;
-                                        // X * /*@auto*/ * /*@auto*/ pItems;
-                                        //sef or ele vai precisar da informacao do _size
-                                        // X * /*@auto*/ * /*@auto*/ _size(Size) pItems;
-                                        //e dai ele passa a string para  funcao gerar
+                                        
+
+                                        
+
+                                        
+
+                                        
+
+                                        
+
+                                        
+
 
 
                                         const char * pszSize =
@@ -26930,27 +28185,31 @@ void InstanciateDestroy2(TProgram * program,
                                         }
                                         else
                                         {
-                                            //nao tem size
+                                            
+
                                         }
                                     }
 
-                                    //Se for destroy e sor 
+                                    
+
                                     InstanciateDestroy2(program,
-                                                        options,
-                                                        &pStructDeclaration->SpecifierQualifierList,
-                                                        pStructDeclarator->pDeclarator,
-                                                        pStructMemberInitializer,
-                                                        NULL, //nao passa os args
-                                                        strVariableName.c_str,
-                                                        strPonterSizeExpr.c_str,
-                                                        action2,
-                                                        SearchAll,
-                                                        pbHasInitializers,
-                                                        fp);
+                                        options,
+                                        &pStructDeclaration->SpecifierQualifierList,
+                                        pStructDeclarator->pDeclarator,
+                                        pStructMemberInitializer,
+                                        NULL, 
+
+                                        strVariableName.c_str,
+                                        strPonterSizeExpr.c_str,
+                                        action2,
+                                        SearchAll,
+                                        pbHasInitializers,
+                                        fp);
 
 
 
-                                    //Variavel local
+                                    
+
                                     TPrimaryExpressionValue_Destroy(&initializerExpression);
 
                                     pStructDeclarator = (pStructDeclarator)->pNext;
@@ -26977,30 +28236,38 @@ void InstanciateDestroy2(TProgram * program,
                             if (pszAutoPointerLenExpressionOpt)
                             {
                                 options->IdentationLevel--;
-                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}"); //fecha  for
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}"); 
+
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
                                 options->IdentationLevel--;
-                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+
                             }
                             else
                             {
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
                                 options->IdentationLevel--;
-                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+
                             }
 
 
-                            //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                            
+
                         }
                     }
                     else if (action == ActionDestroyContent)
                     {
                         if (bIsAutoPointerToAutoPointer)
                         {
-                            //    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
-                            //  options->IdentationLevel--;
-                            //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
-                            //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                            
+
+                            
+
+                            
+
+                            
+
                         }
                     }
                     else if (action == ActionDelete)
@@ -27021,10 +28288,10 @@ void InstanciateDestroy2(TProgram * program,
                     {
                         options->IdentationLevel--;
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                               "}");
+                            "}");
 
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                               "return p;");
+                            "return p;");
                     }
                     else if (action == ActionStaticInit)
                     {
@@ -27036,22 +28303,28 @@ void InstanciateDestroy2(TProgram * program,
                 }
                 else
                 {
-                    //error nao tem a definicao completa da struct
+                    
+
                     StrBuilder_AppendFmt(fp, "/*incomplete type %s*/\n", pInitExpressionText);
                 }
-                ////////////////////////////////////////////////////////////////////////////////////////////////
-            }//complete
+                
+
+            }
+
 
 
         }
         else if (pSingleTypeSpecifier->Token2 == TK_ENUM)
         {
-            //sample
-            //enum E {A}; E* E_Create();
+            
+
+            
+
         }
         else
         {
-            //nao eh typedef, deve ser int, double etc..
+            
+
             if (action == ActionDestroy)
             {
                 if (bIsAutoPointerToObject)
@@ -27077,11 +28350,13 @@ void InstanciateDestroy2(TProgram * program,
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
                     }
 
-                    //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+                    
+
                 }
                 else
                 {
-                    //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = 0;", pInitExpressionText);
+                    
+
                 }
             }
             else if (action == ActionInit)
@@ -27142,35 +28417,47 @@ void InstanciateDestroy2(TProgram * program,
         TStructUnionSpecifier * pStructUnionSpecifier =
             (TStructUnionSpecifier *)pMainSpecifier;
 
-        //Indica se consegui fazer sem entrar na struct
+        
+
         bool bComplete = false;
 
 
         bComplete = FindHighLevelFunction(program,
-                                          options,
-                                          pSpecifierQualifierList,//<-dupla para entender o tipo
-                                          pDeclatator,                        //<-dupla para entender o tipo
-                                          pArgsOpt,
-                                          pInitializerOpt,
-                                          pInitExpressionText, //(x->p->i = 0)    
-                                          pszAutoPointerLenExpressionOpt,
-                                          action,
-                                          search,
-                                          pStructUnionSpecifier->TagName,
-                                          fp);
+            options,
+            pSpecifierQualifierList,
 
-        //Exemplos
-        //struct Y *pY e � para destruir o conteudo
-        //struct Y *pY e NAO � para destruir o conteudo
-        //struct Y * auto pY; e � para destruir o conteudo ou nao
-        //struct Y y; //eh para destruir o conteudo
-        if (!bComplete) //se for para entrar na struct
+            pDeclatator,                        
+
+            pArgsOpt,
+            pInitializerOpt,
+            pInitExpressionText, 
+
+            pszAutoPointerLenExpressionOpt,
+            action,
+            search,
+            pStructUnionSpecifier->TagName,
+            fp);
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        if (!bComplete) 
+
         {
             if (pStructUnionSpecifier &&
                 pStructUnionSpecifier->TagName != NULL)
             {
-                //se nao eh completa tenta achar
-                //vou procurar a definicao completa da struct
+                
+
+                
+
                 pStructUnionSpecifier =
                     SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
             }
@@ -27211,7 +28498,8 @@ void InstanciateDestroy2(TProgram * program,
                         }
                         else
                         {
-                            ////assert(false);
+                            
+
                         }
 
                     }
@@ -27219,31 +28507,39 @@ void InstanciateDestroy2(TProgram * program,
                 }
                 else if (action == ActionCreate)
                 {
-                    //struct sem nome tem que ser criada
-                    //com typedef que chama outro codigo
-                    //assert(pStructUnionSpecifier->Name != NULL);
+                    
+
+                    
+
+                    
+
 
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "struct %s* p = (struct %s*) %s(sizeof * p);",
-                                           pStructUnionSpecifier->TagName,
-                                           pStructUnionSpecifier->TagName,
-                                           GetMallocStr(program));
+                        "struct %s* p = (struct %s*) %s(sizeof * p);",
+                        pStructUnionSpecifier->TagName,
+                        pStructUnionSpecifier->TagName,
+                        GetMallocStr(program));
 
                     PrintIfNotNullLn(program, options, pInitExpressionText, fp);
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "{");
+                        "{");
                     options->IdentationLevel++;
                 }
                 else if (action == ActionStaticInit)
                 {
                     StrBuilder_AppendIdent(fp, 4 * options->IdentationLevel, "{");
 
-                    //if (bCanApplyFunction)
-                    //{
-                    //o primeiro nao precisa do {
+                    
 
-                    //  StrBuilder_AppendFmt(fp, "/*%s=*/{", pInitExpressionText);
-                    //}
+                    
+
+                    
+
+
+                    
+
+                    
+
                 }
 
                 if (bIsUnionTypes)
@@ -27252,25 +28548,25 @@ void InstanciateDestroy2(TProgram * program,
                     {
                         options->IdentationLevel++;
                         UnionTypeDefault(program,
-                                         options,
-                                         pStructUnionSpecifier->TagName,
-                                         NULL, /*args*/
-                                         pInitExpressionText,
-                                         "Delete",
-                                         fp);
+                            options,
+                            pStructUnionSpecifier->TagName,
+                            NULL,  
+                            pInitExpressionText,
+                            "Delete",
+                            fp);
                         options->IdentationLevel--;
                     }
                     else if (action == ActionDestroyContent ||
-                             action == ActionDestroy)
+                        action == ActionDestroy)
                     {
                         options->IdentationLevel++;
                         UnionTypeDefault(program,
-                                         options,
-                                         pStructUnionSpecifier->TagName,
-                                         NULL, /*args*/
-                                         pInitExpressionText,
-                                         "Destroy",
-                                         fp);
+                            options,
+                            pStructUnionSpecifier->TagName,
+                            NULL,  
+                            pInitExpressionText,
+                            "Destroy",
+                            fp);
                         options->IdentationLevel--;
                     }
                     else
@@ -27281,7 +28577,8 @@ void InstanciateDestroy2(TProgram * program,
                 else
                 {
                     int variableCount = 0;
-                    //ok tem a definicao completa da struct
+                    
+
                     for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
                     {
 
@@ -27312,7 +28609,8 @@ void InstanciateDestroy2(TProgram * program,
                                 }
                                 variableCount++;
 
-                                //O padrao eh ser o inicializador do tipo
+                                
+
                                 TInitializer * pStructMemberInitializer =
                                     pStructDeclarator->pInitializer;
 
@@ -27364,7 +28662,8 @@ void InstanciateDestroy2(TProgram * program,
                                 if (action == ActionDestroyContent ||
                                     action == ActionDelete)
                                 {
-                                    //destroy normal
+                                    
+
                                     action2 = ActionDestroy;
                                 }
                                 else if (action == ActionInitContent)
@@ -27404,12 +28703,18 @@ void InstanciateDestroy2(TProgram * program,
                                 if (action2 == ActionDestroy)
                                 {
 
-                                    //Tem que detectar isso aqui!
-                                    // String * /*@auto*/ pItems;
-                                    // X * /*@auto*/ * /*@auto*/ pItems;
-                                    //sef or ele vai precisar da informacao do _size
-                                    // X * /*@auto*/ * /*@auto*/ _size(Size) pItems;
-                                    //e dai ele passa a string para  funcao gerar
+                                    
+
+                                    
+
+                                    
+
+                                    
+
+                                    
+
+                                    
+
 
 
                                     const char * pszSize =
@@ -27431,27 +28736,31 @@ void InstanciateDestroy2(TProgram * program,
                                     }
                                     else
                                     {
-                                        //nao tem size
+                                        
+
                                     }
                                 }
 
-                                //Se for destroy e sor 
+                                
+
                                 InstanciateDestroy2(program,
-                                                    options,
-                                                    &pStructDeclaration->SpecifierQualifierList,
-                                                    pStructDeclarator->pDeclarator,
-                                                    pStructMemberInitializer,
-                                                    NULL, //nao passa os args
-                                                    strVariableName.c_str,
-                                                    strPonterSizeExpr.c_str,
-                                                    action2,
-                                                    SearchAll,
-                                                    pbHasInitializers,
-                                                    fp);
+                                    options,
+                                    &pStructDeclaration->SpecifierQualifierList,
+                                    pStructDeclarator->pDeclarator,
+                                    pStructMemberInitializer,
+                                    NULL, 
+
+                                    strVariableName.c_str,
+                                    strPonterSizeExpr.c_str,
+                                    action2,
+                                    SearchAll,
+                                    pbHasInitializers,
+                                    fp);
 
 
 
-                                //Variavel local
+                                
+
                                 TPrimaryExpressionValue_Destroy(&initializerExpression);
 
                                 pStructDeclarator = (pStructDeclarator)->pNext;
@@ -27478,30 +28787,38 @@ void InstanciateDestroy2(TProgram * program,
                         if (pszAutoPointerLenExpressionOpt)
                         {
                             options->IdentationLevel--;
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}"); //fecha  for
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}"); 
+
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
                             options->IdentationLevel--;
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+
                         }
                         else
                         {
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
                             options->IdentationLevel--;
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
+
                         }
 
 
-                        //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                        
+
                     }
                 }
                 else if (action == ActionDestroyContent)
                 {
                     if (bIsAutoPointerToAutoPointer)
                     {
-                        //    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
-                        //  options->IdentationLevel--;
-                        //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
-                        //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "free((void*)%s);", pInitExpressionText);
+                        
+
+                        
+
+                        
+
+                        
+
                     }
                 }
                 else if (action == ActionDelete)
@@ -27522,28 +28839,35 @@ void InstanciateDestroy2(TProgram * program,
                 {
                     options->IdentationLevel--;
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "}");
+                        "}");
 
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
-                                           "return p;");
+                        "return p;");
                 }
                 else if (action == ActionStaticInit)
                 {
                     StrBuilder_AppendIdent(fp, 4 * options->IdentationLevel, "}");
 
-                    //if (bCanApplyFunction)
-                    //{
-                    //  //o primeiro nao tem 
-                    //StrBuilder_Append(fp, "}");
-                    //}
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
                 }
             }
             else
             {
-                //error nao tem a definicao completa da struct
+                
+
                 StrBuilder_AppendFmt(fp, "/*incomplete type %s*/\n", pInitExpressionText);
             }
-        }//complete
+        }
+
 
     }
     else if (pMainSpecifier->Type == TEnumSpecifier_ID)
@@ -27552,7 +28876,8 @@ void InstanciateDestroy2(TProgram * program,
             TDeclarationSpecifier_As_TEnumSpecifier(pMainSpecifier);
 
 
-        //nao eh typedef, deve ser int, double etc..
+        
+
         if (action == ActionDestroy)
         {
             if (bIsAutoPointerToObject)
@@ -27561,12 +28886,14 @@ void InstanciateDestroy2(TProgram * program,
             }
             else if (bIsAutoPointerToAutoPointer)
             {
-                //assert(false);
+                
+
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
             }
             else
             {
-                //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "//%s = 0;", pInitExpressionText);
+                
+
             }
         }
         else if (action == ActionInit)
@@ -27580,7 +28907,8 @@ void InstanciateDestroy2(TProgram * program,
             }
             else
             {
-                //TODO achar a definicao completa do enum
+                
+
                 const char * firstValue =
                     pEnumSpecifier->EnumeratorList.pHead ? pEnumSpecifier->EnumeratorList.pHead->Name :
                     "0";
@@ -27607,7 +28935,8 @@ void InstanciateDestroy2(TProgram * program,
             }
             else
             {
-                //TODO achar a definicao completa do enum
+                
+
                 const char * firstValue =
                     pEnumSpecifier->EnumeratorList.pHead ? pEnumSpecifier->EnumeratorList.pHead->Name :
                     "0";
@@ -27633,7 +28962,8 @@ void InstanciateDestroy2(TProgram * program,
             }
             else
             {
-                //TODO achar a definicao completa do enum
+                
+
                 const char * firstValue =
                     pEnumSpecifier->EnumeratorList.pHead ? pEnumSpecifier->EnumeratorList.pHead->Name :
                     "0";
@@ -27651,29 +28981,12 @@ void InstanciateDestroy2(TProgram * program,
     }
     else
     {
-        //assert(false);
+        
+
     }
 
 }
 
-
-
-bool IsSuffix(const char * s, const char * suffix)
-{
-    bool bResult = false;
-    int len = (int)strlen(s);
-    int len2 = (int)strlen(suffix);
-    if (len > len2)
-    {
-        const char * pEndPart = &s[len - len2];
-        if (strcmp(pEndPart, suffix) == 0)
-        {
-            bResult = true;
-        }
-    }
-    return bResult;
-
-}
 
 TStructUnionSpecifier * GetStructSpecifier(TProgram * program, TDeclarationSpecifiers * specifiers)
 {
@@ -27705,7 +29018,8 @@ TStructUnionSpecifier * GetStructSpecifier(TProgram * program, TDeclarationSpeci
         }
     }
 
-    //Procura pela definicao completa da struct
+    
+
     if (pTStructUnionSpecifier &&
         pTStructUnionSpecifier->TagName != NULL)
     {
@@ -27713,9 +29027,10 @@ TStructUnionSpecifier * GetStructSpecifier(TProgram * program, TDeclarationSpeci
             SymbolMap_FindStructUnion(&program->GlobalScope, pTStructUnionSpecifier->TagName);
     }
     else  if (pSingleTypeSpecifier != NULL &&
-              pSingleTypeSpecifier->Token2 == TK_STRUCT)
+        pSingleTypeSpecifier->Token2 == TK_STRUCT)
     {
-        //Modelo C++ que o nome da struct ja eh suficiente
+        
+
         pTStructUnionSpecifier =
             SymbolMap_FindStructUnion(&program->GlobalScope, pSingleTypeSpecifier->TypedefName);
     }
@@ -27745,11 +29060,11 @@ TStructUnionSpecifier * GetStructSpecifier(TProgram * program, TDeclarationSpeci
 
 void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
 {
-    const char* end; /* end of processed string */
-    const char* p;      /* search pointer */
-    const char* s;      /* copy pointer */
+    const char* end;  
+    const char* p;       
+    const char* s;       
 
-                        /* extract drive name */
+                         
     if (path[0] && path[1] == ':')
     {
         if (drv)
@@ -27762,11 +29077,11 @@ void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
     else if (drv)
         *drv = '\0';
 
-    /* search for end of string or stream separator */
+     
     for (end = path; *end && *end != ':'; )
         end++;
 
-    /* search for begin of file extension */
+     
     for (p = end; p > path && *--p != '\\' && *p != '/'; )
         if (*p == '.')
         {
@@ -27778,7 +29093,7 @@ void SplitPath(const char* path, char* drv, char* dir, char* name, char* ext)
         for (s = end; (*ext = *s++); )
             ext++;
 
-    /* search for end of directory name */
+     
     for (p = end; p > path; )
         if (*--p == '\\' || *p == '/')
         {
@@ -27822,10 +29137,14 @@ void MakePath(char* path, char* drv, char* dir, char* name, char* ext)
             path++;
             drv++;
         }
-        //*path = ':';
-        //path++;
-       // *path = '\\';
-       // path++;
+        
+
+        
+
+       
+
+       
+
     }
 
     if (dir && dir[0] != '\0')
@@ -27836,8 +29155,10 @@ void MakePath(char* path, char* drv, char* dir, char* name, char* ext)
             path++;
             dir++;
         }
-        //  *path = '\\';
-         // path++;
+        
+
+         
+
     }
 
     while (*name)
@@ -27847,8 +29168,10 @@ void MakePath(char* path, char* drv, char* dir, char* name, char* ext)
         name++;
     }
 
-    //*path = '.';
-    //path++;
+    
+
+    
+
 
     while (*ext)
     {
@@ -27889,7 +29212,8 @@ bool IsFullPath(const char*  path)
             {
                 if (path[2] == '\\')
                 {
-                    //Ve se tem pontos ..
+                    
+
                     const char* p = &path[2];
 
                     while (*p)
@@ -27945,7 +29269,8 @@ void GetFullDirS(const char* fileName, char* out, int len)
     char dir[CPRIME_MAX_DIR];
     char fname[CPRIME_MAX_FNAME];
     char ext[CPRIME_MAX_EXT];
-    SplitPath(buffer, drive, dir, fname, ext); // C4996
+    SplitPath(buffer, drive, dir, fname, ext); 
+
     
     
     strcpy(out, drive);
@@ -27973,8 +29298,10 @@ void GetFullDir(const char* fileName, char** out)
     char dir[CPRIME_MAX_DIR];
     char fname[CPRIME_MAX_FNAME];
     char ext[CPRIME_MAX_EXT];
-    SplitPath(buffer, drive, dir, fname, ext); // C4996
-    StrBuilder s;// = STRBUILDER_INIT;
+    SplitPath(buffer, drive, dir, fname, ext); 
+
+    StrBuilder s;
+
     StrBuilder_Init(&s);
     StrBuilder_Append(&s, drive);
     StrBuilder_Append(&s, dir);
@@ -28004,7 +29331,8 @@ void GetFullPath(const char* fileName, char** out)
     char dir[CPRIME_MAX_DIR];
     char fname[CPRIME_MAX_FNAME];
     char ext[CPRIME_MAX_EXT];
-    SplitPath(buffer, drive, dir, fname, ext); // C4996
+    SplitPath(buffer, drive, dir, fname, ext); 
+
     StrBuilder s = STRBUILDER_INIT;
 
     StrBuilder_Append(&s, drive);
@@ -28035,7 +29363,8 @@ void GetFullPathS(const char* fileName, char* out)
     char dir[CPRIME_MAX_DIR];
     char fname[CPRIME_MAX_FNAME];
     char ext[CPRIME_MAX_EXT];
-    SplitPath(buffer, drive, dir, fname, ext); // C4996
+    SplitPath(buffer, drive, dir, fname, ext); 
+
 
     strcpy(out, drive);
     strcat(out, dir);
@@ -28118,21 +29447,7 @@ void TTypeQualifier_PrintXML(TTypeQualifier * p, struct PrintXMLContext * ctx);
 
 int HasItemsToPrint(TScannerItemList * list)
 {
-    /* ScannerItem* pCurrent = list->pHead;
-     while (pCurrent)
-     {
-         switch (pCurrent->token)
-         {
-         case TK_PRE_INCLUDE:
-         case TK_MACRO_CALL:
-         case TK_FILE_EOF:
-         case TK_MACRO_EOF:
-             return 1;
-         default:
-             break;
-         }
-         pCurrent = pCurrent->pNext;
-     }*/
+     
     return 0;
 }
 
@@ -28165,11 +29480,15 @@ void TScannerItemList_PrintXML(TScannerItemList * list,
                 case TK_MACRO_EOF:
                     PrintLn(ctx, "<TK_MACRO_EOF/>");
                     break;
-                    //case TK_BREAKLINE:
-                      //  PrintLn(ctx, "<BR/>");
-                        //break;
+                    
+
+                      
+
+                        
+
                 default:
-                    //PrintLn(ctx, "<TK>%s</TK>", pCurrent->lexeme.c_str);
+                    
+
                     break;
             }
             pCurrent = pCurrent->pNext;
@@ -28395,7 +29714,8 @@ void TDirectDeclarator_PrintXML(TDirectDeclarator * p,
     {
         TDirectDeclarator_PrintXML(p->pDirectDeclarator, ctx);
     }
-    //p->
+    
+
     PrintLn(ctx, "</direct-declarator>");
 }
 
@@ -28540,7 +29860,8 @@ void TAtomicTypeSpecifier_PrintXML(TAtomicTypeSpecifier * p,
 {
     PrintLn(ctx, "<atomic-specifier>");
     TScannerItemList_PrintXML(&p->ClueList0, ctx);
-    //PrintText(ctx, TokenToString(p->Token));
+    
+
     PrintLn(ctx, "</atomic-specifier>");
 
 
@@ -28550,7 +29871,8 @@ void TAtomicTypeSpecifier_PrintXML(TAtomicTypeSpecifier * p,
 void TAlignmentSpecifier_PrintXML(TAlignmentSpecifier * p,
                                   struct PrintXMLContext * ctx)
 {
-    //TScannerItemList_PrintXML(&p->ClueList0, ctx);
+    
+
 }
 
 
@@ -28710,7 +30032,8 @@ void TProgram_PrintAstToXML(TProgram * pProgram,
                             const char * inputFileName)
 {
     FILE * fp = fopen(fileName, "w");
-    //TDeclarations_Print(&pProgram->Declarations, false, fp);
+    
+
 
     struct PrintXMLContext ctx = { 0 };
     ctx.fp = fp;

@@ -12,7 +12,7 @@
 #include "AstPrint2.h"
 
 #define CONFIG_FILE_NAME "config.txt"
-#define EXECUTABLE_NAME "cprime"
+#define EXECUTABLE_NAME "cpc"
 
 int Compile(const char* configFileName,
     const char* inputFileName,
@@ -99,15 +99,17 @@ void PrintHelp()
     printf("-o FILE                               Sets ouput file name.\n");
     printf("-E                                    Preprocess to console.\n");
     printf("-P                                    Preprocess to file.\n");
-    printf("-A                                    Output AST to file.\n");
-    printf("-a                                    Output almagamation of input file\n");
-    printf("-cx                                   Generate CX.\n");
+    printf("-A                                    Output AST to file.\n");    
+    printf("-cx                                   Generate C'.\n");
     printf("-ca                                   Generated C annotated\n");
-    printf("-removeComments                      Remove comments from output\n");
-    printf("-build                                Compile all sources defined in inputfile\n");
-    printf("-rbuild                               Build of all sources of input\n");
+    printf("-removeComments                       Remove comments from output\n");
+    printf("-buildfile                            Compile all sources defined in inputfile\n");
+    printf("                                      (not recursive)\n");
+    printf("-build                                Build of all sources used by the input file\n");
+    printf("                                      -build with -o generates amalgamation\n");
+    printf("                                      -outDir can define build output\n");
     printf("-sources                              Prints all sources used\n");
-    printf("-noImplicitTag                       Prints all sources used\n");
+    printf("-noImplicitTag                        Disable implicit function tags\n");
 
 }
 
@@ -186,8 +188,8 @@ int main(int argc, char * argv[])
     bool bPrintPreprocessedToFile = false;
     bool bPrintPreprocessedToConsole = false;
     bool bPrintASTFile = false;
+    bool bBuildFile = false;
     bool bBuild = false;
-    bool bRecursiveBuild = false;
     bool bSources = false;
 
     clock_t tstart = clock();
@@ -224,13 +226,14 @@ int main(int argc, char * argv[])
             PrintHelp();
             return 0;
         }
+        else if (strcmp(option, "-buildfile") == 0)
+        {
+            
+            bBuildFile = true;
+        }
         else if (strcmp(option, "-build") == 0)
         {
             bBuild = true;
-        }
-        else if (strcmp(option, "-rbuild") == 0)
-        {
-            bRecursiveBuild = true;
         }
         else if (strcmp(option, "-sources") == 0)
         {
@@ -304,10 +307,13 @@ int main(int argc, char * argv[])
 
     int numberOfFiles = 1;
 
-    if (bBuild || bRecursiveBuild)
+    //-build without -o is generate all files
+    if ((bBuildFile || bBuild)
+        && outputFileFullPath[0] == '\0'
+        )
     {
         printf("Output dir : %s\n", outputDirFullPath);
-        if (bBuild)
+        if (bBuildFile)
         {
             GetSources(NULL, inputFileFullPath, false, &sources);
         }
@@ -376,6 +382,9 @@ int main(int argc, char * argv[])
         }
         else
         {
+            //-build with -o is amalgamate
+            options.bAmalgamate = bBuild && outputFileFullPath[0] != '\0';
+
             Compile(cxconfigFileFullPath, inputFileFullPath, outputFileFullPath, &options, bPrintASTFile);
             numberOfFiles++;
         }
