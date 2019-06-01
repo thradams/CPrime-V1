@@ -5113,7 +5113,7 @@ void Parser_Main(struct Parser* ctx, struct TDeclarations* declarations)
     Parse_Declarations(ctx, declarations);
 }
 
-static void TFileMapToStrArray(TFileMap * map, TFileArray * arr)
+static void TFileMapToStrArray(TFileMap * map, struct TFileArray * arr)
 {
     TFileArray_Reserve(arr, map->Size);
     arr->Size = map->Size;
@@ -5127,7 +5127,7 @@ static void TFileMapToStrArray(TFileMap * map, TFileArray * arr)
             for (int k = 0; k < data->size; k++)
             {
                 struct BucketItem* node = data->data[k];
-                TFile* pFile = (TFile*)node->data;
+                struct TFile* pFile = (struct TFile*)node->data;
 
                 if (pFile->FileIndex >= 0 &&
                     pFile->FileIndex < (int)arr->Size)

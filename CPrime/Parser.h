@@ -24,7 +24,7 @@ struct Parser
     StrBuilder ErrorMessage;
 
     // scanner ja pré-processado
-    Scanner Scanner;
+    struct Scanner Scanner;
 
     struct TScannerItemList ClueList;
 

@@ -21,14 +21,14 @@ else\
   error_count++;\
 }
 
-void Match(Scanner* pScanner,
-    Tokens token,
+void Match(struct Scanner* pScanner,
+    enum Tokens token,
     bool bExpectedActive,
     const char* expectedLexeme,
     const char* func,
     int line)
 {
-    Tokens tk = Scanner_TokenAt((pScanner), 0);
+    enum Tokens tk = Scanner_TokenAt((pScanner), 0);
     const char* lexeme = Scanner_LexemeAt((pScanner), 0);
     bool bIsActive = Scanner_IsActiveAt((pScanner), 0);
 
@@ -60,7 +60,7 @@ void Match(Scanner* pScanner,
 
 void Scanner_Test1(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test1.h", FileIncludeTypeQuoted, false);
 
@@ -87,7 +87,7 @@ void Scanner_Test1(void)
 
 void Scanner_Test2(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test2.h", FileIncludeTypeQuoted, false);
 
@@ -104,7 +104,7 @@ void Scanner_Test2(void)
 }
 void Scanner_Test3(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test3.h", FileIncludeTypeQuoted, false);
 
@@ -135,7 +135,7 @@ void Scanner_Test3(void)
 
 void Scanner_Test4(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test4.h", FileIncludeTypeQuoted, false);
 
@@ -160,7 +160,7 @@ void Scanner_Test4(void)
 
 void Scanner_Test5(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test5.h", FileIncludeTypeQuoted, false);
 
@@ -178,7 +178,7 @@ void Scanner_Test5(void)
 
 void Scanner_Test10(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test9.h", FileIncludeTypeQuoted, false);
 
@@ -199,7 +199,7 @@ void Scanner_Test10(void)
 
 void Scanner_Test11(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test12.h", FileIncludeTypeQuoted, false);
 
@@ -220,7 +220,7 @@ void Scanner_Test11(void)
 
 void Scanner_Test12(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test10.h", FileIncludeTypeQuoted, false);
 
@@ -241,7 +241,7 @@ void Scanner_Test12(void)
 
 void Scanner_Test13(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test11.h", FileIncludeTypeQuoted, false);
 
@@ -265,7 +265,7 @@ void Scanner_Test13(void)
 
 void Scanner_Test15(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test14.h", FileIncludeTypeQuoted, false);
 
@@ -288,7 +288,7 @@ void Scanner_Test15(void)
 
 void Scanner_Test14(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test13.h", FileIncludeTypeQuoted, false);
 
@@ -314,7 +314,7 @@ void Scanner_Test14(void)
 
 void Scanner_Test6(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test6.h", FileIncludeTypeQuoted, false);
     MATCH(&scanner2, TK_BOF);
@@ -346,7 +346,7 @@ void Scanner_Test6(void)
 void Scanner_Test7(void)
 {
     //
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test7.h", FileIncludeTypeQuoted, false);
     MATCH(&scanner2, TK_BOF);
@@ -404,7 +404,7 @@ void Scanner_Test7(void)
 
 void Scanner_Test9(void)
 {
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test6.h", FileIncludeTypeQuoted, false);
     MATCH(&scanner2, TK_BOF);
@@ -441,7 +441,7 @@ void Scanner_Test8(void)
 {
 
     //
-    Scanner scanner2;
+    struct Scanner scanner2;
     Scanner_Init(&scanner2);
     Scanner_IncludeFile(&scanner2, ".\\Files\\Test8.h", FileIncludeTypeQuoted, false);
     MATCH(&scanner2, TK_BOF);

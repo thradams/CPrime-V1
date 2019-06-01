@@ -18,7 +18,7 @@ else\
 
 void BasicScanner_Test1(void)
 {
-    BasicScanner scanner;
+    struct BasicScanner scanner;
 
     BasicScanner_Init(&scanner, "name", "#if 1", BasicScannerType_Token);
     scanner.m_Token = TK_PRE_IF;
@@ -33,7 +33,7 @@ void BasicScanner_Test1(void)
 
 void BasicScanner_Test2(void)
 {
-    BasicScanner scanner;
+    struct BasicScanner scanner;
     BasicScanner_Init(&scanner, "name", "123\r\n", BasicScannerType_File);
 
     TEST(BasicScanner_MatchToken(&scanner, TK_BOF));
@@ -46,7 +46,7 @@ void BasicScanner_Test2(void)
 
 void BasicScanner_Test3(void)
 {
-    BasicScanner scanner;
+    struct BasicScanner scanner;
     BasicScanner_Init(&scanner, "name", "#pragma once\r\n", BasicScannerType_File);
 
     TEST(BasicScanner_MatchToken(&scanner, TK_BOF));
@@ -62,7 +62,7 @@ void BasicScanner_Test3(void)
 
 void BasicScanner_Test4(void)
 {
-    BasicScanner scanner;
+    struct BasicScanner scanner;
 
     BasicScanner_Init(&scanner, "name", "//comment", BasicScannerType_File);
     TEST(BasicScanner_MatchToken(&scanner, TK_BOF));

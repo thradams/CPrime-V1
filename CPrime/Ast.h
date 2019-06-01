@@ -1233,7 +1233,7 @@ struct SyntaxTree
     struct TDeclarations Declarations;
 
     //arquivos na qual declaracao tem indice
-    TFileArray Files2;
+    struct TFileArray Files2;
 
     //multimap dos simbolos
     //DeclarationsMap Symbols;

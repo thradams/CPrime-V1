@@ -9,38 +9,38 @@
 #include "Macro.h"
 #include "Options.h"
 
-typedef struct
+struct TFile
 {
-    char * /*@auto*/ FullPath;
-    char * /*@auto*/ IncludePath;
+    char* /*@auto*/ FullPath;
+    char* /*@auto*/ IncludePath;
     int FileIndex;
     bool PragmaOnce;
     bool bDirectInclude;
     bool bSystemLikeInclude;
-} TFile;
+};
 
-void TFile_Delete(TFile * p);
+void TFile_Delete(struct TFile * p);
 
 typedef struct Map TFileMap;
 
 void TFileMap_Destroy(TFileMap * p);
-bool TFileMap_Set(TFileMap * map, const char * key, TFile * data);
-TFile * TFileMap_Find(TFileMap * map, const char * key);
+bool TFileMap_Set(TFileMap * map, const char * key, struct TFile * data);
+struct TFile * TFileMap_Find(TFileMap * map, const char * key);
 bool TFileMap_DeleteItem(TFileMap * map, const char * key);
 void TFile_DeleteVoid(void * p);
 
-
-typedef struct
+ 
+struct TFileArray
 {
-    TFile * /*@auto*/ * /*@auto*/ /*@[Size]*/ pItems;
+    struct TFile * /*@auto*/ * /*@auto*/ /*@[Size]*/ pItems;
     int Size;
     int Capacity;
-} TFileArray;
+};
 
-void TFileArray_Init(TFileArray * p);
-void TFileArray_Destroy(TFileArray * p);
-void TFileArray_PushBack(TFileArray * p, TFile * pItem);
-void TFileArray_Reserve(TFileArray * p, int n);
+void TFileArray_Init(struct TFileArray * p);
+void TFileArray_Destroy(struct TFileArray * p);
+void TFileArray_PushBack(struct TFileArray * p, struct TFile * pItem);
+void TFileArray_Reserve(struct TFileArray * p, int n);
 
 
 struct TScannerItemList
@@ -102,17 +102,17 @@ enum PPState
     PPState_E1, // inclui
 };
 
-typedef struct
+struct TPPStateStack
 {
-    enum PPState * /*@auto*/ /*@[Size]*/pItems;
+    enum PPState* /*@auto*/ /*@[Size]*/pItems;
     int Size;
     int Capacity;
-} StackInts;
+};
 
-void StackInts_Init(StackInts * p);
-void StackInts_Destroy(StackInts * p);
+void PPStateStack_Init(struct TPPStateStack * p);
+void PPStateStack_Destroy(struct TPPStateStack * p);
 
-typedef struct
+struct Scanner
 {
     //Stack de basicscanner
     struct BasicScannerStack stack;
@@ -121,7 +121,7 @@ typedef struct
     struct MacroMap  Defines2;
 
     //Stack usado para #if #else etc
-    StackInts StackIfDef;
+    struct TPPStateStack StackIfDef;
 
     //lista de arquivos marcados com pragma once
     TFileMap FilesIncluded;
@@ -146,21 +146,21 @@ typedef struct
 
     struct Options * pOptions;
     ///////////////////////////////////////////////////
-} Scanner;
+};
 
-void Scanner_SetError(Scanner * pScanner, const char * fmt, ...);
+void Scanner_SetError(struct Scanner * pScanner, const char * fmt, ...);
 
-void Scanner_GetFilePositionString(Scanner * pScanner, StrBuilder * sb);
+void Scanner_GetFilePositionString(struct Scanner * pScanner, StrBuilder * sb);
 
 
-bool Scanner_InitString(Scanner * pScanner,
+bool Scanner_InitString(struct Scanner * pScanner,
                         const char * name,
                         const char * Text);
 
-bool PushExpandedMacro(Scanner * pScanner, const char * defineName, const char * defineContent);
+bool PushExpandedMacro(struct Scanner * pScanner, const char * defineName, const char * defineContent);
 
 
-bool Scanner_Init(Scanner * pScanner);
+bool Scanner_Init(struct Scanner * pScanner);
 
 typedef enum
 {
@@ -169,17 +169,17 @@ typedef enum
     FileIncludeTypeFullPath,
 } FileIncludeType;
 
-void Scanner_IncludeFile(Scanner * pScanner,
+void Scanner_IncludeFile(struct Scanner * pScanner,
                          const char * fileName,
                          FileIncludeType fileIncludeType, bool bSkipeBof);
 
 
-void Scanner_Destroy(Scanner * pScanner);
-void Scanner_Reset(Scanner * pScanner);
+void Scanner_Destroy(struct Scanner * pScanner);
+void Scanner_Reset(struct Scanner * pScanner);
 
-int EvalExpression(const char * s, Scanner * pScanner);
-void Scanner_PrintDebug(Scanner * pScanner);
-void Scanner_GetError(Scanner * pScanner, StrBuilder * str);
+int EvalExpression(const char * s, struct Scanner * pScanner);
+void Scanner_PrintDebug(struct Scanner * pScanner);
+void Scanner_GetError(struct Scanner * pScanner, StrBuilder * str);
 
 void GetSources(const char * configFile, const char * fileIn, bool bRecursiveSearch, struct FileNodeList * sources);
 void PrintPreprocessedToFile(const char * fileIn,
@@ -189,18 +189,18 @@ void PrintPreprocessedToString2(StrBuilder * fp, const char * input, const char 
 void PrintPreprocessedToConsole(const char * fileIn,
                                 const char * configFileName);
 
-int Scanner_GetNumberOfScannerItems(Scanner * pScanner);
+int Scanner_GetNumberOfScannerItems(struct Scanner * pScanner);
 
 
 //NOVA INTERFACE
 
-int Scanner_FileIndexAt(Scanner * pScanner, int index);
-int Scanner_LineAt(Scanner * pScanner, int index);
-bool Scanner_IsActiveAt(Scanner * pScanner, int index);
-enum Tokens Scanner_TokenAt(Scanner * pScanner, int index);
-const char * Scanner_LexemeAt(Scanner * pScanner, int index);
-void Scanner_PrintItems(Scanner * pScanner);
+int Scanner_FileIndexAt(struct Scanner * pScanner, int index);
+int Scanner_LineAt(struct Scanner * pScanner, int index);
+bool Scanner_IsActiveAt(struct Scanner * pScanner, int index);
+enum Tokens Scanner_TokenAt(struct Scanner * pScanner, int index);
+const char * Scanner_LexemeAt(struct Scanner * pScanner, int index);
+void Scanner_PrintItems(struct Scanner * pScanner);
 
-void Scanner_Match(Scanner * pScanner);
-bool Scanner_MatchToken(Scanner * pScanner, enum Tokens token, bool bActive);
+void Scanner_Match(struct Scanner * pScanner);
+bool Scanner_MatchToken(struct Scanner * pScanner, enum Tokens token, bool bActive);
 

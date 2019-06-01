@@ -29,7 +29,7 @@ void Parser_Test1(void)
 {
     //Este parte do parser poderia ser mais um scanner
     //
-    Parser parser;
+    struct Parser parser;
     Parser_InitString(&parser, "a", "int a /*comment*/ = 1 + 2;");
     ParserMatch(&parser, TK_INT);
 
@@ -47,7 +47,7 @@ void Parser_Test1(void)
 
 void Parser_Test2(void)
 {
-    Parser parser;
+    struct Parser parser;
     Parser_InitString(&parser, "a", "int a = 1 + 2;");
     ParserMatch(&parser, TK_INT);
     ParserMatch(&parser, TK_IDENTIFIER);
@@ -65,7 +65,7 @@ void Parser_Test2(void)
 
 void Parser_Test3(void)
 {
-    Parser parser;
+    struct Parser parser;
     Parser_InitString(&parser, "a", "int a  =  1 + 2;");
     ParserMatch(&parser, TK_INT);
     ParserMatch(&parser, TK_IDENTIFIER);
@@ -94,7 +94,7 @@ void Parser_Test4(void)
         "#endif\n"
         "\n";
 
-    Parser parser;
+    struct Parser parser;
     Parser_InitString(&parser, "a", code);
     ParserMatch(&parser, TK_IDENTIFIER);
     TEST(Parser_LookAheadToken(&parser) == TK_INT);
@@ -114,7 +114,7 @@ void Parser_Test5(void)
         "return (false);\n"
         "}\n";
 
-    Parser parser;
+    struct Parser parser;
     Parser_InitString(&parser, "a", code);
     ParserMatch(&parser, TK_INT);
 
@@ -157,7 +157,7 @@ void Parser_Test6(void)
         "return (false);\n"
         "}\n";
 
-    Parser parser;
+    struct Parser parser;
     Parser_InitString(&parser, "a", code);
     ParserMatch(&parser, TK_INT);
 

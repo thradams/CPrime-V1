@@ -3253,7 +3253,7 @@ void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pProgram,
 
     //for (int i = 0; i < pProgram->Files2.size; i++)
     //{
-    //  TFile *pFile = pProgram->Files2.pItems[i];
+    //  struct TFile *pFile = pProgram->Files2.pItems[i];
     //  printf("\"%s\"\n", pFile->FullPath);
     //}
 
