@@ -9,7 +9,24 @@ It is a new CFront following a new path.
 See it online:
 http://www.thradams.com/web/cprime.html
 
+## Language Extensions
 
+### struct member with initializer and default initialization
+
+```c
+struct Point
+{
+  int x = 1;
+  int y = 2;
+};
+
+int main()
+{
+  struct Point pt ={};
+}
+
+```
+ 
 ## Welcome
 
 I work professionally with C++ since 2000 keeping my knowledge about C++ updated. After 2014 I noticed that my interest for the C language was gradually increasing. 
