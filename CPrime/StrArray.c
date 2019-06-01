@@ -1,4 +1,4 @@
-#include "Array.h"
+#include "StrArray.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>

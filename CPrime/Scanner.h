@@ -8,7 +8,7 @@
 
 #include "Macro.h"
 #include "Options.h"
-#include "Array.h"
+#include "StrArray.h"
 
 struct TFile
 {

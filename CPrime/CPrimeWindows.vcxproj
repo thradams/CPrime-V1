@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Array.c" />
+    <ClCompile Include="StrArray.c" />
     <ClCompile Include="Ast.c" />
     <ClCompile Include="AstPrint.c" />
     <ClCompile Include="AstPrint2.c" />
@@ -43,7 +43,7 @@
     <ClCompile Include="TokenArray.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Array.h" />
+    <ClInclude Include="StrArray.h" />
     <ClInclude Include="Ast.h" />
     <ClInclude Include="AstPrint.h" />
     <ClInclude Include="AstPrint2.h" />
