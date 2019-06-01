@@ -4987,7 +4987,7 @@ bool  Declaration(struct Parser* ctx,
                     struct TInitDeclarator* pDeclarator3 =
                         pFuncVarDeclaration->InitDeclaratorList.pHead;
 
-                    for (struct TParameter *  pParameter = pDeclarator3->pDeclarator->pDirectDeclarator->Parameters->ParameterList.pHead;
+                    for (struct TParameter *  pParameter = pDeclarator3->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
                          pParameter != NULL;
                          pParameter =  pParameter->pNext)
                     {
