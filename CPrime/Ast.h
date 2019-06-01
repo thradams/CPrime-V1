@@ -85,7 +85,7 @@ struct TTypePointer
 };
 
 
-struct TPosition
+struct TFilePos
 {
     int FileIndex;
     int Line;
@@ -915,7 +915,7 @@ struct TDirectDeclarator
     char* /*@auto*/ Identifier;
     struct TDeclarator* /*@auto*/ pDeclarator;
     struct TDirectDeclarator* /*@auto*/ pDirectDeclarator;
-    struct TPosition Position;
+    struct TFilePos Position;
     struct TParameterTypeList  Parameters;
     struct TExpression* /*@auto*/ pExpression;
     enum TDirectDeclaratorType DeclaratorType; //para diferenciar pois null nao basta []
@@ -1357,7 +1357,7 @@ struct TBinaryExpression
     enum Tokens token;
     struct TExpression* /*@auto*/ pExpressionLeft;
     struct TExpression* /*@auto*/ pExpressionRight;
-    struct TPosition Position;
+    struct TFilePos Position;
     struct TScannerItemList ClueList0;
 };
 

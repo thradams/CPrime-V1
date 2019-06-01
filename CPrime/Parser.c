@@ -234,11 +234,10 @@ int GetFileIndex(struct Parser* parser)
     return Scanner_FileIndexAt(&parser->Scanner, 0);
 }
 
-static void GetPosition(struct Parser* ctx, struct TPosition* pPosition)
+static void GetPosition(struct Parser* ctx, struct TFilePos* pPosition)
 {
     pPosition->Line = GetCurrentLine(ctx);
     pPosition->FileIndex = GetFileIndex(ctx);
-    ////assert(pPosition->FileIndex >= 0);
 }
 
 enum Tokens Parser_LookAheadToken(struct Parser* parser)
