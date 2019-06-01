@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "Array.h"
+
 
 #include "StringEx.h"
 #include "Scanner.h"

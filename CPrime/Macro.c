@@ -7,7 +7,7 @@
 
 #include "Macro.h"
 #include "StringEx.h"
-#include "Array.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -68,7 +68,7 @@ void HidenSetAdd(const struct TokenSet* hs,
 
         for (int k = 0; k < hs->Size; k++)
         {
-            TokenSet_PushBack(&t->HiddenSet, PPToken_Clone(hs->pItems[k]));
+            TokenSet_PushUnique(&t->HiddenSet, PPToken_Clone(hs->pItems[k]));
         }
 
         TokenArray_PushBack(pOut, PPToken_Clone(t));
@@ -856,7 +856,7 @@ void ExpandMacro(const struct TokenArray* tsOriginal,
 
             struct TokenSet hiddenSet = TOKENSET_INIT;
             TokenSetAppendCopy(&hiddenSet, &pHead->HiddenSet);
-            TokenSet_PushBack(&hiddenSet, PPToken_Create(pHead->Lexeme, pHead->Token));
+            TokenSet_PushUnique(&hiddenSet, PPToken_Create(pHead->Lexeme, pHead->Token));
 
             PPToken_Delete(pHead);
             pHead = NULL; //usado deletado
@@ -920,7 +920,7 @@ void ExpandMacro(const struct TokenArray* tsOriginal,
             SetIntersection(&pHead->HiddenSet,
                             &close.HiddenSet,
                             &hs);
-            TokenSet_PushBack(&hs, PPToken_Create(pMacro->Name, PPTokenType_Identifier));
+            TokenSet_PushUnique(&hs, PPToken_Create(pMacro->Name, PPTokenType_Identifier));
 
             PPToken_Delete(pHead);
             pHead = NULL;//deletado

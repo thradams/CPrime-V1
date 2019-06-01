@@ -15,7 +15,7 @@ struct TokenArray
 #define TOKENARRAY_INIT {0, 0, 0}
 
 void      TokenArray_Reserve(struct TokenArray* p, int nelements);
-int      TokenArray_Grow(struct TokenArray* p, int nelements);
+
 void     TokenArray_Pop(struct TokenArray* p);
 
 struct PPToken* TokenArray_PopFront(struct TokenArray* p);
@@ -87,7 +87,7 @@ struct TokenSet
 };
 #define TOKENSET_INIT { NULL, 0, 0 }
 
-void TokenSet_PushBack(struct TokenSet* p, struct PPToken* pItem);
+void TokenSet_PushUnique(struct TokenSet* p, struct PPToken* pItem);
 void TokenSetAppendCopy(struct TokenSet* pArrayTo, const struct TokenSet* pArrayFrom);
 struct PPToken* TokenSet_Find(const struct TokenSet* pArray, const char* lexeme);
 void TokenSet_Destroy(struct TokenSet* pArray);

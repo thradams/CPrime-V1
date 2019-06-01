@@ -2,12 +2,13 @@
 #pragma once
 #pragma source
 
-#include "Array.h"
+
 #include "BasicScanner.h"
 #include "Map.h"
 
 #include "Macro.h"
 #include "Options.h"
+#include "Array.h"
 
 struct TFile
 {
