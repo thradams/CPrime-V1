@@ -8,6 +8,7 @@
 #include <assert.h>
 #include "Path.h"
 
+#define List_IsFirstItem(pList, pItem) ((pList)->pHead == (pItem))
 
 void IntegerStack_Init(struct IntegerStack* pItems) /*@default*/
 {
@@ -136,7 +137,9 @@ static void TNodeClueList_CodePrint(struct PrintCodeOptions* options, struct TSc
         return;
     };
 
-    ForEachListItem(struct ScannerItem, pNodeClue, list)
+    for (struct ScannerItem *  pNodeClue = list->pHead ;
+         pNodeClue != NULL;
+         pNodeClue =  pNodeClue->pNext)
     {
         switch (pNodeClue->token)
         {
@@ -260,8 +263,11 @@ static void TNodeClueList_CodePrint(struct PrintCodeOptions* options, struct TSc
                 }
                 else
                 {
-                    Output_Append(fp, options, pNodeClue->lexeme.c_str);
-                    options->bInclude = false;
+                    //if (!strstr(pNodeClue->lexeme.c_str, "ForEachListItem"))
+                    //{
+                        Output_Append(fp, options, pNodeClue->lexeme.c_str);
+                        options->bInclude = false;
+                    //}                    
                 }
                 break;
 
@@ -940,7 +946,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
             struct TPrimaryExpressionLiteral* pPrimaryExpressionLiteral
                 = (struct TPrimaryExpressionLiteral*)p;
 
-            ForEachListItem(struct TPrimaryExpressionLiteralItem, pItem, &pPrimaryExpressionLiteral->List)
+            for (struct TPrimaryExpressionLiteralItem *  pItem = ( &pPrimaryExpressionLiteral->List)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
             {
                 TNodeClueList_CodePrint(options, &pItem->ClueList0, fp);
                 Output_Append(fp, options, pItem->lexeme);
@@ -1102,7 +1108,7 @@ static void TEnumSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCod
     {
         Output_Append(fp, options, "{");
 
-        ForEachListItem(struct TEnumerator, pTEnumerator, &p->EnumeratorList)
+        for (struct TEnumerator *  pTEnumerator = ( &p->EnumeratorList)->pHead ;  pTEnumerator != NULL;  pTEnumerator =  pTEnumerator->pNext)
         {
             TEnumerator_CodePrint(program, options, pTEnumerator, fp);
         }
@@ -1383,7 +1389,7 @@ static void TInitializerList_CodePrint(struct SyntaxTree* program,
     else
     {
 
-        ForEachListItem(struct TInitializerListItem, pItem, p)
+        for (struct TInitializerListItem *  pItem = ( p)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
         {
             if (!List_IsFirstItem(p, pItem))
                 Output_Append(fp, options, ",");
@@ -1531,7 +1537,7 @@ static void TInitializer_CodePrint(struct SyntaxTree* program,
 
 static void TPointerList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TPointerList* p, struct StrBuilder* fp)
 {
-    ForEachListItem(struct TPointer, pItem, p)
+    for (struct TPointer *  pItem = ( p)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
     {
         TPointer_CodePrint(program, options, pItem, fp);
     }
@@ -1542,7 +1548,7 @@ static void TParameterList_CodePrint(struct SyntaxTree* program, struct PrintCod
 
 
 
-    ForEachListItem(struct TParameter, pItem, p)
+    for (struct TParameter *  pItem = ( p)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
     {
         //if (!List_IsFirstItem(p, pItem))
         //{
@@ -1712,7 +1718,7 @@ static void TStructDeclaratorList_CodePrint(struct SyntaxTree* program,
 
 
 
-    ForEachListItem(struct TInitDeclarator, pItem, p)
+    for (struct TInitDeclarator *  pItem = ( p)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
     {
         if (!List_IsFirstItem(p, pItem))
         {
@@ -1983,7 +1989,7 @@ void TInitDeclaratorList_CodePrint(struct SyntaxTree* program,
 {
 
     //fprintf(fp, "[");
-    ForEachListItem(struct TInitDeclarator, pInitDeclarator, p)
+    for (struct TInitDeclarator *  pInitDeclarator = ( p)->pHead ;  pInitDeclarator != NULL;  pInitDeclarator =  pInitDeclarator->pNext)
     {
         if (!List_IsFirstItem(p, pInitDeclarator))
             Output_Append(fp, options, ",");
@@ -3190,7 +3196,7 @@ static void TDesignatorList_CodePrint(struct SyntaxTree* program, struct PrintCo
 
 
 
-    ForEachListItem(struct TDesignator, pItem, p)
+    for (struct TDesignator *  pItem = ( p)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
     {
         if (!List_IsFirstItem(p, pItem))
         {
@@ -4232,7 +4238,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                                                  &declarator);
             if (pDeclarationSpecifiers)
             {
-                ForEachListItem(struct TPointer, pItem, &pDeclatator->PointerList)
+                for (struct TPointer *  pItem = ( &pDeclatator->PointerList)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
                 {
                     struct TPointer* pNew = TPointer_Create();
                     TPointer_Copy(pNew, pItem);

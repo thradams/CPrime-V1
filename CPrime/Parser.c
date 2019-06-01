@@ -4887,7 +4887,9 @@ bool  Declaration(struct Parser* ctx,
 
                 //colocar os declaradores nos simbolos
                 //agora ele monta a tabela com a declaracao toda
-                ForEachListItem(struct TInitDeclarator, pInitDeclarator, &pFuncVarDeclaration->InitDeclaratorList)
+                for (struct TInitDeclarator *  pInitDeclarator = pFuncVarDeclaration->InitDeclaratorList.pHead;
+                     pInitDeclarator != NULL;
+                     pInitDeclarator =  pInitDeclarator->pNext)
                 {
                     const char* declaratorName = TInitDeclarator_FindName(pInitDeclarator);
 
@@ -4985,7 +4987,9 @@ bool  Declaration(struct Parser* ctx,
                     struct TInitDeclarator* pDeclarator3 =
                         pFuncVarDeclaration->InitDeclaratorList.pHead;
 
-                    ForEachListItem(struct TParameter, pParameter, &pDeclarator3->pDeclarator->pDirectDeclarator->Parameters.ParameterList)
+                    for (struct TParameter *  pParameter = pDeclarator3->pDeclarator->pDirectDeclarator->Parameters->ParameterList.pHead;
+                         pParameter != NULL;
+                         pParameter =  pParameter->pNext)
                     {
                         const char* parameterName = TDeclarator_GetName(&pParameter->Declarator);
                         if (parameterName != NULL)

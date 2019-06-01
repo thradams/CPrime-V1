@@ -7,6 +7,8 @@
 #include <assert.h>
 #include "AstPrint.h"
 
+#define List_IsFirstItem(pList, pItem) ((pList)->pHead == (pItem))
+
 bool TFunctionSpecifier_Print(struct TFunctionSpecifier* p, bool b, FILE* fp);
 bool StorageSpecifier_Print(struct TStorageSpecifier* p, bool b, FILE* fp);
 bool TTypeQualifierList_Print(struct TTypeQualifierList* p, bool b, FILE* fp);
@@ -625,7 +627,9 @@ bool TEnumSpecifier_Print(struct TEnumSpecifier* p, bool b, FILE* fp)
 
     //for (int i = 0; i < p->EnumeratorList.size; i++)
     int i = 0;
-    ForEachListItem(struct TEnumerator, pTEnumerator, &p->EnumeratorList)
+    for (struct TEnumerator* pTEnumerator = p->EnumeratorList.pHead;
+         pTEnumerator != NULL;
+         pTEnumerator = pTEnumerator->pNext)
     {
         //struct TEnumerator *pTEnumerator = p->EnumeratorList.pItems[i];
 
@@ -761,7 +765,9 @@ bool TInitializerList_Print(struct TInitializerList* p, bool b, FILE* fp)
     b = false;
     fprintf(fp, "[");
 
-    ForEachListItem(struct TInitializerListItem, pItem, p)
+    for (struct TInitializerListItem *  pItem = ( p)->pHead ;
+         pItem != NULL;
+         pItem =  pItem->pNext)
 
     {
         if (!List_IsFirstItem(p, pItem))
@@ -818,7 +824,7 @@ bool TPointerList_Print(struct TPointerList* p, bool b, FILE* fp)
     fprintf(fp, "[");
     int i = 0;
     //for (int i = 0; i < p->size; i++)
-    ForEachListItem(struct TPointer, pItem, p)
+    for (struct TPointer *  pItem = ( p)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
     {
         if (i > 0)
             fprintf(fp, ",");
@@ -840,7 +846,9 @@ bool TParameterList_Print(struct TParameterList* p, bool b, FILE* fp)
     b = false;
     fprintf(fp, "[");
 
-    ForEachListItem(struct TParameter, pItem, p)
+    for (struct TParameter*  pItem = p->pHead ;
+         pItem != NULL;
+         pItem =  pItem->pNext)
     {
         if (!List_IsFirstItem(p, pItem))
             fprintf(fp, ",");
@@ -987,7 +995,9 @@ bool TStructDeclaratorList_Print(struct TStructDeclaratorList* p, bool b, FILE* 
     fprintf(fp, "[");
 
 
-    ForEachListItem(struct TInitDeclarator, pItem, p)
+    for (struct TInitDeclarator *  pItem = ( p)->pHead ;
+         pItem != NULL;
+         pItem =  pItem->pNext)
     {
         if (!List_IsFirstItem(p, pItem))
             fprintf(fp, ",");
@@ -1003,7 +1013,7 @@ bool TInitDeclaratorList_Print(struct TInitDeclaratorList* p, bool b, FILE* fp)
 {
     b = false;
     fprintf(fp, "[");
-    ForEachListItem(struct TInitDeclarator, pInitDeclarator, p)
+    for (struct TInitDeclarator *  pInitDeclarator = ( p)->pHead ;  pInitDeclarator != NULL;  pInitDeclarator =  pInitDeclarator->pNext)
     {
         if (!List_IsFirstItem(p, pInitDeclarator))
             fprintf(fp, ",");
@@ -1316,7 +1326,7 @@ bool TDesignatorList_Print(struct TDesignatorList* p, bool b, FILE* fp)
     fprintf(fp, "[");
 
 
-    ForEachListItem(struct TDesignator, pItem, p)
+    for (struct TDesignator *  pItem = ( p)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
     {
         if (!List_IsFirstItem(p, pItem))
             fprintf(fp, ",");

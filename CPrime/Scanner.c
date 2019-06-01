@@ -345,7 +345,7 @@ enum PPTokenType TokenToPPToken(enum Tokens token)
 
 struct TFile* TFile_Create() /*@default*/
 {
-    struct TFile *p = (struct TFile*) Malloc(sizeof * p);
+    struct TFile* p = (struct TFile*) Malloc(sizeof * p);
     if (p != NULL)
     {
         p->FullPath = NULL;
@@ -2839,7 +2839,7 @@ void PrintPreprocessedToConsole(const char* fileIn,
 int Scanner_GetNumberOfScannerItems(struct Scanner * pScanner)
 {
     int nCount = 1; // contando com o "normal"
-    ForEachListItem(struct ScannerItem, pItem, &pScanner->AcumulatedTokens)
+    for (struct ScannerItem *  pItem = ( &pScanner->AcumulatedTokens)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
     {
         nCount++;
     }
@@ -2859,7 +2859,7 @@ struct ScannerItem* Scanner_ScannerItemAt(struct Scanner * pScanner, int index)
     {
         // conta o numero de itens empilhados
         int nCount = 0;
-        ForEachListItem(struct ScannerItem, pItem, &pScanner->AcumulatedTokens)
+        for (struct ScannerItem *  pItem = ( &pScanner->AcumulatedTokens)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
         {
             nCount++;
         }
@@ -2878,7 +2878,7 @@ struct ScannerItem* Scanner_ScannerItemAt(struct Scanner * pScanner, int index)
         {
             // nao precisa comprar eh so pegar
             int n = 0;
-            ForEachListItem(struct ScannerItem, pItem, &pScanner->AcumulatedTokens)
+            for (struct ScannerItem *  pItem = ( &pScanner->AcumulatedTokens)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
             {
                 if (n == index)
                 {

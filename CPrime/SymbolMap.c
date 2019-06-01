@@ -732,7 +732,9 @@ struct TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(struct SymbolMap* pMa
                         if (pDeclarator)
                         {
                             //copiar o pointer list deste typedef para o outro
-                            ForEachListItem(struct TPointer, pItem, &pDeclarator->PointerList)
+                            for (struct TPointer* pItem = pDeclarator->PointerList.pHead;
+                                 pItem != NULL;
+                                 pItem =  pItem->pNext)
                             {
                                 struct TPointer* pNew = TPointer_Create();
                                 TPointer_Copy(pNew, pItem);
@@ -844,7 +846,9 @@ struct TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(struct SymbolMap
                         if (pDeclarator)
                         {
                             //copiar o pointer list deste typedef para o outro
-                            ForEachListItem(struct TPointer, pItem, &pDeclarator->PointerList)
+                            for (struct TPointer * pItem = pDeclarator->PointerList.pHead;
+                                 pItem != NULL;
+                                 pItem =  pItem->pNext)
                             {
                                 struct TPointer* pNew = TPointer_Create();
                                 TPointer_Copy(pNew, pItem);
@@ -868,7 +872,9 @@ struct TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(struct SymbolMap
                             TDeclaration_FindDeclarator(pDeclaration, typedefName);
 
                         //copiar o pointer list deste typedef para o outro
-                        ForEachListItem(struct TPointer, pItem, &pDeclarator->PointerList)
+                        for (struct TPointer * pItem = pDeclarator->PointerList.pHead ;
+                             pItem != NULL; 
+                             pItem =  pItem->pNext)
                         {
                             struct TPointer* pNew = TPointer_Create();
                             TPointer_Copy(pNew, pItem);

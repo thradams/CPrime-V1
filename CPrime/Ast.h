@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "Array.h"
-#include "List.h"
+
 #include "StringEx.h"
 #include "Scanner.h"
 #include "Macro.h"
@@ -1257,7 +1257,7 @@ struct TTypeName
     type-name:
     specifier-qualifier-list abstract-declaratoropt
     */
-    enum Type Type  /*@=TypeName_ID*/;
+    enum Type Type  /*@=TTypeName_ID*/;
     struct TSpecifierQualifierList SpecifierQualifierList;
     struct TDeclarator Declarator;
 };
