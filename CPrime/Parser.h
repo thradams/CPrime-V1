@@ -8,7 +8,6 @@
 #include "Scanner.h"
 #include "CodePrint.h"
 
-#define SYMBOL_BUCKETS_SIZE 1000
 
 struct ParserOptions
 {
