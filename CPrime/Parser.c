@@ -726,7 +726,7 @@ void TTypeName_Swap(struct TTypeName* a, struct TTypeName* b)
 
 void TTypeName_Init(struct TTypeName* p) /*@default*/
 {
-    p->Type = TypeName_ID;
+    p->Type = TTypeName_ID;
     p->SpecifierQualifierList.pData = NULL;
     p->SpecifierQualifierList.Size = 0;
     p->SpecifierQualifierList.Capacity = 0;

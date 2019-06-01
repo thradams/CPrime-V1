@@ -332,7 +332,7 @@ const char* PrintType(enum Type type)
         case TWhileStatement_ID:
         case TDoStatement_ID:
         case TIfStatement_ID:
-        case TypeName_ID:
+        case TTypeName_ID:
 
         case TInitializerListType_ID:
 

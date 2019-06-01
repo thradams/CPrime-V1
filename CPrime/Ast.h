@@ -62,7 +62,7 @@ enum Type
     TWhileStatement_ID,
     TDoStatement_ID,
     TIfStatement_ID,
-    TypeName_ID,
+    TTypeName_ID,
     TEnumerator_ID,
 
     TInitializerListType_ID,
