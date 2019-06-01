@@ -21,7 +21,7 @@ struct Parser
     bool bError;
 
     // mensagem de erro
-    StrBuilder ErrorMessage;
+    struct StrBuilder ErrorMessage;
 
     // scanner ja pré-processado
     struct Scanner Scanner;

@@ -71,5 +71,5 @@ void ExpandMacroToText(const struct TokenArray* pTokenSequence,
                        bool skip_defined,
                        bool evalmode,
                        struct Macro* caller,
-                       StrBuilder* strBuilder);
+                       struct StrBuilder* strBuilder);
 

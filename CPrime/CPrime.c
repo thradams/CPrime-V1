@@ -129,7 +129,7 @@ char* CompileText(int type, int bNoImplicitTag, char* input)
     {
 
 
-        StrBuilder sb = STRBUILDER_INIT;
+        struct StrBuilder sb = STRBUILDER_INIT;
         StrBuilder_Reserve(&sb, 500);
         if (options2.Target == CompilerTarget_Preprocessed)
         {

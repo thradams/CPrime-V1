@@ -247,7 +247,7 @@ void GetFullDir(const char* fileName, char** out)
     char fname[CPRIME_MAX_FNAME];
     char ext[CPRIME_MAX_EXT];
     SplitPath(buffer, drive, dir, fname, ext); // C4996
-    StrBuilder s;// = STRBUILDER_INIT;
+    struct StrBuilder s;// = STRBUILDER_INIT;
     StrBuilder_Init(&s);
     StrBuilder_Append(&s, drive);
     StrBuilder_Append(&s, dir);
@@ -278,7 +278,7 @@ void GetFullPath(const char* fileName, char** out)
     char fname[CPRIME_MAX_FNAME];
     char ext[CPRIME_MAX_EXT];
     SplitPath(buffer, drive, dir, fname, ext); // C4996
-    StrBuilder s = STRBUILDER_INIT;
+    struct StrBuilder s = STRBUILDER_INIT;
 
     StrBuilder_Append(&s, drive);
     StrBuilder_Append(&s, dir);

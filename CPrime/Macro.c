@@ -109,7 +109,7 @@ int FindNoSpaceIndex(const struct TokenArray* pArray, int start)
 }
 
 // Return s with all \ and " characters \ escaped
-void AppendEscaped(StrBuilder* strBuilder,
+void AppendEscaped(struct StrBuilder* strBuilder,
                    const char* source)
 {
     while (*source)
@@ -134,7 +134,7 @@ void AppendEscaped(StrBuilder* strBuilder,
 * Multiple spaces are converted to a single space, \ and " are
 * escaped
 */
-void AppendStringize(StrBuilder* strBuilder, const struct TokenArray* ts)
+void AppendStringize(struct StrBuilder* strBuilder, const struct TokenArray* ts)
 {
     /*
     Each occurrence of white space between the arguments
@@ -255,7 +255,7 @@ void SubstituteArgs(struct Macro* pMacro,
                 contains the spelling of the preprocessing token sequence
                 for the corresponding argument.
                 */
-                StrBuilder strBuilder = STRBUILDER_INIT;
+                struct StrBuilder strBuilder = STRBUILDER_INIT;
                 AppendStringize(&strBuilder, aseq);
                 TokenArray_Erase(&is, 0, idx + 1);
 
@@ -1065,7 +1065,7 @@ void Glue(const struct TokenArray* lsI,
             //Junta o ultimo token do lado esquerdo
             //com o primeiro do lado direito
 
-            StrBuilder strNewLexeme = STRBUILDER_INIT;
+            struct StrBuilder strNewLexeme = STRBUILDER_INIT;
 
             if (ls.Size > 0)
             {
@@ -1109,7 +1109,7 @@ void ExpandMacroToText(const struct TokenArray* pTokenSequence,
                        bool skip_defined,
                        bool evalmode,
                        struct Macro* caller,
-                       StrBuilder * strBuilder)
+                       struct StrBuilder * strBuilder)
 {
     StrBuilder_Clear(strBuilder);
     struct TokenArray tks = TOKENARRAY_INIT;

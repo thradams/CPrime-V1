@@ -523,7 +523,7 @@ void StatePop(struct Scanner * pScanner)
     PPStateStack_Pop(&pScanner->StackIfDef);
 }
 
-void Scanner_GetError(struct Scanner * pScanner, StrBuilder * str)
+void Scanner_GetError(struct Scanner * pScanner, struct StrBuilder * str)
 {
     StrBuilder_Append(str, pScanner->DebugString.c_str);
     StrBuilder_Append(str, "\n");
@@ -537,7 +537,7 @@ void Scanner_GetError(struct Scanner * pScanner, StrBuilder * str)
 }
 
 
-void Scanner_GetFilePositionString(struct Scanner * pScanner, StrBuilder * sb)
+void Scanner_GetFilePositionString(struct Scanner * pScanner, struct StrBuilder * sb)
 {
     struct BasicScanner* pScannerTop = Scanner_Top(pScanner);
 
@@ -727,7 +727,7 @@ bool Scanner_GetFullPath(struct Scanner * pScanner, const char* fileName,
             if (pScanner->stack.pTop != NULL)
             {
                 // tenta nos diretorios ja abertos
-                StrBuilder path = STRBUILDER_INIT;
+                struct StrBuilder path = STRBUILDER_INIT;
 
                 // for (int i = (int)pScanner->stack.size - 1; i >= 0; i--)
                 ForEachBasicScanner(p, pScanner->stack.pTop)
@@ -776,7 +776,7 @@ bool Scanner_GetFullPath(struct Scanner * pScanner, const char* fileName,
     */
     if (!bFullPathFound)
     {
-        StrBuilder path = STRBUILDER_INIT;
+        struct StrBuilder path = STRBUILDER_INIT;
 
 
         for (int i = 0; i < pScanner->IncludeDir.size; i++)
@@ -807,7 +807,7 @@ bool Scanner_GetFullPath(struct Scanner * pScanner, const char* fileName,
 
 bool Scanner_IsAlreadyIncluded(struct Scanner * pScanner,
                                const char* includeFileName,
-                               FileIncludeType fileIncludeType)
+                               enum FileIncludeType fileIncludeType)
 {
     bool bResult = false;
     char* /*@auto*/ fullPath = NULL;
@@ -843,7 +843,7 @@ bool Scanner_IsAlreadyIncluded(struct Scanner * pScanner,
 
 void Scanner_IncludeFile(struct Scanner * pScanner,
                          const char* includeFileName,
-                         FileIncludeType fileIncludeType,
+                         enum FileIncludeType fileIncludeType,
                          bool bSkipBof)
 {
     if (pScanner->bError)
@@ -1091,7 +1091,7 @@ struct BasicScanner* Scanner_Top(struct Scanner * pScanner)
 //    return Scanner_Top(pScanner)->stream.currentCol;
 //}
 
-void IgnorePreProcessorv2(struct BasicScanner* pBasicScanner, StrBuilder * strBuilder)
+void IgnorePreProcessorv2(struct BasicScanner* pBasicScanner, struct StrBuilder * strBuilder)
 {
 
     while (pBasicScanner->currentItem.token != TK_EOF &&
@@ -1108,7 +1108,7 @@ void IgnorePreProcessorv2(struct BasicScanner* pBasicScanner, StrBuilder * strBu
     }
 }
 
-void GetDefineString(struct Scanner * pScanner, StrBuilder * strBuilder)
+void GetDefineString(struct Scanner * pScanner, struct StrBuilder * strBuilder)
 {
     for (;;)
     {
@@ -1213,7 +1213,7 @@ int EvalExpression(const char* s, struct Scanner * pScanner)
 
 static void GetMacroArguments(struct Scanner * pScanner, struct BasicScanner* pBasicScanner,
                               struct Macro* pMacro, struct TokenArray* ppTokenArray,
-                              StrBuilder * strBuilder)
+                              struct StrBuilder * strBuilder)
 {
     // StrBuilder_Append(strBuilderResult, Scanner_LexemeAt(pScanner));
     // TODO aqui nao pode ser o current
@@ -1410,7 +1410,7 @@ enum Tokens FindPreToken(const char* lexeme)
 }
 
 void GetPPTokens(struct BasicScanner* pBasicScanner, struct TokenArray* pptokens,
-                 StrBuilder * strBuilder)
+                 struct StrBuilder * strBuilder)
 {
     enum Tokens token = pBasicScanner->currentItem.token;
     const char* lexeme = pBasicScanner->currentItem.lexeme.c_str;
@@ -1440,7 +1440,7 @@ void GetPPTokens(struct BasicScanner* pBasicScanner, struct TokenArray* pptokens
 }
 
 static void Scanner_MatchAllPreprocessorSpaces(struct BasicScanner* pBasicScanner,
-                                               StrBuilder * strBuilder)
+                                               struct StrBuilder * strBuilder)
 {
     enum Tokens token = pBasicScanner->currentItem.token;
     while (token == TK_SPACES || token == TK_BACKSLASHBREAKLINE ||
@@ -1455,7 +1455,7 @@ static void Scanner_MatchAllPreprocessorSpaces(struct BasicScanner* pBasicScanne
     }
 }
 
-void ParsePreDefinev2(struct Scanner * pScanner, StrBuilder * strBuilder)
+void ParsePreDefinev2(struct Scanner * pScanner, struct StrBuilder * strBuilder)
 {
     struct BasicScanner* pBasicScanner = Scanner_Top(pScanner);
 
@@ -1542,7 +1542,7 @@ void ParsePreDefinev2(struct Scanner * pScanner, StrBuilder * strBuilder)
     // breakline ficou...
 }
 
-int EvalPre(struct Scanner * pScanner, StrBuilder * sb)
+int EvalPre(struct Scanner * pScanner, struct StrBuilder * sb)
 {
     if (pScanner->bError)
     {
@@ -1558,7 +1558,7 @@ int EvalPre(struct Scanner * pScanner, StrBuilder * sb)
     GetPPTokens(pBasicScanner, &pptokens, sb);
 
 
-    StrBuilder strBuilder = STRBUILDER_INIT;
+    struct StrBuilder strBuilder = STRBUILDER_INIT;
     ExpandMacroToText(&pptokens, &pScanner->Defines2, false, true, true, NULL,
                       &strBuilder);
 
@@ -1569,7 +1569,7 @@ int EvalPre(struct Scanner * pScanner, StrBuilder * sb)
         //assert(false);
     }
 
-    /*StrBuilder sb1 = STRBUILDER_INIT;
+    /*struct StrBuilder sb1 = STRBUILDER_INIT;
     Scanner_GetFilePositionString(pScanner, &sb1);
     printf("%s \n", sb1.c_str);
     printf("#if ");
@@ -1678,7 +1678,7 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(struct Scanner * pScanner)
                 PPToken_Create(pMacro2->Name, TokenToPPToken(TK_IDENTIFIER));
             TokenArray_PushBack(&ppTokenArray, ppTokenName);
 
-            StrBuilder strExpanded = STRBUILDER_INIT;
+            struct StrBuilder strExpanded = STRBUILDER_INIT;
 
             ExpandMacroToText(&ppTokenArray, &pScanner->Defines2, false, false, false, NULL,
                               &strExpanded);
@@ -1754,8 +1754,8 @@ void Scanner_BuyIdentifierThatCanExpandAndCollapse(struct Scanner * pScanner)
 
             if (token == TK_LEFT_PARENTHESIS)
             {
-                StrBuilder strCallString = STRBUILDER_INIT;
-                StrBuilder strExpanded = STRBUILDER_INIT;
+                struct StrBuilder strCallString = STRBUILDER_INIT;
+                struct StrBuilder strExpanded = STRBUILDER_INIT;
                 struct TokenArray ppTokenArray = TOKENARRAY_INIT;
 
                 StrBuilder_Set(&strCallString, pFirstMacro->Name);
@@ -1936,7 +1936,7 @@ void Scanner_BuyTokens(struct Scanner * pScanner)
         return;
     }
 
-    StrBuilder strBuilder = STRBUILDER_INIT;
+    struct StrBuilder strBuilder = STRBUILDER_INIT;
 
     enum PPState state = StateTop(pScanner);
     bool bActive0 = IsIncludeState(state);
@@ -2011,7 +2011,7 @@ void Scanner_BuyTokens(struct Scanner * pScanner)
                     BasicScanner_Match(pBasicScanner);
                     lexeme = pBasicScanner->currentItem.lexeme.c_str;
                     token = pBasicScanner->currentItem.token;
-                    StrBuilder path = STRBUILDER_INIT;
+                    struct StrBuilder path = STRBUILDER_INIT;
 
 
                     for (;;)
@@ -2423,7 +2423,7 @@ void Scanner_BuyTokens(struct Scanner * pScanner)
 
             if (IsIncludeState(state))
             {
-                StrBuilder str = STRBUILDER_INIT;
+                struct StrBuilder str = STRBUILDER_INIT;
                 StrBuilder_Append(&str, ": #error : ");
                 GetDefineString(pScanner, &str);
                 Scanner_SetError(pScanner, str.c_str);
@@ -2609,7 +2609,7 @@ void PrintPreprocessedToFile(const char* fileIn, const char* configFileName)
     Free(fullFileNamePath);
 }
 
-void PrintPreprocessedToStringCore2(StrBuilder * fp, struct Scanner * scanner)
+void PrintPreprocessedToStringCore2(struct StrBuilder * fp, struct Scanner * scanner)
 {
     while (Scanner_TokenAt(scanner, 0) != TK_EOF)
     {
@@ -2663,7 +2663,7 @@ void PrintPreprocessedToStringCore2(StrBuilder * fp, struct Scanner * scanner)
     }
 }
 
-void PrintPreprocessedToString2(StrBuilder * fp, const char* input, const char* configFileName)
+void PrintPreprocessedToString2(struct StrBuilder * fp, const char* input, const char* configFileName)
 {
 
     struct Scanner scanner;

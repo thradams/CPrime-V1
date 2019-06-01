@@ -1306,7 +1306,7 @@ bool TParameterTypeList_HasNamedArgs(struct TParameterTypeList* p)
 
 
 
-void TParameterTypeList_GetArgsString(struct TParameterTypeList* p, StrBuilder * sb)
+void TParameterTypeList_GetArgsString(struct TParameterTypeList* p, struct StrBuilder * sb)
 {
     if (p != NULL)
     {

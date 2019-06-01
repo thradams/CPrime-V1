@@ -158,7 +158,7 @@ struct PPToken* TokenArray_Find(const struct TokenArray* pArray, const char* lex
 }
 
 void TokenArray_ToStrBuilder(const struct TokenArray* tokens,
-                             StrBuilder* strBuidler)
+                             struct StrBuilder* strBuidler)
 {
     StrBuilder_Clear(strBuidler);
     for (int i = 0; i < tokens->Size; i++)

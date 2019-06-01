@@ -40,7 +40,7 @@ struct PrintCodeOptions
     int IdentationLevel;
     //
 
-    StrBuilder sbPreDeclaration;
+    struct StrBuilder sbPreDeclaration;
 
 };
 
@@ -55,10 +55,10 @@ void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pProgram,
 
 void SyntaxTree_PrintCodeToString(struct SyntaxTree* pProgram,
                                   struct Options* options,
-                                  StrBuilder* output);
+                                  struct StrBuilder* output);
 
 
-void TTypeName_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeName* p, StrBuilder* fp);
+void TTypeName_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeName* p, struct StrBuilder* fp);
 
 
 
@@ -66,10 +66,10 @@ void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program,
                                        struct PrintCodeOptions* options,
                                        struct TSpecifierQualifierList* pDeclarationSpecifiers,
 
-                                       StrBuilder* fp);
+                                       struct StrBuilder* fp);
 
 
-void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarationSpecifiers* pDeclarationSpecifiers, StrBuilder* fp);
+void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarationSpecifiers* pDeclarationSpecifiers, struct StrBuilder* fp);
 
 enum Action
 {
@@ -94,4 +94,4 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                          const enum Action action,
                          enum Search search,
                          bool* pbHasInitializers,
-                         StrBuilder* fp);
+                         struct StrBuilder* fp);

@@ -133,11 +133,11 @@ struct Scanner
     struct FileNodeList Sources;
 
     //char para debug
-    StrBuilder DebugString;
+    struct StrBuilder DebugString;
 
 
     //char que mantem o erro
-    StrBuilder ErrorString;
+    struct StrBuilder ErrorString;
 
     //True indica error
     bool bError;
@@ -150,7 +150,7 @@ struct Scanner
 
 void Scanner_SetError(struct Scanner * pScanner, const char * fmt, ...);
 
-void Scanner_GetFilePositionString(struct Scanner * pScanner, StrBuilder * sb);
+void Scanner_GetFilePositionString(struct Scanner * pScanner, struct StrBuilder * sb);
 
 
 bool Scanner_InitString(struct Scanner * pScanner,
@@ -162,16 +162,16 @@ bool PushExpandedMacro(struct Scanner * pScanner, const char * defineName, const
 
 bool Scanner_Init(struct Scanner * pScanner);
 
-typedef enum
+enum FileIncludeType
 {
     FileIncludeTypeQuoted,
     FileIncludeTypeIncludes,
     FileIncludeTypeFullPath,
-} FileIncludeType;
+};
 
 void Scanner_IncludeFile(struct Scanner * pScanner,
                          const char * fileName,
-                         FileIncludeType fileIncludeType, bool bSkipeBof);
+                         enum FileIncludeType fileIncludeType, bool bSkipeBof);
 
 
 void Scanner_Destroy(struct Scanner * pScanner);
@@ -179,13 +179,13 @@ void Scanner_Reset(struct Scanner * pScanner);
 
 int EvalExpression(const char * s, struct Scanner * pScanner);
 void Scanner_PrintDebug(struct Scanner * pScanner);
-void Scanner_GetError(struct Scanner * pScanner, StrBuilder * str);
+void Scanner_GetError(struct Scanner * pScanner, struct StrBuilder * str);
 
 void GetSources(const char * configFile, const char * fileIn, bool bRecursiveSearch, struct FileNodeList * sources);
 void PrintPreprocessedToFile(const char * fileIn,
                              const char * configFileName);
 
-void PrintPreprocessedToString2(StrBuilder * fp, const char * input, const char * configFileName);
+void PrintPreprocessedToString2(struct StrBuilder * fp, const char * input, const char * configFileName);
 void PrintPreprocessedToConsole(const char * fileIn,
                                 const char * configFileName);
 

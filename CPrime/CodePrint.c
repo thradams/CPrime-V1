@@ -63,9 +63,9 @@ void PrintCodeOptions_Destroy(struct PrintCodeOptions* options) /*@default*/
 }
 
 
-void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TSpecifierQualifierList* pDeclarationSpecifiers, StrBuilder* fp);
+void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TSpecifierQualifierList* pDeclarationSpecifiers, struct StrBuilder* fp);
 
-void TTypeName_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeName* p, StrBuilder* fp);
+void TTypeName_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeName* p, struct StrBuilder* fp);
 
 static void TInitializer_CodePrint(struct SyntaxTree* program,
                                    struct PrintCodeOptions* options,
@@ -73,7 +73,7 @@ static void TInitializer_CodePrint(struct SyntaxTree* program,
                                    struct TDeclarationSpecifiers* pDeclarationSpecifiers,
                                    struct TInitializer* pTInitializer,
 
-                                   StrBuilder* fp);
+                                   struct StrBuilder* fp);
 
 static void TInitializerList_CodePrint(struct SyntaxTree* program,
                                        struct PrintCodeOptions* options,
@@ -81,7 +81,7 @@ static void TInitializerList_CodePrint(struct SyntaxTree* program,
                                        struct TDeclarator* pDeclarator,
                                        struct TInitializerList* p,
 
-                                       StrBuilder* fp);
+                                       struct StrBuilder* fp);
 
 
 static void TInitializerListItem_CodePrint(struct SyntaxTree* program,
@@ -90,24 +90,24 @@ static void TInitializerListItem_CodePrint(struct SyntaxTree* program,
                                            struct TDeclarationSpecifiers* pDeclarationSpecifiers,
                                            struct TInitializerListItem* p,
 
-                                           StrBuilder* fp);
+                                           struct StrBuilder* fp);
 
 
-static void TTypeQualifierList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifierList* p, StrBuilder* fp);
+static void TTypeQualifierList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifierList* p, struct StrBuilder* fp);
 
-static void TAnyDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyDeclaration* pDeclaration, StrBuilder* fp);
+static void TAnyDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyDeclaration* pDeclaration, struct StrBuilder* fp);
 
-static void TAnyStructDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyStructDeclaration* p, StrBuilder* fp);
-static void TTypeQualifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifier* p, StrBuilder* fp);
-static void TDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclaration* p, StrBuilder* fp);
-static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TExpression* p, const char* name, StrBuilder* fp);
-static void TStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStatement* p, StrBuilder* fp);
-static void TBlockItem_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TBlockItem* p, StrBuilder* fp);
+static void TAnyStructDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyStructDeclaration* p, struct StrBuilder* fp);
+static void TTypeQualifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifier* p, struct StrBuilder* fp);
+static void TDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclaration* p, struct StrBuilder* fp);
+static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TExpression* p, const char* name, struct StrBuilder* fp);
+static void TStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStatement* p, struct StrBuilder* fp);
+static void TBlockItem_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TBlockItem* p, struct StrBuilder* fp);
 
-static void TPointer_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TPointer* pPointer, StrBuilder* fp);
-static void TParameter_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameter* p, StrBuilder* fp);
+static void TPointer_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TPointer* pPointer, struct StrBuilder* fp);
+static void TParameter_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameter* p, struct StrBuilder* fp);
 
-void Output_Append(StrBuilder* p,
+void Output_Append(struct StrBuilder* p,
                    struct PrintCodeOptions* options,
                    const char* source)
 {
@@ -126,7 +126,7 @@ void Output_Append(StrBuilder* p,
 }
 
 static void TNodeClueList_CodePrint(struct PrintCodeOptions* options, struct TScannerItemList* list,
-                                    StrBuilder* fp)
+                                    struct StrBuilder* fp)
 {
     if (options->Options.bCannonical)
     {
@@ -296,7 +296,7 @@ static void TCompoundStatement_CodePrint(struct SyntaxTree* program,
                                          struct PrintCodeOptions* options,
                                          struct TCompoundStatement* p,
 
-                                         StrBuilder* fp)
+                                         struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "{");
@@ -313,7 +313,7 @@ static void TCompoundStatement_CodePrint(struct SyntaxTree* program,
 }
 
 
-static void TLabeledStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TLabeledStatement* p, StrBuilder* fp)
+static void TLabeledStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TLabeledStatement* p, struct StrBuilder* fp)
 {
 
 
@@ -357,7 +357,7 @@ static void TLabeledStatement_CodePrint(struct SyntaxTree* program, struct Print
 
 }
 
-static void TForStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TForStatement* p, StrBuilder* fp)
+static void TForStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TForStatement* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -396,7 +396,7 @@ static void TForStatement_CodePrint(struct SyntaxTree* program, struct PrintCode
 }
 
 
-static void TWhileStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TWhileStatement* p, StrBuilder* fp)
+static void TWhileStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TWhileStatement* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -412,7 +412,7 @@ static void TWhileStatement_CodePrint(struct SyntaxTree* program, struct PrintCo
 
 
 
-static void TDoStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDoStatement* p, StrBuilder* fp)
+static void TDoStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDoStatement* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -434,7 +434,7 @@ static void TDoStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeO
 }
 
 
-static void TExpressionStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TExpressionStatement* p, StrBuilder* fp)
+static void TExpressionStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TExpressionStatement* p, struct StrBuilder* fp)
 {
     TExpression_CodePrint(program, options, p->pExpression, "", fp);
 
@@ -445,7 +445,7 @@ static void TExpressionStatement_CodePrint(struct SyntaxTree* program, struct Pr
 }
 
 
-static void TJumpStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TJumpStatement* p, StrBuilder* fp)
+static void TJumpStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TJumpStatement* p, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
@@ -480,13 +480,13 @@ static void TJumpStatement_CodePrint(struct SyntaxTree* program, struct PrintCod
 
 }
 
-static void TAsmStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAsmStatement* p, StrBuilder* fp)
+static void TAsmStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAsmStatement* p, struct StrBuilder* fp)
 {
     Output_Append(fp, options, "\"type\":\"asm-statement\"");
 
 }
 
-static void TSwitchStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TSwitchStatement* p, StrBuilder* fp)
+static void TSwitchStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TSwitchStatement* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -505,7 +505,7 @@ static void TSwitchStatement_CodePrint(struct SyntaxTree* program, struct PrintC
 }
 
 
-static void TIfStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TIfStatement* p, StrBuilder* fp)
+static void TIfStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TIfStatement* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -538,7 +538,7 @@ static void TIfStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeO
 
 }
 
-static void TStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStatement* p, StrBuilder* fp)
+static void TStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStatement* p, struct StrBuilder* fp)
 {
     if (p == NULL)
     {
@@ -591,7 +591,7 @@ static void TStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOpt
 
 }
 
-static void TBlockItem_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TBlockItem* p, StrBuilder* fp)
+static void TBlockItem_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TBlockItem* p, struct StrBuilder* fp)
 {
     if (p == NULL)
     {
@@ -683,7 +683,7 @@ static void TBlockItem_CodePrint(struct SyntaxTree* program, struct PrintCodeOpt
 
 
 bool GetType(const char* source,
-             StrBuilder* strBuilderType)
+             struct StrBuilder* strBuilderType)
 {
 
     while (*source &&
@@ -699,8 +699,8 @@ bool GetType(const char* source,
 
 
 bool GetTypeAndFunction(const char* source,
-                        StrBuilder* strBuilderType,
-                        StrBuilder* strBuilderFunc)
+                        struct StrBuilder* strBuilderType,
+                        struct StrBuilder* strBuilderFunc)
 {
 
     while (*source &&
@@ -719,20 +719,20 @@ bool GetTypeAndFunction(const char* source,
     return *source == '_';
 }
 
-static void TParameterTypeList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameterTypeList* p, StrBuilder* fp);
+static void TParameterTypeList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameterTypeList* p, struct StrBuilder* fp);
 
 
 static void TPrimaryExpressionLambda_CodePrint(struct SyntaxTree* program,
                                                struct PrintCodeOptions* options,
                                                struct TPrimaryExpressionLambda* p,
-                                               StrBuilder* fp)
+                                               struct StrBuilder* fp)
 {
 
     //Output_Append(fp, options, "l1");
     //Output_Append
     StrBuilder_AppendFmt(fp, "_lambda_%d", global_lambda_counter);
 
-    StrBuilder sb = STRBUILDER_INIT;
+    struct StrBuilder sb = STRBUILDER_INIT;
 
     if (p->pParameterTypeListOpt)
     {
@@ -788,7 +788,7 @@ static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* program,
                                              struct PrintCodeOptions* options,
                                              struct TPostfixExpressionCore* p,
 
-                                             StrBuilder* fp)
+                                             struct StrBuilder* fp)
 {
 
 
@@ -890,7 +890,7 @@ static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* program,
 static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TExpression* p,
                                   const char* name,
 
-                                  StrBuilder* fp)
+                                  struct StrBuilder* fp)
 {
     if (p == NULL)
     {
@@ -1052,7 +1052,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
 
 
 
-static   void TEnumerator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TEnumerator* pTEnumerator, StrBuilder* fp)
+static   void TEnumerator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TEnumerator* pTEnumerator, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &pTEnumerator->ClueList0, fp);
@@ -1081,7 +1081,7 @@ static   void TEnumerator_CodePrint(struct SyntaxTree* program, struct PrintCode
 
 }
 
-static void TEnumSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TEnumSpecifier* p, StrBuilder* fp)
+static void TEnumSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TEnumSpecifier* p, struct StrBuilder* fp)
 {
     //true;
 
@@ -1114,7 +1114,7 @@ static void TEnumSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCod
 
 }
 
-static void TUnionSetItem_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TUnionSetItem* p, StrBuilder* fp)
+static void TUnionSetItem_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TUnionSetItem* p, struct StrBuilder* fp)
 {
     if (p->Token == TK_STRUCT)
     {
@@ -1137,7 +1137,7 @@ static void TUnionSetItem_CodePrint(struct SyntaxTree* program, struct PrintCode
     }
 }
 
-static void TUnionSet_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TUnionSet* p, StrBuilder* fp)
+static void TUnionSet_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TUnionSet* p, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
@@ -1165,7 +1165,7 @@ static void TUnionSet_CodePrint(struct SyntaxTree* program, struct PrintCodeOpti
 
 }
 
-static void TStructUnionSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStructUnionSpecifier* p, StrBuilder* fp)
+static void TStructUnionSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStructUnionSpecifier* p, struct StrBuilder* fp)
 {
     if (options->Options.bCannonical)
     {
@@ -1252,7 +1252,7 @@ static void TStructUnionSpecifier_CodePrint(struct SyntaxTree* program, struct P
 
 }
 
-static void TSingleTypeSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TSingleTypeSpecifier* p, StrBuilder* fp)
+static void TSingleTypeSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TSingleTypeSpecifier* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -1304,7 +1304,7 @@ static void TSingleTypeSpecifier_CodePrint(struct SyntaxTree* program, struct Pr
 
 }
 
-static void TDesignator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDesignator* p, StrBuilder* fp)
+static void TDesignator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDesignator* p, struct StrBuilder* fp)
 {
     //    if (b)
     //      Output_Append(fp, options,  ",");
@@ -1344,7 +1344,7 @@ static void TInitializerList_CodePrint(struct SyntaxTree* program,
                                        struct TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
                                        struct TInitializerList* p,
 
-                                       StrBuilder* fp)
+                                       struct StrBuilder* fp)
 {
     if (List_HasOneItem(p) &&
         List_Back(p)->pInitializer == NULL/* &&
@@ -1355,7 +1355,7 @@ static void TInitializerList_CodePrint(struct SyntaxTree* program,
             //Output_Append(fp, options, COMMENT_KEYWORD_DEFAULT);
         }
         //a partir de {} e um tipo consegue gerar o final  
-        StrBuilder sb = STRBUILDER_INIT;
+        struct StrBuilder sb = STRBUILDER_INIT;
         bool bHasInitializers = false;
         InstanciateDestroy2(program,
                             options,
@@ -1404,7 +1404,7 @@ static void TInitializerListType_CodePrint(struct SyntaxTree* program,
                                            struct TDeclarator* pDeclarator,
                                            struct TDeclarationSpecifiers* pDeclarationSpecifiers,
                                            struct TInitializerListType* p,
-                                           StrBuilder* fp)
+                                           struct StrBuilder* fp)
 {
 
     /*
@@ -1450,7 +1450,7 @@ static void TInitializerListType_CodePrint(struct SyntaxTree* program,
             if (p->InitializerList.pHead)
                 TNodeClueList_CodePrint(options, &p->InitializerList.pHead->ClueList, fp);
 
-            StrBuilder sb = STRBUILDER_INIT;
+            struct StrBuilder sb = STRBUILDER_INIT;
             bool bHasInitializers = false;
             InstanciateDestroy2(program,
                                 options,
@@ -1505,7 +1505,7 @@ static void TInitializer_CodePrint(struct SyntaxTree* program,
                                    struct TDeclarationSpecifiers* pDeclarationSpecifiers,
                                    struct TInitializer* pTInitializer,
 
-                                   StrBuilder* fp)
+                                   struct StrBuilder* fp)
 {
     if (pTInitializer == NULL)
     {
@@ -1529,7 +1529,7 @@ static void TInitializer_CodePrint(struct SyntaxTree* program,
 
 
 
-static void TPointerList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TPointerList* p, StrBuilder* fp)
+static void TPointerList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TPointerList* p, struct StrBuilder* fp)
 {
     ForEachListItem(struct TPointer, pItem, p)
     {
@@ -1537,7 +1537,7 @@ static void TPointerList_CodePrint(struct SyntaxTree* program, struct PrintCodeO
     }
 }
 
-static void TParameterList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameterList* p, StrBuilder* fp)
+static void TParameterList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameterList* p, struct StrBuilder* fp)
 {
 
 
@@ -1557,7 +1557,7 @@ static void TParameterList_CodePrint(struct SyntaxTree* program, struct PrintCod
 
 }
 
-static void TParameterTypeList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameterTypeList* p, StrBuilder* fp)
+static void TParameterTypeList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameterTypeList* p, struct StrBuilder* fp)
 {
     //Output_Append(fp, options,  "(");
     TParameterList_CodePrint(program, options, &p->ParameterList, fp);
@@ -1573,12 +1573,12 @@ static void TParameterTypeList_CodePrint(struct SyntaxTree* program, struct Prin
     //Output_Append(fp, options,  ")");
 
 }
-static void TDeclarator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarator* p, bool bPrintName, StrBuilder* fp);
+static void TDeclarator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarator* p, bool bPrintName, struct StrBuilder* fp);
 
 static void TDirectDeclarator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDirectDeclarator* pDirectDeclarator,
 
                                         bool bPrintName,
-                                        StrBuilder* fp)
+                                        struct StrBuilder* fp)
 {
     if (pDirectDeclarator == NULL)
     {
@@ -1648,7 +1648,7 @@ static void TDirectDeclarator_CodePrint(struct SyntaxTree* program, struct Print
 
 }
 
-static void TDeclarator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarator* p, bool bPrintName, StrBuilder* fp)
+static void TDeclarator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarator* p, bool bPrintName, struct StrBuilder* fp)
 {
     TPointerList_CodePrint(program, options, &p->PointerList, fp);
     TDirectDeclarator_CodePrint(program, options, p->pDirectDeclarator, bPrintName, fp);
@@ -1658,7 +1658,7 @@ static void TDeclarator_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
 //void TInitDeclarator_CodePrint(struct SyntaxTree* program, 
 //struct PrintCodeOptions * options, 
 //TI/nitDeclarator* p,    
-//StrBuilder* fp);
+//struct StrBuilder* fp);
 
 
 
@@ -1666,7 +1666,7 @@ void TStructDeclarator_CodePrint(struct SyntaxTree* program,
                                  struct PrintCodeOptions* options,
                                  struct TSpecifierQualifierList* pSpecifierQualifierList,
                                  TStructDeclarator* p,
-                                 StrBuilder* fp)
+                                 struct StrBuilder* fp)
 {
 
     TDeclarator_CodePrint(program, options, p->pDeclarator, true/*bPrintName*/, fp);
@@ -1706,7 +1706,7 @@ static void TStructDeclaratorList_CodePrint(struct SyntaxTree* program,
                                             struct PrintCodeOptions* options,
                                             struct TSpecifierQualifierList* pSpecifierQualifierList,
                                             struct TStructDeclaratorList* p,
-                                            StrBuilder* fp)
+                                            struct StrBuilder* fp)
 {
 
 
@@ -1729,7 +1729,7 @@ static void TStructDeclaratorList_CodePrint(struct SyntaxTree* program,
 static void TStructDeclaration_CodePrint(struct SyntaxTree* program,
                                          struct PrintCodeOptions* options,
                                          struct TStructDeclaration* p,
-                                         StrBuilder* fp)
+                                         struct StrBuilder* fp)
 {
     TSpecifierQualifierList_CodePrint(program, options, &p->SpecifierQualifierList, fp);
     TStructDeclaratorList_CodePrint(program,
@@ -1744,7 +1744,7 @@ static void TStructDeclaration_CodePrint(struct SyntaxTree* program,
 
 }
 
-static void TAnyStructDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyStructDeclaration* p, StrBuilder* fp)
+static void TAnyStructDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyStructDeclaration* p, struct StrBuilder* fp)
 {
     switch (p->Type)
     {
@@ -1760,20 +1760,20 @@ static void TAnyStructDeclaration_CodePrint(struct SyntaxTree* program, struct P
 
 }
 
-static void StorageSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStorageSpecifier* p, StrBuilder* fp)
+static void StorageSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStorageSpecifier* p, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, TokenToString(p->Token));
 }
 
-static void TFunctionSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TFunctionSpecifier* p, StrBuilder* fp)
+static void TFunctionSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TFunctionSpecifier* p, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, TokenToString(p->Token));
 }
 
 
-static void TTypeQualifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifier* p, StrBuilder* fp)
+static void TTypeQualifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifier* p, struct StrBuilder* fp)
 {
     //TODO nao pode colocr isso se veio de comentario
 
@@ -1832,7 +1832,7 @@ static void TTypeQualifier_CodePrint(struct SyntaxTree* program, struct PrintCod
 #endif
 }
 
-static void TTypeQualifierList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifierList* p, StrBuilder* fp)
+static void TTypeQualifierList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifierList* p, struct StrBuilder* fp)
 {
     for (int i = 0; i < p->Size; i++)
     {
@@ -1841,7 +1841,7 @@ static void TTypeQualifierList_CodePrint(struct SyntaxTree* program, struct Prin
     }
 
 }
-static void TPointer_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TPointer* pPointer, StrBuilder* fp)
+static void TPointer_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TPointer* pPointer, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &pPointer->ClueList0, fp);
     Output_Append(fp, options, "*");
@@ -1851,7 +1851,7 @@ static void TPointer_CodePrint(struct SyntaxTree* program, struct PrintCodeOptio
 void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program,
                                        struct PrintCodeOptions* options,
                                        struct TSpecifierQualifierList* pDeclarationSpecifiers,
-                                       StrBuilder* fp)
+                                       struct StrBuilder* fp)
 {
     for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
     {
@@ -1899,7 +1899,7 @@ void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program,
 
 }
 
-void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarationSpecifiers* pDeclarationSpecifiers, StrBuilder* fp)
+void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarationSpecifiers* pDeclarationSpecifiers, struct StrBuilder* fp)
 {
 
     for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
@@ -1952,7 +1952,7 @@ void TInitDeclarator_CodePrint(struct SyntaxTree* program,
                                struct TDeclarator* pDeclarator,
                                struct TDeclarationSpecifiers* pDeclarationSpecifiers,
                                struct TInitDeclarator* p,
-                               StrBuilder* fp)
+                               struct StrBuilder* fp)
 {
     TDeclarator_CodePrint(program, options, p->pDeclarator, true/*bPrintName*/, fp);
 
@@ -1979,7 +1979,7 @@ void TInitDeclaratorList_CodePrint(struct SyntaxTree* program,
                                    struct TDeclarationSpecifiers* pDeclarationSpecifiers,
                                    struct TInitDeclaratorList* p,
 
-                                   StrBuilder* fp)
+                                   struct StrBuilder* fp)
 {
 
     //fprintf(fp, "[");
@@ -2010,8 +2010,8 @@ static bool FindListStructPattern(struct SyntaxTree* program,
                                   struct TParameter* pParameter,
                                   bool* pbItemIsPointer,
                                   bool* pbItemIsAutoPointer,
-                                  StrBuilder* itemTypeName,
-                                  StrBuilder* arrayName)
+                                  struct StrBuilder* itemTypeName,
+                                  struct StrBuilder* arrayName)
 {
     //Esta funcao analisa a struct e ve se ela eh compativel com o tipo vector.
     //ter size, capacity e um vector de items
@@ -2075,8 +2075,8 @@ static bool FindVectorStructPattern(struct SyntaxTree* program,
                                     struct TParameter* pParameter,
                                     bool* pbItemIsPointer,
                                     bool* pbItemIsAutoPointer,
-                                    StrBuilder* itemTypeName,
-                                    StrBuilder* arrayName)
+                                    struct StrBuilder* itemTypeName,
+                                    struct StrBuilder* arrayName)
 {
     //Esta funcao analisa a struct e ve se ela eh compativel com o tipo vector.
     //ter size, capacity e um vector de items
@@ -2135,7 +2135,7 @@ static bool FindVectorStructPattern(struct SyntaxTree* program,
                         //este eh array
                         //vamos ver o tipo do item e se ele eh auto
                         //pStructDeclaration->SpecifierQualifierList
-                        // StrBuilder itemTypeStr = STRBUILDER_INIT;
+                        // struct StrBuilder itemTypeStr = STRBUILDER_INIT;
                         struct TTypeName* pTypeName = NULL;
                         struct PrintCodeOptions  options = CODE_PRINT_OPTIONS_INIT;
                         options.Options.bCannonical = true;
@@ -2183,7 +2183,7 @@ const char* FindValue(const char* name, int namesize, struct TemplateVar* args, 
     return "?";
 }
 
-void StrBuilder_Template(StrBuilder* p,
+void StrBuilder_Template(struct StrBuilder* p,
                          const char* tmpt,
                          struct TemplateVar* vars,
                          int size,
@@ -2284,7 +2284,7 @@ void StrBuilder_Template(StrBuilder* p,
     }
 }
 
-void GetPrefixSuffix(const char* psz, StrBuilder* prefix, StrBuilder* suffix)
+void GetPrefixSuffix(const char* psz, struct StrBuilder* prefix, struct StrBuilder* suffix)
 {
     while (*psz && *psz != '_')
     {
@@ -2304,7 +2304,7 @@ void GetPrefixSuffix(const char* psz, StrBuilder* prefix, StrBuilder* suffix)
 
 static int FindRuntimeID(struct SyntaxTree* program,
                          const char* structOrTypeName,
-                         StrBuilder* idname)
+                         struct StrBuilder* idname)
 {
     ////////////
     struct TDeclaration* pFinalDecl =
@@ -2365,7 +2365,7 @@ static int FindRuntimeID(struct SyntaxTree* program,
 
 static int FindIDValue(struct SyntaxTree* program,
                        const char* structOrTypeName,
-                       StrBuilder* idname)
+                       struct StrBuilder* idname)
 {
     ////////////
     struct TDeclaration* pFinalDecl =
@@ -2482,7 +2482,7 @@ void UnionTypeDefault(struct SyntaxTree* program,
                       struct TParameterTypeList* pArgsOpt, //parametros
                       const char* parameterName,
                       const char* functionSuffix,
-                      StrBuilder* fp);
+                      struct StrBuilder* fp);
 static const char* GetNullStr(struct SyntaxTree* program);
 
 
@@ -2490,7 +2490,7 @@ static const char* GetNullStr(struct SyntaxTree* program);
 static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
                                                 struct PrintCodeOptions* options,
                                                 struct TDeclaration* p,
-                                                StrBuilder* fp)
+                                                struct StrBuilder* fp)
 {
 
     //Retorno da funcao
@@ -2500,8 +2500,8 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
     const char* funcName =
         TDeclarator_GetName(p->InitDeclaratorList.pHead->pDeclarator);
 
-    StrBuilder functionPrefix = STRBUILDER_INIT;
-    StrBuilder functionSuffix = STRBUILDER_INIT;
+    struct StrBuilder functionPrefix = STRBUILDER_INIT;
+    struct StrBuilder functionSuffix = STRBUILDER_INIT;
 
     GetPrefixSuffix(funcName, &functionPrefix, &functionSuffix);
 
@@ -2621,8 +2621,8 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
         {
             bool bItemIsPointer;
             bool bItemIsAutoPointer;
-            StrBuilder itemType = STRBUILDER_INIT;
-            StrBuilder arrayName = STRBUILDER_INIT;
+            struct StrBuilder itemType = STRBUILDER_INIT;
+            struct StrBuilder arrayName = STRBUILDER_INIT;
 
             //Implemetancao para vector
             if (FindVectorStructPattern(program,
@@ -2681,8 +2681,8 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
         {
             bool bItemIsPointer;
             bool bItemIsAutoPointer;
-            StrBuilder itemType = STRBUILDER_INIT;
-            StrBuilder arrayName = STRBUILDER_INIT;
+            struct StrBuilder itemType = STRBUILDER_INIT;
+            struct StrBuilder arrayName = STRBUILDER_INIT;
 
             //Implemetancao para vector
             if (FindVectorStructPattern(program,
@@ -2842,7 +2842,7 @@ static void TDeclaration_CodePrint(struct SyntaxTree* program,
                                    struct PrintCodeOptions* options,
                                    struct TDeclaration* p,
 
-                                   StrBuilder* fp)
+                                   struct StrBuilder* fp)
 {
     TDeclarationSpecifiers_CodePrint(program, options, &p->Specifiers, fp);
 
@@ -2984,7 +2984,7 @@ static void TDeclaration_CodePrint(struct SyntaxTree* program,
     return;
 }
 
-void TTypeName_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeName* p, StrBuilder* fp)
+void TTypeName_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeName* p, struct StrBuilder* fp)
 {
 
     TSpecifierQualifierList_CodePrint(program, options, &p->SpecifierQualifierList, fp);
@@ -2998,7 +2998,7 @@ static void TParameter_CodePrint(struct SyntaxTree* program,
                                  struct PrintCodeOptions* options,
                                  struct TParameter* p,
 
-                                 StrBuilder* fp)
+                                 struct StrBuilder* fp)
 {
     TDeclarationSpecifiers_CodePrint(program, options, &p->Specifiers, fp);
     TDeclarator_CodePrint(program, options, &p->Declarator, true/*bPrintName*/, fp);
@@ -3016,7 +3016,7 @@ static void TEofDeclaration_CodePrint(struct SyntaxTree* program,
                                       struct PrintCodeOptions* options,
                                       struct TEofDeclaration* p,
 
-                                      StrBuilder* fp)
+                                      struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 }
@@ -3025,7 +3025,7 @@ static void TStaticAssertDeclaration_CodePrint(struct SyntaxTree* program,
                                                struct PrintCodeOptions* options,
                                                struct TStaticAssertDeclaration* p,
 
-                                               StrBuilder* fp)
+                                               struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "_StaticAssert");
@@ -3046,7 +3046,7 @@ static void TStaticAssertDeclaration_CodePrint(struct SyntaxTree* program,
 
 }
 
-static void TGroupDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TGroupDeclaration* p, StrBuilder* fp)
+static void TGroupDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TGroupDeclaration* p, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "#pragma region cprime");
@@ -3066,7 +3066,7 @@ static void TGroupDeclaration_CodePrint(struct SyntaxTree* program, struct Print
         struct Map2 map = MAPSTRINGTOPTR_INIT;
         FindUnionSetOf(program, p->Identifier, &map);
 
-        StrBuilder idname = STRBUILDER_INIT;
+        struct StrBuilder idname = STRBUILDER_INIT;
 
         int ir = FindRuntimeID(program,
                                p->Identifier,
@@ -3079,7 +3079,7 @@ static void TGroupDeclaration_CodePrint(struct SyntaxTree* program, struct Print
                 const char* derivedName = (const char*)map.pHashTable[i]->Key;
                 const char* baseName = p->Identifier;
 
-                StrBuilder idnamelocal = STRBUILDER_INIT;
+                struct StrBuilder idnamelocal = STRBUILDER_INIT;
 
                 int ir2 = FindIDValue(program,
                                       derivedName,
@@ -3157,7 +3157,7 @@ static void TGroupDeclaration_CodePrint(struct SyntaxTree* program, struct Print
     Output_Append(fp, options, "#pragma endregion cprime\n");
 }
 
-static void TAnyDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyDeclaration* pDeclaration, StrBuilder* fp)
+static void TAnyDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyDeclaration* pDeclaration, struct StrBuilder* fp)
 {
     switch (pDeclaration->Type)
     {
@@ -3185,7 +3185,7 @@ static void TAnyDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCo
 
 }
 
-static void TDesignatorList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDesignatorList* p, StrBuilder* fp)
+static void TDesignatorList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDesignatorList* p, struct StrBuilder* fp)
 {
 
 
@@ -3210,7 +3210,7 @@ static void TInitializerListItem_CodePrint(struct SyntaxTree* program,
                                            struct TDeclarationSpecifiers* pDeclarationSpecifiers,
                                            struct TInitializerListItem* p,
 
-                                           StrBuilder* fp)
+                                           struct StrBuilder* fp)
 {
     if (p->DesignatorList.pHead != NULL)
     {
@@ -3257,7 +3257,7 @@ void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pProgram,
     //  printf("\"%s\"\n", pFile->FullPath);
     //}
 
-    StrBuilder sb = STRBUILDER_INIT;
+    struct StrBuilder sb = STRBUILDER_INIT;
     StrBuilder_Reserve(&sb, 80 * 5000);
 
     for (int i = 0; i < pProgram->Declarations.Size; i++)
@@ -3266,7 +3266,7 @@ void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pProgram,
 
         StrBuilder_Clear(&options.sbPreDeclaration);
 
-        StrBuilder sbDeclaration = STRBUILDER_INIT;
+        struct StrBuilder sbDeclaration = STRBUILDER_INIT;
         TAnyDeclaration_CodePrint(pProgram, &options, pItem, &sbDeclaration);
 
         StrBuilder_Append(&sb, options.sbPreDeclaration.c_str);
@@ -3287,7 +3287,7 @@ void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pProgram,
 
 void SyntaxTree_PrintCodeToString(struct SyntaxTree* pProgram,
                                   struct Options* options0,
-                                  StrBuilder* output)
+                                  struct StrBuilder* output)
 {
     struct PrintCodeOptions options = CODE_PRINT_OPTIONS_INIT;
     options.Options = *options0;
@@ -3295,7 +3295,7 @@ void SyntaxTree_PrintCodeToString(struct SyntaxTree* pProgram,
     int k = 0;
 
 
-    StrBuilder sb = STRBUILDER_INIT;
+    struct StrBuilder sb = STRBUILDER_INIT;
     StrBuilder_Reserve(&sb, 80 * 5000);
 
     for (int i = 0; i < pProgram->Declarations.Size; i++)
@@ -3304,7 +3304,7 @@ void SyntaxTree_PrintCodeToString(struct SyntaxTree* pProgram,
 
         StrBuilder_Clear(&options.sbPreDeclaration);
 
-        StrBuilder sbDeclaration = STRBUILDER_INIT;
+        struct StrBuilder sbDeclaration = STRBUILDER_INIT;
         TAnyDeclaration_CodePrint(pProgram, &options, pItem, &sbDeclaration);
 
         StrBuilder_Append(&sb, options.sbPreDeclaration.c_str);
@@ -3372,7 +3372,7 @@ static const char* GetNullStr(struct SyntaxTree* program)
 static void PrintIfNotNullLn(struct SyntaxTree* program,
                              struct PrintCodeOptions* options,
                              const char* pInitExpressionText, //(x->p->i = 0)    
-                             StrBuilder* fp)
+                             struct StrBuilder* fp)
 {
     bool bHasNULL =
         MacroMap_Find(&program->Defines, "NULL") != NULL;
@@ -3490,7 +3490,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
                                   const enum Action action,
                                   enum Search search,
                                   const char* nameToFind,
-                                  StrBuilder* fp)
+                                  struct StrBuilder* fp)
 {
     if (nameToFind == NULL)
     {
@@ -4086,15 +4086,15 @@ void UnionTypeDefault(struct SyntaxTree* program,
                       struct TParameterTypeList* pArgsOpt, //parametros
                       const char* parameterName0,
                       const char* functionSuffix,
-                      StrBuilder* fp)
+                      struct StrBuilder* fp)
 {
     struct Map2 map = MAPSTRINGTOPTR_INIT;
     FindUnionSetOf(program, structName, &map);
 
-    StrBuilder strid = STRBUILDER_INIT;
+    struct StrBuilder strid = STRBUILDER_INIT;
     FindRuntimeID(program, structName, &strid);
 
-    StrBuilder args = STRBUILDER_INIT;
+    struct StrBuilder args = STRBUILDER_INIT;
 
     if (pArgsOpt != NULL)
     {
@@ -4124,7 +4124,7 @@ void UnionTypeDefault(struct SyntaxTree* program,
     {
         if (map.pHashTable[i])
         {
-            StrBuilder idvalue = STRBUILDER_INIT;
+            struct StrBuilder idvalue = STRBUILDER_INIT;
 
             FindIDValue(program,
                 (const char*)map.pHashTable[i]->Key,
@@ -4188,7 +4188,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                          const enum Action action,
                          enum Search search,
                          bool* pbHasInitializers,
-                         StrBuilder* fp)
+                         struct StrBuilder* fp)
 {
     if (pInitializerOpt && pbHasInitializers)
     {
@@ -4531,8 +4531,8 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                                 TStructDeclarator* pStructDeclarator =
                                     pStructDeclaration->DeclaratorList.pHead;
 
-                                StrBuilder strVariableName = STRBUILDER_INIT;
-                                StrBuilder strPonterSizeExpr = STRBUILDER_INIT;
+                                struct StrBuilder strVariableName = STRBUILDER_INIT;
+                                struct StrBuilder strPonterSizeExpr = STRBUILDER_INIT;
 
 
                                 while (pStructDeclarator)
@@ -5032,8 +5032,8 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                             TStructDeclarator* pStructDeclarator =
                                 pStructDeclaration->DeclaratorList.pHead;
 
-                            StrBuilder strVariableName = STRBUILDER_INIT;
-                            StrBuilder strPonterSizeExpr = STRBUILDER_INIT;
+                            struct StrBuilder strVariableName = STRBUILDER_INIT;
+                            struct StrBuilder strPonterSizeExpr = STRBUILDER_INIT;
 
 
                             while (pStructDeclarator)

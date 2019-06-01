@@ -733,7 +733,7 @@ const char* TParameterTypeList_GetFirstParameterName(struct TParameterTypeList* 
 const char* TParameterTypeList_GetSecondParameterName(struct TParameterTypeList* p);
 struct TParameter* TParameterTypeList_FindParameterByName(struct TParameterTypeList* p, const char* name);
 struct TParameter* TParameterTypeList_GetParameterByIndex(struct TParameterTypeList* p, int index);
-void TParameterTypeList_GetArgsString(struct TParameterTypeList* p, StrBuilder* sb);
+void TParameterTypeList_GetArgsString(struct TParameterTypeList* p, struct StrBuilder* sb);
 bool TParameterTypeList_HasNamedArgs(struct TParameterTypeList* p);
 
 struct TDesignator

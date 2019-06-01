@@ -33,7 +33,7 @@ void     TokenArray_Swap(struct TokenArray* p1, struct TokenArray* p2);
 void TokenArray_AppendCopy(struct TokenArray* pArrayTo, const struct TokenArray* pArrayFrom);
 void TokenArray_AppendMove(struct TokenArray* pArrayTo, struct TokenArray* pArrayFrom);
 void TokenArray_Print(const struct TokenArray* tokens);
-void TokenArray_ToStrBuilder(const struct TokenArray* tokens, StrBuilder* strBuidler);
+void TokenArray_ToStrBuilder(const struct TokenArray* tokens, struct StrBuilder* strBuidler);
 
 struct PPToken* TokenArray_Find(const struct TokenArray* pArray, const char* lexeme);
 void TokenArray_Erase(struct TokenArray* pArray, int begin, int end);

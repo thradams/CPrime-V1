@@ -181,7 +181,7 @@ bool Parser_HasError(struct Parser* pParser)
 
 void SetWarning(struct Parser* parser, const char* fmt, ...)
 {
-    StrBuilder warningMessage = STRBUILDER_INIT;
+    struct StrBuilder warningMessage = STRBUILDER_INIT;
     Scanner_GetFilePositionString(&parser->Scanner, &warningMessage);
     va_list args;
     va_start(args, fmt);
