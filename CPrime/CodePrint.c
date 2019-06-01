@@ -1094,7 +1094,7 @@ static void TEnumSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCod
     }
 
     TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-    Output_Append(fp, options, p->Name);
+    Output_Append(fp, options, p->Tag);
 
     TNodeClueList_CodePrint(options, &p->ClueList2, fp);
 
@@ -5285,7 +5285,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
             TDeclarationSpecifier_As_TEnumSpecifier(pMainSpecifier);
 
         pEnumSpecifier =
-            SymbolMap_FindCompleteEnumSpecifier(&program->GlobalScope, pEnumSpecifier->Name);
+            SymbolMap_FindCompleteEnumSpecifier(&program->GlobalScope, pEnumSpecifier->Tag);
 
         if (pEnumSpecifier == NULL)
         {

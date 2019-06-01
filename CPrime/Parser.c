@@ -3485,17 +3485,17 @@ void Enum_Specifier(struct Parser* ctx, struct TEnumSpecifier* pEnumSpecifier2)
     if (token == TK_IDENTIFIER)
     {
         const char* lexeme = Lexeme(ctx);
-        PTR_STRING_REPLACE(pEnumSpecifier2->Name, lexeme);
+        PTR_STRING_REPLACE(pEnumSpecifier2->Tag, lexeme);
         Parser_Match(ctx, &pEnumSpecifier2->ClueList1);
 
 
-        SymbolMap_SetAt(ctx->pCurrentScope, pEnumSpecifier2->Name, (struct TTypePointer*)pEnumSpecifier2);
+        SymbolMap_SetAt(ctx->pCurrentScope, pEnumSpecifier2->Tag, (struct TTypePointer*)pEnumSpecifier2);
     }
 
     else
     {
         const char* name = GetName();
-        PTR_STRING_REPLACE(pEnumSpecifier2->Name, name);
+        PTR_STRING_REPLACE(pEnumSpecifier2->Tag, name);
         Parser_Match(ctx, &pEnumSpecifier2->ClueList2);
     }
 

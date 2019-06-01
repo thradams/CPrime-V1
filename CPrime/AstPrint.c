@@ -620,7 +620,7 @@ bool TEnumSpecifier_Print(struct TEnumSpecifier* p, bool b, FILE* fp)
 
     b = true;
     fprintf(fp, "\"enum-specifier\": {");
-    fprintf(fp, "\"name\":\"%s\",", p->Name);
+    fprintf(fp, "\"name\":\"%s\",", p->Tag);
     fprintf(fp, "\"enumerator-list\":[");
 
     //for (int i = 0; i < p->EnumeratorList.size; i++)

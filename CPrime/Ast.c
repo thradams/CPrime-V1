@@ -907,7 +907,7 @@ struct TEnumSpecifier* TEnumSpecifier_Create(void) /*@default*/
     if (p != NULL)
     {
         p->Type = TEnumSpecifier_ID;
-        p->Name = NULL;
+        p->Tag = NULL;
         TEnumeratorList_Init(&p->EnumeratorList);
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
@@ -921,7 +921,7 @@ void TEnumSpecifier_Delete(struct TEnumSpecifier* p) /*@default*/
 {
     if (p != NULL)
     {
-        Free((void*)p->Name);
+        Free((void*)p->Tag);
         TEnumeratorList_Destroy(&p->EnumeratorList);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
@@ -935,7 +935,7 @@ bool TEnumSpecifier_CompareTagName(struct TEnumSpecifier* p1, struct TEnumSpecif
 {
     bool result = false;
 
-    if (p1->Name && p2->Name && strcmp(p1->Name, p2->Name) == 0)
+    if (p1->Tag && p2->Tag && strcmp(p1->Tag, p2->Tag) == 0)
     {
         result = true;
     }
@@ -2446,8 +2446,8 @@ bool TDeclarationSpecifiers_CanAddSpeficier(struct TDeclarationSpecifiers* pDecl
         else if (pEnumSpecifier)
         {
             //ja tem uma struct
-            if (pEnumSpecifier->Name &&
-                strcmp(pEnumSpecifier->Name, lexeme) == 0)
+            if (pEnumSpecifier->Tag &&
+                strcmp(pEnumSpecifier->Tag, lexeme) == 0)
             {
                 //typedef enum X X;
             }

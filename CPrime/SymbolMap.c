@@ -302,7 +302,7 @@ const char* PrintType(enum Type type)
 
     switch (type)
     {
-        case TypeNull:
+        case TNull_ID:
         case TDeclaration_ID:
             return "TDeclaration_ID";
         case TStaticAssertDeclaration_ID:
@@ -979,9 +979,9 @@ struct TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(struct SymbolMap* pM
                         (struct TEnumSpecifier*)pItem;
                     if (pEnumSpecifier->EnumeratorList.pHead == NULL)
                     {
-                        if (pEnumSpecifier->Name != NULL)
+                        if (pEnumSpecifier->Tag != NULL)
                         {
-                            pEnumSpecifier = SymbolMap_FindEnum(pMap, pEnumSpecifier->Name);
+                            pEnumSpecifier = SymbolMap_FindEnum(pMap, pEnumSpecifier->Tag);
                         }
                         else
                         {

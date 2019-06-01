@@ -35,7 +35,7 @@ AST data structures
 
 enum Type
 {
-    TypeNull,
+    TNull_ID,
     TDeclaration_ID,
     TGroupDeclaration_ID,
     TStaticAssertDeclaration_ID,
@@ -545,7 +545,7 @@ struct TEnumSpecifier
     */
 
     enum Type Type  /*@=TEnumSpecifier_ID*/;
-    char* /*@auto*/ Name;
+    char* /*@auto*/ Tag;
     struct TEnumeratorList EnumeratorList;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
