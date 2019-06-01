@@ -958,9 +958,9 @@ struct TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(struct SymbolMap* pM
                         (struct TStructUnionSpecifier*)pItem;
                     if (pStructUnionSpecifier->StructDeclarationList.Size == 0)
                     {
-                        if (pStructUnionSpecifier->TagName != NULL)
+                        if (pStructUnionSpecifier->Tag != NULL)
                         {
-                            pSpecifierTarget = (struct TTypeSpecifier*)SymbolMap_FindStructUnion(pMap, pStructUnionSpecifier->TagName);
+                            pSpecifierTarget = (struct TTypeSpecifier*)SymbolMap_FindStructUnion(pMap, pStructUnionSpecifier->Tag);
                         }
                         else
                         {

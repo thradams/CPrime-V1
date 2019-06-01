@@ -85,9 +85,6 @@ struct TTypePointer
 };
 
 
-#define CASE(T) case T##_ID
-
-
 struct TPosition
 {
     int FileIndex;
@@ -95,8 +92,6 @@ struct TPosition
 };
 
 #define TPOSITION_INIT {0,0}
-
-
 
 
 struct TStaticAssertDeclaration
@@ -107,7 +102,7 @@ struct TStaticAssertDeclaration
     */
     enum Type Type /*@=TStaticAssertDeclaration_ID*/;
 
-    struct TExpression* /*@auto*/  pConstantExpression;
+    struct TExpression* /*@auto*/ pConstantExpression;
     char* /*@auto*/ Text;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
@@ -211,7 +206,6 @@ struct TTypeQualifierList
 
     struct TTypeQualifier* /*@auto*/ Data[4];
     int Size;
-
 };
 
 void TTypeQualifierList_Init(struct TTypeQualifierList* p);
@@ -226,7 +220,7 @@ void TTypeQualifier_Delete(struct TTypeQualifier* p);
 struct TExpressionStatement
 {
     enum Type Type /*@=TExpressionStatement_ID*/;
-    struct TExpression* /*@auto*/    pExpression;
+    struct TExpression* /*@auto*/ pExpression;
     struct TScannerItemList ClueList0;
 };
 
@@ -238,7 +232,7 @@ struct TJumpStatement
     enum Type Type /*@=TJumpStatement_ID*/;
     enum Tokens token;
     char* /*@auto*/ Identifier;
-    struct TExpression* /*@auto*/   pExpression;
+    struct TExpression* /*@auto*/ pExpression;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
     struct TScannerItemList ClueList2;
@@ -259,12 +253,18 @@ void TAsmStatement_Delete(struct TAsmStatement* p);
 
 struct TForStatement
 {
+    /*
+    iteration-statement:
+     for ( expressionopt ; expressionopt ; expressionopt ) statement
+     for ( declaration expressionopt ; expressionopt ) statement
+    */
+
     enum Type Type  /*@=TForStatement_ID*/;
-    struct TAnyDeclaration* /*@auto*/   pInitDeclarationOpt;
-    struct TExpression* /*@auto*/   pExpression1;
-    struct TExpression* /*@auto*/  pExpression2;
-    struct TExpression* /*@auto*/   pExpression3;
-    struct TStatement* /*@auto*/   pStatement;
+    struct TAnyDeclaration* /*@auto*/ pInitDeclarationOpt;
+    struct TExpression* /*@auto*/ pExpression1;
+    struct TExpression* /*@auto*/ pExpression2;
+    struct TExpression* /*@auto*/ pExpression3;
+    struct TStatement* /*@auto*/ pStatement;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
     struct TScannerItemList ClueList2;
@@ -278,8 +278,8 @@ void TForStatement_Delete(struct TForStatement* p);
 struct TWhileStatement
 {
     enum Type Type  /*@=TWhileStatement_ID*/;
-    struct TExpression* /*@auto*/   pExpression;
-    struct TStatement* /*@auto*/   pStatement;
+    struct TExpression* /*@auto*/ pExpression;
+    struct TStatement* /*@auto*/ pStatement;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
     struct TScannerItemList ClueList2;
@@ -291,8 +291,8 @@ void TWhileStatement_Delete(struct TWhileStatement* p);
 struct TDoStatement
 {
     enum Type Type  /*@=TDoStatement_ID*/;
-    struct TExpression* /*@auto*/    pExpression;
-    struct TStatement* /*@auto*/    pStatement;
+    struct TExpression* /*@auto*/ pExpression;
+    struct TStatement* /*@auto*/ pStatement;
     struct TScannerItemList ClueList0; //do
     struct TScannerItemList ClueList1; //while
     struct TScannerItemList ClueList2; //(
@@ -308,8 +308,8 @@ struct TLabeledStatement
 {
     enum Type Type  /*@=TLabeledStatement_ID*/;
 
-    struct TStatement* /*@auto*/   pStatementOpt;
-    struct TExpression* /*@auto*/   pExpression;
+    struct TStatement* /*@auto*/ pStatementOpt;
+    struct TExpression* /*@auto*/ pExpression;
     char* /*@auto*/ Identifier;
     enum Tokens token;
     struct TScannerItemList ClueList0;
@@ -323,8 +323,8 @@ void TLabeledStatement_Delete(struct TLabeledStatement* p);
 struct TSwitchStatement
 {
     enum Type Type  /*@=TSwitchStatement_ID*/;
-    struct TExpression* /*@auto*/   pConditionExpression;
-    struct TStatement* /*@auto*/    pExpression;
+    struct TExpression* /*@auto*/ pConditionExpression;
+    struct TStatement* /*@auto*/ pExpression;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
     struct TScannerItemList ClueList2;
@@ -337,9 +337,9 @@ void TSwitchStatement_Delete(struct TSwitchStatement* p);
 struct TIfStatement
 {
     enum Type Type  /*@=TIfStatement_ID*/;
-    struct TExpression* /*@auto*/    pConditionExpression;
-    struct TStatement* /*@auto*/   pStatement;
-    struct TStatement* /*@auto*/   pElseStatement;
+    struct TExpression* /*@auto*/ pConditionExpression;
+    struct TStatement* /*@auto*/ pStatement;
+    struct TStatement* /*@auto*/ pElseStatement;
     struct TScannerItemList ClueList0; //if 
     struct TScannerItemList ClueList1; //(
     struct TScannerItemList ClueList2; //)
@@ -512,7 +512,7 @@ struct TEnumerator
     */
     struct TEnumerator* pNext;
     char* /*@auto*/ Name;
-    struct TExpression* /*@auto*/   pExpression;
+    struct TExpression* /*@auto*/ pExpression;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1; // =
     struct TScannerItemList ClueList2; // ,
@@ -743,7 +743,7 @@ struct TDesignator
     . identifier
     */
     char* /*@auto*/ Name;
-    struct TExpression* /*@auto*/  pExpression;
+    struct TExpression* /*@auto*/ pExpression;
     struct TDesignator* pNext;
     struct TScannerItemList ClueList0; //. ou [
     struct TScannerItemList ClueList1; //]
@@ -792,7 +792,7 @@ struct TInitializerListItem
     initializer-list , designationopt initializer
     */
     struct TDesignatorList  DesignatorList;
-    struct TInitializer* /*@auto*/  pInitializer;
+    struct TInitializer* /*@auto*/ pInitializer;
     struct TInitializerListItem* pNext;
     struct TScannerItemList ClueList;
     bool bDefault;
@@ -876,7 +876,7 @@ struct TDeclarator
     */
 
     struct TPointerList PointerList;
-    struct TDirectDeclarator* /*@auto*/  pDirectDeclarator;
+    struct TDirectDeclarator* /*@auto*/ pDirectDeclarator;
     struct TScannerItemList ClueList;
 };
 
@@ -913,10 +913,10 @@ struct TDirectDeclarator
 
     char* /*@auto*/ Identifier;
     struct TDeclarator* /*@auto*/ pDeclarator;
-    struct TDirectDeclarator* /*@auto*/  pDirectDeclarator;
+    struct TDirectDeclarator* /*@auto*/ pDirectDeclarator;
     struct TPosition Position;
     struct TParameterTypeList  Parameters;
-    struct TExpression* /*@auto*/  pExpression;
+    struct TExpression* /*@auto*/ pExpression;
     enum TDirectDeclaratorType DeclaratorType; //para diferenciar pois null nao basta []
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
@@ -935,8 +935,8 @@ struct TInitDeclarator
     declarator
     declarator = initializer
     */
-    struct TDeclarator* /*@auto*/  pDeclarator;
-    struct TInitializer* /*@auto*/   pInitializer;
+    struct TDeclarator* /*@auto*/ pDeclarator;
+    struct TInitializer* /*@auto*/ pInitializer;
     struct TInitDeclarator* pNext;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1; //defval
@@ -1046,7 +1046,6 @@ struct TUnionSet
 
     struct TScannerItemList ClueList0; // <
     struct TScannerItemList ClueList1; // > 
-    //struct TScannerItemList ClueList2; //>
 };
 
 void TUnionSet_Init(struct TUnionSet* p);
@@ -1069,7 +1068,7 @@ struct TStructUnionSpecifier
 
     enum Type Type  /*@=TStructUnionSpecifier_ID*/;
     struct TStructDeclarationList StructDeclarationList;
-    char* /*@auto*/ TagName;
+    char* /*@auto*/ Tag;
 
     enum Tokens Token;
 
@@ -1085,9 +1084,6 @@ struct TStructUnionSpecifier
 
 struct TStructUnionSpecifier* TStructUnionSpecifier_Create();
 void TStructUnionSpecifier_Delete(struct TStructUnionSpecifier* p);
-void TStructUnionSpecifier_SetFunctionImplicitTag(struct TStructUnionSpecifier* p,
-                                                  const char* funcName,
-                                                  struct TDeclaration* pFuncDeclaration);
 
 
 struct /*@<TSingleTypeSpecifier |
@@ -1133,7 +1129,7 @@ struct TDeclaration
     struct TInitDeclaratorList InitDeclaratorList;
 
     //se for funcao
-    struct TCompoundStatement* /*@auto*/  pCompoundStatementOpt;
+    struct TCompoundStatement* /*@auto*/ pCompoundStatementOpt;
 
     int FileIndex;
     int Line;
@@ -1313,7 +1309,7 @@ struct TPrimaryExpressionValue
     enum Type Type /*@=TPrimaryExpressionValue_ID*/;
     enum Tokens token;
     char* /*@auto*/ lexeme;
-    struct TExpression* /*@auto*/   pExpressionOpt; //( expression )
+    struct TExpression* /*@auto*/ pExpressionOpt; //( expression )
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
 };
@@ -1358,8 +1354,8 @@ struct TBinaryExpression
 {
     enum Type Type /*@=TBinaryExpression_ID*/;
     enum Tokens token;
-    struct TExpression* /*@auto*/   pExpressionLeft;
-    struct TExpression* /*@auto*/    pExpressionRight;
+    struct TExpression* /*@auto*/ pExpressionLeft;
+    struct TExpression* /*@auto*/ pExpressionRight;
     struct TPosition Position;
     struct TScannerItemList ClueList0;
 };
@@ -1371,9 +1367,9 @@ struct TTernaryExpression
 {
     enum Type Type /*@=TTernaryExpression_ID*/;
     enum Tokens token;
-    struct TExpression* /*@auto*/   pExpressionLeft;
-    struct TExpression* /*@auto*/    pExpressionMiddle;
-    struct TExpression* /*@auto*/    pExpressionRight;
+    struct TExpression* /*@auto*/ pExpressionLeft;
+    struct TExpression* /*@auto*/ pExpressionMiddle;
+    struct TExpression* /*@auto*/ pExpressionRight;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
 };
@@ -1387,13 +1383,13 @@ struct TPostfixExpressionCore
     enum Type Type  /*@=TPostfixExpressionCore_ID*/;
     enum Tokens token;
     char* /*@auto*/ lexeme;
-    struct TExpression* /*@auto*/   pExpressionLeft;
-    struct TExpression* /*@auto*/   pExpressionRight;
+    struct TExpression* /*@auto*/ pExpressionLeft;
+    struct TExpression* /*@auto*/ pExpressionRight;
 
-    struct TPostfixExpressionCore* /*@auto*/  pNext;
+    struct TPostfixExpressionCore* /*@auto*/ pNext;
     struct TInitializerList InitializerList;
     char* /*@auto*/ Identifier;
-    struct TTypeName* /*@auto*/  pTypeName; /*typename*/
+    struct TTypeName* /*@auto*/ pTypeName;
 
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
@@ -1410,7 +1406,7 @@ void TPostfixExpressionCore_Delete(struct TPostfixExpressionCore* p);
 struct TCastExpressionType
 {
     enum Type Type  /*@=TCastExpressionType_ID*/;
-    struct TExpression* /*@auto*/    pExpression;
+    struct TExpression* /*@auto*/ pExpression;
     struct TTypeName TypeName;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
@@ -1424,7 +1420,7 @@ struct TUnaryExpressionOperator
 {
     enum Type Type  /*@=TUnaryExpressionOperator_ID*/;
     enum Tokens token;
-    struct TExpression* /*@auto*/   pExpressionRight;
+    struct TExpression* /*@auto*/ pExpressionRight;
     struct TTypeName TypeName;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1; //sizeof (

@@ -470,7 +470,7 @@ bool TExpression_Print(struct TExpression* p, const char* name, bool b, FILE* fp
 
     switch (p->Type)
     {
-        CASE(TBinaryExpression) :
+        case TBinaryExpression_ID:
             b = TExpression_Print(((struct TBinaryExpression*)p)->pExpressionLeft, "l-expr", b, fp);
         b = TExpression_Print(((struct TBinaryExpression*)p)->pExpressionRight, "r-expr", b, fp);
         fprintf(fp, ",\"binary\":\"%s\"", TokenToString(((struct TBinaryExpression*)p)->token));
@@ -478,7 +478,7 @@ bool TExpression_Print(struct TExpression* p, const char* name, bool b, FILE* fp
         //fprintf(fp, "op\"%s\":[", ((struct TBinaryExpression*)p)->token);
         break;
 
-        CASE(TTernaryExpression) :
+        case TTernaryExpression_ID:
             b = TExpression_Print(((struct TTernaryExpression*)p)->pExpressionLeft, "l-expr", b, fp);
         b = TExpression_Print(((struct TTernaryExpression*)p)->pExpressionMiddle, "m-expr", b, fp);
         b = TExpression_Print(((struct TTernaryExpression*)p)->pExpressionRight, "r-expr", b, fp);
@@ -487,7 +487,7 @@ bool TExpression_Print(struct TExpression* p, const char* name, bool b, FILE* fp
         //fprintf(fp, "op\"%s\":[", ((struct TBinaryExpression*)p)->token);
         break;
 
-        CASE(TPrimaryExpressionValue) :
+        case TPrimaryExpressionValue_ID:
         {
             struct TPrimaryExpressionValue* pPrimaryExpressionValue =
                 (struct TPrimaryExpressionValue*)p;
@@ -507,7 +507,7 @@ bool TExpression_Print(struct TExpression* p, const char* name, bool b, FILE* fp
         }
         break;
 
-        CASE(TPostfixExpressionCore) :
+        case TPostfixExpressionCore_ID:
         {
             struct TPostfixExpressionCore* pPostfixExpressionCore =
                 (struct TPostfixExpressionCore*)p;
@@ -515,7 +515,7 @@ bool TExpression_Print(struct TExpression* p, const char* name, bool b, FILE* fp
         }
         break;
 
-        CASE(TUnaryExpressionOperator) :
+        case TUnaryExpressionOperator_ID:
         {
             struct TUnaryExpressionOperator* pTUnaryExpressionOperator =
                 (struct TUnaryExpressionOperator*)p;
@@ -557,7 +557,7 @@ bool TExpression_Print(struct TExpression* p, const char* name, bool b, FILE* fp
         }
         break;
 
-        CASE(TCastExpressionType) :
+        case TCastExpressionType_ID:
         {
             struct TCastExpressionType* pCastExpressionType =
                 (struct TCastExpressionType*)p;
@@ -651,7 +651,7 @@ bool TStructUnionSpecifier_Print(struct TStructUnionSpecifier* p, bool b, FILE* 
     else if (p->Token == TK_UNION)
         fprintf(fp, "\"type:\":\"union-specifier\",");
 
-    fprintf(fp, "\"name\":\"%s\",", p->TagName);
+    fprintf(fp, "\"name\":\"%s\",", p->Tag);
 
     fprintf(fp, "\"struct-declaration-list\":[");
 
@@ -1019,29 +1019,29 @@ bool SpecifierQualifier_Print(struct TSpecifierQualifier* pItem, bool b, FILE* f
 {
     switch (pItem->Type)
     {
-        CASE(TStorageSpecifier) :
+        case TStorageSpecifier_ID:
             b = StorageSpecifier_Print((struct TStorageSpecifier*)pItem, b, fp);
         break;
-        CASE(TTypeQualifier) :
+        case TTypeQualifier_ID:
             b = TTypeQualifier_Print((struct TTypeQualifier*)pItem, b, fp);
         break;
-        CASE(TFunctionSpecifier) :
+        case TFunctionSpecifier_ID:
             b = TFunctionSpecifier_Print((struct TFunctionSpecifier*)pItem, b, fp);
         break;
 
-        CASE(TSingleTypeSpecifier) :
+        case TSingleTypeSpecifier_ID:
             b = TSingleTypeSpecifier_Print((struct TSingleTypeSpecifier*)pItem, b, fp);
         break;
 
-        CASE(TStructUnionSpecifier) :
+        case TStructUnionSpecifier_ID:
             b = TStructUnionSpecifier_Print((struct TStructUnionSpecifier*)pItem, b, fp);
         break;
 
-        CASE(TEnumSpecifier) :
+        case TEnumSpecifier_ID:
             b = TEnumSpecifier_Print((struct TEnumSpecifier*)pItem, b, fp);
         break;
 
-        //CASE(TAlignmentSpecifier) :
+        //case TAlignmentSpecifier_ID:
         //  AlignmentSpecifier_Print((struct TAlignmentSpecifier*)pItem, b, fp);
         //break;
         default:
@@ -1199,33 +1199,33 @@ bool TDeclarationSpecifier_Print(struct TDeclarationSpecifier* pItem, bool b, FI
 {
     switch (pItem->Type)
     {
-        CASE(TStorageSpecifier) :
+        case TStorageSpecifier_ID:
             b = StorageSpecifier_Print((struct TStorageSpecifier*)pItem, b, fp);
         break;
-        CASE(TTypeQualifier) :
+        case TTypeQualifier_ID:
             b = TTypeQualifier_Print((struct TTypeQualifier*)pItem, b, fp);
         break;
 
-        CASE(TFunctionSpecifier) :
+        case TFunctionSpecifier_ID:
             b = TFunctionSpecifier_Print((struct TFunctionSpecifier*)pItem, b, fp);
         break;
 
-        CASE(TSingleTypeSpecifier) :
+        case TSingleTypeSpecifier_ID:
             b = TSingleTypeSpecifier_Print((struct TSingleTypeSpecifier*)pItem, b, fp);
         break;
 
-        CASE(TStructUnionSpecifier) :
+        case TStructUnionSpecifier_ID:
             b = TStructUnionSpecifier_Print((struct TStructUnionSpecifier*)pItem, b, fp);
         break;
 
-        CASE(TEnumSpecifier) :
+        case TEnumSpecifier_ID:
             b = TEnumSpecifier_Print((struct TEnumSpecifier*)pItem, b, fp);
         break;
 
         default:
             //assert(false);
             break;
-            //CASE(TAlignmentSpecifier) :
+            //case TAlignmentSpecifier_ID:
             //  AlignmentSpecifier_Print((struct TAlignmentSpecifier*)pItem, b, fp);
             //break;
 

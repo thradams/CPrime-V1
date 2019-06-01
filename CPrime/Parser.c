@@ -3374,13 +3374,13 @@ void Struct_Or_Union_Specifier(struct Parser* ctx,
     if (token == TK_IDENTIFIER)
     {
         //ANNOTATED AQUI TEM O COMENTARIO /*Box | Circle*/ antes nome da struct
-        PTR_STRING_REPLACE(pStructUnionSpecifier->TagName, lexeme);
+        PTR_STRING_REPLACE(pStructUnionSpecifier->Tag, lexeme);
         Parser_Match(ctx, &pStructUnionSpecifier->ClueList1);
     }
 
-    if (pStructUnionSpecifier->TagName != NULL)
+    if (pStructUnionSpecifier->Tag != NULL)
     {
-        SymbolMap_SetAt(ctx->pCurrentScope, pStructUnionSpecifier->TagName, (struct TTypePointer*)pStructUnionSpecifier);
+        SymbolMap_SetAt(ctx->pCurrentScope, pStructUnionSpecifier->Tag, (struct TTypePointer*)pStructUnionSpecifier);
     }
 
     token = Parser_CurrentToken(ctx);

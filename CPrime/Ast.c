@@ -979,7 +979,6 @@ void TUnionSet_Init(struct TUnionSet* p) /*@default*/
 
 void TUnionSet_Destroy(struct TUnionSet* p)
 {
-    //TUnionSetItem_Delete(p->pHead);
     struct TUnionSetItem* pCurrent = p->pHead;
     while (pCurrent)
     {
@@ -1016,7 +1015,7 @@ struct TStructUnionSpecifier* TStructUnionSpecifier_Create() /*@default*/
     {
         p->Type = TStructUnionSpecifier_ID;
         TStructDeclarationList_Init(&p->StructDeclarationList);
-        p->TagName = NULL;
+        p->Tag = NULL;
         p->Token = TK_NONE;
         TUnionSet_Init(&p->UnionSet);
         TScannerItemList_Init(&p->ClueList0);
@@ -1031,7 +1030,7 @@ void TStructUnionSpecifier_Delete(struct TStructUnionSpecifier* p) /*@default*/
     if (p != NULL)
     {
         TStructDeclarationList_Destroy(&p->StructDeclarationList);
-        Free((void*)p->TagName);
+        Free((void*)p->Tag);
         TUnionSet_Destroy(&p->UnionSet);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
@@ -1046,7 +1045,7 @@ bool TStructUnionSpecifier_CompareTagName(struct TStructUnionSpecifier* p1, stru
     bool result = false;
     if (p1->Token == p2->Token)
     {
-        if (p1->TagName && p2->TagName && strcmp(p1->TagName, p2->TagName) == 0)
+        if (p1->Tag && p2->Tag && strcmp(p1->Tag, p2->Tag) == 0)
         {
             result = true;
         }
@@ -1475,7 +1474,7 @@ bool TSpecifierQualifierList_Compare(struct TSpecifierQualifierList* p1, struct 
             switch (p1->pData[i]->Type)
             {
 
-                CASE(TSingleTypeSpecifier) :
+                case TSingleTypeSpecifier_ID:
                     if (!TSingleTypeSpecifier_Compare((struct TSingleTypeSpecifier*)p1->pData[i],
                         (struct TSingleTypeSpecifier*)p2->pData[i]))
                     {
@@ -1483,21 +1482,21 @@ bool TSpecifierQualifierList_Compare(struct TSpecifierQualifierList* p1, struct 
                     }
                 break;
 
-                CASE(TStorageSpecifier) :
+                case TStorageSpecifier_ID:
                     if (!TStorageSpecifier_Compare((struct TStorageSpecifier*)p1->pData[i],
                         (struct TStorageSpecifier*)p2->pData[i]))
                     {
                         return false;
                     }
                 break;
-                CASE(TTypeQualifier) :
+                case TTypeQualifier_ID:
                     if (!TTypeQualifier_Compare((struct TTypeQualifier*)p1->pData[i],
                         (struct TTypeQualifier*)p2->pData[i]))
                     {
                         return false;
                     }
                 break;
-                CASE(TFunctionSpecifier) :
+                case TFunctionSpecifier_ID:
                     if (!TFunctionSpecifier_Compare((struct TFunctionSpecifier*)p1->pData[i],
                         (struct TFunctionSpecifier*)p2->pData[i]))
                     {
@@ -1506,7 +1505,7 @@ bool TSpecifierQualifierList_Compare(struct TSpecifierQualifierList* p1, struct 
                 break;
 
 
-                CASE(TStructUnionSpecifier) :
+                case TStructUnionSpecifier_ID:
                     if (!TStructUnionSpecifier_CompareTagName((struct TStructUnionSpecifier*)p1->pData[i],
                         (struct TStructUnionSpecifier*)p2->pData[i]))
                     {
@@ -1514,7 +1513,7 @@ bool TSpecifierQualifierList_Compare(struct TSpecifierQualifierList* p1, struct 
                     }
                 break;
 
-                CASE(TEnumSpecifier) :
+                case TEnumSpecifier_ID:
                     if (!TEnumSpecifier_CompareTagName((struct TEnumSpecifier*)p1->pData[i],
                         (struct TEnumSpecifier*)p2->pData[i]))
                     {
@@ -2271,7 +2270,7 @@ bool TSpecifierQualifierList_CanAdd(struct TSpecifierQualifierList* p, enum Toke
         struct TSpecifierQualifier* pSpecifier = p->pData[i];
         switch (pSpecifier->Type)
         {
-            CASE(TSingleTypeSpecifier) :
+            case TSingleTypeSpecifier_ID:
             {     struct TSingleTypeSpecifier* pTSingleTypeSpecifier =
                 (struct TSingleTypeSpecifier*)pSpecifier;
             switch (pTSingleTypeSpecifier->Token2)
@@ -2292,24 +2291,24 @@ bool TSpecifierQualifierList_CanAdd(struct TSpecifierQualifierList* p, enum Toke
             }
             break;
 
-            CASE(TStructUnionSpecifier) :
+            case TStructUnionSpecifier_ID:
                 bStruct = true;
             break;
 
-            CASE(TEnumSpecifier) :
+            case TEnumSpecifier_ID:
                 bEnum = true;
             break;
 
-            CASE(TStorageSpecifier) :
+            case TStorageSpecifier_ID:
 
                 break;
-            CASE(TTypeQualifier) :
+            case TTypeQualifier_ID:
 
                 break;
-            CASE(TFunctionSpecifier) :
+            case TFunctionSpecifier_ID:
 
                 break;
-            CASE(TAlignmentSpecifier) :
+            case TAlignmentSpecifier_ID:
 
                 break;
             default:
@@ -2375,7 +2374,7 @@ bool TDeclarationSpecifiers_CanAddSpeficier(struct TDeclarationSpecifiers* pDecl
 
         switch (pSpecifier->Type)
         {
-            CASE(TSingleTypeSpecifier) :
+            case TSingleTypeSpecifier_ID:
             {     struct TSingleTypeSpecifier* pTSingleTypeSpecifier =
                 (struct TSingleTypeSpecifier*)pSpecifier;
             switch (pTSingleTypeSpecifier->Token2)
@@ -2398,26 +2397,26 @@ bool TDeclarationSpecifiers_CanAddSpeficier(struct TDeclarationSpecifiers* pDecl
             }
             break;
 
-            CASE(TStructUnionSpecifier) :
+            case TStructUnionSpecifier_ID:
                 bStruct = true;
             pTStructUnionSpecifier = (struct TStructUnionSpecifier*)pSpecifier;
             break;
 
-            CASE(TEnumSpecifier) :
+            case TEnumSpecifier_ID:
                 bEnum = true;
             pEnumSpecifier = (struct TEnumSpecifier*)pSpecifier;
             break;
 
-            CASE(TStorageSpecifier) :
+            case TStorageSpecifier_ID:
 
                 break;
-            CASE(TTypeQualifier) :
+            case TTypeQualifier_ID:
 
                 break;
-            CASE(TFunctionSpecifier) :
+            case TFunctionSpecifier_ID:
 
                 break;
-            CASE(TAlignmentSpecifier) :
+            case TAlignmentSpecifier_ID:
 
                 break;
 
@@ -2433,8 +2432,8 @@ bool TDeclarationSpecifiers_CanAddSpeficier(struct TDeclarationSpecifiers* pDecl
         if (pTStructUnionSpecifier)
         {
             //ja tem uma struct
-            if (pTStructUnionSpecifier->TagName &&
-                strcmp(pTStructUnionSpecifier->TagName, lexeme) == 0)
+            if (pTStructUnionSpecifier->Tag &&
+                strcmp(pTStructUnionSpecifier->Tag, lexeme) == 0)
             {
                 //typedef struct X X;
             }
@@ -2491,11 +2490,11 @@ struct TStructUnionSpecifier* TDeclarationSpecifiers_GetCompleteStructUnionSpeci
         pStructUnionSpecifier =
             TDeclarationSpecifier_As_TStructUnionSpecifier(pFirstArgSpecifier);
 
-        if (pStructUnionSpecifier && pStructUnionSpecifier->TagName && pStructUnionSpecifier->StructDeclarationList.Size == 0)
+        if (pStructUnionSpecifier && pStructUnionSpecifier->Tag && pStructUnionSpecifier->StructDeclarationList.Size == 0)
         {
             //procura declaracao completa
             pStructUnionSpecifier =
-                SymbolMap_FindStructUnion(pSymbolMap, pStructUnionSpecifier->TagName);
+                SymbolMap_FindStructUnion(pSymbolMap, pStructUnionSpecifier->Tag);
         }
         else
         {
@@ -2519,10 +2518,10 @@ struct TStructUnionSpecifier* TDeclarationSpecifiers_GetCompleteStructUnionSpeci
 
                         if (pStructUnionSpecifier &&
                             pStructUnionSpecifier->StructDeclarationList.Size == 0 &&
-                            pStructUnionSpecifier->TagName != NULL)
+                            pStructUnionSpecifier->Tag != NULL)
                         {
                             pStructUnionSpecifier =
-                                SymbolMap_FindStructUnion(pSymbolMap, pStructUnionSpecifier->TagName);
+                                SymbolMap_FindStructUnion(pSymbolMap, pStructUnionSpecifier->Tag);
                         }
                     }
                 }
@@ -2921,7 +2920,7 @@ bool TDeclarationSpecifiers_IsStatic(struct TDeclarationSpecifiers* pDeclaration
         struct TDeclarationSpecifier* pItem = pDeclarationSpecifiers->pData[i];
         switch (pItem->Type)
         {
-            CASE(TStorageSpecifier) :
+            case TStorageSpecifier_ID:
             {
                 struct TStorageSpecifier* pStorageSpecifier =
                     (struct TStorageSpecifier*)pItem;
@@ -2954,7 +2953,7 @@ bool TDeclarationSpecifiers_IsTypedef(struct TDeclarationSpecifiers* pDeclaratio
         struct TDeclarationSpecifier* pItem = pDeclarationSpecifiers->pData[i];
         switch (pItem->Type)
         {
-            CASE(TStorageSpecifier) :
+            case TStorageSpecifier_ID:
             {
                 struct TStorageSpecifier* pStorageSpecifier =
                     (struct TStorageSpecifier*)pItem;
@@ -3362,7 +3361,7 @@ bool EvaluateConstantExpression(struct TExpression* p, int* pResult)
 
     switch (p->Type)
     {
-        CASE(TBinaryExpression) :
+        case TBinaryExpression_ID:
         {
             struct TBinaryExpression* pBinaryExpression =
                 (struct TBinaryExpression*)p;
@@ -3461,7 +3460,7 @@ bool EvaluateConstantExpression(struct TExpression* p, int* pResult)
         }
         break;
 
-        CASE(TTernaryExpression) :
+        case TTernaryExpression_ID:
         {
             int e1, e2, e3;
             b = EvaluateConstantExpression(((struct TTernaryExpression*)p)->pExpressionLeft, &e1);
@@ -3473,7 +3472,7 @@ bool EvaluateConstantExpression(struct TExpression* p, int* pResult)
         }
         break;
 
-        CASE(TPrimaryExpressionValue) :
+        case TPrimaryExpressionValue_ID:
         {
             struct TPrimaryExpressionValue* pPrimaryExpressionValue =
                 (struct TPrimaryExpressionValue*)p;
@@ -3523,7 +3522,7 @@ bool EvaluateConstantExpression(struct TExpression* p, int* pResult)
         }
         break;
 
-        CASE(TPostfixExpressionCore) :
+        case TPostfixExpressionCore_ID:
         {
             struct TPostfixExpressionCore* pPostfixExpressionCore =
                 (struct TPostfixExpressionCore*)p;
@@ -3532,7 +3531,7 @@ bool EvaluateConstantExpression(struct TExpression* p, int* pResult)
         }
         break;
 
-        CASE(TUnaryExpressionOperator) :
+        case TUnaryExpressionOperator_ID:
         {
 
             struct TUnaryExpressionOperator* pTUnaryExpressionOperator =
@@ -3579,7 +3578,7 @@ bool EvaluateConstantExpression(struct TExpression* p, int* pResult)
         }
         break;
 
-        CASE(TCastExpressionType) :
+        case TCastExpressionType_ID:
         {
             struct TCastExpressionType* pCastExpressionType =
                 (struct TCastExpressionType*)p;

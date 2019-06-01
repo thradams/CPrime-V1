@@ -902,7 +902,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
 
     switch (p->Type)
     {
-        CASE(TBinaryExpression) :
+        case TBinaryExpression_ID:
         {
             struct TBinaryExpression* pBinaryExpression = (struct TBinaryExpression*)p;
 
@@ -915,7 +915,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
         }
         break;
 
-        CASE(TTernaryExpression) :
+        case TTernaryExpression_ID:
         {
             struct TTernaryExpression* pTernaryExpression =
                 (struct TTernaryExpression*)p;
@@ -935,7 +935,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
         }
         break;
 
-        CASE(TPrimaryExpressionLiteral) :
+        case TPrimaryExpressionLiteral_ID:
         {
             struct TPrimaryExpressionLiteral* pPrimaryExpressionLiteral
                 = (struct TPrimaryExpressionLiteral*)p;
@@ -948,7 +948,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
         }
         break;
 
-        CASE(TPrimaryExpressionValue) :
+        case TPrimaryExpressionValue_ID:
         {
             struct TPrimaryExpressionValue* pPrimaryExpressionValue =
                 (struct TPrimaryExpressionValue*)p;
@@ -972,7 +972,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
 
         break;
 
-        CASE(TPrimaryExpressionLambda) :
+        case TPrimaryExpressionLambda_ID:
         {
             struct TPrimaryExpressionLambda* pPostfixExpressionCore =
                 (struct TPrimaryExpressionLambda*)p;
@@ -980,7 +980,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
         }
         break;
 
-        CASE(TPostfixExpressionCore) :
+        case TPostfixExpressionCore_ID:
         {
             struct TPostfixExpressionCore* pPostfixExpressionCore =
                 (struct TPostfixExpressionCore*)p;
@@ -988,7 +988,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
         }
         break;
 
-        CASE(TUnaryExpressionOperator) :
+        case TUnaryExpressionOperator_ID:
         {
             struct TUnaryExpressionOperator* pTUnaryExpressionOperator =
                 (struct TUnaryExpressionOperator*)p;
@@ -1023,7 +1023,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
         }
         break;
 
-        CASE(TCastExpressionType) :
+        case TCastExpressionType_ID:
         {
             struct TCastExpressionType* pCastExpressionType =
                 (struct TCastExpressionType*)p;
@@ -1231,7 +1231,7 @@ static void TStructUnionSpecifier_CodePrint(struct SyntaxTree* program, struct P
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
     }
 
-    Output_Append(fp, options, p->TagName);
+    Output_Append(fp, options, p->Tag);
 
 
     if (p->StructDeclarationList.Size > 0)
@@ -1865,28 +1865,28 @@ void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program,
         switch (pItem->Type)
         {
 
-            CASE(TSingleTypeSpecifier) :
+            case TSingleTypeSpecifier_ID:
                 TSingleTypeSpecifier_CodePrint(program, options, (struct TSingleTypeSpecifier*)pItem, fp);
             break;
 
-            CASE(TStorageSpecifier) :
+            case TStorageSpecifier_ID:
                 StorageSpecifier_CodePrint(program, options, (struct TStorageSpecifier*)pItem, fp);
             break;
-            CASE(TTypeQualifier) :
+            case TTypeQualifier_ID:
                 TTypeQualifier_CodePrint(program, options, (struct TTypeQualifier*)pItem, fp);
             break;
-            CASE(TFunctionSpecifier) :
+            case TFunctionSpecifier_ID:
                 TFunctionSpecifier_CodePrint(program, options, (struct TFunctionSpecifier*)pItem, fp);
             break;
-            //CASE(TAlignmentSpecifier) : 
+            //case TAlignmentSpecifier_ID: 
             ///TAlignmentSpecifier_CodePrint(program, options, (struct TAlignmentSpecifier*)pItem,  fp);
             //break;
 
-            CASE(TStructUnionSpecifier) :
+            case TStructUnionSpecifier_ID:
                 TStructUnionSpecifier_CodePrint(program, options, (struct TStructUnionSpecifier*)pItem, fp);
             break;
 
-            CASE(TEnumSpecifier) :
+            case TEnumSpecifier_ID:
                 TEnumSpecifier_CodePrint(program, options, (struct TEnumSpecifier*)pItem, fp);
             break;
 
@@ -1909,29 +1909,29 @@ void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* program, struct PrintCo
         switch (pItem->Type)
         {
 
-            CASE(TSingleTypeSpecifier) :
+            case TSingleTypeSpecifier_ID:
                 TSingleTypeSpecifier_CodePrint(program, options, (struct TSingleTypeSpecifier*)pItem, fp);
             break;
 
-            CASE(TStructUnionSpecifier) :
+            case TStructUnionSpecifier_ID:
                 TStructUnionSpecifier_CodePrint(program, options, (struct TStructUnionSpecifier*)pItem, fp);
             break;
 
-            CASE(TEnumSpecifier) :
+            case TEnumSpecifier_ID:
                 TEnumSpecifier_CodePrint(program, options, (struct TEnumSpecifier*)pItem, fp);
             break;
 
-            CASE(TStorageSpecifier) :
+            case TStorageSpecifier_ID:
                 StorageSpecifier_CodePrint(program, options, (struct TStorageSpecifier*)pItem, fp);
             break;
-            CASE(TTypeQualifier) :
+            case TTypeQualifier_ID:
                 TTypeQualifier_CodePrint(program, options, (struct TTypeQualifier*)pItem, fp);
             break;
-            CASE(TFunctionSpecifier) :
+            case TFunctionSpecifier_ID:
                 TFunctionSpecifier_CodePrint(program, options, (struct TFunctionSpecifier*)pItem, fp);
             break;
 
-            //CASE(TAlignmentSpecifier) : 
+            //case TAlignmentSpecifier_ID: 
             ///TAlignmentSpecifier_CodePrint(program, options, (struct TAlignmentSpecifier*)pItem,  fp);
             //break;
 
@@ -2318,11 +2318,11 @@ static int FindRuntimeID(struct SyntaxTree* program,
         {
             pStructUnionSpecifier =
                 TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
-            if (pStructUnionSpecifier->TagName)
+            if (pStructUnionSpecifier->Tag)
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
+                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Tag);
             }
         }
     }
@@ -2379,11 +2379,11 @@ static int FindIDValue(struct SyntaxTree* program,
         {
             pStructUnionSpecifier =
                 TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
-            if (pStructUnionSpecifier->TagName)
+            if (pStructUnionSpecifier->Tag)
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
+                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Tag);
             }
         }
     }
@@ -2443,11 +2443,11 @@ void FindUnionSetOf(struct SyntaxTree* program,
         {
             pStructUnionSpecifier =
                 TDeclarationSpecifier_As_TStructUnionSpecifier(pFinalDecl->Specifiers.pData[1]);
-            if (pStructUnionSpecifier->TagName)
+            if (pStructUnionSpecifier->Tag)
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
+                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Tag);
             }
         }
     }
@@ -2822,7 +2822,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
                     options->IdentationLevel++;
                     UnionTypeDefault(program,
                                      options,
-                                     pStructUnionSpecifier->TagName,
+                                     pStructUnionSpecifier->Tag,
                                      pArgs,
                                      TParameter_GetName(pFirstParameter),
                                      functionSuffix.c_str,
@@ -4464,8 +4464,8 @@ void InstanciateDestroy2(struct SyntaxTree* program,
 
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                "struct %s* p = (struct %s*) %s(sizeof * p);",
-                                               pStructUnionSpecifier->TagName,
-                                               pStructUnionSpecifier->TagName,
+                                               pStructUnionSpecifier->Tag,
+                                               pStructUnionSpecifier->Tag,
                                                GetMallocStr(program));
 
                         PrintIfNotNullLn(program, options, pInitExpressionText, fp);
@@ -4485,7 +4485,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                             options->IdentationLevel++;
                             UnionTypeDefault(program,
                                              options,
-                                             pStructUnionSpecifier->TagName,
+                                             pStructUnionSpecifier->Tag,
                                              NULL, /*args*/
                                              pInitExpressionText,
                                              "Delete",
@@ -4498,7 +4498,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                             options->IdentationLevel++;
                             UnionTypeDefault(program,
                                              options,
-                                             pStructUnionSpecifier->TagName,
+                                             pStructUnionSpecifier->Tag,
                                              NULL, /*args*/
                                              pInitExpressionText,
                                              "Destroy",
@@ -4889,7 +4889,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                                           pszAutoPointerLenExpressionOpt,
                                           action,
                                           search,
-                                          pStructUnionSpecifier->TagName,
+                                          pStructUnionSpecifier->Tag,
                                           fp);
 
         //Exemplos
@@ -4900,12 +4900,12 @@ void InstanciateDestroy2(struct SyntaxTree* program,
         if (!bComplete) //se for para entrar na struct
         {
             if (pStructUnionSpecifier &&
-                pStructUnionSpecifier->TagName != NULL)
+                pStructUnionSpecifier->Tag != NULL)
             {
                 //se nao eh completa tenta achar
                 //vou procurar a definicao completa da struct
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->TagName);
+                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Tag);
             }
 
             bool bIsUnionTypes = pStructUnionSpecifier &&
@@ -4958,8 +4958,8 @@ void InstanciateDestroy2(struct SyntaxTree* program,
 
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                            "struct %s* p = (struct %s*) %s(sizeof * p);",
-                                           pStructUnionSpecifier->TagName,
-                                           pStructUnionSpecifier->TagName,
+                                           pStructUnionSpecifier->Tag,
+                                           pStructUnionSpecifier->Tag,
                                            GetMallocStr(program));
 
                     PrintIfNotNullLn(program, options, pInitExpressionText, fp);
@@ -4986,7 +4986,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                         options->IdentationLevel++;
                         UnionTypeDefault(program,
                                          options,
-                                         pStructUnionSpecifier->TagName,
+                                         pStructUnionSpecifier->Tag,
                                          NULL, /*args*/
                                          pInitExpressionText,
                                          "Delete",
@@ -4999,7 +4999,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                         options->IdentationLevel++;
                         UnionTypeDefault(program,
                                          options,
-                                         pStructUnionSpecifier->TagName,
+                                         pStructUnionSpecifier->Tag,
                                          NULL, /*args*/
                                          pInitExpressionText,
                                          "Destroy",
@@ -5433,10 +5433,10 @@ struct TStructUnionSpecifier* GetStructSpecifier(struct SyntaxTree* program, str
 
     //Procura pela definicao completa da struct
     if (pTStructUnionSpecifier &&
-        pTStructUnionSpecifier->TagName != NULL)
+        pTStructUnionSpecifier->Tag != NULL)
     {
         pTStructUnionSpecifier =
-            SymbolMap_FindStructUnion(&program->GlobalScope, pTStructUnionSpecifier->TagName);
+            SymbolMap_FindStructUnion(&program->GlobalScope, pTStructUnionSpecifier->Tag);
     }
     else  if (pSingleTypeSpecifier != NULL &&
               pSingleTypeSpecifier->Token2 == TK_STRUCT)
