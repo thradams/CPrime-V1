@@ -7,9 +7,9 @@
 
 struct StrArray
 {
-    const char* /*@auto*/ * /*@auto [size]*/ pItems;
-    int size;
-    int capacity;
+    const char* /*@auto*/ * /*@auto*/ /*@[Size]*/ pData;
+    int Size;
+    int Capacity;
 
 };
 

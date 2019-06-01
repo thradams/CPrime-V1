@@ -779,9 +779,9 @@ bool Scanner_GetFullPath(struct Scanner * pScanner, const char* fileName,
         struct StrBuilder path = STRBUILDER_INIT;
 
 
-        for (int i = 0; i < pScanner->IncludeDir.size; i++)
+        for (int i = 0; i < pScanner->IncludeDir.Size; i++)
         {
-            const char* pItem = pScanner->IncludeDir.pItems[i];
+            const char* pItem = pScanner->IncludeDir.pData[i];
             StrBuilder_Set(&path, pItem);
 
             //barra para o outro lado funciona
@@ -2775,9 +2775,9 @@ void GetSources(const char* configFile,
                     struct TFile* pFile = (struct TFile*)pBucket->data[i];
 
                     bool bIncludeDir = false;
-                    for (int k = 0; k < scanner.IncludeDir.size; k++)
+                    for (int k = 0; k < scanner.IncludeDir.Size; k++)
                     {
-                        if (strstr(pFile->FullPath, scanner.IncludeDir.pItems[k]) != 0)
+                        if (strstr(pFile->FullPath, scanner.IncludeDir.pData[k]) != 0)
                         {
                             bIncludeDir = true;
                             break;

@@ -8,40 +8,46 @@
 
 void StrArray_Init(struct StrArray* p) /*@default*/
 {
-    p->pItems = NULL;
-    p->size = 0;
-    p->capacity = 0;
+    p->pData = NULL;
+    p->Size = 0;
+    p->Capacity = 0;
+}
+
+void StrArray_PushCore(struct StrArray* p, const char* text) /*@: push*/ /*@default*/
+{
+    if (p->Size + 1 > p->Capacity)
+    {
+        int n = p->Capacity * 2;
+        if (n == 0)
+        {
+            n = 1;
+        }
+        const char** pnew = p->pData;
+        pnew = (const char**)Realloc(pnew, n * sizeof(const char*));
+        if (pnew)
+        {
+            p->pData = pnew;
+            p->Capacity = n;
+        }
+    }
+    p->pData[p->Size] = text;
+    p->Size++;
 }
 
 void StrArray_Push(struct StrArray* p,  const char* text)
 {
     text = StrDup(text);
-    if (p->size + 1 > p->capacity)
-    {
-        int n = p->capacity * 2;
-        if (n == 0)
-        {
-            n = 1;
-        }
-        const char** pnew = p->pItems;
-        pnew = (const char**)realloc((char**)pnew, n * sizeof(const char*));
-        if (pnew)
-        {
-            p->pItems = pnew;
-            p->capacity = n;
-        }
-    }
-    p->pItems[p->size] = text;
-    p->size++;
+    if (text)
+      StrArray_PushCore(p, text);    
 }
 
 void StrArray_Destroy(struct StrArray* p) /*@default*/
 {
-    for (int i = 0; i < p->size; i++)
+    for (int i = 0; i < p->Size; i++)
     {
-        Free((void*)p->pItems[i]);
+        Free((void*)p->pData[i]);
     }
-    Free((void*)p->pItems);
+    Free((void*)p->pData);
 }
 
 void StrArray_Swap(struct StrArray* p1, struct StrArray* p2)
