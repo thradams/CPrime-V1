@@ -5284,6 +5284,15 @@ void InstanciateDestroy2(struct SyntaxTree* program,
         struct TEnumSpecifier* pEnumSpecifier =
             TDeclarationSpecifier_As_TEnumSpecifier(pMainSpecifier);
 
+        pEnumSpecifier =
+            SymbolMap_FindCompleteEnumSpecifier(&program->GlobalScope, pEnumSpecifier->Name);
+
+        if (pEnumSpecifier == NULL)
+        {
+
+            assert(false);
+            //erro nao achou definicao comlpeta.
+        }
 
         //nao eh typedef, deve ser int, double etc..
         if (action == ActionDestroy)
@@ -5313,6 +5322,8 @@ void InstanciateDestroy2(struct SyntaxTree* program,
             }
             else
             {
+                
+
                 //TODO achar a definicao completa do enum
                 const char* firstValue =
                     pEnumSpecifier->EnumeratorList.pHead ? pEnumSpecifier->EnumeratorList.pHead->Name :

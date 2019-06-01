@@ -7,6 +7,9 @@ enum E
 struct X
 {
     enum E e;
-}
+};
 
-void X(struct X * p) : init default;
+void X(struct X * p) /*@: init*/ /*@default*/
+{
+    p->e = A;
+}

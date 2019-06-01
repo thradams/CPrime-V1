@@ -67,6 +67,8 @@ struct TDeclaration* SymbolMap_FindTypedefDeclarationTarget(struct SymbolMap* pM
 
 struct TDeclaration* SymbolMap_FindFunction(struct SymbolMap* pMap, const char* funcName);
 
+struct TEnumSpecifier* SymbolMap_FindCompleteEnumSpecifier(struct SymbolMap* pMap, const char* enumName);
+
 struct TDeclaration* SymbolMap_FindObjFunction2(struct SymbolMap* pMap,
     const char* objName,
                                                 const char* funcName);

@@ -269,7 +269,7 @@ void Map2_Swap(struct Map2* pA, struct Map2* pB)
 
 struct Map2* Map2_Create(void) /*@default*/
 {
-    struct Map2* p = (struct Map2*) Malloc(sizeof * p);
+    struct Map2 *p = (struct Map2 *) Malloc(sizeof * p);
     if (p != NULL)
     {
         Map2_Init(p);

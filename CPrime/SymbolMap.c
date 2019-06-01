@@ -440,6 +440,38 @@ bool SymbolMap_IsTypeName(struct SymbolMap* pMap, const char* identifierName)
     return bIsTypeName;
 }
 
+struct TEnumSpecifier* SymbolMap_FindCompleteEnumSpecifier(struct SymbolMap* pMap, const char* enumName)
+{
+    struct TEnumSpecifier* pResult = NULL;
+    if (pMap->pHashTable != NULL)
+    {
+        unsigned int nHashBucket, HashValue;
+        struct SymbolMapItem* pKeyValue =
+            SymbolMap_GetAssocAt(pMap,
+                                 enumName,
+                                 &nHashBucket,
+                                 &HashValue);
+
+        while (pKeyValue != NULL)
+        {
+            if (pKeyValue->pValue->Type == TEnumSpecifier_ID &&
+                strcmp(pKeyValue->Key, enumName) == 0)
+            {
+                struct TEnumSpecifier* pEnumSpecifier =
+                    (struct TEnumSpecifier*)pKeyValue->pValue;
+
+                if (pEnumSpecifier->EnumeratorList.pHead != NULL)
+                {
+                    pResult = pEnumSpecifier; //complete definition found
+                    break;
+                }
+            }
+            pKeyValue = pKeyValue->pNext;
+        }
+    }
+
+    return pResult;
+}
 
 struct TDeclaration* SymbolMap_FindFunction(struct SymbolMap* pMap, const char* funcName)
 {
@@ -486,7 +518,7 @@ struct TDeclaration* SymbolMap_FindObjFunction2(struct SymbolMap* pMap,
         return NULL;
     }
 
-    char buffer[500] = {0};
+    char buffer[500] = { 0 };
     strcat(buffer, objName);
     strcat(buffer, "_");
     strcat(buffer, funcName);

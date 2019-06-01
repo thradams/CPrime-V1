@@ -72,7 +72,7 @@ void TokenArray_Init(struct TokenArray* p) /*@default*/
 
 struct TokenArray* TokenArray_Create() /*@default*/
 {
-    struct TokenArray* p = (struct TokenArray*) Malloc(sizeof * p);
+    struct TokenArray *p = (struct TokenArray *) Malloc(sizeof * p);
     if (p != NULL)
     {
         TokenArray_Init(p);

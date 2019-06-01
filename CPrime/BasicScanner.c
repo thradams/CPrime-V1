@@ -289,7 +289,7 @@ const char* TokenToString(enum Tokens tk)
 
 struct ScannerItem* ScannerItem_Create(void) /*@default*/
 {
-    struct ScannerItem* p = (struct ScannerItem*) Malloc(sizeof * p);
+    struct ScannerItem *p = (struct ScannerItem *) Malloc(sizeof * p);
     if (p != NULL)
     {
         ScannerItem_Init(p);
@@ -309,10 +309,10 @@ void ScannerItem_Delete(struct ScannerItem* pScannerItem) /*@default*/
 void ScannerItem_Init(struct ScannerItem* scannerItem) /*@default*/
 {
     LocalStrBuilder_Init(&scannerItem->lexeme);
-    scannerItem->token = 0;
-    scannerItem->Line = -1;
-    scannerItem->FileIndex = -1;
-    scannerItem->bActive = 1;
+    scannerItem->token = TK_NONE;
+    scannerItem->Line =  -1;
+    scannerItem->FileIndex =  -1;
+    scannerItem->bActive =  1;
     scannerItem->pNext = NULL;
 }
 
