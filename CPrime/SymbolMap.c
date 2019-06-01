@@ -526,7 +526,7 @@ struct TDeclaration* SymbolMap_FindObjFunction2(struct SymbolMap* pMap,
     return p;
 }
 
-struct TStructUnionSpecifier* SymbolMap_FindStructUnion(struct SymbolMap* pMap, const char* structTagName)
+struct TStructUnionSpecifier* SymbolMap_FindCompleteStructUnionSpecifier(struct SymbolMap* pMap, const char* structTagName)
 {
     struct TStructUnionSpecifier* pStructUnionSpecifier = NULL;
 
@@ -564,44 +564,6 @@ struct TStructUnionSpecifier* SymbolMap_FindStructUnion(struct SymbolMap* pMap, 
 
     return pStructUnionSpecifier;
 }
-
-
-struct TEnumSpecifier* SymbolMap_FindEnum(struct SymbolMap* pMap, const char* enumTagName)
-{
-    struct TEnumSpecifier* pEnumSpecifier = NULL;
-
-    if (pMap->pHashTable != NULL)
-    {
-        unsigned int nHashBucket, HashValue;
-        struct SymbolMapItem* pKeyValue =
-            SymbolMap_GetAssocAt(pMap,
-                                 enumTagName,
-                                 &nHashBucket,
-                                 &HashValue);
-
-        while (pKeyValue != NULL)
-        {
-            //Obs enum struct e union compartilham um mapa unico
-            if (pKeyValue->pValue->Type == TEnumSpecifier_ID)
-            {
-                if (strcmp(pKeyValue->Key, enumTagName) == 0)
-                {
-                    pEnumSpecifier =
-                        (struct TEnumSpecifier*)pKeyValue->pValue;
-                    if (pEnumSpecifier->EnumeratorList.pHead != NULL)
-                    {
-                        //Se achou definicao completa pode sair
-                        break;
-                    }
-                }
-            }
-            pKeyValue = pKeyValue->pNext;
-        }
-    }
-
-    return pEnumSpecifier;
-}
-
 
 struct TDeclaration* SymbolMap_FindTypedefDeclarationTarget(struct SymbolMap* pMap,
     const char* typedefName)
@@ -960,7 +922,7 @@ struct TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(struct SymbolMap* pM
                     {
                         if (pStructUnionSpecifier->Tag != NULL)
                         {
-                            pSpecifierTarget = (struct TTypeSpecifier*)SymbolMap_FindStructUnion(pMap, pStructUnionSpecifier->Tag);
+                            pSpecifierTarget = (struct TTypeSpecifier*)SymbolMap_FindCompleteStructUnionSpecifier(pMap, pStructUnionSpecifier->Tag);
                         }
                         else
                         {
@@ -981,7 +943,7 @@ struct TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(struct SymbolMap* pM
                     {
                         if (pEnumSpecifier->Tag != NULL)
                         {
-                            pEnumSpecifier = SymbolMap_FindEnum(pMap, pEnumSpecifier->Tag);
+                            pEnumSpecifier = SymbolMap_FindCompleteEnumSpecifier(pMap, pEnumSpecifier->Tag);
                         }
                         else
                         {

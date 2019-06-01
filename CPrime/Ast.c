@@ -1345,7 +1345,8 @@ struct TParameter* TParameterTypeList_GetParameterByIndex(struct TParameterTypeL
                 p->ParameterList.pHead->Specifiers.pData[0]->Type == TSingleTypeSpecifier_ID)
             {
                 struct TSingleTypeSpecifier* pSingleTypeSpecifier =
-                    p->ParameterList.pHead->Specifiers.pData[0];
+                   (struct TSingleTypeSpecifier*) p->ParameterList.pHead->Specifiers.pData[0];
+
                 if (pSingleTypeSpecifier)
                 {
                     if (pSingleTypeSpecifier->Token2 == TK_VOID)
@@ -2503,7 +2504,7 @@ struct TStructUnionSpecifier* TDeclarationSpecifiers_GetCompleteStructUnionSpeci
         {
             //procura declaracao completa
             pStructUnionSpecifier =
-                SymbolMap_FindStructUnion(pSymbolMap, pStructUnionSpecifier->Tag);
+                SymbolMap_FindCompleteStructUnionSpecifier(pSymbolMap, pStructUnionSpecifier->Tag);
         }
         else
         {
@@ -2530,7 +2531,7 @@ struct TStructUnionSpecifier* TDeclarationSpecifiers_GetCompleteStructUnionSpeci
                             pStructUnionSpecifier->Tag != NULL)
                         {
                             pStructUnionSpecifier =
-                                SymbolMap_FindStructUnion(pSymbolMap, pStructUnionSpecifier->Tag);
+                                SymbolMap_FindCompleteStructUnionSpecifier(pSymbolMap, pStructUnionSpecifier->Tag);
                         }
                     }
                 }

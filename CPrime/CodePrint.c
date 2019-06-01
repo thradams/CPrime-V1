@@ -2322,7 +2322,7 @@ static int FindRuntimeID(struct SyntaxTree* program,
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Tag);
+                    SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pStructUnionSpecifier->Tag);
             }
         }
     }
@@ -2330,7 +2330,7 @@ static int FindRuntimeID(struct SyntaxTree* program,
     {
         typeInt = 2; //struct
         pStructUnionSpecifier =
-            SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);
+            SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, structOrTypeName);
     }
     //////////////
 
@@ -2383,7 +2383,7 @@ static int FindIDValue(struct SyntaxTree* program,
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Tag);
+                    SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pStructUnionSpecifier->Tag);
             }
         }
     }
@@ -2391,7 +2391,7 @@ static int FindIDValue(struct SyntaxTree* program,
     {
         typeInt = 2; //struct
         pStructUnionSpecifier =
-            SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);
+            SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, structOrTypeName);
     }
     //////////////
 
@@ -2447,7 +2447,7 @@ void FindUnionSetOf(struct SyntaxTree* program,
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Tag);
+                    SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pStructUnionSpecifier->Tag);
             }
         }
     }
@@ -2455,7 +2455,7 @@ void FindUnionSetOf(struct SyntaxTree* program,
     {
         typeInt = 2; //struct
         pStructUnionSpecifier =
-            SymbolMap_FindStructUnion(&program->GlobalScope, structOrTypeName);
+            SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, structOrTypeName);
     }
 
     if (pStructUnionSpecifier &&
@@ -4409,7 +4409,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                     //se nao eh completa tenta achar
                     //vou procurar a definicao completa da struct
                     pStructUnionSpecifier =
-                        SymbolMap_FindStructUnion(&program->GlobalScope, pSingleTypeSpecifier->TypedefName);
+                        SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pSingleTypeSpecifier->TypedefName);
                 }
 
                 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -4905,7 +4905,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                 //se nao eh completa tenta achar
                 //vou procurar a definicao completa da struct
                 pStructUnionSpecifier =
-                    SymbolMap_FindStructUnion(&program->GlobalScope, pStructUnionSpecifier->Tag);
+                    SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pStructUnionSpecifier->Tag);
             }
 
             bool bIsUnionTypes = pStructUnionSpecifier &&
@@ -5436,14 +5436,14 @@ struct TStructUnionSpecifier* GetStructSpecifier(struct SyntaxTree* program, str
         pTStructUnionSpecifier->Tag != NULL)
     {
         pTStructUnionSpecifier =
-            SymbolMap_FindStructUnion(&program->GlobalScope, pTStructUnionSpecifier->Tag);
+            SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pTStructUnionSpecifier->Tag);
     }
     else  if (pSingleTypeSpecifier != NULL &&
               pSingleTypeSpecifier->Token2 == TK_STRUCT)
     {
         //Modelo C++ que o nome da struct ja eh suficiente
         pTStructUnionSpecifier =
-            SymbolMap_FindStructUnion(&program->GlobalScope, pSingleTypeSpecifier->TypedefName);
+            SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pSingleTypeSpecifier->TypedefName);
     }
 
     return pTStructUnionSpecifier;

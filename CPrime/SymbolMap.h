@@ -55,8 +55,8 @@ struct SymbolMapItem* SymbolMap_GetAssocAt(struct SymbolMap* pMap,
                                            unsigned int* nHashBucket,
                                            unsigned int* HashValue);
 
-struct TStructUnionSpecifier* SymbolMap_FindStructUnion(struct SymbolMap* pMap, const char* structTagName);
-struct TEnumSpecifier* SymbolMap_FindEnum(struct SymbolMap* pMap, const char* enumTagName);
+struct TStructUnionSpecifier* SymbolMap_FindCompleteStructUnionSpecifier(struct SymbolMap* pMap, const char* structTagName);
+
 
 
 struct TTypeSpecifier* SymbolMap_FindTypedefSpecifierTarget(struct SymbolMap* pMap,
