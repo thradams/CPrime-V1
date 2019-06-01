@@ -1,9 +1,9 @@
 
 ## Description
 
-C' (cprime) is a C compiler that generates C code.
+C' (cprime) is a C compiler that generates C code.  The generated code is intended to be readably and formatation is kept together with comments and macros.
 
-It is a new CFront but following a new path.
+It is a new CFront following a new path.
 
 
 See it online:
