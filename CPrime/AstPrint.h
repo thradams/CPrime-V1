@@ -6,7 +6,7 @@
 #include "Ast.h"
 
 
-void SyntaxTree_PrintAstToFile(struct SyntaxTree* pProgram,
+void SyntaxTree_PrintAstToFile(struct SyntaxTree* pSyntaxTree,
                                const char* fileName,
                                const char* inputFileName);
 

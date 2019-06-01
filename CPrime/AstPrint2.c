@@ -661,21 +661,21 @@ void TAnyDeclaration_PrintXML(struct TAnyDeclaration* p,
 }
 
 
-void SyntaxTree_PrintAstToXML(struct SyntaxTree* pProgram,
+void SyntaxTree_PrintAstToXML(struct SyntaxTree* pSyntaxTree,
                               const char* fileName,
                               const char* inputFileName)
 {
     FILE* fp = fopen(fileName, "w");
-    //TDeclarations_Print(&pProgram->Declarations, false, fp);
+    //TDeclarations_Print(&pSyntaxTree->Declarations, false, fp);
 
     struct PrintXMLContext ctx = { 0 };
     ctx.fp = fp;
     bool b = false;
     fprintf(fp, "<AST>\n");
 
-    for (int i = 0; i < pProgram->Declarations.Size; i++)
+    for (int i = 0; i < pSyntaxTree->Declarations.Size; i++)
     {
-        struct TAnyDeclaration* pItem = pProgram->Declarations.pItems[i];
+        struct TAnyDeclaration* pItem = pSyntaxTree->Declarations.pItems[i];
         TAnyDeclaration_PrintXML(pItem, &ctx);
     }
 

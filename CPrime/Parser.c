@@ -5146,7 +5146,7 @@ static void TFileMapToStrArray(TFileMap * map, struct TFileArray * arr)
 bool GetAST(const char* filename,
             const char* configFileName /*optional*/,
             struct Options* options,
-            struct SyntaxTree* pProgram)
+            struct SyntaxTree* pSyntaxTree)
 {
     bool bResult = false;
 
@@ -5160,11 +5160,11 @@ bool GetAST(const char* filename,
         GetFullPath(configFileName, &fullConfigFilePath);
 
         Parser_InitFile(&parser, fullConfigFilePath);
-        Parser_Main(&parser, &pProgram->Declarations);
+        Parser_Main(&parser, &pSyntaxTree->Declarations);
 
         //apaga declaracoes eof por ex
-        TDeclarations_Destroy(&pProgram->Declarations);
-        TDeclarations_Init(&pProgram->Declarations);
+        TDeclarations_Destroy(&pSyntaxTree->Declarations);
+        TDeclarations_Init(&pSyntaxTree->Declarations);
 
         //Some com o arquivo de configclea
         TScannerItemList_Clear(&parser.ClueList);
@@ -5191,7 +5191,7 @@ bool GetAST(const char* filename,
         {
             Parser_PushFile(&parser, fullFileNamePath);
         }
-        Parser_Main(&parser, &pProgram->Declarations);
+        Parser_Main(&parser, &pSyntaxTree->Declarations);
     }
 
 
@@ -5237,7 +5237,7 @@ bool GetAST(const char* filename,
                     printf("source %s\n", pCurrent->Key);
 
 
-                    Parser_Main(&parser, &pProgram->Declarations);
+                    Parser_Main(&parser, &pSyntaxTree->Declarations);
                 }
                 else
                 {
@@ -5253,16 +5253,16 @@ bool GetAST(const char* filename,
     }
 
 
-    TFileMapToStrArray(&parser.Scanner.FilesIncluded, &pProgram->Files2);
+    TFileMapToStrArray(&parser.Scanner.FilesIncluded, &pSyntaxTree->Files2);
     printf("%s\n", GetCompletationMessage(&parser));
-    SymbolMap_Swap(&parser.GlobalScope, &pProgram->GlobalScope);
+    SymbolMap_Swap(&parser.GlobalScope, &pSyntaxTree->GlobalScope);
 
     if (Parser_HasError(&parser))
     {
         Scanner_PrintDebug(&parser.Scanner);
     }
 
-    MacroMap_Swap(&parser.Scanner.Defines2, &pProgram->Defines);
+    MacroMap_Swap(&parser.Scanner.Defines2, &pSyntaxTree->Defines);
 
     bResult = !Parser_HasError(&parser);
 
@@ -5276,7 +5276,7 @@ bool GetAST(const char* filename,
 
 bool GetASTFromString(const char* sourceCode,
                       struct Options* options,
-                      struct SyntaxTree* pProgram)
+                      struct SyntaxTree* pSyntaxTree)
 {
     bool bResult = false;
 
@@ -5286,19 +5286,19 @@ bool GetASTFromString(const char* sourceCode,
 
     parser.ParserOptions.bNoImplicitTag = options->bNoImplicitTag;
 
-    Parser_Main(&parser, &pProgram->Declarations);
+    Parser_Main(&parser, &pSyntaxTree->Declarations);
 
 
-    TFileMapToStrArray(&parser.Scanner.FilesIncluded, &pProgram->Files2);
+    TFileMapToStrArray(&parser.Scanner.FilesIncluded, &pSyntaxTree->Files2);
     printf("%s\n", GetCompletationMessage(&parser));
-    SymbolMap_Swap(&parser.GlobalScope, &pProgram->GlobalScope);
+    SymbolMap_Swap(&parser.GlobalScope, &pSyntaxTree->GlobalScope);
 
     if (Parser_HasError(&parser))
     {
         Scanner_PrintDebug(&parser.Scanner);
     }
 
-    MacroMap_Swap(&parser.Scanner.Defines2, &pProgram->Defines);
+    MacroMap_Swap(&parser.Scanner.Defines2, &pSyntaxTree->Defines);
 
     bResult = !Parser_HasError(&parser);
 

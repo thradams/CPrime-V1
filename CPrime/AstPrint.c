@@ -1382,20 +1382,20 @@ bool TDeclarations_Print(struct TDeclarations* p, bool b, FILE* fp)
 }
 
 
-void SyntaxTree_PrintAstToFile(struct SyntaxTree* pProgram,
+void SyntaxTree_PrintAstToFile(struct SyntaxTree* pSyntaxTree,
                                const char* fileName,
                                const char* inputFileName)
 {
     FILE* fp = fopen(fileName, "w");
-    //TDeclarations_Print(&pProgram->Declarations, false, fp);
+    //TDeclarations_Print(&pSyntaxTree->Declarations, false, fp);
 
 
     bool b = false;
     fprintf(fp, "[");
 
-    for (int i = 0; i < pProgram->Declarations.Size; i++)
+    for (int i = 0; i < pSyntaxTree->Declarations.Size; i++)
     {
-        struct TAnyDeclaration* pItem = pProgram->Declarations.pItems[i];
+        struct TAnyDeclaration* pItem = pSyntaxTree->Declarations.pItems[i];
         if (b)
             fprintf(fp, ",");
         b = TAnyDeclaration_Print(pItem, b, fp);

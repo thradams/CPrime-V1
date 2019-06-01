@@ -46,9 +46,10 @@ bool Parser_HasError(struct Parser* pParser);
 
 const char* GetCompletationMessage(struct Parser* parser);
 
-bool GetAST(const char* filename, const char* configFileName,
+bool GetAST(const char* filename,
+            const char* configFileName,
             struct Options* options,
-            struct SyntaxTree* pProgram);
+            struct SyntaxTree* pSyntaxTree);
 
 void ConstantExpression(struct Parser* ctx, struct TExpression** ppExpression);
 enum Tokens Parser_MatchToken(struct Parser* parser, enum Tokens tk, struct TScannerItemList* listOpt);
@@ -57,4 +58,4 @@ enum Tokens Parser_LookAheadToken(struct Parser* parser);
 
 bool GetASTFromString(const char* sourceCode,
                       struct Options* options,
-                      struct SyntaxTree* pProgram);
+                      struct SyntaxTree* pSyntaxTree);

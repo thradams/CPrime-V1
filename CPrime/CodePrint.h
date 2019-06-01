@@ -48,12 +48,12 @@ struct PrintCodeOptions
 
 void PrintCodeOptions_Destroy(struct PrintCodeOptions* options);
 
-void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pProgram,
+void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pSyntaxTree,
                                 struct Options* options,
                                 const char* fileName,
                                 const char* userpath);
 
-void SyntaxTree_PrintCodeToString(struct SyntaxTree* pProgram,
+void SyntaxTree_PrintCodeToString(struct SyntaxTree* pSyntaxTree,
                                   struct Options* options,
                                   struct StrBuilder* output);
 

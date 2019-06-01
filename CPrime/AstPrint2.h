@@ -11,6 +11,6 @@
 
 
 
-void SyntaxTree_PrintAstToXML(struct SyntaxTree* pProgram,
+void SyntaxTree_PrintAstToXML(struct SyntaxTree* pSyntaxTree,
                               const char* fileName,
                               const char* inputFileName);

@@ -3235,7 +3235,7 @@ static void TInitializerListItem_CodePrint(struct SyntaxTree* program,
 
 
 
-void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pProgram,
+void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pSyntaxTree,
                                 struct Options* options0,
                                 const char* outFileName,
                                 const char* inputFileName)
@@ -3257,23 +3257,23 @@ void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pProgram,
 
     int k = 0;
 
-    //for (int i = 0; i < pProgram->Files2.size; i++)
+    //for (int i = 0; i < pSyntaxTree->Files2.size; i++)
     //{
-    //  struct TFile *pFile = pProgram->Files2.pItems[i];
+    //  struct TFile *pFile = pSyntaxTree->Files2.pItems[i];
     //  printf("\"%s\"\n", pFile->FullPath);
     //}
 
     struct StrBuilder sb = STRBUILDER_INIT;
     StrBuilder_Reserve(&sb, 80 * 5000);
 
-    for (int i = 0; i < pProgram->Declarations.Size; i++)
+    for (int i = 0; i < pSyntaxTree->Declarations.Size; i++)
     {
-        struct TAnyDeclaration* pItem = pProgram->Declarations.pItems[i];
+        struct TAnyDeclaration* pItem = pSyntaxTree->Declarations.pItems[i];
 
         StrBuilder_Clear(&options.sbPreDeclaration);
 
         struct StrBuilder sbDeclaration = STRBUILDER_INIT;
-        TAnyDeclaration_CodePrint(pProgram, &options, pItem, &sbDeclaration);
+        TAnyDeclaration_CodePrint(pSyntaxTree, &options, pItem, &sbDeclaration);
 
         StrBuilder_Append(&sb, options.sbPreDeclaration.c_str);
         StrBuilder_Append(&sb, sbDeclaration.c_str);
@@ -3291,7 +3291,7 @@ void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pProgram,
     fclose(fp);
 }
 
-void SyntaxTree_PrintCodeToString(struct SyntaxTree* pProgram,
+void SyntaxTree_PrintCodeToString(struct SyntaxTree* pSyntaxTree,
                                   struct Options* options0,
                                   struct StrBuilder* output)
 {
@@ -3304,14 +3304,14 @@ void SyntaxTree_PrintCodeToString(struct SyntaxTree* pProgram,
     struct StrBuilder sb = STRBUILDER_INIT;
     StrBuilder_Reserve(&sb, 80 * 5000);
 
-    for (int i = 0; i < pProgram->Declarations.Size; i++)
+    for (int i = 0; i < pSyntaxTree->Declarations.Size; i++)
     {
-        struct TAnyDeclaration* pItem = pProgram->Declarations.pItems[i];
+        struct TAnyDeclaration* pItem = pSyntaxTree->Declarations.pItems[i];
 
         StrBuilder_Clear(&options.sbPreDeclaration);
 
         struct StrBuilder sbDeclaration = STRBUILDER_INIT;
-        TAnyDeclaration_CodePrint(pProgram, &options, pItem, &sbDeclaration);
+        TAnyDeclaration_CodePrint(pSyntaxTree, &options, pItem, &sbDeclaration);
 
         StrBuilder_Append(&sb, options.sbPreDeclaration.c_str);
         StrBuilder_Append(&sb, sbDeclaration.c_str);
