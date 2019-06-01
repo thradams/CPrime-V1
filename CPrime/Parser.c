@@ -3426,7 +3426,7 @@ bool EnumeratorC(struct Parser* ctx, struct TEnumerator* pEnumerator2)
     if (token == TK_EQUALS_SIGN)
     {
         Parser_Match(ctx, &pEnumerator2->ClueList1);
-        ConstantExpression(ctx, &pEnumerator2->pExpression);
+        ConstantExpression(ctx, &pEnumerator2->pConstantExpression);
         bValueAssigned = true;
     }
 

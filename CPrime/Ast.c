@@ -465,41 +465,41 @@ void TStatement_Delete(struct TStatement* p) /*@default*/
 {
     if (p != NULL)
     {
-            switch (p->Type)
-            {
-                case TForStatement_ID:
-                    TForStatement_Delete((struct TForStatement*)p);
+        switch (p->Type)
+        {
+            case TForStatement_ID:
+                TForStatement_Delete((struct TForStatement*)p);
                 break;
-                case TJumpStatement_ID:
-                    TJumpStatement_Delete((struct TJumpStatement*)p);
+            case TJumpStatement_ID:
+                TJumpStatement_Delete((struct TJumpStatement*)p);
                 break;
-                case TExpressionStatement_ID:
-                    TExpressionStatement_Delete((struct TExpressionStatement*)p);
+            case TExpressionStatement_ID:
+                TExpressionStatement_Delete((struct TExpressionStatement*)p);
                 break;
-                case TIfStatement_ID:
-                    TIfStatement_Delete((struct TIfStatement*)p);
+            case TIfStatement_ID:
+                TIfStatement_Delete((struct TIfStatement*)p);
                 break;
-                case TWhileStatement_ID:
-                    TWhileStatement_Delete((struct TWhileStatement*)p);
+            case TWhileStatement_ID:
+                TWhileStatement_Delete((struct TWhileStatement*)p);
                 break;
-                case TSwitchStatement_ID:
-                    TSwitchStatement_Delete((struct TSwitchStatement*)p);
+            case TSwitchStatement_ID:
+                TSwitchStatement_Delete((struct TSwitchStatement*)p);
                 break;
-                case TAsmStatement_ID:
-                    TAsmStatement_Delete((struct TAsmStatement*)p);
+            case TAsmStatement_ID:
+                TAsmStatement_Delete((struct TAsmStatement*)p);
                 break;
-                case TDoStatement_ID:
-                    TDoStatement_Delete((struct TDoStatement*)p);
+            case TDoStatement_ID:
+                TDoStatement_Delete((struct TDoStatement*)p);
                 break;
-                case TLabeledStatement_ID:
-                    TLabeledStatement_Delete((struct TLabeledStatement*)p);
+            case TLabeledStatement_ID:
+                TLabeledStatement_Delete((struct TLabeledStatement*)p);
                 break;
-                case TCompoundStatement_ID:
-                    TCompoundStatement_Delete((struct TCompoundStatement*)p);
+            case TCompoundStatement_ID:
+                TCompoundStatement_Delete((struct TCompoundStatement*)p);
                 break;
-                default:
+            default:
                 break;
-            }
+        }
     }
 }
 
@@ -509,44 +509,44 @@ void TBlockItem_Delete(struct TBlockItem* p) /*@default*/
 {
     if (p != NULL)
     {
-            switch (p->Type)
-            {
-                case TForStatement_ID:
-                    TForStatement_Delete((struct TForStatement*)p);
+        switch (p->Type)
+        {
+            case TForStatement_ID:
+                TForStatement_Delete((struct TForStatement*)p);
                 break;
-                case TJumpStatement_ID:
-                    TJumpStatement_Delete((struct TJumpStatement*)p);
+            case TJumpStatement_ID:
+                TJumpStatement_Delete((struct TJumpStatement*)p);
                 break;
-                case TExpressionStatement_ID:
-                    TExpressionStatement_Delete((struct TExpressionStatement*)p);
+            case TExpressionStatement_ID:
+                TExpressionStatement_Delete((struct TExpressionStatement*)p);
                 break;
-                case TDeclaration_ID:
-                    TDeclaration_Delete((struct TDeclaration*)p);
+            case TDeclaration_ID:
+                TDeclaration_Delete((struct TDeclaration*)p);
                 break;
-                case TIfStatement_ID:
-                    TIfStatement_Delete((struct TIfStatement*)p);
+            case TIfStatement_ID:
+                TIfStatement_Delete((struct TIfStatement*)p);
                 break;
-                case TWhileStatement_ID:
-                    TWhileStatement_Delete((struct TWhileStatement*)p);
+            case TWhileStatement_ID:
+                TWhileStatement_Delete((struct TWhileStatement*)p);
                 break;
-                case TSwitchStatement_ID:
-                    TSwitchStatement_Delete((struct TSwitchStatement*)p);
+            case TSwitchStatement_ID:
+                TSwitchStatement_Delete((struct TSwitchStatement*)p);
                 break;
-                case TAsmStatement_ID:
-                    TAsmStatement_Delete((struct TAsmStatement*)p);
+            case TAsmStatement_ID:
+                TAsmStatement_Delete((struct TAsmStatement*)p);
                 break;
-                case TDoStatement_ID:
-                    TDoStatement_Delete((struct TDoStatement*)p);
+            case TDoStatement_ID:
+                TDoStatement_Delete((struct TDoStatement*)p);
                 break;
-                case TLabeledStatement_ID:
-                    TLabeledStatement_Delete((struct TLabeledStatement*)p);
+            case TLabeledStatement_ID:
+                TLabeledStatement_Delete((struct TLabeledStatement*)p);
                 break;
-                case TCompoundStatement_ID:
-                    TCompoundStatement_Delete((struct TCompoundStatement*)p);
+            case TCompoundStatement_ID:
+                TCompoundStatement_Delete((struct TCompoundStatement*)p);
                 break;
-                default:
+            default:
                 break;
-            }
+        }
     }
 }
 
@@ -570,7 +570,7 @@ void TPrimaryExpressionValue_Destroy(struct TPrimaryExpressionValue* p) /*@defau
 
 struct TPrimaryExpressionValue* TPrimaryExpressionValue_Create() /*@default*/
 {
-    struct TPrimaryExpressionValue *p = (struct TPrimaryExpressionValue *) Malloc(sizeof * p);
+    struct TPrimaryExpressionValue* p = (struct TPrimaryExpressionValue*) Malloc(sizeof * p);
     if (p != NULL)
     {
         TPrimaryExpressionValue_Init(p);
@@ -765,35 +765,35 @@ void TExpression_Delete(struct TExpression* p) /*@default*/
 {
     if (p != NULL)
     {
-            switch (p->Type)
-            {
-                case TBinaryExpression_ID:
-                    TBinaryExpression_Delete((struct TBinaryExpression*)p);
+        switch (p->Type)
+        {
+            case TBinaryExpression_ID:
+                TBinaryExpression_Delete((struct TBinaryExpression*)p);
                 break;
-                case TPrimaryExpressionLambda_ID:
-                    TPrimaryExpressionLambda_Delete((struct TPrimaryExpressionLambda*)p);
+            case TPrimaryExpressionLambda_ID:
+                TPrimaryExpressionLambda_Delete((struct TPrimaryExpressionLambda*)p);
                 break;
-                case TUnaryExpressionOperator_ID:
-                    TUnaryExpressionOperator_Delete((struct TUnaryExpressionOperator*)p);
+            case TUnaryExpressionOperator_ID:
+                TUnaryExpressionOperator_Delete((struct TUnaryExpressionOperator*)p);
                 break;
-                case TCastExpressionType_ID:
-                    TCastExpressionType_Delete((struct TCastExpressionType*)p);
+            case TCastExpressionType_ID:
+                TCastExpressionType_Delete((struct TCastExpressionType*)p);
                 break;
-                case TPrimaryExpressionValue_ID:
-                    TPrimaryExpressionValue_Delete((struct TPrimaryExpressionValue*)p);
+            case TPrimaryExpressionValue_ID:
+                TPrimaryExpressionValue_Delete((struct TPrimaryExpressionValue*)p);
                 break;
-                case TPostfixExpressionCore_ID:
-                    TPostfixExpressionCore_Delete((struct TPostfixExpressionCore*)p);
+            case TPostfixExpressionCore_ID:
+                TPostfixExpressionCore_Delete((struct TPostfixExpressionCore*)p);
                 break;
-                case TPrimaryExpressionLiteral_ID:
-                    TPrimaryExpressionLiteral_Delete((struct TPrimaryExpressionLiteral*)p);
+            case TPrimaryExpressionLiteral_ID:
+                TPrimaryExpressionLiteral_Delete((struct TPrimaryExpressionLiteral*)p);
                 break;
-                case TTernaryExpression_ID:
-                    TTernaryExpression_Delete((struct TTernaryExpression*)p);
+            case TTernaryExpression_ID:
+                TTernaryExpression_Delete((struct TTernaryExpression*)p);
                 break;
-                default:
+            default:
                 break;
-            }
+        }
     }
 }
 
@@ -862,7 +862,7 @@ struct TEnumerator* TEnumerator_Create(void) /*@default*/
     {
         p->pNext = NULL;
         p->Name = NULL;
-        p->pExpression = NULL;
+        p->pConstantExpression = NULL;
         TScannerItemList_Init(&p->ClueList0);
         TScannerItemList_Init(&p->ClueList1);
         TScannerItemList_Init(&p->ClueList2);
@@ -876,7 +876,7 @@ void TEnumerator_Delete(struct TEnumerator* p) /*@default*/
     if (p != NULL)
     {
         Free((void*)p->Name);
-        TExpression_Delete(p->pExpression);
+        TExpression_Delete(p->pConstantExpression);
         TScannerItemList_Destroy(&p->ClueList0);
         TScannerItemList_Destroy(&p->ClueList1);
         TScannerItemList_Destroy(&p->ClueList2);
@@ -931,7 +931,7 @@ void TEnumSpecifier_Delete(struct TEnumSpecifier* p) /*@default*/
     }
 }
 
-bool TEnumSpecifier_CompareTagName(struct TEnumSpecifier* p1, struct TEnumSpecifier* p2)
+bool TEnumSpecifier_IsSameTag(struct TEnumSpecifier* p1, struct TEnumSpecifier* p2)
 {
     bool result = false;
 
@@ -1092,8 +1092,15 @@ bool TSingleTypeSpecifier_Compare(struct TSingleTypeSpecifier* p1, struct TSingl
     bool result = false;
     if (p1->Token2 == p2->Token2)
     {
-        if (p1->TypedefName && p2->TypedefName &&
-            strcmp(p1->TypedefName, p2->TypedefName) == 0)
+        if (p1->TypedefName &&
+            p2->TypedefName)
+        {
+            if (strcmp(p1->TypedefName, p2->TypedefName) == 0)
+            {
+                result = true;
+            }
+        }
+        else
         {
             result = true;
         }
@@ -1132,7 +1139,7 @@ bool TTypeSpecifier_Compare(struct TTypeSpecifier* p1, struct TTypeSpecifier* p2
             result = TSingleTypeSpecifier_Compare((struct TSingleTypeSpecifier*)p1, (struct TSingleTypeSpecifier*)p2);
             break;
         case TEnumSpecifier_ID:
-            result = TEnumSpecifier_CompareTagName((struct TEnumSpecifier*)p1, (struct TEnumSpecifier*)p2);
+            result = TEnumSpecifier_IsSameTag((struct TEnumSpecifier*)p1, (struct TEnumSpecifier*)p2);
             break;
         default:
             break;
@@ -1144,23 +1151,23 @@ void TTypeSpecifier_Delete(struct TTypeSpecifier* p) /*@default*/
 {
     if (p != NULL)
     {
-            switch (p->Type)
-            {
-                case TStructUnionSpecifier_ID:
-                    TStructUnionSpecifier_Delete((struct TStructUnionSpecifier*)p);
+        switch (p->Type)
+        {
+            case TStructUnionSpecifier_ID:
+                TStructUnionSpecifier_Delete((struct TStructUnionSpecifier*)p);
                 break;
-                case TAtomicTypeSpecifier_ID:
-                    TAtomicTypeSpecifier_Delete((struct TAtomicTypeSpecifier*)p);
+            case TAtomicTypeSpecifier_ID:
+                TAtomicTypeSpecifier_Delete((struct TAtomicTypeSpecifier*)p);
                 break;
-                case TSingleTypeSpecifier_ID:
-                    TSingleTypeSpecifier_Delete((struct TSingleTypeSpecifier*)p);
+            case TSingleTypeSpecifier_ID:
+                TSingleTypeSpecifier_Delete((struct TSingleTypeSpecifier*)p);
                 break;
-                case TEnumSpecifier_ID:
-                    TEnumSpecifier_Delete((struct TEnumSpecifier*)p);
+            case TEnumSpecifier_ID:
+                TEnumSpecifier_Delete((struct TEnumSpecifier*)p);
                 break;
-                default:
+            default:
                 break;
-            }
+        }
     }
 }
 
@@ -1175,7 +1182,7 @@ void TDeclarator_Init(struct TDeclarator* p) /*@default*/
 
 struct TDeclarator* TDeclarator_Create() /*@default*/
 {
-    struct TDeclarator *p = (struct TDeclarator *) Malloc(sizeof * p);
+    struct TDeclarator* p = (struct TDeclarator*) Malloc(sizeof * p);
     if (p != NULL)
     {
         TDeclarator_Init(p);
@@ -1253,7 +1260,7 @@ void TParameterTypeList_Destroy(struct TParameterTypeList* p) /*@default*/
 
 struct TParameterTypeList* TParameterTypeList_Create() /*@default*/
 {
-    struct TParameterTypeList *p = (struct TParameterTypeList *) Malloc(sizeof * p);
+    struct TParameterTypeList* p = (struct TParameterTypeList*) Malloc(sizeof * p);
     if (p != NULL)
     {
         TParameterTypeList_Init(p);
@@ -1480,7 +1487,7 @@ bool TSpecifierQualifierList_Compare(struct TSpecifierQualifierList* p1, struct 
                     {
                         return false;
                     }
-                break;
+                    break;
 
                 case TStorageSpecifier_ID:
                     if (!TStorageSpecifier_Compare((struct TStorageSpecifier*)p1->pData[i],
@@ -1488,21 +1495,21 @@ bool TSpecifierQualifierList_Compare(struct TSpecifierQualifierList* p1, struct 
                     {
                         return false;
                     }
-                break;
+                    break;
                 case TTypeQualifier_ID:
                     if (!TTypeQualifier_Compare((struct TTypeQualifier*)p1->pData[i],
                         (struct TTypeQualifier*)p2->pData[i]))
                     {
                         return false;
                     }
-                break;
+                    break;
                 case TFunctionSpecifier_ID:
                     if (!TFunctionSpecifier_Compare((struct TFunctionSpecifier*)p1->pData[i],
                         (struct TFunctionSpecifier*)p2->pData[i]))
                     {
                         return false;
                     }
-                break;
+                    break;
 
 
                 case TStructUnionSpecifier_ID:
@@ -1511,15 +1518,15 @@ bool TSpecifierQualifierList_Compare(struct TSpecifierQualifierList* p1, struct 
                     {
                         return false;
                     }
-                break;
+                    break;
 
                 case TEnumSpecifier_ID:
-                    if (!TEnumSpecifier_CompareTagName((struct TEnumSpecifier*)p1->pData[i],
+                    if (!TEnumSpecifier_IsSameTag((struct TEnumSpecifier*)p1->pData[i],
                         (struct TEnumSpecifier*)p2->pData[i]))
                     {
                         return false;
                     }
-                break;
+                    break;
 
                 default:
                     //assert(false);
@@ -1770,17 +1777,17 @@ void TAnyStructDeclaration_Delete(struct TAnyStructDeclaration* p) /*@default*/
 {
     if (p != NULL)
     {
-            switch (p->Type)
-            {
-                case TStaticAssertDeclaration_ID:
-                    TStaticAssertDeclaration_Delete((struct TStaticAssertDeclaration*)p);
+        switch (p->Type)
+        {
+            case TStaticAssertDeclaration_ID:
+                TStaticAssertDeclaration_Delete((struct TStaticAssertDeclaration*)p);
                 break;
-                case TStructDeclaration_ID:
-                    TStructDeclaration_Delete((struct TStructDeclaration*)p);
+            case TStructDeclaration_ID:
+                TStructDeclaration_Delete((struct TStructDeclaration*)p);
                 break;
-                default:
+            default:
                 break;
-            }
+        }
     }
 }
 
@@ -2271,33 +2278,34 @@ bool TSpecifierQualifierList_CanAdd(struct TSpecifierQualifierList* p, enum Toke
         switch (pSpecifier->Type)
         {
             case TSingleTypeSpecifier_ID:
-            {     struct TSingleTypeSpecifier* pTSingleTypeSpecifier =
-                (struct TSingleTypeSpecifier*)pSpecifier;
-            switch (pTSingleTypeSpecifier->Token2)
             {
-                case TK_INT:
-                    bInt = true;
-                    break;
-                case TK_DOUBLE:
-                    break;
+                struct TSingleTypeSpecifier* pTSingleTypeSpecifier =
+                    (struct TSingleTypeSpecifier*)pSpecifier;
+                switch (pTSingleTypeSpecifier->Token2)
+                {
+                    case TK_INT:
+                        bInt = true;
+                        break;
+                    case TK_DOUBLE:
+                        break;
 
-                case TK_IDENTIFIER:
-                    bTypeDef = true;
-                    break;
-                default:
-                    //assert(false);
-                    break;
-            }
+                    case TK_IDENTIFIER:
+                        bTypeDef = true;
+                        break;
+                    default:
+                        //assert(false);
+                        break;
+                }
             }
             break;
 
             case TStructUnionSpecifier_ID:
                 bStruct = true;
-            break;
+                break;
 
             case TEnumSpecifier_ID:
                 bEnum = true;
-            break;
+                break;
 
             case TStorageSpecifier_ID:
 
@@ -2375,37 +2383,38 @@ bool TDeclarationSpecifiers_CanAddSpeficier(struct TDeclarationSpecifiers* pDecl
         switch (pSpecifier->Type)
         {
             case TSingleTypeSpecifier_ID:
-            {     struct TSingleTypeSpecifier* pTSingleTypeSpecifier =
-                (struct TSingleTypeSpecifier*)pSpecifier;
-            switch (pTSingleTypeSpecifier->Token2)
             {
-                //case TK_INT:				
-                //case TK_DOUBLE:
-                    //..etc...
-                    //bOther = true;
-                    //break; 
+                struct TSingleTypeSpecifier* pTSingleTypeSpecifier =
+                    (struct TSingleTypeSpecifier*)pSpecifier;
+                switch (pTSingleTypeSpecifier->Token2)
+                {
+                    //case TK_INT:				
+                    //case TK_DOUBLE:
+                        //..etc...
+                        //bOther = true;
+                        //break; 
 
-                case TK_IDENTIFIER:
-                    bTypeDef = true;
-                    break;
-                default:
-                    bOther = true;
-                    break;
-                    ////assert(false);
-                    break;
-            }
+                    case TK_IDENTIFIER:
+                        bTypeDef = true;
+                        break;
+                    default:
+                        bOther = true;
+                        break;
+                        ////assert(false);
+                        break;
+                }
             }
             break;
 
             case TStructUnionSpecifier_ID:
                 bStruct = true;
-            pTStructUnionSpecifier = (struct TStructUnionSpecifier*)pSpecifier;
-            break;
+                pTStructUnionSpecifier = (struct TStructUnionSpecifier*)pSpecifier;
+                break;
 
             case TEnumSpecifier_ID:
                 bEnum = true;
-            pEnumSpecifier = (struct TEnumSpecifier*)pSpecifier;
-            break;
+                pEnumSpecifier = (struct TEnumSpecifier*)pSpecifier;
+                break;
 
             case TStorageSpecifier_ID:
 
@@ -2563,26 +2572,26 @@ void TSpecifierQualifier_Delete(struct TSpecifierQualifier* pItem) /*@default*/
 {
     if (pItem != NULL)
     {
-            switch (pItem->Type)
-            {
-                case TTypeQualifier_ID:
-                    TTypeQualifier_Delete((struct TTypeQualifier*)pItem);
+        switch (pItem->Type)
+        {
+            case TTypeQualifier_ID:
+                TTypeQualifier_Delete((struct TTypeQualifier*)pItem);
                 break;
-                case TStructUnionSpecifier_ID:
-                    TStructUnionSpecifier_Delete((struct TStructUnionSpecifier*)pItem);
+            case TStructUnionSpecifier_ID:
+                TStructUnionSpecifier_Delete((struct TStructUnionSpecifier*)pItem);
                 break;
-                case TAtomicTypeSpecifier_ID:
-                    TAtomicTypeSpecifier_Delete((struct TAtomicTypeSpecifier*)pItem);
+            case TAtomicTypeSpecifier_ID:
+                TAtomicTypeSpecifier_Delete((struct TAtomicTypeSpecifier*)pItem);
                 break;
-                case TSingleTypeSpecifier_ID:
-                    TSingleTypeSpecifier_Delete((struct TSingleTypeSpecifier*)pItem);
+            case TSingleTypeSpecifier_ID:
+                TSingleTypeSpecifier_Delete((struct TSingleTypeSpecifier*)pItem);
                 break;
-                case TEnumSpecifier_ID:
-                    TEnumSpecifier_Delete((struct TEnumSpecifier*)pItem);
+            case TEnumSpecifier_ID:
+                TEnumSpecifier_Delete((struct TEnumSpecifier*)pItem);
                 break;
-                default:
+            default:
                 break;
-            }
+        }
     }
 }
 
@@ -2590,35 +2599,35 @@ void TDeclarationSpecifier_Delete(struct TDeclarationSpecifier* pItem) /*@defaul
 {
     if (pItem != NULL)
     {
-            switch (pItem->Type)
-            {
-                case TTypeQualifier_ID:
-                    TTypeQualifier_Delete((struct TTypeQualifier*)pItem);
+        switch (pItem->Type)
+        {
+            case TTypeQualifier_ID:
+                TTypeQualifier_Delete((struct TTypeQualifier*)pItem);
                 break;
-                case TStructUnionSpecifier_ID:
-                    TStructUnionSpecifier_Delete((struct TStructUnionSpecifier*)pItem);
+            case TStructUnionSpecifier_ID:
+                TStructUnionSpecifier_Delete((struct TStructUnionSpecifier*)pItem);
                 break;
-                case TStorageSpecifier_ID:
-                    TStorageSpecifier_Delete((struct TStorageSpecifier*)pItem);
+            case TStorageSpecifier_ID:
+                TStorageSpecifier_Delete((struct TStorageSpecifier*)pItem);
                 break;
-                case TAtomicTypeSpecifier_ID:
-                    TAtomicTypeSpecifier_Delete((struct TAtomicTypeSpecifier*)pItem);
+            case TAtomicTypeSpecifier_ID:
+                TAtomicTypeSpecifier_Delete((struct TAtomicTypeSpecifier*)pItem);
                 break;
-                case TSingleTypeSpecifier_ID:
-                    TSingleTypeSpecifier_Delete((struct TSingleTypeSpecifier*)pItem);
+            case TSingleTypeSpecifier_ID:
+                TSingleTypeSpecifier_Delete((struct TSingleTypeSpecifier*)pItem);
                 break;
-                case TAlignmentSpecifier_ID:
-                    TAlignmentSpecifier_Delete((struct TAlignmentSpecifier*)pItem);
+            case TAlignmentSpecifier_ID:
+                TAlignmentSpecifier_Delete((struct TAlignmentSpecifier*)pItem);
                 break;
-                case TFunctionSpecifier_ID:
-                    TFunctionSpecifier_Delete((struct TFunctionSpecifier*)pItem);
+            case TFunctionSpecifier_ID:
+                TFunctionSpecifier_Delete((struct TFunctionSpecifier*)pItem);
                 break;
-                case TEnumSpecifier_ID:
-                    TEnumSpecifier_Delete((struct TEnumSpecifier*)pItem);
+            case TEnumSpecifier_ID:
+                TEnumSpecifier_Delete((struct TEnumSpecifier*)pItem);
                 break;
-                default:
+            default:
                 break;
-            }
+        }
     }
 }
 
@@ -2889,7 +2898,7 @@ void TParameterList_Init(struct TParameterList* p) /*@default*/
     p->pTail = NULL;
 }
 
-void TParameterList_Destroy(struct TParameterList* p)
+void TParameterList_Destroy(struct TParameterList* p) 
 {
     struct TParameter* pCurrent = p->pHead;
     while (pCurrent)
@@ -3017,23 +3026,23 @@ void TAnyDeclaration_Delete(struct TAnyDeclaration* pDeclaration) /*@default*/
 {
     if (pDeclaration != NULL)
     {
-            switch (pDeclaration->Type)
-            {
-                case TGroupDeclaration_ID:
-                    TGroupDeclaration_Delete((struct TGroupDeclaration*)pDeclaration);
+        switch (pDeclaration->Type)
+        {
+            case TGroupDeclaration_ID:
+                TGroupDeclaration_Delete((struct TGroupDeclaration*)pDeclaration);
                 break;
-                case TStaticAssertDeclaration_ID:
-                    TStaticAssertDeclaration_Delete((struct TStaticAssertDeclaration*)pDeclaration);
+            case TStaticAssertDeclaration_ID:
+                TStaticAssertDeclaration_Delete((struct TStaticAssertDeclaration*)pDeclaration);
                 break;
-                case TDeclaration_ID:
-                    TDeclaration_Delete((struct TDeclaration*)pDeclaration);
+            case TDeclaration_ID:
+                TDeclaration_Delete((struct TDeclaration*)pDeclaration);
                 break;
-                case TEofDeclaration_ID:
-                    TEofDeclaration_Delete((struct TEofDeclaration*)pDeclaration);
+            case TEofDeclaration_ID:
+                TEofDeclaration_Delete((struct TEofDeclaration*)pDeclaration);
                 break;
-                default:
+            default:
                 break;
-            }
+        }
     }
 }
 
@@ -3125,38 +3134,38 @@ void TInitializer_Delete(struct TInitializer* p) /*@default*/
 {
     if (p != NULL)
     {
-            switch (p->Type)
-            {
-                case TBinaryExpression_ID:
-                    TBinaryExpression_Delete((struct TBinaryExpression*)p);
+        switch (p->Type)
+        {
+            case TBinaryExpression_ID:
+                TBinaryExpression_Delete((struct TBinaryExpression*)p);
                 break;
-                case TPrimaryExpressionLambda_ID:
-                    TPrimaryExpressionLambda_Delete((struct TPrimaryExpressionLambda*)p);
+            case TPrimaryExpressionLambda_ID:
+                TPrimaryExpressionLambda_Delete((struct TPrimaryExpressionLambda*)p);
                 break;
-                case TUnaryExpressionOperator_ID:
-                    TUnaryExpressionOperator_Delete((struct TUnaryExpressionOperator*)p);
+            case TUnaryExpressionOperator_ID:
+                TUnaryExpressionOperator_Delete((struct TUnaryExpressionOperator*)p);
                 break;
-                case TCastExpressionType_ID:
-                    TCastExpressionType_Delete((struct TCastExpressionType*)p);
+            case TCastExpressionType_ID:
+                TCastExpressionType_Delete((struct TCastExpressionType*)p);
                 break;
-                case TInitializerListType_ID:
-                    TInitializerListType_Delete((struct TInitializerListType*)p);
+            case TInitializerListType_ID:
+                TInitializerListType_Delete((struct TInitializerListType*)p);
                 break;
-                case TPrimaryExpressionValue_ID:
-                    TPrimaryExpressionValue_Delete((struct TPrimaryExpressionValue*)p);
+            case TPrimaryExpressionValue_ID:
+                TPrimaryExpressionValue_Delete((struct TPrimaryExpressionValue*)p);
                 break;
-                case TPostfixExpressionCore_ID:
-                    TPostfixExpressionCore_Delete((struct TPostfixExpressionCore*)p);
+            case TPostfixExpressionCore_ID:
+                TPostfixExpressionCore_Delete((struct TPostfixExpressionCore*)p);
                 break;
-                case TPrimaryExpressionLiteral_ID:
-                    TPrimaryExpressionLiteral_Delete((struct TPrimaryExpressionLiteral*)p);
+            case TPrimaryExpressionLiteral_ID:
+                TPrimaryExpressionLiteral_Delete((struct TPrimaryExpressionLiteral*)p);
                 break;
-                case TTernaryExpression_ID:
-                    TTernaryExpression_Delete((struct TTernaryExpression*)p);
+            case TTernaryExpression_ID:
+                TTernaryExpression_Delete((struct TTernaryExpression*)p);
                 break;
-                default:
+            default:
                 break;
-            }
+        }
     }
 }
 
@@ -3850,7 +3859,7 @@ struct TDirectDeclarator* TDirectDeclarator_Create() /*@default*/
 
 struct TTypeName* TTypeName_Create() /*@default*/
 {
-    struct TTypeName *p = (struct TTypeName *) Malloc(sizeof * p);
+    struct TTypeName* p = (struct TTypeName*) Malloc(sizeof * p);
     if (p != NULL)
     {
         TTypeName_Init(p);

@@ -1058,12 +1058,12 @@ static   void TEnumerator_CodePrint(struct SyntaxTree* program, struct PrintCode
     TNodeClueList_CodePrint(options, &pTEnumerator->ClueList0, fp);
     Output_Append(fp, options, pTEnumerator->Name);
 
-    if (pTEnumerator->pExpression)
+    if (pTEnumerator->pConstantExpression)
     {
         TNodeClueList_CodePrint(options, &pTEnumerator->ClueList1, fp);
         Output_Append(fp, options, "=");
 
-        TExpression_CodePrint(program, options, pTEnumerator->pExpression, "expr", fp);
+        TExpression_CodePrint(program, options, pTEnumerator->pConstantExpression, "expr", fp);
 
 
     }

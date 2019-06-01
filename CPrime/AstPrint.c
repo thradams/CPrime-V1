@@ -599,9 +599,9 @@ bool TEnumerator_Print(struct TEnumerator* pTEnumerator, bool b, FILE* fp)
     fprintf(fp, "{");
     fprintf(fp, "\"name\":\"%s\"", pTEnumerator->Name);
     //fprintf(fp, ",");
-    if (pTEnumerator->pExpression)
+    if (pTEnumerator->pConstantExpression)
     {
-        TExpression_Print(pTEnumerator->pExpression, "expr", true, fp);
+        TExpression_Print(pTEnumerator->pConstantExpression, "expr", true, fp);
     }
     else
     {

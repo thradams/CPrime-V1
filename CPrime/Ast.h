@@ -378,12 +378,13 @@ CAST(TStatement, TWhileStatement)
 CAST(TStatement, TSwitchStatement)
 
 
-/*block-item:
-declaration
-statement
-*/
+
 struct /*@<TDeclaration | TStatement>*/ TBlockItem
 {
+    /*block-item:
+       declaration
+       statement
+    */
     enum Type Type;
 };
 
@@ -455,8 +456,8 @@ struct TFunctionSpecifier
 {
     /*
     function-specifier:
-    inline
-    _Noreturn
+      inline
+      _Noreturn
     */
     enum Type Type  /*@=TFunctionSpecifier_ID*/;
     enum Tokens Token;
@@ -472,12 +473,12 @@ struct TStorageSpecifier
 {
     /*
     storage-class-specifier:
-    typedef
-    extern
-    static
-    _Thread_local
-    auto
-    register
+     typedef
+     extern
+     static
+     _Thread_local
+     auto
+     register
     */
     enum Type Type  /*@=TStorageSpecifier_ID*/;
     enum Tokens Token;
@@ -512,7 +513,7 @@ struct TEnumerator
     */
     struct TEnumerator* pNext;
     char* /*@auto*/ Name;
-    struct TExpression* /*@auto*/ pExpression;
+    struct TExpression* /*@auto*/ pConstantExpression;
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1; // =
     struct TScannerItemList ClueList2; // ,
@@ -555,7 +556,7 @@ struct TEnumSpecifier
 
 struct TEnumSpecifier* TEnumSpecifier_Create(void);
 void TEnumSpecifier_Delete(struct TEnumSpecifier* p);
-bool TEnumSpecifier_CompareTagName(struct TEnumSpecifier* p1, struct TEnumSpecifier* p2);
+bool TEnumSpecifier_IsSameTag(struct TEnumSpecifier* p1, struct TEnumSpecifier* p2);
 
 struct TSingleTypeSpecifier
 {
