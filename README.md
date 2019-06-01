@@ -3,6 +3,8 @@
 
 C' (cprime) is a C compiler that generates C code.
 
+It is a new CFront but following a new path.
+
 
 See it online:
 http://www.thradams.com/web/cprime.html
