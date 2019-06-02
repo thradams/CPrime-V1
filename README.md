@@ -272,6 +272,49 @@ void Items_Push(struct Items* pItems, struct Item* pItem) default
 
 
 ```
+### Especial comments
+CPrime has especial comments that are ignored.
+
+```c
+/*@
+and 
+*/
+
+```
+These two sequences will be interprted as spaces.
+
+These special comments where created to allow C language extensions be created using normal C syntax.
+
+For instance, this C code parsed by C compiler will see comments
+
+```c
+//file X.h
+struct X {
+    int i /*@= 3*/;
+};
+
+struct X * makeX() /*@: create*/;
+```
+but cprime compiler will see:
+
+```c
+//file X.h
+struct X {
+    int i = 3;
+};
+
+struct X * makeX() : create;
+```
+>
+> CPrime is compiled using itself. I use VC++ compiler and IDE with this annotation method.
+> Without this method I would need a IDE plugin, and this is something I dont have at this time.
+>
+
+
+## Using the compiler
+The compiler can be used together with traditional C compilers like VC++, clang or gcc.
+
+
 
 ## Welcome
 
