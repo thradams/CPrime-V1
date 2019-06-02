@@ -28,6 +28,47 @@ int main()
   struct Point pt = {}; //same as {.x = 1, .y = 2}
 }
 ```
+
+### Lambdas Expression
+
+This is similar of C++. The diference is that we don't capture and the result of the lambdas expression is always a pointer to function.
+
+```c
+void Run(void (*callback)(void*), void* data);
+int main()
+{  
+  Run([](void* data) {
+    printf("first");
+    Run([](void* data){
+      printf("second");
+    }, 0);     
+  }, 0);
+}
+```
+
+the generated code is :
+```c
+
+void Run(void (*callback)(void*), void* data);
+
+static void _lambda_1(void* data){
+      printf("second");
+    }
+
+static void _lambda_0(void* data){
+  
+    printf("first");
+    Run(_lambda_1, 0);     
+  }
+
+int main()
+{  
+  Run(_lambda_0, 0);
+}
+
+```
+
+
  
 ## Welcome
 
