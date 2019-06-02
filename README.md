@@ -21,7 +21,7 @@ struct Point
 };
 ```
 
-### Default initialization
+### Default initializer
 ```c
 int main()
 {
