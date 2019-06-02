@@ -83,7 +83,7 @@ void FunctionName(int) : functionTag;
 void FunctionName(int); 
 ```
 ### Explicit function instantiation 
-The compiler knows how to implement some functions.
+The compiler knows how to implement some functions for any struct.
 
 They are:
 * init     - initialize structs with default values
@@ -194,9 +194,84 @@ void Items_Destroy(struct Items* pItems);
 Is automatically tagged as
 
 ```c
-void Items_Destroy(struct Items* pItems) : destroy;'
+void Items_Destroy(struct Items* pItems) : destroy;
+```
+## Automatic instanciation of Push
+Push is a function that adds a new item inside a known data structure. 
+
+It cannot be instanciated for any type. The current implementation allow the instanciation of push for vector and linked list only.
+
+```c
+struct Item {
+    int i;
+    struct Item* pNext;
+};
+
+struct Items {
+    struct Item* pHead,* pTail;
+};
+
+void Items_Push(struct Items* pItems, struct Item* pItem) : push*/ /*@default*/
+```
+Instantiation for linked list with pHead and pTail
+
+```c
+void Items_Push(struct Items* pItems, struct Item* pItem) default
+{
+    if (pItems->pHead == 0)
+    {
+        pItems->pHead = pItem;
+    }
+    else
+    {
+        pItems->pTail->pNext = pItem;
+    }
+    pItems->pTail = pItem; 
+}
+```
+```c
+struct Item
+{
+    int i;
+    struct Item* pNext;
+};
+
+struct Items
+{
+    struct Item** pData;
+    int Size;
+    int Capacity;
+};
+
+void Items_Push(struct Items* pItems, struct Item* pItem) : push default;
+
 ```
 
+```c
+
+void Items_Push(struct Items* pItems, struct Item* pItem) default
+{
+    if (pItems->Size + 1 > pItems->Capacity)
+    {
+        int n = pItems->Capacity * 2;
+        if (n == 0)
+        {
+            n = 1;
+        }
+        struct Item** pnew = pItems->pData;
+        pnew = (struct Item**)realloc(pnew, n * sizeof(struct Item*));
+        if (pnew)
+        {
+            pItems->pData = pnew;
+            pItems->Capacity = n;
+        }
+    }
+    pItems->pData[pItems->Size] = pItem;
+    pItems->Size++;
+}
+
+
+```
 
 ## Welcome
 
