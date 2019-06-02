@@ -86,10 +86,10 @@ void FunctionName(int);
 The compiler knows how to implement some functions.
 
 They are:
-* init
-* destroy
-* create
-* delete
+* init     - initialize structs with default values
+* destroy  - free resources used by structs
+* create   - Allocates and initialize the object on the heap (malloc)
+* delete   - Destroy a object created on heap and frees the memory
 
 Any of these functions can be implemented automaticaly for any struct.
 
@@ -118,8 +118,73 @@ The instantiation point is defined with the keyword default.
 struct X * makeX() default;
 ```
 
+### Auto pointer qualifier
 
- 
+Pointers can be qualified with the 'auto' keyword.
+
+This tells the compiler that the pointer is the owner of the pointed object.
+
+In pratice this is used for destroy and delete instantiation:
+
+For instance:
+
+```c
+struct X {
+    char * auto Text;
+};
+
+void DestroyX(struct X *) : destroy;
+```
+
+The destroyX instantiation will be
+
+```c
+void DestroyX(struct X *) default
+{
+    free((void*)->Text);
+}
+```
+
+### [size] pointer qualifier
+Structures member pointers can be qualified with '[size]' .
+
+This tells the compiler that the pointer is pointing size objects where size is also a member of the struct.
+
+```c
+struct Item {
+	char * auto Text;
+};
+
+struct Items
+{
+	struct Item * auto * auto [Size] pData;
+	int Size;	
+};
+
+
+void Items_Destroy(struct Items* pItems) default;
+```
+
+This 'struct Item * auto * auto [Size] pData;' can be read as "pData is a onwer pointer of Size onwer pointers of struct Item".
+
+Items_Destroy is instanciated as:
+
+```c
+void Items_Destroy(struct Items* pItems) /*@default*/
+{
+    if (pItems->pData)
+    {
+        for (int i = 0; i < pItems->Size; i++)
+        {
+            free((void*)pItems->pData[i]->Text);
+        }
+        free((void*)pItems->pData);
+    }
+}
+```
+
+
+
 ## Welcome
 
 I work professionally with C++ since 2000 keeping my knowledge about C++ updated. After 2014 I noticed that my interest for the C language was gradually increasing. 
