@@ -363,7 +363,7 @@ The compiler can be used together with traditional C compilers like VC++, clang 
 
 
 
-## Welcome
+## Background
 
 I work professionally with C++ since 2000 keeping my knowledge about C++ updated. After 2014 I noticed that my interest for the C language was gradually increasing. 
 
