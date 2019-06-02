@@ -145,7 +145,7 @@ void DestroyX(struct X *) default
 }
 ```
 
-### [size] pointer qualifier
+### Pointer qualifier [size]
 Structures member pointers can be qualified with '[size]' .
 
 This tells the compiler that the pointer is pointing size objects where size is also a member of the struct.
@@ -162,7 +162,7 @@ struct Items
 };
 
 
-void Items_Destroy(struct Items* pItems) default;
+void Items_Destroy(struct Items* pItems) : destroy;
 ```
 
 This 'struct Item * auto * auto [Size] pData;' can be read as "pData is a onwer pointer of Size onwer pointers of struct Item".
@@ -183,6 +183,19 @@ void Items_Destroy(struct Items* pItems) /*@default*/
 }
 ```
 
+## Automatic function tags
+This is an optional feature controled by compiler flags. We can define that functions with the aproprieted signature and know suffixes like create, init, destroy and delete (case insensitive) will be automatically tagged.
+
+For instance:
+
+```c
+void Items_Destroy(struct Items* pItems);
+```
+Is automatically tagged as
+
+```c
+void Items_Destroy(struct Items* pItems) : destroy;'
+```
 
 
 ## Welcome
