@@ -1,7 +1,7 @@
 
 ## Description
 
-C' (cprime) is a C compiler that generates C code.  The generated code is intended to be readably and formatation is kept together with comments and macros.
+C' (cprime) is a C compiler that generates readably C code.
 
 It is a new CFront following a new path.
 
@@ -155,8 +155,7 @@ struct Item {
 	char * auto Text;
 };
 
-struct Items
-{
+struct Items {
 	struct Item * auto * auto [Size] pData;
 	int Size;	
 };
@@ -170,7 +169,7 @@ This 'struct Item * auto * auto [Size] pData;' can be read as "pData is a onwer 
 Items_Destroy is instanciated as:
 
 ```c
-void Items_Destroy(struct Items* pItems) /*@default*/
+void Items_Destroy(struct Items* pItems) default
 {
     if (pItems->pData)
     {
@@ -230,14 +229,12 @@ void Items_Push(struct Items* pItems, struct Item* pItem) default
 }
 ```
 ```c
-struct Item
-{
+struct Item {
     int i;
     struct Item* pNext;
 };
 
-struct Items
-{
+struct Items {
     struct Item** pData;
     int Size;
     int Capacity;
@@ -276,10 +273,7 @@ void Items_Push(struct Items* pItems, struct Item* pItem) default
 CPrime has especial comments that are ignored.
 
 ```c
-/*@
-and 
-*/
-
+/*@   and   */
 ```
 These two sequences will be interprted as spaces.
 
@@ -312,10 +306,10 @@ struct X * makeX() : create;
 
 ### Runtime polymorphism
 
-We can specify in cprime the set of types for a pointer. In C for instance, void* means a pointer to any object.
-Instead of saying pointer to any object I want to especify the list of possible types.
+In C we have void * that means a pointer to any object.
+In C' we can espcify a list of possible pointed objects.
 
-The syntax is :
+Sample:
 
 ```c
 struct Box {
@@ -330,10 +324,13 @@ struct <Box | Circle> Shape {
     int id;
 };
 
+struct Shape * p ...;
 ```
-We can read as "Shape is a pointer to Box or Circle". The pointed object have some common initial struct member that is called discriminant. With this discrimenti prime can do the runtime polimorphism.
 
-We can instanciate a function like this:
+Here, p is a pointer to Box or Circle.
+The struct Shape is manually (at this point) defined with the comom initial member of Box and Circle and this member is called discriminant.
+
+Having the discriminant we can instanciate functions for Shape.
 
 ```c
 void Shape_Draw(struct Shape* pShape) default;
@@ -356,7 +353,6 @@ void Shape_Draw(struct Shape* pShape) default
     }
 }
 ```
-
 
 
 ## Using the compiler
