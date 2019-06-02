@@ -9,7 +9,7 @@ It is a new CFront following a new path.
 See it online:
 http://www.thradams.com/web/cprime.html
 
-## Language Extensions
+## C language extensions 
 
 ### Struct members with initializer
 
@@ -29,7 +29,7 @@ int main()
 }
 ```
 
-### Lambdas Expression
+### Lambda Expression
 
 This is similar of C++. The diference is that we don't capture and the result of the lambdas expression is always a pointer to function.
 
@@ -66,6 +66,56 @@ int main()
   Run(_lambda_0, 0);
 }
 
+```
+### Function tags
+
+Functions can have a extra identifier that is called function tag.
+
+```c
+void FunctionName(int) : functionTag;
+```
+Function can be tagged in one place
+
+```c
+void FunctionName(int) : functionTag;
+
+//this is the same function with the same tag
+void FunctionName(int); 
+```
+### Explicit function instantiation 
+The compiler knows how to implement some functions.
+
+They are:
+* init
+* destroy
+* create
+* delete
+
+Any of these functions can be implemented automaticaly for any struct.
+
+It is called  explicit instantiation because declaration and point of instantiation is given by the programmer.
+
+Declaration sample:
+```c
+//file X.h
+struct X {
+    int i = 3;
+};
+
+struct X * makeX() : create;
+```
+
+Instantiation sample:
+
+The compiler will understand that makeX is instance of 'create' reading the function tag.
+The instantiation point is defined with the keyword default. 
+
+```c
+//file X.c
+#include "X.h"
+
+//this is the point of instantiation
+struct X * makeX() default;
 ```
 
 
