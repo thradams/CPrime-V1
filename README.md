@@ -310,6 +310,54 @@ struct X * makeX() : create;
 > Without this method I would need a IDE plugin, and this is something I dont have at this time.
 >
 
+### Runtime polymorphism
+
+We can specify in cprime the set of types for a pointer. In C for instance, void* means a pointer to any object.
+Instead of saying pointer to any object I want to especify the list of possible types.
+
+The syntax is :
+
+```c
+struct Box {
+    int id = 1;
+};
+
+struct Circle {
+    int id = 2;
+};
+
+struct <Box | Circle> Shape {
+    int id;
+};
+
+```
+We can read as "Shape is a pointer to Box or Circle". The pointed object have some common initial struct member that is called discriminant. With this discrimenti prime can do the runtime polimorphism.
+
+We can instanciate a function like this:
+
+```c
+void Shape_Draw(struct Shape* pShape) default;
+```
+resulting in:
+
+```c
+void Shape_Draw(struct Shape* pShape) default
+{
+    switch (pShape->id)
+    {
+        case  2:
+            Circle_Draw((struct Circle*)pShape);
+        break;
+        case  1:
+            Box_Draw((struct Box*)pShape);
+        break;
+        default:
+        break;
+    }
+}
+```
+
+
 
 ## Using the compiler
 The compiler can be used together with traditional C compilers like VC++, clang or gcc.
