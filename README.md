@@ -211,7 +211,7 @@ struct Items {
     struct Item* pHead,* pTail;
 };
 
-void Items_Push(struct Items* pItems, struct Item* pItem) : push*/ /*@default*/
+void Items_Push(struct Items* pItems, struct Item* pItem) : push;
 ```
 Instantiation for linked list with pHead and pTail
 
