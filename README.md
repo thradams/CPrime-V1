@@ -9,9 +9,9 @@ It is a new CFront following a new path.
 See it online:
 http://www.thradams.com/web/cprime.html
 
-## C language extensions 
+## C language extensions tour
 
-### Struct members with initializer
+### Struct members with initializers
 
 ```c
 struct Point
