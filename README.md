@@ -11,7 +11,7 @@ http://www.thradams.com/web/cprime.html
 
 ## Language Extensions
 
-### struct member with initializer and default initialization
+### Struct members with initializer
 
 ```c
 struct Point
@@ -19,12 +19,14 @@ struct Point
   int x = 1;
   int y = 2;
 };
+```
 
+### Default initialization
+```c
 int main()
 {
-  struct Point pt ={};
+  struct Point pt = {}; //same as {.x = 1, .y = 2}
 }
-
 ```
  
 ## Welcome
