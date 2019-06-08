@@ -448,7 +448,7 @@ bool IsFirstOfPrimaryExpression(enum Tokens token)
 void PrimaryExpressionLiteral(struct Parser* ctx, struct TExpression** ppPrimaryExpression)
 {
     enum Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    //const char* lexeme = Lexeme(ctx);
 
     struct TPrimaryExpressionLiteral* pPrimaryExpressionLiteral
         = TPrimaryExpressionLiteral_Create();
@@ -3318,7 +3318,7 @@ void UnionSet(struct Parser* ctx, struct TUnionSet* pUnionSet)
     */
 
     enum Tokens token = Parser_CurrentToken(ctx);
-    const char* lexeme = Lexeme(ctx);
+    //const char* lexeme = Lexeme(ctx);
 
 
     if (token == TK_LESS_THAN_SIGN)
@@ -4250,7 +4250,7 @@ void Type_Specifier(struct Parser* ctx, struct TTypeSpecifier * *ppTypeSpecifier
     */
 
 
-    bool bResult = false;
+    //bool bResult = false;
 
     const char* lexeme = Lexeme(ctx);
     enum Tokens token = Parser_CurrentToken(ctx);
@@ -4281,7 +4281,7 @@ void Type_Specifier(struct Parser* ctx, struct TTypeSpecifier * *ppTypeSpecifier
                 TSingleTypeSpecifier_Create();
 
             pSingleTypeSpecifier->Token2 = token;
-            bResult = true;
+            //bResult = true;
 
             Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
 
@@ -4291,7 +4291,7 @@ void Type_Specifier(struct Parser* ctx, struct TTypeSpecifier * *ppTypeSpecifier
 
         //atomic-type-specifier
         case TK__ATOMIC:
-            bResult = true;
+            //bResult = true;
             AtomicTypeSpecifier(ctx, ppTypeSpecifier);
             break;
 
@@ -4299,7 +4299,7 @@ void Type_Specifier(struct Parser* ctx, struct TTypeSpecifier * *ppTypeSpecifier
         case TK_UNION:
         {
             //assert(*ppTypeSpecifier == NULL);
-            bResult = true;
+            //bResult = true;
             struct TStructUnionSpecifier* pStructUnionSpecifier = TStructUnionSpecifier_Create();
 
             *ppTypeSpecifier = (struct TTypeSpecifier*)pStructUnionSpecifier;
@@ -4310,7 +4310,7 @@ void Type_Specifier(struct Parser* ctx, struct TTypeSpecifier * *ppTypeSpecifier
         case TK_ENUM:
         {
             //assert(*ppTypeSpecifier == NULL);
-            bResult = true;
+            //bResult = true;
             struct TEnumSpecifier* pEnumSpecifier2 = TEnumSpecifier_Create();
             *ppTypeSpecifier = (struct TTypeSpecifier*)pEnumSpecifier2;
             Enum_Specifier(ctx, pEnumSpecifier2);
@@ -4335,7 +4335,7 @@ void Type_Specifier(struct Parser* ctx, struct TTypeSpecifier * *ppTypeSpecifier
                     pSingleTypeSpecifier->Token2 = token;
 
                 PTR_STRING_REPLACE(pSingleTypeSpecifier->TypedefName, lexeme);
-                bResult = true;
+                //bResult = true;
 
                 Parser_Match(ctx, &pSingleTypeSpecifier->ClueList0);
                 *ppTypeSpecifier = (struct TTypeSpecifier*)pSingleTypeSpecifier;

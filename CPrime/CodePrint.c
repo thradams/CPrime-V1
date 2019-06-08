@@ -798,7 +798,7 @@ static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* pSyntaxTree,
 {
 
 
-    bool bIsPointer = false;
+    //bool bIsPointer = false;
 
     if (p->pExpressionLeft)
     {
@@ -816,7 +816,7 @@ static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* pSyntaxTree,
             Output_Append(fp, options, ")");
 
             //pSpecifierQualifierList = &p->pTypeName->SpecifierQualifierList;
-            bIsPointer = TPointerList_IsPointer(&p->pTypeName->Declarator.PointerList);
+            //bIsPointer = TPointerList_IsPointer(&p->pTypeName->Declarator.PointerList);
 
             //falta imprimeir typename
             //TTypeName_Print*
@@ -2133,8 +2133,8 @@ static bool FindVectorStructPattern(struct SyntaxTree* pSyntaxTree,
                         *pbItemIsPointer = bIsPointer2;
 
                         //se eh um array de ponteiros  donos
-                        bool bItemIsAutoPointer =
-                            TPointerList_IsAutoPointer(&pStructDeclarator->pDeclarator->PointerList);
+                        //bool bItemIsAutoPointer =
+                          //  TPointerList_IsAutoPointer(&pStructDeclarator->pDeclarator->PointerList);
 
                         *pbItemIsAutoPointer = bItemIsPointer;
 
@@ -3512,7 +3512,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* pSyntaxTree,
     //TPointerList_Printf(&pDeclatator->PointerList);
 
     //TODO FAZER FLAGS e OLHAR P TIPO E DECLARATOR AMBOS
-    bool bIsPointerToObject = TPointerList_IsPointerToObject(&pDeclatator->PointerList);
+    //bool bIsPointerToObject = TPointerList_IsPointerToObject(&pDeclatator->PointerList);
     bool bIsAutoPointerToObject = TPointerList_IsAutoPointerToObject(&pDeclatator->PointerList);
     bool bIsAutoPointerToAutoPointer = TPointerList_IsAutoPointerToAutoPointer(&pDeclatator->PointerList);
     bool bIsAutoPointerToPointer = TPointerList_IsAutoPointerToPointer(&pDeclatator->PointerList);
@@ -4030,61 +4030,6 @@ static bool FindHighLevelFunction(struct SyntaxTree* pSyntaxTree,
 }
 
 
-//Verifica se tem "cara" de ser o vector
-static bool IsVector(struct TStructUnionSpecifier* pStructUnionSpecifier)
-{
-    bool bHasVector = false;
-    bool bHasSize = false;
-    bool bHasCapacity = false;
-
-    if (pStructUnionSpecifier)
-    {
-        //Vou analisar a "digital" da struct
-        //ok tem a definicao completa da struct
-        for (int i = 0; i < pStructUnionSpecifier->StructDeclarationList.Size; i++)
-        {
-            struct TAnyStructDeclaration* pAnyStructDeclaration =
-                pStructUnionSpecifier->StructDeclarationList.pItems[i];
-
-            struct TStructDeclaration* pStructDeclaration =
-                TAnyStructDeclaration_As_TStructDeclaration(pAnyStructDeclaration);
-            if (pStructDeclaration)
-            {
-                TStructDeclarator* pStructDeclarator =
-                    pStructDeclaration->DeclaratorList.pHead;
-
-                while (pStructDeclarator)
-                {
-                    const char* structDeclaratorName =
-                        TDeclarator_GetName(pStructDeclarator->pDeclarator);
-
-                    bool bIsPointer1 =
-                        TPointerList_IsPointerN(&pStructDeclarator->pDeclarator->PointerList, 1);
-
-                    if (bIsPointer1)
-                    {
-                        bHasVector = true;
-                    }
-                    else  if (TSpecifierQualifierList_IsAnyInteger(&pStructDeclaration->SpecifierQualifierList))
-                    {
-                        if (strcmp(structDeclaratorName, "Size") == 0)
-                        {
-                            bHasSize = true;
-                        }
-                        else if (strcmp(structDeclaratorName, "Capacity") == 0)
-                        {
-                            bHasCapacity = true;
-                        }
-                    }
-
-                    pStructDeclarator = (pStructDeclarator)->pNext;
-                }
-            }
-        }
-    }
-
-    return bHasSize && bHasCapacity&& bHasVector;
-}
 
 void UnionTypeDefault(struct SyntaxTree* pSyntaxTree,
                       struct PrintCodeOptions* options,
@@ -4142,7 +4087,7 @@ void UnionTypeDefault(struct SyntaxTree* pSyntaxTree,
             {"value", idvalue.c_str},
             {"args", args.c_str}
             };
-            if ((int)map.pHashTable[i]->pValue == 2)
+            if ((size_t)map.pHashTable[i]->pValue == 2)
             {
                 //2 is struct
                 StrBuilder_Template(fp,
@@ -4205,7 +4150,7 @@ void InstanciateDestroy2(struct SyntaxTree* pSyntaxTree,
     bool bIsPointerToObject = TPointerList_IsPointerToObject(&pDeclatator->PointerList);
     bool bIsAutoPointerToObject = TPointerList_IsAutoPointerToObject(&pDeclatator->PointerList);
     bool bIsAutoPointerToAutoPointer = TPointerList_IsAutoPointerToAutoPointer(&pDeclatator->PointerList);
-    bool bIsAutoPointerToPointer = TPointerList_IsAutoPointerToPointer(&pDeclatator->PointerList);
+    //bool bIsAutoPointerToPointer = TPointerList_IsAutoPointerToPointer(&pDeclatator->PointerList);
     bool bIsPointer = TPointerList_IsPointer(&pDeclatator->PointerList);
 
     struct TDeclarationSpecifier* pMainSpecifier =

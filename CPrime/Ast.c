@@ -2277,7 +2277,7 @@ bool TSpecifierQualifierList_CanAdd(struct TSpecifierQualifierList* p, enum Toke
     bool bResult = false;
 
    // bool bStruct = false;
-    bool bEnum = false;
+    //bool bEnum = false;
 
     bool bTypeDef = false;
     bool bInt = false;
@@ -2313,7 +2313,7 @@ bool TSpecifierQualifierList_CanAdd(struct TSpecifierQualifierList* p, enum Toke
                 break;
 
             case TEnumSpecifier_ID:
-                bEnum = true;
+                //bEnum = true;
                 break;
 
             case TStorageSpecifier_ID:
@@ -2378,7 +2378,7 @@ bool TDeclarationSpecifiers_CanAddSpeficier(struct TDeclarationSpecifiers* pDecl
 {
     bool bResult = false;
     //bool bStruct = false;
-    bool bEnum = false;
+    //bool bEnum = false;
 
     struct TStructUnionSpecifier* pTStructUnionSpecifier = NULL;
     struct TEnumSpecifier* pEnumSpecifier = NULL;
@@ -2421,7 +2421,7 @@ bool TDeclarationSpecifiers_CanAddSpeficier(struct TDeclarationSpecifiers* pDecl
                 break;
 
             case TEnumSpecifier_ID:
-                bEnum = true;
+                //bEnum = true;
                 pEnumSpecifier = (struct TEnumSpecifier*)pSpecifier;
                 break;
 
@@ -3518,7 +3518,7 @@ bool EvaluateConstantExpression(struct TExpression* p, int* pResult)
                         break;
 
                     case TK_HEX_INTEGER:
-                        result = strtol(pPrimaryExpressionValue->lexeme, NULL, 16);
+                        result = (int)strtol(pPrimaryExpressionValue->lexeme, NULL, 16);
                         b = true;
                         break;
 
