@@ -361,6 +361,7 @@ void Shape_Draw(struct Shape* pShape) default
 ## Using the compiler
 The compiler can be used together with traditional C compilers like VC++, clang or gcc.
 
+## Grammar changes
 
 
 ## Background
