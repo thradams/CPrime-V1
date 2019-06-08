@@ -782,6 +782,7 @@ struct TDesignation
 struct TDesignation* TDesignation_Create(void);
 void TDesignation_Delete(struct TDesignation* p);
 
+struct TInitializer;
 
 void TInitializer_Delete(struct TInitializer* p);
 

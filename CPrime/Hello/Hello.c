@@ -13,3 +13,7 @@ void X(struct X * p) /*@: init*/ /*@default*/
 {
     p->e = A;
 }
+int main()
+{
+
+}

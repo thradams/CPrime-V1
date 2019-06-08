@@ -96,7 +96,7 @@ bool Stream_Init(struct Stream* pStream, const char* name, const char* Text)
 
     if (Text != NULL)
     {
-        pStream->TextLen = strlen(Text);
+        pStream->TextLen = (int)strlen(Text);
     }
 
     else

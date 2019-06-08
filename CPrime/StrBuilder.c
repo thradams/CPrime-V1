@@ -119,12 +119,12 @@ bool StrBuilder_Set(struct StrBuilder* p,
     }
     else
     {
-        int n = strlen(source);
+        int n = (int)strlen(source);
         StrBuilder_Clear(p);
 
         if (n > 0)
         {
-            r = StrBuilder_SetN(p, source, strlen(source));
+            r = StrBuilder_SetN(p, source, (int)strlen(source));
         }
     }
     return r;
@@ -173,7 +173,7 @@ bool StrBuilder_Append(struct StrBuilder* p,
         return true;
     }
 
-    return StrBuilder_AppendN(p, source, strlen(source));
+    return StrBuilder_AppendN(p, source, (int)strlen(source));
 }
 
 void StrBuilder_Clear(struct StrBuilder* p)

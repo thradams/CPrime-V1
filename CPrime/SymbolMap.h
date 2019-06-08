@@ -5,6 +5,12 @@
 #include "StringEx.h"
 
 
+struct TDeclarator;
+struct TDeclarationSpecifiers;
+struct TDeclaration;
+struct TTypeSpecifier;
+struct TStructUnionSpecifier;
+struct TTypePointer;
 
 struct SymbolMapItem
 {
@@ -72,6 +78,7 @@ struct TEnumSpecifier* SymbolMap_FindCompleteEnumSpecifier(struct SymbolMap* pMa
 struct TDeclaration* SymbolMap_FindObjFunction2(struct SymbolMap* pMap,
     const char* objName,
                                                 const char* funcName);
+
 
 struct TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(struct SymbolMap* pMap,
     const char* typedefName,

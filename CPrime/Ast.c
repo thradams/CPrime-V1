@@ -1478,7 +1478,7 @@ bool TSpecifierQualifierList_Compare(struct TSpecifierQualifierList* p1, struct 
         return false;
     }
 
-    bool bResult = false;
+    //bool bResult = false;
     for (int i = 0; i < p1->Size; i++)
     {
         if (p1->pData[i]->Type == p2->pData[i]->Type)
@@ -2276,7 +2276,7 @@ bool TSpecifierQualifierList_CanAdd(struct TSpecifierQualifierList* p, enum Toke
 {
     bool bResult = false;
 
-    bool bStruct = false;
+   // bool bStruct = false;
     bool bEnum = false;
 
     bool bTypeDef = false;
@@ -2309,7 +2309,7 @@ bool TSpecifierQualifierList_CanAdd(struct TSpecifierQualifierList* p, enum Toke
             break;
 
             case TStructUnionSpecifier_ID:
-                bStruct = true;
+                //bStruct = true;
                 break;
 
             case TEnumSpecifier_ID:
@@ -2377,7 +2377,7 @@ bool TDeclarationSpecifiers_CanAddSpeficier(struct TDeclarationSpecifiers* pDecl
                                             const char* lexeme)
 {
     bool bResult = false;
-    bool bStruct = false;
+    //bool bStruct = false;
     bool bEnum = false;
 
     struct TStructUnionSpecifier* pTStructUnionSpecifier = NULL;
@@ -2416,7 +2416,7 @@ bool TDeclarationSpecifiers_CanAddSpeficier(struct TDeclarationSpecifiers* pDecl
             break;
 
             case TStructUnionSpecifier_ID:
-                bStruct = true;
+                //bStruct = true;
                 pTStructUnionSpecifier = (struct TStructUnionSpecifier*)pSpecifier;
                 break;
 
@@ -3763,7 +3763,7 @@ struct TStructUnionSpecifier* TDeclarationSpecifiers_Find_StructUnionSpecifier(s
     return pStructUnionSpecifier;
 }
 
-struct TStructUnionSpecifier* TParameter_Is_DirectPointerToStruct(struct SyntaxTree* program, struct TParameter* pParameter)
+struct TStructUnionSpecifier* TParameter_Is_DirectPointerToStruct(struct SyntaxTree* pSyntaxTree, struct TParameter* pParameter)
 {
     struct TStructUnionSpecifier* pStructUnionSpecifier = NULL;
     if (TParameter_IsDirectPointer(pParameter))
@@ -3771,7 +3771,7 @@ struct TStructUnionSpecifier* TParameter_Is_DirectPointerToStruct(struct SyntaxT
         const char* typedefName = TParameter_GetTypedefName(pParameter);
         if (typedefName != NULL)
         {
-            struct TDeclaration* pArgType = SyntaxTree_FindDeclaration(program, TParameter_GetTypedefName(pParameter));
+            struct TDeclaration* pArgType = SyntaxTree_FindDeclaration(pSyntaxTree, TParameter_GetTypedefName(pParameter));
             if (pArgType)
             {
                 pStructUnionSpecifier =

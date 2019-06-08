@@ -299,7 +299,7 @@ static void TokenSet_Push(struct TokenSet* p, struct PPToken* pItem) /*@:push*/ 
             n = 1;
         }
         struct PPToken** pnew = p->pItems;
-        pnew = (struct PPToken**)Realloc(pnew, n * sizeof(struct PPToken*));
+        pnew = (struct PPToken**)Realloc(pnew,  n * sizeof(struct PPToken*));
         if (pnew)
         {
             p->pItems = pnew;
@@ -312,7 +312,6 @@ static void TokenSet_Push(struct TokenSet* p, struct PPToken* pItem) /*@:push*/ 
 
 void TokenSet_PushUnique(struct TokenSet* p, struct PPToken* pItem) /*custom*/
 {
-    int r = 0;
     struct PPToken* pTk = TokenSet_Find(p, pItem->Lexeme);
 
     if (pTk == NULL)
@@ -321,7 +320,6 @@ void TokenSet_PushUnique(struct TokenSet* p, struct PPToken* pItem) /*custom*/
     }
     else
     {
-        r = 0;
         PPToken_Delete(pItem);
     }
 

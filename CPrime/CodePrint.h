@@ -58,18 +58,18 @@ void SyntaxTree_PrintCodeToString(struct SyntaxTree* pSyntaxTree,
                                   struct StrBuilder* output);
 
 
-void TTypeName_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeName* p, struct StrBuilder* fp);
+void TTypeName_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TTypeName* p, struct StrBuilder* fp);
 
 
 
-void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program,
+void TSpecifierQualifierList_CodePrint(struct SyntaxTree* pSyntaxTree,
                                        struct PrintCodeOptions* options,
                                        struct TSpecifierQualifierList* pDeclarationSpecifiers,
 
                                        struct StrBuilder* fp);
 
 
-void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarationSpecifiers* pDeclarationSpecifiers, struct StrBuilder* fp);
+void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TDeclarationSpecifiers* pDeclarationSpecifiers, struct StrBuilder* fp);
 
 enum Action
 {
@@ -82,7 +82,7 @@ enum Action
     ActionStaticInit,
 };
 
-void InstanciateDestroy2(struct SyntaxTree* program,
+void InstanciateDestroy2(struct SyntaxTree* pSyntaxTree,
                          struct PrintCodeOptions* options,
                          struct TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
                          struct TDeclarator* pDeclatator,                        //<-dupla para entender o tipo

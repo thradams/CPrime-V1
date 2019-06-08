@@ -54,7 +54,7 @@ void IntegerStack_Destroy(struct IntegerStack* pItems) /*@default*/
 }
 
 static int global_lambda_counter = 0;
-static const char* GetReallocStr(struct SyntaxTree* program);
+static const char* GetReallocStr(struct SyntaxTree* pSyntaxTree);
 
 void PrintCodeOptions_Destroy(struct PrintCodeOptions* options) /*@default*/
 {
@@ -64,11 +64,11 @@ void PrintCodeOptions_Destroy(struct PrintCodeOptions* options) /*@default*/
 }
 
 
-void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TSpecifierQualifierList* pDeclarationSpecifiers, struct StrBuilder* fp);
+void TSpecifierQualifierList_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TSpecifierQualifierList* pDeclarationSpecifiers, struct StrBuilder* fp);
 
-void TTypeName_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeName* p, struct StrBuilder* fp);
+void TTypeName_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TTypeName* p, struct StrBuilder* fp);
 
-static void TInitializer_CodePrint(struct SyntaxTree* program,
+static void TInitializer_CodePrint(struct SyntaxTree* pSyntaxTree,
                                    struct PrintCodeOptions* options,
                                    struct TDeclarator* pDeclarator,
                                    struct TDeclarationSpecifiers* pDeclarationSpecifiers,
@@ -76,7 +76,7 @@ static void TInitializer_CodePrint(struct SyntaxTree* program,
 
                                    struct StrBuilder* fp);
 
-static void TInitializerList_CodePrint(struct SyntaxTree* program,
+static void TInitializerList_CodePrint(struct SyntaxTree* pSyntaxTree,
                                        struct PrintCodeOptions* options,
                                        struct TDeclarationSpecifiers* pDeclarationSpecifiers,
                                        struct TDeclarator* pDeclarator,
@@ -85,7 +85,7 @@ static void TInitializerList_CodePrint(struct SyntaxTree* program,
                                        struct StrBuilder* fp);
 
 
-static void TInitializerListItem_CodePrint(struct SyntaxTree* program,
+static void TInitializerListItem_CodePrint(struct SyntaxTree* pSyntaxTree,
                                            struct PrintCodeOptions* options,
                                            struct TDeclarator* pDeclarator,
                                            struct TDeclarationSpecifiers* pDeclarationSpecifiers,
@@ -94,19 +94,19 @@ static void TInitializerListItem_CodePrint(struct SyntaxTree* program,
                                            struct StrBuilder* fp);
 
 
-static void TTypeQualifierList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifierList* p, struct StrBuilder* fp);
+static void TTypeQualifierList_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TTypeQualifierList* p, struct StrBuilder* fp);
 
-static void TAnyDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyDeclaration* pDeclaration, struct StrBuilder* fp);
+static void TAnyDeclaration_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TAnyDeclaration* pDeclaration, struct StrBuilder* fp);
 
-static void TAnyStructDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyStructDeclaration* p, struct StrBuilder* fp);
-static void TTypeQualifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifier* p, struct StrBuilder* fp);
-static void TDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclaration* p, struct StrBuilder* fp);
-static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TExpression* p, const char* name, struct StrBuilder* fp);
-static void TStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStatement* p, struct StrBuilder* fp);
-static void TBlockItem_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TBlockItem* p, struct StrBuilder* fp);
+static void TAnyStructDeclaration_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TAnyStructDeclaration* p, struct StrBuilder* fp);
+static void TTypeQualifier_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TTypeQualifier* p, struct StrBuilder* fp);
+static void TDeclaration_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TDeclaration* p, struct StrBuilder* fp);
+static void TExpression_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TExpression* p, const char* name, struct StrBuilder* fp);
+static void TStatement_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TStatement* p, struct StrBuilder* fp);
+static void TBlockItem_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TBlockItem* p, struct StrBuilder* fp);
 
-static void TPointer_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TPointer* pPointer, struct StrBuilder* fp);
-static void TParameter_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameter* p, struct StrBuilder* fp);
+static void TPointer_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TPointer* pPointer, struct StrBuilder* fp);
+static void TParameter_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TParameter* p, struct StrBuilder* fp);
 
 void Output_Append(struct StrBuilder* p,
                    struct PrintCodeOptions* options,
@@ -298,7 +298,7 @@ static void TNodeClueList_CodePrint(struct PrintCodeOptions* options, struct TSc
 
 }
 
-static void TCompoundStatement_CodePrint(struct SyntaxTree* program,
+static void TCompoundStatement_CodePrint(struct SyntaxTree* pSyntaxTree,
                                          struct PrintCodeOptions* options,
                                          struct TCompoundStatement* p,
 
@@ -310,7 +310,7 @@ static void TCompoundStatement_CodePrint(struct SyntaxTree* program,
     for (int j = 0; j < p->BlockItemList.Size; j++)
     {
         struct TBlockItem* pBlockItem = p->BlockItemList.pItems[j];
-        TBlockItem_CodePrint(program, options, pBlockItem, fp);
+        TBlockItem_CodePrint(pSyntaxTree, options, pBlockItem, fp);
     }
 
     TNodeClueList_CodePrint(options, &p->ClueList1, fp);
@@ -319,7 +319,7 @@ static void TCompoundStatement_CodePrint(struct SyntaxTree* program,
 }
 
 
-static void TLabeledStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TLabeledStatement* p, struct StrBuilder* fp)
+static void TLabeledStatement_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TLabeledStatement* p, struct StrBuilder* fp)
 {
 
 
@@ -329,7 +329,7 @@ static void TLabeledStatement_CodePrint(struct SyntaxTree* program, struct Print
         Output_Append(fp, options, "case");
         if (p->pExpression)
         {
-            TExpression_CodePrint(program, options, p->pExpression, "", fp);
+            TExpression_CodePrint(pSyntaxTree, options, p->pExpression, "", fp);
         }
         else
         {
@@ -338,7 +338,7 @@ static void TLabeledStatement_CodePrint(struct SyntaxTree* program, struct Print
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         Output_Append(fp, options, ":");
 
-        TStatement_CodePrint(program, options, p->pStatementOpt, fp);
+        TStatement_CodePrint(pSyntaxTree, options, p->pStatementOpt, fp);
     }
     else if (p->token == TK_DEFAULT)
     {
@@ -346,7 +346,7 @@ static void TLabeledStatement_CodePrint(struct SyntaxTree* program, struct Print
         Output_Append(fp, options, "default");
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         Output_Append(fp, options, ":");
-        TStatement_CodePrint(program, options, p->pStatementOpt, fp);
+        TStatement_CodePrint(pSyntaxTree, options, p->pStatementOpt, fp);
     }
     else if (p->token == TK_IDENTIFIER)
     {
@@ -356,14 +356,14 @@ static void TLabeledStatement_CodePrint(struct SyntaxTree* program, struct Print
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         Output_Append(fp, options, ":");
 
-        TStatement_CodePrint(program, options, p->pStatementOpt, fp);
+        TStatement_CodePrint(pSyntaxTree, options, p->pStatementOpt, fp);
     }
 
 
 
 }
 
-static void TForStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TForStatement* p, struct StrBuilder* fp)
+static void TForStatement_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TForStatement* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -373,64 +373,64 @@ static void TForStatement_CodePrint(struct SyntaxTree* program, struct PrintCode
 
     if (p->pInitDeclarationOpt)
     {
-        TAnyDeclaration_CodePrint(program, options, p->pInitDeclarationOpt, fp);
+        TAnyDeclaration_CodePrint(pSyntaxTree, options, p->pInitDeclarationOpt, fp);
         if (p->pExpression2)
         {
-            TExpression_CodePrint(program, options, p->pExpression2, "expr2", fp);
+            TExpression_CodePrint(pSyntaxTree, options, p->pExpression2, "expr2", fp);
         }
         TNodeClueList_CodePrint(options, &p->ClueList2, fp);
         Output_Append(fp, options, ";");
-        TExpression_CodePrint(program, options, p->pExpression3, "expr3", fp);
+        TExpression_CodePrint(pSyntaxTree, options, p->pExpression3, "expr3", fp);
     }
     else
     {
-        TExpression_CodePrint(program, options, p->pExpression1, "expr1", fp);
+        TExpression_CodePrint(pSyntaxTree, options, p->pExpression1, "expr1", fp);
         TNodeClueList_CodePrint(options, &p->ClueList2, fp);
         Output_Append(fp, options, ";");
-        TExpression_CodePrint(program, options, p->pExpression2, "expr2", fp);
+        TExpression_CodePrint(pSyntaxTree, options, p->pExpression2, "expr2", fp);
         TNodeClueList_CodePrint(options, &p->ClueList3, fp);
         Output_Append(fp, options, ";");
-        TExpression_CodePrint(program, options, p->pExpression3, "expr3", fp);
+        TExpression_CodePrint(pSyntaxTree, options, p->pExpression3, "expr3", fp);
     }
 
     TNodeClueList_CodePrint(options, &p->ClueList4, fp);
     Output_Append(fp, options, ")");
 
-    TStatement_CodePrint(program, options, p->pStatement, fp);
+    TStatement_CodePrint(pSyntaxTree, options, p->pStatement, fp);
 
 
 }
 
 
-static void TWhileStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TWhileStatement* p, struct StrBuilder* fp)
+static void TWhileStatement_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TWhileStatement* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "while");
     TNodeClueList_CodePrint(options, &p->ClueList1, fp);
     Output_Append(fp, options, "(");
-    TExpression_CodePrint(program, options, p->pExpression, "expr", fp);
+    TExpression_CodePrint(pSyntaxTree, options, p->pExpression, "expr", fp);
     TNodeClueList_CodePrint(options, &p->ClueList2, fp);
     Output_Append(fp, options, ")");
-    TStatement_CodePrint(program, options, p->pStatement, fp);
+    TStatement_CodePrint(pSyntaxTree, options, p->pStatement, fp);
 
 }
 
 
 
-static void TDoStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDoStatement* p, struct StrBuilder* fp)
+static void TDoStatement_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TDoStatement* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "do");
 
-    TStatement_CodePrint(program, options, p->pStatement, fp);
+    TStatement_CodePrint(pSyntaxTree, options, p->pStatement, fp);
 
     TNodeClueList_CodePrint(options, &p->ClueList1, fp);
     Output_Append(fp, options, "while");
     TNodeClueList_CodePrint(options, &p->ClueList2, fp);
     Output_Append(fp, options, "(");
-    TExpression_CodePrint(program, options, p->pExpression, "expr", fp);
+    TExpression_CodePrint(pSyntaxTree, options, p->pExpression, "expr", fp);
     TNodeClueList_CodePrint(options, &p->ClueList3, fp);
     Output_Append(fp, options, ")");
     TNodeClueList_CodePrint(options, &p->ClueList4, fp);
@@ -440,9 +440,9 @@ static void TDoStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeO
 }
 
 
-static void TExpressionStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TExpressionStatement* p, struct StrBuilder* fp)
+static void TExpressionStatement_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TExpressionStatement* p, struct StrBuilder* fp)
 {
-    TExpression_CodePrint(program, options, p->pExpression, "", fp);
+    TExpression_CodePrint(pSyntaxTree, options, p->pExpression, "", fp);
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, ";");
@@ -451,7 +451,7 @@ static void TExpressionStatement_CodePrint(struct SyntaxTree* program, struct Pr
 }
 
 
-static void TJumpStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TJumpStatement* p, struct StrBuilder* fp)
+static void TJumpStatement_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TJumpStatement* p, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
@@ -471,7 +471,7 @@ static void TJumpStatement_CodePrint(struct SyntaxTree* program, struct PrintCod
         case TK_RETURN:
             Output_Append(fp, options, "return");
             TNodeClueList_CodePrint(options, &p->ClueList1, fp);
-            TExpression_CodePrint(program, options, p->pExpression, "", fp);
+            TExpression_CodePrint(pSyntaxTree, options, p->pExpression, "", fp);
             break;
 
         default:
@@ -486,13 +486,13 @@ static void TJumpStatement_CodePrint(struct SyntaxTree* program, struct PrintCod
 
 }
 
-static void TAsmStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAsmStatement* p, struct StrBuilder* fp)
+static void TAsmStatement_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TAsmStatement* p, struct StrBuilder* fp)
 {
     Output_Append(fp, options, "\"type\":\"asm-statement\"");
 
 }
 
-static void TSwitchStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TSwitchStatement* p, struct StrBuilder* fp)
+static void TSwitchStatement_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TSwitchStatement* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -501,17 +501,17 @@ static void TSwitchStatement_CodePrint(struct SyntaxTree* program, struct PrintC
     TNodeClueList_CodePrint(options, &p->ClueList1, fp);
     Output_Append(fp, options, "(");
 
-    TExpression_CodePrint(program, options, p->pConditionExpression, "expr", fp);
+    TExpression_CodePrint(pSyntaxTree, options, p->pConditionExpression, "expr", fp);
 
     TNodeClueList_CodePrint(options, &p->ClueList2, fp);
     Output_Append(fp, options, ")");
 
-    TStatement_CodePrint(program, options, p->pExpression, fp);
+    TStatement_CodePrint(pSyntaxTree, options, p->pExpression, fp);
 
 }
 
 
-static void TIfStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TIfStatement* p, struct StrBuilder* fp)
+static void TIfStatement_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TIfStatement* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -521,7 +521,7 @@ static void TIfStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeO
     Output_Append(fp, options, "(");
 
 
-    TExpression_CodePrint(program, options, p->pConditionExpression, "expr", fp);
+    TExpression_CodePrint(pSyntaxTree, options, p->pConditionExpression, "expr", fp);
 
     TNodeClueList_CodePrint(options, &p->ClueList2, fp);
     Output_Append(fp, options, ")");
@@ -531,20 +531,20 @@ static void TIfStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeO
 
     if (p->pStatement)
     {
-        TStatement_CodePrint(program, options, p->pStatement, fp);
+        TStatement_CodePrint(pSyntaxTree, options, p->pStatement, fp);
     }
 
     if (p->pElseStatement)
     {
         TNodeClueList_CodePrint(options, &p->ClueList3, fp);
         Output_Append(fp, options, "else");
-        TStatement_CodePrint(program, options, p->pElseStatement, fp);
+        TStatement_CodePrint(pSyntaxTree, options, p->pElseStatement, fp);
     }
 
 
 }
 
-static void TStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStatement* p, struct StrBuilder* fp)
+static void TStatement_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TStatement* p, struct StrBuilder* fp)
 {
     if (p == NULL)
     {
@@ -554,39 +554,39 @@ static void TStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOpt
     switch (p->Type)
     {
         case TExpressionStatement_ID:
-            TExpressionStatement_CodePrint(program, options, (struct TExpressionStatement*)p, fp);
+            TExpressionStatement_CodePrint(pSyntaxTree, options, (struct TExpressionStatement*)p, fp);
             break;
 
         case TSwitchStatement_ID:
-            TSwitchStatement_CodePrint(program, options, (struct TSwitchStatement*)p, fp);
+            TSwitchStatement_CodePrint(pSyntaxTree, options, (struct TSwitchStatement*)p, fp);
             break;
 
         case TLabeledStatement_ID:
-            TLabeledStatement_CodePrint(program, options, (struct TLabeledStatement*)p, fp);
+            TLabeledStatement_CodePrint(pSyntaxTree, options, (struct TLabeledStatement*)p, fp);
             break;
 
         case TForStatement_ID:
-            TForStatement_CodePrint(program, options, (struct TForStatement*)p, fp);
+            TForStatement_CodePrint(pSyntaxTree, options, (struct TForStatement*)p, fp);
             break;
 
         case TJumpStatement_ID:
-            TJumpStatement_CodePrint(program, options, (struct TJumpStatement*)p, fp);
+            TJumpStatement_CodePrint(pSyntaxTree, options, (struct TJumpStatement*)p, fp);
             break;
 
         case TAsmStatement_ID:
-            TAsmStatement_CodePrint(program, options, (struct TAsmStatement*)p, fp);
+            TAsmStatement_CodePrint(pSyntaxTree, options, (struct TAsmStatement*)p, fp);
             break;
 
         case TCompoundStatement_ID:
-            TCompoundStatement_CodePrint(program, options, (struct TCompoundStatement*)p, fp);
+            TCompoundStatement_CodePrint(pSyntaxTree, options, (struct TCompoundStatement*)p, fp);
             break;
 
         case TIfStatement_ID:
-            TIfStatement_CodePrint(program, options, (struct TIfStatement*)p, fp);
+            TIfStatement_CodePrint(pSyntaxTree, options, (struct TIfStatement*)p, fp);
             break;
 
         case TDoStatement_ID:
-            TDoStatement_CodePrint(program, options, (struct TDoStatement*)p, fp);
+            TDoStatement_CodePrint(pSyntaxTree, options, (struct TDoStatement*)p, fp);
             break;
 
         default:
@@ -597,7 +597,7 @@ static void TStatement_CodePrint(struct SyntaxTree* program, struct PrintCodeOpt
 
 }
 
-static void TBlockItem_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TBlockItem* p, struct StrBuilder* fp)
+static void TBlockItem_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TBlockItem* p, struct StrBuilder* fp)
 {
     if (p == NULL)
     {
@@ -616,65 +616,65 @@ static void TBlockItem_CodePrint(struct SyntaxTree* program, struct PrintCodeOpt
 
         case TSwitchStatement_ID:
 
-            TSwitchStatement_CodePrint(program, options, (struct TSwitchStatement*)p, fp);
+            TSwitchStatement_CodePrint(pSyntaxTree, options, (struct TSwitchStatement*)p, fp);
 
             break;
 
         case TJumpStatement_ID:
 
-            TJumpStatement_CodePrint(program, options, (struct TJumpStatement*)p, fp);
+            TJumpStatement_CodePrint(pSyntaxTree, options, (struct TJumpStatement*)p, fp);
 
             break;
 
         case TForStatement_ID:
 
-            TForStatement_CodePrint(program, options, (struct TForStatement*)p, fp);
+            TForStatement_CodePrint(pSyntaxTree, options, (struct TForStatement*)p, fp);
 
             break;
 
         case TIfStatement_ID:
 
-            TIfStatement_CodePrint(program, options, (struct TIfStatement*)p, fp);
+            TIfStatement_CodePrint(pSyntaxTree, options, (struct TIfStatement*)p, fp);
 
             break;
 
         case TWhileStatement_ID:
 
-            TWhileStatement_CodePrint(program, options, (struct TWhileStatement*)p, fp);
+            TWhileStatement_CodePrint(pSyntaxTree, options, (struct TWhileStatement*)p, fp);
 
             break;
 
         case TDoStatement_ID:
 
-            TDoStatement_CodePrint(program, options, (struct TDoStatement*)p, fp);
+            TDoStatement_CodePrint(pSyntaxTree, options, (struct TDoStatement*)p, fp);
 
             break;
 
         case TDeclaration_ID:
-            TDeclaration_CodePrint(program, options, (struct TDeclaration*)p, fp);
+            TDeclaration_CodePrint(pSyntaxTree, options, (struct TDeclaration*)p, fp);
             //Output_Append(fp, options,  "\n");
             break;
 
         case TLabeledStatement_ID:
 
-            TLabeledStatement_CodePrint(program, options, (struct TLabeledStatement*)p, fp);
+            TLabeledStatement_CodePrint(pSyntaxTree, options, (struct TLabeledStatement*)p, fp);
 
             break;
 
         case TCompoundStatement_ID:
-            TCompoundStatement_CodePrint(program, options, (struct TCompoundStatement*)p, fp);
+            TCompoundStatement_CodePrint(pSyntaxTree, options, (struct TCompoundStatement*)p, fp);
             break;
 
         case TExpressionStatement_ID:
 
-            TExpressionStatement_CodePrint(program, options, (struct TExpressionStatement*)p, fp);
+            TExpressionStatement_CodePrint(pSyntaxTree, options, (struct TExpressionStatement*)p, fp);
 
             break;
 
 
         case TAsmStatement_ID:
 
-            TAsmStatement_CodePrint(program, options, (struct TAsmStatement*)p, fp);
+            TAsmStatement_CodePrint(pSyntaxTree, options, (struct TAsmStatement*)p, fp);
 
             break;
 
@@ -725,10 +725,10 @@ bool GetTypeAndFunction(const char* source,
     return *source == '_';
 }
 
-static void TParameterTypeList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameterTypeList* p, struct StrBuilder* fp);
+static void TParameterTypeList_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TParameterTypeList* p, struct StrBuilder* fp);
 
 
-static void TPrimaryExpressionLambda_CodePrint(struct SyntaxTree* program,
+static void TPrimaryExpressionLambda_CodePrint(struct SyntaxTree* pSyntaxTree,
                                                struct PrintCodeOptions* options,
                                                struct TPrimaryExpressionLambda* p,
                                                struct StrBuilder* fp)
@@ -749,14 +749,14 @@ static void TPrimaryExpressionLambda_CodePrint(struct SyntaxTree* program,
         StrBuilder_AppendFmt(&sb, "static void _lambda_%d(", global_lambda_counter);
         //Output_Append(&sb, options, "static void func_l1(");
 
-        TParameterTypeList_CodePrint(program, options, p->pParameterTypeListOpt, &sb);
+        TParameterTypeList_CodePrint(pSyntaxTree, options, p->pParameterTypeListOpt, &sb);
 
         //TNodeClueList_CodePrint(options, &p->ClueList3, &sb);
         Output_Append(&sb, options, ")");
 
     }
     global_lambda_counter++;
-    TCompoundStatement_CodePrint(program, options, p->pCompoundStatement, &sb);
+    TCompoundStatement_CodePrint(pSyntaxTree, options, p->pCompoundStatement, &sb);
 
     Output_Append(&options->sbPreDeclaration, options, "\n");
 
@@ -778,19 +778,19 @@ static void TPrimaryExpressionLambda_CodePrint(struct SyntaxTree* program,
         TNodeClueList_CodePrint(options, &p->ClueList2, fp);
         Output_Append(fp, options, "(");
 
-        TParameterTypeList_CodePrint(program, options, p->pParameterTypeListOpt, fp);
+        TParameterTypeList_CodePrint(pSyntaxTree, options, p->pParameterTypeListOpt, fp);
 
         TNodeClueList_CodePrint(options, &p->ClueList3, fp);
         Output_Append(fp, options, ")");
 
     }
 
-    TCompoundStatement_CodePrint(program, options, p->pCompoundStatement, fp);
+    TCompoundStatement_CodePrint(pSyntaxTree, options, p->pCompoundStatement, fp);
 #endif
 
 }
 
-static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* program,
+static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* pSyntaxTree,
                                              struct PrintCodeOptions* options,
                                              struct TPostfixExpressionCore* p,
 
@@ -802,7 +802,7 @@ static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* program,
 
     if (p->pExpressionLeft)
     {
-        TExpression_CodePrint(program, options, p->pExpressionLeft, "l", fp);
+        TExpression_CodePrint(pSyntaxTree, options, p->pExpressionLeft, "l", fp);
     }
 
 
@@ -811,7 +811,7 @@ static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* program,
         {
             TNodeClueList_CodePrint(options, &p->ClueList0, fp);
             Output_Append(fp, options, "(");
-            TTypeName_CodePrint(program, options, p->pTypeName, fp);
+            TTypeName_CodePrint(pSyntaxTree, options, p->pTypeName, fp);
             TNodeClueList_CodePrint(options, &p->ClueList1, fp);
             Output_Append(fp, options, ")");
 
@@ -820,7 +820,7 @@ static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* program,
 
             //falta imprimeir typename
             //TTypeName_Print*
-            TInitializerList_CodePrint(program,
+            TInitializerList_CodePrint(pSyntaxTree,
                                        options,
                                        (struct TDeclarationSpecifiers*) & p->pTypeName->SpecifierQualifierList,
                                        NULL,
@@ -851,7 +851,7 @@ static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* program,
         case TK_LEFT_SQUARE_BRACKET:
             TNodeClueList_CodePrint(options, &p->ClueList0, fp);
             Output_Append(fp, options, "[");
-            TExpression_CodePrint(program, options, p->pExpressionRight, "r", fp);
+            TExpression_CodePrint(pSyntaxTree, options, p->pExpressionRight, "r", fp);
             TNodeClueList_CodePrint(options, &p->ClueList1, fp);
             Output_Append(fp, options, "]");
             break;
@@ -860,7 +860,7 @@ static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* program,
             //Do lado esquerdo vem o nome da funcao p->pExpressionLeft
             TNodeClueList_CodePrint(options, &p->ClueList0, fp);
             Output_Append(fp, options, "(");
-            TExpression_CodePrint(program, options, p->pExpressionRight, "r", fp);
+            TExpression_CodePrint(pSyntaxTree, options, p->pExpressionRight, "r", fp);
             TNodeClueList_CodePrint(options, &p->ClueList1, fp);
             Output_Append(fp, options, ")");
             break;
@@ -886,14 +886,14 @@ static void TPostfixExpressionCore_CodePrint(struct SyntaxTree* program,
 
     if (p->pNext)
     {
-        TPostfixExpressionCore_CodePrint(program, options, p->pNext, fp);
+        TPostfixExpressionCore_CodePrint(pSyntaxTree, options, p->pNext, fp);
     }
 
 
 
 }
 
-static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TExpression* p,
+static void TExpression_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TExpression* p,
                                   const char* name,
 
                                   struct StrBuilder* fp)
@@ -912,12 +912,12 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
         {
             struct TBinaryExpression* pBinaryExpression = (struct TBinaryExpression*)p;
 
-            TExpression_CodePrint(program, options, pBinaryExpression->pExpressionLeft, "l-expr", fp);
+            TExpression_CodePrint(pSyntaxTree, options, pBinaryExpression->pExpressionLeft, "l-expr", fp);
 
             TNodeClueList_CodePrint(options, &pBinaryExpression->ClueList0, fp);
             Output_Append(fp, options, TokenToString(pBinaryExpression->token));
 
-            TExpression_CodePrint(program, options, ((struct TBinaryExpression*)p)->pExpressionRight, "r-expr", fp);
+            TExpression_CodePrint(pSyntaxTree, options, ((struct TBinaryExpression*)p)->pExpressionRight, "r-expr", fp);
         }
         break;
 
@@ -927,17 +927,17 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
                 (struct TTernaryExpression*)p;
 
 
-            TExpression_CodePrint(program, options, pTernaryExpression->pExpressionLeft, "l-expr", fp);
+            TExpression_CodePrint(pSyntaxTree, options, pTernaryExpression->pExpressionLeft, "l-expr", fp);
 
             TNodeClueList_CodePrint(options, &pTernaryExpression->ClueList0, fp);
             Output_Append(fp, options, "?");
 
-            TExpression_CodePrint(program, options, pTernaryExpression->pExpressionMiddle, "m-expr", fp);
+            TExpression_CodePrint(pSyntaxTree, options, pTernaryExpression->pExpressionMiddle, "m-expr", fp);
 
             TNodeClueList_CodePrint(options, &pTernaryExpression->ClueList1, fp);
             Output_Append(fp, options, ":");
 
-            TExpression_CodePrint(program, options, pTernaryExpression->pExpressionRight, "r-expr", fp);
+            TExpression_CodePrint(pSyntaxTree, options, pTernaryExpression->pExpressionRight, "r-expr", fp);
         }
         break;
 
@@ -963,7 +963,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
             {
                 TNodeClueList_CodePrint(options, &pPrimaryExpressionValue->ClueList0, fp);
                 Output_Append(fp, options, "(");
-                TExpression_CodePrint(program, options, pPrimaryExpressionValue->pExpressionOpt, "expr", fp);
+                TExpression_CodePrint(pSyntaxTree, options, pPrimaryExpressionValue->pExpressionOpt, "expr", fp);
 
                 TNodeClueList_CodePrint(options, &pPrimaryExpressionValue->ClueList1, fp);
                 Output_Append(fp, options, ")");
@@ -982,7 +982,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
         {
             struct TPrimaryExpressionLambda* pPostfixExpressionCore =
                 (struct TPrimaryExpressionLambda*)p;
-            TPrimaryExpressionLambda_CodePrint(program, options, pPostfixExpressionCore, fp);
+            TPrimaryExpressionLambda_CodePrint(pSyntaxTree, options, pPostfixExpressionCore, fp);
         }
         break;
 
@@ -990,7 +990,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
         {
             struct TPostfixExpressionCore* pPostfixExpressionCore =
                 (struct TPostfixExpressionCore*)p;
-            TPostfixExpressionCore_CodePrint(program, options, pPostfixExpressionCore, fp);
+            TPostfixExpressionCore_CodePrint(pSyntaxTree, options, pPostfixExpressionCore, fp);
         }
         break;
 
@@ -1009,7 +1009,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
                     TNodeClueList_CodePrint(options, &pTUnaryExpressionOperator->ClueList1, fp);
 
                     Output_Append(fp, options, "(");
-                    TTypeName_CodePrint(program, options, &pTUnaryExpressionOperator->TypeName, fp);
+                    TTypeName_CodePrint(pSyntaxTree, options, &pTUnaryExpressionOperator->TypeName, fp);
 
                     TNodeClueList_CodePrint(options, &pTUnaryExpressionOperator->ClueList2, fp);
                     Output_Append(fp, options, ")");
@@ -1017,14 +1017,14 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
                 else
                 {
                     Output_Append(fp, options, "sizeof");
-                    TExpression_CodePrint(program, options, pTUnaryExpressionOperator->pExpressionRight, "expr", fp);
+                    TExpression_CodePrint(pSyntaxTree, options, pTUnaryExpressionOperator->pExpressionRight, "expr", fp);
                     Output_Append(fp, options, "");
                 }
             }
             else
             {
                 Output_Append(fp, options, TokenToString(((struct TBinaryExpression*)p)->token));
-                TExpression_CodePrint(program, options, pTUnaryExpressionOperator->pExpressionRight, "expr", fp);
+                TExpression_CodePrint(pSyntaxTree, options, pTUnaryExpressionOperator->pExpressionRight, "expr", fp);
             }
         }
         break;
@@ -1036,13 +1036,13 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
             TNodeClueList_CodePrint(options, &pCastExpressionType->ClueList0, fp);
             Output_Append(fp, options, "(");
 
-            TTypeName_CodePrint(program, options, &pCastExpressionType->TypeName, fp);
+            TTypeName_CodePrint(pSyntaxTree, options, &pCastExpressionType->TypeName, fp);
 
 
             TNodeClueList_CodePrint(options, &pCastExpressionType->ClueList1, fp);
             Output_Append(fp, options, ")");
 
-            TExpression_CodePrint(program, options, pCastExpressionType->pExpression, "expr", fp);
+            TExpression_CodePrint(pSyntaxTree, options, pCastExpressionType->pExpression, "expr", fp);
         }
         break;
 
@@ -1058,7 +1058,7 @@ static void TExpression_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
 
 
 
-static   void TEnumerator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TEnumerator* pTEnumerator, struct StrBuilder* fp)
+static   void TEnumerator_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TEnumerator* pTEnumerator, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &pTEnumerator->ClueList0, fp);
@@ -1069,7 +1069,7 @@ static   void TEnumerator_CodePrint(struct SyntaxTree* program, struct PrintCode
         TNodeClueList_CodePrint(options, &pTEnumerator->ClueList1, fp);
         Output_Append(fp, options, "=");
 
-        TExpression_CodePrint(program, options, pTEnumerator->pConstantExpression, "expr", fp);
+        TExpression_CodePrint(pSyntaxTree, options, pTEnumerator->pConstantExpression, "expr", fp);
 
 
     }
@@ -1087,7 +1087,7 @@ static   void TEnumerator_CodePrint(struct SyntaxTree* program, struct PrintCode
 
 }
 
-static void TEnumSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TEnumSpecifier* p, struct StrBuilder* fp)
+static void TEnumSpecifier_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TEnumSpecifier* p, struct StrBuilder* fp)
 {
     //true;
 
@@ -1110,7 +1110,7 @@ static void TEnumSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCod
 
         for (struct TEnumerator *  pTEnumerator = ( &p->EnumeratorList)->pHead ;  pTEnumerator != NULL;  pTEnumerator =  pTEnumerator->pNext)
         {
-            TEnumerator_CodePrint(program, options, pTEnumerator, fp);
+            TEnumerator_CodePrint(pSyntaxTree, options, pTEnumerator, fp);
         }
 
         TNodeClueList_CodePrint(options, &p->ClueList3, fp);
@@ -1120,7 +1120,7 @@ static void TEnumSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCod
 
 }
 
-static void TUnionSetItem_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TUnionSetItem* p, struct StrBuilder* fp)
+static void TUnionSetItem_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TUnionSetItem* p, struct StrBuilder* fp)
 {
     if (p->Token == TK_STRUCT)
     {
@@ -1143,7 +1143,7 @@ static void TUnionSetItem_CodePrint(struct SyntaxTree* program, struct PrintCode
     }
 }
 
-static void TUnionSet_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TUnionSet* p, struct StrBuilder* fp)
+static void TUnionSet_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TUnionSet* p, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 
@@ -1157,7 +1157,7 @@ static void TUnionSet_CodePrint(struct SyntaxTree* program, struct PrintCodeOpti
     struct TUnionSetItem* pCurrent = p->pHead;
     while (pCurrent)
     {
-        TUnionSetItem_CodePrint(program, options, pCurrent, fp);
+        TUnionSetItem_CodePrint(pSyntaxTree, options, pCurrent, fp);
         pCurrent = pCurrent->pNext;
     }
 
@@ -1171,7 +1171,7 @@ static void TUnionSet_CodePrint(struct SyntaxTree* program, struct PrintCodeOpti
 
 }
 
-static void TStructUnionSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStructUnionSpecifier* p, struct StrBuilder* fp)
+static void TStructUnionSpecifier_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TStructUnionSpecifier* p, struct StrBuilder* fp)
 {
     if (options->Options.bCannonical)
     {
@@ -1201,7 +1201,7 @@ static void TStructUnionSpecifier_CodePrint(struct SyntaxTree* program, struct P
 
         if (p->UnionSet.pHead != NULL)
         {
-            TUnionSet_CodePrint(program, options, &p->UnionSet, fp);
+            TUnionSet_CodePrint(pSyntaxTree, options, &p->UnionSet, fp);
         }
 
         //TNodeClueList_CodePrint(options, &p->ClueList1, fp);
@@ -1225,7 +1225,7 @@ static void TStructUnionSpecifier_CodePrint(struct SyntaxTree* program, struct P
 
         if (p->UnionSet.pHead != NULL)
         {
-            TUnionSet_CodePrint(program, options, &p->UnionSet, fp);
+            TUnionSet_CodePrint(pSyntaxTree, options, &p->UnionSet, fp);
         }
     }
 
@@ -1249,7 +1249,7 @@ static void TStructUnionSpecifier_CodePrint(struct SyntaxTree* program, struct P
         for (int i = 0; i < p->StructDeclarationList.Size; i++)
         {
             struct TAnyStructDeclaration* pStructDeclaration = p->StructDeclarationList.pItems[i];
-            TAnyStructDeclaration_CodePrint(program, options, pStructDeclaration, fp);
+            TAnyStructDeclaration_CodePrint(pSyntaxTree, options, pStructDeclaration, fp);
         }
 
         TNodeClueList_CodePrint(options, &p->ClueList3, fp);
@@ -1258,7 +1258,7 @@ static void TStructUnionSpecifier_CodePrint(struct SyntaxTree* program, struct P
 
 }
 
-static void TSingleTypeSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TSingleTypeSpecifier* p, struct StrBuilder* fp)
+static void TSingleTypeSpecifier_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TSingleTypeSpecifier* p, struct StrBuilder* fp)
 {
 
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
@@ -1310,7 +1310,7 @@ static void TSingleTypeSpecifier_CodePrint(struct SyntaxTree* program, struct Pr
 
 }
 
-static void TDesignator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDesignator* p, struct StrBuilder* fp)
+static void TDesignator_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TDesignator* p, struct StrBuilder* fp)
 {
     //    if (b)
     //      Output_Append(fp, options,  ",");
@@ -1324,13 +1324,13 @@ static void TDesignator_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
         Output_Append(fp, options, ".");
         Output_Append(fp, options, p->Name);
         Output_Append(fp, options, "=");
-        TExpression_CodePrint(program, options, p->pExpression, "index", fp);
+        TExpression_CodePrint(pSyntaxTree, options, p->pExpression, "index", fp);
     }
     else
     {
         //[constant-expression]
         TNodeClueList_CodePrint(options, &p->ClueList0, fp);
-        TExpression_CodePrint(program, options, p->pExpression, "index", fp);
+        TExpression_CodePrint(pSyntaxTree, options, p->pExpression, "index", fp);
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
     }
 
@@ -1344,7 +1344,7 @@ static void TDesignator_CodePrint(struct SyntaxTree* program, struct PrintCodeOp
 #define List_Back(pList) \
   ((pList)->pTail)
 
-static void TInitializerList_CodePrint(struct SyntaxTree* program,
+static void TInitializerList_CodePrint(struct SyntaxTree* pSyntaxTree,
                                        struct PrintCodeOptions* options,
                                        struct TDeclarationSpecifiers* pDeclarationSpecifiers, //<- usadao para construir {}
                                        struct TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
@@ -1363,7 +1363,7 @@ static void TInitializerList_CodePrint(struct SyntaxTree* program,
         //a partir de {} e um tipo consegue gerar o final  
         struct StrBuilder sb = STRBUILDER_INIT;
         bool bHasInitializers = false;
-        InstanciateDestroy2(program,
+        InstanciateDestroy2(pSyntaxTree,
                             options,
                             (struct TSpecifierQualifierList*)(pDeclarationSpecifiers),
                             pDeclatator,                        //<-dupla para entender o tipo
@@ -1394,7 +1394,7 @@ static void TInitializerList_CodePrint(struct SyntaxTree* program,
             if (!List_IsFirstItem(p, pItem))
                 Output_Append(fp, options, ",");
 
-            TInitializerListItem_CodePrint(program,
+            TInitializerListItem_CodePrint(pSyntaxTree,
                                            options,
                                            pDeclatator,
                                            pDeclarationSpecifiers,
@@ -1405,7 +1405,7 @@ static void TInitializerList_CodePrint(struct SyntaxTree* program,
     }
 }
 
-static void TInitializerListType_CodePrint(struct SyntaxTree* program,
+static void TInitializerListType_CodePrint(struct SyntaxTree* pSyntaxTree,
                                            struct PrintCodeOptions* options,
                                            struct TDeclarator* pDeclarator,
                                            struct TDeclarationSpecifiers* pDeclarationSpecifiers,
@@ -1458,7 +1458,7 @@ static void TInitializerListType_CodePrint(struct SyntaxTree* program,
 
             struct StrBuilder sb = STRBUILDER_INIT;
             bool bHasInitializers = false;
-            InstanciateDestroy2(program,
+            InstanciateDestroy2(pSyntaxTree,
                                 options,
                                 (struct TSpecifierQualifierList*)(pDeclarationSpecifiers),
                                 pDeclarator,                        //<-dupla para entender o tipo
@@ -1489,7 +1489,7 @@ static void TInitializerListType_CodePrint(struct SyntaxTree* program,
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
         Output_Append(fp, options, "{");
 
-        TInitializerList_CodePrint(program,
+        TInitializerList_CodePrint(pSyntaxTree,
                                    options,
                                    pDeclarationSpecifiers,
                                    pDeclarator,
@@ -1505,7 +1505,7 @@ static void TInitializerListType_CodePrint(struct SyntaxTree* program,
 }
 
 
-static void TInitializer_CodePrint(struct SyntaxTree* program,
+static void TInitializer_CodePrint(struct SyntaxTree* pSyntaxTree,
                                    struct PrintCodeOptions* options,
                                    struct TDeclarator* pDeclarator,
                                    struct TDeclarationSpecifiers* pDeclarationSpecifiers,
@@ -1519,7 +1519,7 @@ static void TInitializer_CodePrint(struct SyntaxTree* program,
     }
     if (pTInitializer->Type == TInitializerListType_ID)
     {
-        TInitializerListType_CodePrint(program,
+        TInitializerListType_CodePrint(pSyntaxTree,
                                        options,
                                        pDeclarator,
                                        pDeclarationSpecifiers,
@@ -1527,7 +1527,7 @@ static void TInitializer_CodePrint(struct SyntaxTree* program,
     }
     else
     {
-        TExpression_CodePrint(program, options, (struct TExpression*)pTInitializer, "", fp);
+        TExpression_CodePrint(pSyntaxTree, options, (struct TExpression*)pTInitializer, "", fp);
     }
 
 
@@ -1535,15 +1535,15 @@ static void TInitializer_CodePrint(struct SyntaxTree* program,
 
 
 
-static void TPointerList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TPointerList* p, struct StrBuilder* fp)
+static void TPointerList_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TPointerList* p, struct StrBuilder* fp)
 {
     for (struct TPointer *  pItem = ( p)->pHead ;  pItem != NULL;  pItem =  pItem->pNext)
     {
-        TPointer_CodePrint(program, options, pItem, fp);
+        TPointer_CodePrint(pSyntaxTree, options, pItem, fp);
     }
 }
 
-static void TParameterList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameterList* p, struct StrBuilder* fp)
+static void TParameterList_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TParameterList* p, struct StrBuilder* fp)
 {
 
 
@@ -1556,17 +1556,17 @@ static void TParameterList_CodePrint(struct SyntaxTree* program, struct PrintCod
         //            Output_Append(fp, options,  ",");
         //}
         //TParameterDeclaration * pItem = p->pItems[i];
-        TParameter_CodePrint(program, options, pItem, fp);
+        TParameter_CodePrint(pSyntaxTree, options, pItem, fp);
     }
 
 
 
 }
 
-static void TParameterTypeList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TParameterTypeList* p, struct StrBuilder* fp)
+static void TParameterTypeList_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TParameterTypeList* p, struct StrBuilder* fp)
 {
     //Output_Append(fp, options,  "(");
-    TParameterList_CodePrint(program, options, &p->ParameterList, fp);
+    TParameterList_CodePrint(pSyntaxTree, options, &p->ParameterList, fp);
 
     if (p->bVariadicArgs)
     {
@@ -1579,9 +1579,9 @@ static void TParameterTypeList_CodePrint(struct SyntaxTree* program, struct Prin
     //Output_Append(fp, options,  ")");
 
 }
-static void TDeclarator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarator* p, bool bPrintName, struct StrBuilder* fp);
+static void TDeclarator_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TDeclarator* p, bool bPrintName, struct StrBuilder* fp);
 
-static void TDirectDeclarator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDirectDeclarator* pDirectDeclarator,
+static void TDirectDeclarator_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TDirectDeclarator* pDirectDeclarator,
 
                                         bool bPrintName,
                                         struct StrBuilder* fp)
@@ -1609,7 +1609,7 @@ static void TDirectDeclarator_CodePrint(struct SyntaxTree* program, struct Print
         TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList0, fp);
         Output_Append(fp, options, "(");
 
-        TDeclarator_CodePrint(program, options, pDirectDeclarator->pDeclarator, bPrintName, fp);
+        TDeclarator_CodePrint(pSyntaxTree, options, pDirectDeclarator->pDeclarator, bPrintName, fp);
 
         TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList1, fp);
         Output_Append(fp, options, ")");
@@ -1626,7 +1626,7 @@ static void TDirectDeclarator_CodePrint(struct SyntaxTree* program, struct Print
         Output_Append(fp, options, "[");
         if (pDirectDeclarator->pExpression)
         {
-            TExpression_CodePrint(program, options, pDirectDeclarator->pExpression, "assignment-expression", fp);
+            TExpression_CodePrint(pSyntaxTree, options, pDirectDeclarator->pExpression, "assignment-expression", fp);
         }
         TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList3, fp);
         Output_Append(fp, options, "]");
@@ -1638,7 +1638,7 @@ static void TDirectDeclarator_CodePrint(struct SyntaxTree* program, struct Print
         //( parameter-type-list )
         TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList2, fp);
         Output_Append(fp, options, "(");
-        TParameterTypeList_CodePrint(program, options, &pDirectDeclarator->Parameters, fp);
+        TParameterTypeList_CodePrint(pSyntaxTree, options, &pDirectDeclarator->Parameters, fp);
         TNodeClueList_CodePrint(options, &pDirectDeclarator->ClueList3, fp);
         Output_Append(fp, options, ")");
     }
@@ -1646,7 +1646,7 @@ static void TDirectDeclarator_CodePrint(struct SyntaxTree* program, struct Print
     if (pDirectDeclarator->pDirectDeclarator)
     {
         //fprintf(fp, "\"direct-declarator\":");
-        TDirectDeclarator_CodePrint(program, options, pDirectDeclarator->pDirectDeclarator, bPrintName, fp);
+        TDirectDeclarator_CodePrint(pSyntaxTree, options, pDirectDeclarator->pDirectDeclarator, bPrintName, fp);
     }
 
 
@@ -1654,28 +1654,28 @@ static void TDirectDeclarator_CodePrint(struct SyntaxTree* program, struct Print
 
 }
 
-static void TDeclarator_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarator* p, bool bPrintName, struct StrBuilder* fp)
+static void TDeclarator_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TDeclarator* p, bool bPrintName, struct StrBuilder* fp)
 {
-    TPointerList_CodePrint(program, options, &p->PointerList, fp);
-    TDirectDeclarator_CodePrint(program, options, p->pDirectDeclarator, bPrintName, fp);
+    TPointerList_CodePrint(pSyntaxTree, options, &p->PointerList, fp);
+    TDirectDeclarator_CodePrint(pSyntaxTree, options, p->pDirectDeclarator, bPrintName, fp);
 
 }
 
-//void TInitDeclarator_CodePrint(struct SyntaxTree* program, 
+//void TInitDeclarator_CodePrint(struct SyntaxTree* pSyntaxTree, 
 //struct PrintCodeOptions * options, 
 //TI/nitDeclarator* p,    
 //struct StrBuilder* fp);
 
 
 
-void TStructDeclarator_CodePrint(struct SyntaxTree* program,
+void TStructDeclarator_CodePrint(struct SyntaxTree* pSyntaxTree,
                                  struct PrintCodeOptions* options,
                                  struct TSpecifierQualifierList* pSpecifierQualifierList,
                                  TStructDeclarator* p,
                                  struct StrBuilder* fp)
 {
 
-    TDeclarator_CodePrint(program, options, p->pDeclarator, true/*bPrintName*/, fp);
+    TDeclarator_CodePrint(pSyntaxTree, options, p->pDeclarator, true/*bPrintName*/, fp);
     if (p->pInitializer)
     {
         TNodeClueList_CodePrint(options, &p->ClueList1, fp);
@@ -1692,7 +1692,7 @@ void TStructDeclarator_CodePrint(struct SyntaxTree* program,
         options2.Options.bIncludeComments = false;
 
 
-        TInitializer_CodePrint(program,
+        TInitializer_CodePrint(pSyntaxTree,
                                &options2,
                                p->pDeclarator,
                                (struct TDeclarationSpecifiers*)pSpecifierQualifierList,
@@ -1708,7 +1708,7 @@ void TStructDeclarator_CodePrint(struct SyntaxTree* program,
 
 }
 
-static void TStructDeclaratorList_CodePrint(struct SyntaxTree* program,
+static void TStructDeclaratorList_CodePrint(struct SyntaxTree* pSyntaxTree,
                                             struct PrintCodeOptions* options,
                                             struct TSpecifierQualifierList* pSpecifierQualifierList,
                                             struct TStructDeclaratorList* p,
@@ -1725,20 +1725,20 @@ static void TStructDeclaratorList_CodePrint(struct SyntaxTree* program,
             TNodeClueList_CodePrint(options, &pItem->ClueList0, fp);
             Output_Append(fp, options, ",");
         }
-        TStructDeclarator_CodePrint(program, options, pSpecifierQualifierList, pItem, fp);
+        TStructDeclarator_CodePrint(pSyntaxTree, options, pSpecifierQualifierList, pItem, fp);
     }
 
 
 
 }
 
-static void TStructDeclaration_CodePrint(struct SyntaxTree* program,
+static void TStructDeclaration_CodePrint(struct SyntaxTree* pSyntaxTree,
                                          struct PrintCodeOptions* options,
                                          struct TStructDeclaration* p,
                                          struct StrBuilder* fp)
 {
-    TSpecifierQualifierList_CodePrint(program, options, &p->SpecifierQualifierList, fp);
-    TStructDeclaratorList_CodePrint(program,
+    TSpecifierQualifierList_CodePrint(pSyntaxTree, options, &p->SpecifierQualifierList, fp);
+    TStructDeclaratorList_CodePrint(pSyntaxTree,
                                     options,
                                     &p->SpecifierQualifierList,
                                     &p->DeclaratorList, fp);
@@ -1750,12 +1750,12 @@ static void TStructDeclaration_CodePrint(struct SyntaxTree* program,
 
 }
 
-static void TAnyStructDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyStructDeclaration* p, struct StrBuilder* fp)
+static void TAnyStructDeclaration_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TAnyStructDeclaration* p, struct StrBuilder* fp)
 {
     switch (p->Type)
     {
         case TStructDeclaration_ID:
-            TStructDeclaration_CodePrint(program, options, (struct TStructDeclaration*)p, fp);
+            TStructDeclaration_CodePrint(pSyntaxTree, options, (struct TStructDeclaration*)p, fp);
             break;
 
         default:
@@ -1766,20 +1766,20 @@ static void TAnyStructDeclaration_CodePrint(struct SyntaxTree* program, struct P
 
 }
 
-static void StorageSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TStorageSpecifier* p, struct StrBuilder* fp)
+static void StorageSpecifier_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TStorageSpecifier* p, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, TokenToString(p->Token));
 }
 
-static void TFunctionSpecifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TFunctionSpecifier* p, struct StrBuilder* fp)
+static void TFunctionSpecifier_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TFunctionSpecifier* p, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, TokenToString(p->Token));
 }
 
 
-static void TTypeQualifier_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifier* p, struct StrBuilder* fp)
+static void TTypeQualifier_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TTypeQualifier* p, struct StrBuilder* fp)
 {
     //TODO nao pode colocr isso se veio de comentario
 
@@ -1838,23 +1838,23 @@ static void TTypeQualifier_CodePrint(struct SyntaxTree* program, struct PrintCod
 #endif
 }
 
-static void TTypeQualifierList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeQualifierList* p, struct StrBuilder* fp)
+static void TTypeQualifierList_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TTypeQualifierList* p, struct StrBuilder* fp)
 {
     for (int i = 0; i < p->Size; i++)
     {
         struct TTypeQualifier* pItem = p->Data[i];
-        TTypeQualifier_CodePrint(program, options, pItem, fp);
+        TTypeQualifier_CodePrint(pSyntaxTree, options, pItem, fp);
     }
 
 }
-static void TPointer_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TPointer* pPointer, struct StrBuilder* fp)
+static void TPointer_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TPointer* pPointer, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &pPointer->ClueList0, fp);
     Output_Append(fp, options, "*");
-    TTypeQualifierList_CodePrint(program, options, &pPointer->Qualifier, fp);
+    TTypeQualifierList_CodePrint(pSyntaxTree, options, &pPointer->Qualifier, fp);
 }
 
-void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program,
+void TSpecifierQualifierList_CodePrint(struct SyntaxTree* pSyntaxTree,
                                        struct PrintCodeOptions* options,
                                        struct TSpecifierQualifierList* pDeclarationSpecifiers,
                                        struct StrBuilder* fp)
@@ -1872,28 +1872,28 @@ void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program,
         {
 
             case TSingleTypeSpecifier_ID:
-                TSingleTypeSpecifier_CodePrint(program, options, (struct TSingleTypeSpecifier*)pItem, fp);
+                TSingleTypeSpecifier_CodePrint(pSyntaxTree, options, (struct TSingleTypeSpecifier*)pItem, fp);
             break;
 
             case TStorageSpecifier_ID:
-                StorageSpecifier_CodePrint(program, options, (struct TStorageSpecifier*)pItem, fp);
+                StorageSpecifier_CodePrint(pSyntaxTree, options, (struct TStorageSpecifier*)pItem, fp);
             break;
             case TTypeQualifier_ID:
-                TTypeQualifier_CodePrint(program, options, (struct TTypeQualifier*)pItem, fp);
+                TTypeQualifier_CodePrint(pSyntaxTree, options, (struct TTypeQualifier*)pItem, fp);
             break;
             case TFunctionSpecifier_ID:
-                TFunctionSpecifier_CodePrint(program, options, (struct TFunctionSpecifier*)pItem, fp);
+                TFunctionSpecifier_CodePrint(pSyntaxTree, options, (struct TFunctionSpecifier*)pItem, fp);
             break;
             //case TAlignmentSpecifier_ID: 
-            ///TAlignmentSpecifier_CodePrint(program, options, (struct TAlignmentSpecifier*)pItem,  fp);
+            ///TAlignmentSpecifier_CodePrint(pSyntaxTree, options, (struct TAlignmentSpecifier*)pItem,  fp);
             //break;
 
             case TStructUnionSpecifier_ID:
-                TStructUnionSpecifier_CodePrint(program, options, (struct TStructUnionSpecifier*)pItem, fp);
+                TStructUnionSpecifier_CodePrint(pSyntaxTree, options, (struct TStructUnionSpecifier*)pItem, fp);
             break;
 
             case TEnumSpecifier_ID:
-                TEnumSpecifier_CodePrint(program, options, (struct TEnumSpecifier*)pItem, fp);
+                TEnumSpecifier_CodePrint(pSyntaxTree, options, (struct TEnumSpecifier*)pItem, fp);
             break;
 
             default:
@@ -1905,7 +1905,7 @@ void TSpecifierQualifierList_CodePrint(struct SyntaxTree* program,
 
 }
 
-void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDeclarationSpecifiers* pDeclarationSpecifiers, struct StrBuilder* fp)
+void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TDeclarationSpecifiers* pDeclarationSpecifiers, struct StrBuilder* fp)
 {
 
     for (int i = 0; i < pDeclarationSpecifiers->Size; i++)
@@ -1916,29 +1916,29 @@ void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* program, struct PrintCo
         {
 
             case TSingleTypeSpecifier_ID:
-                TSingleTypeSpecifier_CodePrint(program, options, (struct TSingleTypeSpecifier*)pItem, fp);
+                TSingleTypeSpecifier_CodePrint(pSyntaxTree, options, (struct TSingleTypeSpecifier*)pItem, fp);
             break;
 
             case TStructUnionSpecifier_ID:
-                TStructUnionSpecifier_CodePrint(program, options, (struct TStructUnionSpecifier*)pItem, fp);
+                TStructUnionSpecifier_CodePrint(pSyntaxTree, options, (struct TStructUnionSpecifier*)pItem, fp);
             break;
 
             case TEnumSpecifier_ID:
-                TEnumSpecifier_CodePrint(program, options, (struct TEnumSpecifier*)pItem, fp);
+                TEnumSpecifier_CodePrint(pSyntaxTree, options, (struct TEnumSpecifier*)pItem, fp);
             break;
 
             case TStorageSpecifier_ID:
-                StorageSpecifier_CodePrint(program, options, (struct TStorageSpecifier*)pItem, fp);
+                StorageSpecifier_CodePrint(pSyntaxTree, options, (struct TStorageSpecifier*)pItem, fp);
             break;
             case TTypeQualifier_ID:
-                TTypeQualifier_CodePrint(program, options, (struct TTypeQualifier*)pItem, fp);
+                TTypeQualifier_CodePrint(pSyntaxTree, options, (struct TTypeQualifier*)pItem, fp);
             break;
             case TFunctionSpecifier_ID:
-                TFunctionSpecifier_CodePrint(program, options, (struct TFunctionSpecifier*)pItem, fp);
+                TFunctionSpecifier_CodePrint(pSyntaxTree, options, (struct TFunctionSpecifier*)pItem, fp);
             break;
 
             //case TAlignmentSpecifier_ID: 
-            ///TAlignmentSpecifier_CodePrint(program, options, (struct TAlignmentSpecifier*)pItem,  fp);
+            ///TAlignmentSpecifier_CodePrint(pSyntaxTree, options, (struct TAlignmentSpecifier*)pItem,  fp);
             //break;
 
             default:
@@ -1953,20 +1953,20 @@ void TDeclarationSpecifiers_CodePrint(struct SyntaxTree* program, struct PrintCo
 
 }
 
-void TInitDeclarator_CodePrint(struct SyntaxTree* program,
+void TInitDeclarator_CodePrint(struct SyntaxTree* pSyntaxTree,
                                struct PrintCodeOptions* options,
                                struct TDeclarator* pDeclarator,
                                struct TDeclarationSpecifiers* pDeclarationSpecifiers,
                                struct TInitDeclarator* p,
                                struct StrBuilder* fp)
 {
-    TDeclarator_CodePrint(program, options, p->pDeclarator, true/*bPrintName*/, fp);
+    TDeclarator_CodePrint(pSyntaxTree, options, p->pDeclarator, true/*bPrintName*/, fp);
 
     if (p->pInitializer)
     {
         TNodeClueList_CodePrint(options, &p->ClueList0, fp);
         Output_Append(fp, options, "=");
-        TInitializer_CodePrint(program,
+        TInitializer_CodePrint(pSyntaxTree,
                                options,
                                pDeclarator,
                                pDeclarationSpecifiers,
@@ -1979,7 +1979,7 @@ void TInitDeclarator_CodePrint(struct SyntaxTree* program,
 
 
 
-void TInitDeclaratorList_CodePrint(struct SyntaxTree* program,
+void TInitDeclaratorList_CodePrint(struct SyntaxTree* pSyntaxTree,
                                    struct PrintCodeOptions* options,
 
                                    struct TDeclarationSpecifiers* pDeclarationSpecifiers,
@@ -1995,7 +1995,7 @@ void TInitDeclaratorList_CodePrint(struct SyntaxTree* program,
             Output_Append(fp, options, ",");
 
 
-        TInitDeclarator_CodePrint(program,
+        TInitDeclarator_CodePrint(pSyntaxTree,
                                   options,
                                   pInitDeclarator->pDeclarator,
                                   pDeclarationSpecifiers,
@@ -2009,10 +2009,10 @@ void TInitDeclaratorList_CodePrint(struct SyntaxTree* program,
 
 
 
-struct TStructUnionSpecifier* GetStructSpecifier(struct SyntaxTree* program, struct TDeclarationSpecifiers* specifiers);
+struct TStructUnionSpecifier* GetStructSpecifier(struct SyntaxTree* pSyntaxTree, struct TDeclarationSpecifiers* specifiers);
 
 
-static bool FindListStructPattern(struct SyntaxTree* program,
+static bool FindListStructPattern(struct SyntaxTree* pSyntaxTree,
                                   struct TParameter* pParameter,
                                   bool* pbItemIsPointer,
                                   bool* pbItemIsAutoPointer,
@@ -2027,7 +2027,7 @@ static bool FindListStructPattern(struct SyntaxTree* program,
 
     //O primeiro parametro tem que ser struct or typedef para struct
     struct TStructUnionSpecifier* pStructUnionSpecifier =
-        GetStructSpecifier(program, &pParameter->Specifiers);
+        GetStructSpecifier(pSyntaxTree, &pParameter->Specifiers);
     if (pStructUnionSpecifier)
     {
         //Vou analisar a "digital" da struct
@@ -2077,7 +2077,7 @@ static bool FindListStructPattern(struct SyntaxTree* program,
     return bHasHead && bHasTail;
 }
 
-static bool FindVectorStructPattern(struct SyntaxTree* program,
+static bool FindVectorStructPattern(struct SyntaxTree* pSyntaxTree,
                                     struct TParameter* pParameter,
                                     bool* pbItemIsPointer,
                                     bool* pbItemIsAutoPointer,
@@ -2092,7 +2092,7 @@ static bool FindVectorStructPattern(struct SyntaxTree* program,
 
     //O primeiro parametro tem que ser struct or typedef para struct
     struct TStructUnionSpecifier* pStructUnionSpecifier =
-        GetStructSpecifier(program, &pParameter->Specifiers);
+        GetStructSpecifier(pSyntaxTree, &pParameter->Specifiers);
     if (pStructUnionSpecifier)
     {
         //Vou analisar a "digital" da struct
@@ -2145,7 +2145,7 @@ static bool FindVectorStructPattern(struct SyntaxTree* program,
                         struct TTypeName* pTypeName = NULL;
                         struct PrintCodeOptions  options = CODE_PRINT_OPTIONS_INIT;
                         options.Options.bCannonical = true;
-                        TSpecifierQualifierList_CodePrint(program, &options, &pStructDeclaration->SpecifierQualifierList, itemTypeName);
+                        TSpecifierQualifierList_CodePrint(pSyntaxTree, &options, &pStructDeclaration->SpecifierQualifierList, itemTypeName);
                         //StrBuilder_Destroy(&itemTypeStr);
                     }
                     else  if (TSpecifierQualifierList_IsAnyInteger(&pStructDeclaration->SpecifierQualifierList))
@@ -2308,13 +2308,13 @@ void GetPrefixSuffix(const char* psz, struct StrBuilder* prefix, struct StrBuild
     }
 }
 
-static int FindRuntimeID(struct SyntaxTree* program,
+static int FindRuntimeID(struct SyntaxTree* pSyntaxTree,
                          const char* structOrTypeName,
                          struct StrBuilder* idname)
 {
     ////////////
     struct TDeclaration* pFinalDecl =
-        SyntaxTree_GetFinalTypeDeclaration(program, structOrTypeName);
+        SyntaxTree_GetFinalTypeDeclaration(pSyntaxTree, structOrTypeName);
     int typeInt = 0;
     struct TStructUnionSpecifier* pStructUnionSpecifier = NULL;
     if (pFinalDecl)
@@ -2328,7 +2328,7 @@ static int FindRuntimeID(struct SyntaxTree* program,
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pStructUnionSpecifier->Tag);
+                    SymbolMap_FindCompleteStructUnionSpecifier(&pSyntaxTree->GlobalScope, pStructUnionSpecifier->Tag);
             }
         }
     }
@@ -2336,7 +2336,7 @@ static int FindRuntimeID(struct SyntaxTree* program,
     {
         typeInt = 2; //struct
         pStructUnionSpecifier =
-            SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, structOrTypeName);
+            SymbolMap_FindCompleteStructUnionSpecifier(&pSyntaxTree->GlobalScope, structOrTypeName);
     }
     //////////////
 
@@ -2369,13 +2369,13 @@ static int FindRuntimeID(struct SyntaxTree* program,
 }
 
 
-static int FindIDValue(struct SyntaxTree* program,
+static int FindIDValue(struct SyntaxTree* pSyntaxTree,
                        const char* structOrTypeName,
                        struct StrBuilder* idname)
 {
     ////////////
     struct TDeclaration* pFinalDecl =
-        SyntaxTree_GetFinalTypeDeclaration(program, structOrTypeName);
+        SyntaxTree_GetFinalTypeDeclaration(pSyntaxTree, structOrTypeName);
     int typeInt = 0;
     struct TStructUnionSpecifier* pStructUnionSpecifier = NULL;
     if (pFinalDecl)
@@ -2389,7 +2389,7 @@ static int FindIDValue(struct SyntaxTree* program,
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pStructUnionSpecifier->Tag);
+                    SymbolMap_FindCompleteStructUnionSpecifier(&pSyntaxTree->GlobalScope, pStructUnionSpecifier->Tag);
             }
         }
     }
@@ -2397,7 +2397,7 @@ static int FindIDValue(struct SyntaxTree* program,
     {
         typeInt = 2; //struct
         pStructUnionSpecifier =
-            SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, structOrTypeName);
+            SymbolMap_FindCompleteStructUnionSpecifier(&pSyntaxTree->GlobalScope, structOrTypeName);
     }
     //////////////
 
@@ -2420,7 +2420,7 @@ static int FindIDValue(struct SyntaxTree* program,
                     //if (TSpecifierQualifierList_IsAnyInteger(&pStructDeclaration->SpecifierQualifierList))
                     {
                         struct PrintCodeOptions options2 = CODE_PRINT_OPTIONS_INIT;
-                        TInitializer_CodePrint(program, &options2, pStructDeclarator->pDeclarator,
+                        TInitializer_CodePrint(pSyntaxTree, &options2, pStructDeclarator->pDeclarator,
                             (struct TDeclarationSpecifiers*) & pStructDeclaration->SpecifierQualifierList,
                                                pStructDeclarator->pInitializer, idname);
 
@@ -2434,12 +2434,12 @@ static int FindIDValue(struct SyntaxTree* program,
 }
 
 
-void FindUnionSetOf(struct SyntaxTree* program,
+void FindUnionSetOf(struct SyntaxTree* pSyntaxTree,
                     const char* structOrTypeName,
                     struct Map2* map)
 {
     struct TDeclaration* pFinalDecl =
-        SyntaxTree_GetFinalTypeDeclaration(program, structOrTypeName);
+        SyntaxTree_GetFinalTypeDeclaration(pSyntaxTree, structOrTypeName);
     int typeInt = 0;
     struct TStructUnionSpecifier* pStructUnionSpecifier = NULL;
     if (pFinalDecl)
@@ -2453,7 +2453,7 @@ void FindUnionSetOf(struct SyntaxTree* program,
             {
                 //procura a mais completa
                 pStructUnionSpecifier =
-                    SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pStructUnionSpecifier->Tag);
+                    SymbolMap_FindCompleteStructUnionSpecifier(&pSyntaxTree->GlobalScope, pStructUnionSpecifier->Tag);
             }
         }
     }
@@ -2461,7 +2461,7 @@ void FindUnionSetOf(struct SyntaxTree* program,
     {
         typeInt = 2; //struct
         pStructUnionSpecifier =
-            SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, structOrTypeName);
+            SymbolMap_FindCompleteStructUnionSpecifier(&pSyntaxTree->GlobalScope, structOrTypeName);
     }
 
     if (pStructUnionSpecifier &&
@@ -2471,7 +2471,7 @@ void FindUnionSetOf(struct SyntaxTree* program,
             pStructUnionSpecifier->UnionSet.pHead;
         while (pCurrent)
         {
-            FindUnionSetOf(program, pCurrent->Name, map);
+            FindUnionSetOf(pSyntaxTree, pCurrent->Name, map);
             pCurrent = pCurrent->pNext;
         }
     }
@@ -2482,18 +2482,18 @@ void FindUnionSetOf(struct SyntaxTree* program,
     }
 }
 
-void UnionTypeDefault(struct SyntaxTree* program,
+void UnionTypeDefault(struct SyntaxTree* pSyntaxTree,
                       struct PrintCodeOptions* options,
                       const char* structName,
                       struct TParameterTypeList* pArgsOpt, //parametros
                       const char* parameterName,
                       const char* functionSuffix,
                       struct StrBuilder* fp);
-static const char* GetNullStr(struct SyntaxTree* program);
+static const char* GetNullStr(struct SyntaxTree* pSyntaxTree);
 
 
 
-static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
+static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* pSyntaxTree,
                                                 struct PrintCodeOptions* options,
                                                 struct TDeclaration* p,
                                                 struct StrBuilder* fp)
@@ -2521,7 +2521,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
         TParameterTypeList_GetParameterByIndex(pArgs, 0);
 
 
-    const char* functionTagName = TDeclaration_FindFunctionTagName(p, &program->GlobalScope);
+    const char* functionTagName = TDeclaration_FindFunctionTagName(p, &pSyntaxTree->GlobalScope);
 
 
     struct TParameter* pSecondParameter =
@@ -2532,7 +2532,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
     {
         options->IdentationLevel++;
 
-        InstanciateDestroy2(program,
+        InstanciateDestroy2(pSyntaxTree,
                             options,
                             (struct TSpecifierQualifierList*)(pSpecifiers),
                             p->InitDeclaratorList.pHead->pDeclarator,
@@ -2549,7 +2549,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
     else if (functionTagName && strcmp(functionTagName, "init") == 0 && pFirstParameter != NULL)
     {
         options->IdentationLevel++;
-        InstanciateDestroy2(program,
+        InstanciateDestroy2(pSyntaxTree,
                             options,
                             (struct TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
                             &pFirstParameter->Declarator,
@@ -2567,7 +2567,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
     {
 
         options->IdentationLevel++;
-        InstanciateDestroy2(program,
+        InstanciateDestroy2(pSyntaxTree,
                             options,
                             (struct TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
                             &pFirstParameter->Declarator,
@@ -2585,7 +2585,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
     {
 
         options->IdentationLevel++;
-        InstanciateDestroy2(program,
+        InstanciateDestroy2(pSyntaxTree,
                             options,
                             (struct TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
                             &pFirstParameter->Declarator,
@@ -2603,7 +2603,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
     {
         //Agora entre no auto tag.
         const char* functionTag =
-            TDeclaration_FindFunctionTagName(p, &program->GlobalScope);
+            TDeclaration_FindFunctionTagName(p, &pSyntaxTree->GlobalScope);
 
         if (functionTag == NULL && !options->Options.bNoImplicitTag)
         {
@@ -2631,7 +2631,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
             struct StrBuilder arrayName = STRBUILDER_INIT;
 
             //Implemetancao para vector
-            if (FindVectorStructPattern(program,
+            if (FindVectorStructPattern(pSyntaxTree,
                 pFirstParameter,
                 &bItemIsPointer,
                 &bItemIsAutoPointer,
@@ -2670,7 +2670,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
                 {"nelements", TParameter_GetName(pSecondParameter)},
                 {"type", itemType.c_str},
                 {"data", arrayName.c_str},
-                {"realloc", GetReallocStr(program)}
+                {"realloc", GetReallocStr(pSyntaxTree)}
                 };
 
                 StrBuilder_Template(fp,
@@ -2691,7 +2691,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
             struct StrBuilder arrayName = STRBUILDER_INIT;
 
             //Implemetancao para vector
-            if (FindVectorStructPattern(program,
+            if (FindVectorStructPattern(pSyntaxTree,
                 pFirstParameter,
                 &bItemIsPointer,
                 &bItemIsAutoPointer,
@@ -2700,7 +2700,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
             {
                 //TODO procurar pelas funcoes com tag
                 bool bHasReserve =
-                    SymbolMap_FindObjFunction2(&program->GlobalScope, functionPrefix.c_str, "Reserve") != 0;
+                    SymbolMap_FindObjFunction2(&pSyntaxTree->GlobalScope, functionPrefix.c_str, "Reserve") != 0;
                 const char* pszTemplate = "";
 
                 if (bHasReserve)
@@ -2769,7 +2769,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
                 {"type", itemType.c_str},
                 {"data", arrayName.c_str},
                 {"prefix", functionPrefix.c_str},
-                {"realloc", GetReallocStr(program)}
+                {"realloc", GetReallocStr(pSyntaxTree)}
                 };
 
                 StrBuilder_Template(fp,
@@ -2778,7 +2778,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
                                     sizeof(vars) / sizeof(vars[0]),
                                     1/*options->IdentationLevel*/);
             }
-            else if (FindListStructPattern(program,
+            else if (FindListStructPattern(pSyntaxTree,
                      pFirstParameter,
                      &bItemIsPointer,
                      &bItemIsAutoPointer,
@@ -2791,7 +2791,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
                 {"type", itemType.c_str},
                 {"data", arrayName.c_str},
                 {"prefix", functionPrefix.c_str},
-                {"null", GetNullStr(program)}
+                {"null", GetNullStr(pSyntaxTree)}
                 };
                 //o item apontado tem que ter pNext verificar isso
                 //e colocar erro se nao tiver
@@ -2821,12 +2821,12 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
             if (pFirstParameter != NULL)
             {
                 struct TStructUnionSpecifier* pStructUnionSpecifier =
-                    GetStructSpecifier(program, &pFirstParameter->Specifiers);
+                    GetStructSpecifier(pSyntaxTree, &pFirstParameter->Specifiers);
                 if (pStructUnionSpecifier &&
                     pStructUnionSpecifier->UnionSet.pHead != NULL)
                 {
                     options->IdentationLevel++;
-                    UnionTypeDefault(program,
+                    UnionTypeDefault(pSyntaxTree,
                                      options,
                                      pStructUnionSpecifier->Tag,
                                      pArgs,
@@ -2844,15 +2844,15 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* program,
 
 }
 
-static void TDeclaration_CodePrint(struct SyntaxTree* program,
+static void TDeclaration_CodePrint(struct SyntaxTree* pSyntaxTree,
                                    struct PrintCodeOptions* options,
                                    struct TDeclaration* p,
 
                                    struct StrBuilder* fp)
 {
-    TDeclarationSpecifiers_CodePrint(program, options, &p->Specifiers, fp);
+    TDeclarationSpecifiers_CodePrint(pSyntaxTree, options, &p->Specifiers, fp);
 
-    TInitDeclaratorList_CodePrint(program,
+    TInitDeclaratorList_CodePrint(pSyntaxTree,
                                   options,
                                   &p->Specifiers,
                                   &p->InitDeclaratorList, fp);
@@ -2907,7 +2907,7 @@ static void TDeclaration_CodePrint(struct SyntaxTree* program,
                 TNodeClueList_CodePrint(options, &p->pCompoundStatementOpt->ClueList0, fp);
                 Output_Append(fp, options, "{\n");
 
-                DefaultFunctionDefinition_CodePrint(program,
+                DefaultFunctionDefinition_CodePrint(pSyntaxTree,
                                                     options,
                                                     p,
 
@@ -2928,7 +2928,7 @@ static void TDeclaration_CodePrint(struct SyntaxTree* program,
             if (p->pCompoundStatementOpt != NULL)
             {
                 //normal
-                TCompoundStatement_CodePrint(program,
+                TCompoundStatement_CodePrint(pSyntaxTree,
                                              options,
                                              p->pCompoundStatementOpt,
 
@@ -2961,7 +2961,7 @@ static void TDeclaration_CodePrint(struct SyntaxTree* program,
                 TNodeClueList_CodePrint(options, &p->ClueList1, fp);
                 Output_Append(fp, options, "\n{\n");
 
-                DefaultFunctionDefinition_CodePrint(program,
+                DefaultFunctionDefinition_CodePrint(pSyntaxTree,
                                                     options,
                                                     p,
 
@@ -2990,24 +2990,24 @@ static void TDeclaration_CodePrint(struct SyntaxTree* program,
     return;
 }
 
-void TTypeName_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TTypeName* p, struct StrBuilder* fp)
+void TTypeName_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TTypeName* p, struct StrBuilder* fp)
 {
 
-    TSpecifierQualifierList_CodePrint(program, options, &p->SpecifierQualifierList, fp);
+    TSpecifierQualifierList_CodePrint(pSyntaxTree, options, &p->SpecifierQualifierList, fp);
 
-    TDeclarator_CodePrint(program, options, &p->Declarator, true/*bPrintName*/, fp);
+    TDeclarator_CodePrint(pSyntaxTree, options, &p->Declarator, true/*bPrintName*/, fp);
 
 
 }
 
-static void TParameter_CodePrint(struct SyntaxTree* program,
+static void TParameter_CodePrint(struct SyntaxTree* pSyntaxTree,
                                  struct PrintCodeOptions* options,
                                  struct TParameter* p,
 
                                  struct StrBuilder* fp)
 {
-    TDeclarationSpecifiers_CodePrint(program, options, &p->Specifiers, fp);
-    TDeclarator_CodePrint(program, options, &p->Declarator, true/*bPrintName*/, fp);
+    TDeclarationSpecifiers_CodePrint(pSyntaxTree, options, &p->Specifiers, fp);
+    TDeclarator_CodePrint(pSyntaxTree, options, &p->Declarator, true/*bPrintName*/, fp);
 
     if (p->bHasComma)
     {
@@ -3018,7 +3018,7 @@ static void TParameter_CodePrint(struct SyntaxTree* program,
 
 }
 
-static void TEofDeclaration_CodePrint(struct SyntaxTree* program,
+static void TEofDeclaration_CodePrint(struct SyntaxTree* pSyntaxTree,
                                       struct PrintCodeOptions* options,
                                       struct TEofDeclaration* p,
 
@@ -3027,7 +3027,7 @@ static void TEofDeclaration_CodePrint(struct SyntaxTree* program,
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
 }
 
-static void TStaticAssertDeclaration_CodePrint(struct SyntaxTree* program,
+static void TStaticAssertDeclaration_CodePrint(struct SyntaxTree* pSyntaxTree,
                                                struct PrintCodeOptions* options,
                                                struct TStaticAssertDeclaration* p,
 
@@ -3037,7 +3037,7 @@ static void TStaticAssertDeclaration_CodePrint(struct SyntaxTree* program,
     Output_Append(fp, options, "_StaticAssert");
     TNodeClueList_CodePrint(options, &p->ClueList1, fp);
     Output_Append(fp, options, "(");
-    TExpression_CodePrint(program, options, p->pConstantExpression, "", fp);
+    TExpression_CodePrint(pSyntaxTree, options, p->pConstantExpression, "", fp);
     Output_Append(fp, options, ",");
     TNodeClueList_CodePrint(options, &p->ClueList2, fp);
 
@@ -3052,7 +3052,7 @@ static void TStaticAssertDeclaration_CodePrint(struct SyntaxTree* program,
 
 }
 
-static void TGroupDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TGroupDeclaration* p, struct StrBuilder* fp)
+static void TGroupDeclaration_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TGroupDeclaration* p, struct StrBuilder* fp)
 {
     TNodeClueList_CodePrint(options, &p->ClueList0, fp);
     Output_Append(fp, options, "#pragma region cprime");
@@ -3062,19 +3062,19 @@ static void TGroupDeclaration_CodePrint(struct SyntaxTree* program, struct Print
     Output_Append(fp, options, "\n");
 
     struct TDeclaration* pFunction =
-        SymbolMap_FindFunction(&program->GlobalScope, p->Identifier);
+        SymbolMap_FindFunction(&pSyntaxTree->GlobalScope, p->Identifier);
     if (pFunction)
     {
-        TDeclaration_CodePrint(program, options, pFunction, fp);
+        TDeclaration_CodePrint(pSyntaxTree, options, pFunction, fp);
     }
     else
     {
         struct Map2 map = MAPSTRINGTOPTR_INIT;
-        FindUnionSetOf(program, p->Identifier, &map);
+        FindUnionSetOf(pSyntaxTree, p->Identifier, &map);
 
         struct StrBuilder idname = STRBUILDER_INIT;
 
-        int ir = FindRuntimeID(program,
+        int ir = FindRuntimeID(pSyntaxTree,
                                p->Identifier,
                                &idname);
 
@@ -3087,7 +3087,7 @@ static void TGroupDeclaration_CodePrint(struct SyntaxTree* program, struct Print
 
                 struct StrBuilder idnamelocal = STRBUILDER_INIT;
 
-                int ir2 = FindIDValue(program,
+                int ir2 = FindIDValue(pSyntaxTree,
                                       derivedName,
                                       &idnamelocal);
 
@@ -3157,30 +3157,30 @@ static void TGroupDeclaration_CodePrint(struct SyntaxTree* program, struct Print
 
     //for (int i = 0; i < p->Declarations.Size; i++)
     //{
-      //TAnyDeclaration_CodePrint(program, options, p->Declarations.pItems[i], fp);
+      //TAnyDeclaration_CodePrint(pSyntaxTree, options, p->Declarations.pItems[i], fp);
     //}
     //TNodeClueList_CodePrint(options, &p->ClueList1, fp);
     Output_Append(fp, options, "#pragma endregion cprime\n");
 }
 
-static void TAnyDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TAnyDeclaration* pDeclaration, struct StrBuilder* fp)
+static void TAnyDeclaration_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TAnyDeclaration* pDeclaration, struct StrBuilder* fp)
 {
     switch (pDeclaration->Type)
     {
         case TGroupDeclaration_ID:
-            TGroupDeclaration_CodePrint(program, options, (struct TGroupDeclaration*)pDeclaration, fp);
+            TGroupDeclaration_CodePrint(pSyntaxTree, options, (struct TGroupDeclaration*)pDeclaration, fp);
             break;
 
         case TEofDeclaration_ID:
-            TEofDeclaration_CodePrint(program, options, (struct TEofDeclaration*)pDeclaration, fp);
+            TEofDeclaration_CodePrint(pSyntaxTree, options, (struct TEofDeclaration*)pDeclaration, fp);
             break;
 
         case TStaticAssertDeclaration_ID:
-            TStaticAssertDeclaration_CodePrint(program, options, (struct TStaticAssertDeclaration*)pDeclaration, fp);
+            TStaticAssertDeclaration_CodePrint(pSyntaxTree, options, (struct TStaticAssertDeclaration*)pDeclaration, fp);
             break;
 
         case TDeclaration_ID:
-            TDeclaration_CodePrint(program, options, (struct TDeclaration*)pDeclaration, fp);
+            TDeclaration_CodePrint(pSyntaxTree, options, (struct TDeclaration*)pDeclaration, fp);
             break;
 
         default:
@@ -3191,7 +3191,7 @@ static void TAnyDeclaration_CodePrint(struct SyntaxTree* program, struct PrintCo
 
 }
 
-static void TDesignatorList_CodePrint(struct SyntaxTree* program, struct PrintCodeOptions* options, struct TDesignatorList* p, struct StrBuilder* fp)
+static void TDesignatorList_CodePrint(struct SyntaxTree* pSyntaxTree, struct PrintCodeOptions* options, struct TDesignatorList* p, struct StrBuilder* fp)
 {
 
 
@@ -3202,7 +3202,7 @@ static void TDesignatorList_CodePrint(struct SyntaxTree* program, struct PrintCo
         {
             Output_Append(fp, options, ",");
         }
-        TDesignator_CodePrint(program, options, pItem, fp);
+        TDesignator_CodePrint(pSyntaxTree, options, pItem, fp);
     }
 
 
@@ -3210,7 +3210,7 @@ static void TDesignatorList_CodePrint(struct SyntaxTree* program, struct PrintCo
 }
 
 
-static void TInitializerListItem_CodePrint(struct SyntaxTree* program,
+static void TInitializerListItem_CodePrint(struct SyntaxTree* pSyntaxTree,
                                            struct PrintCodeOptions* options,
                                            struct TDeclarator* pDeclarator,
                                            struct TDeclarationSpecifiers* pDeclarationSpecifiers,
@@ -3220,10 +3220,10 @@ static void TInitializerListItem_CodePrint(struct SyntaxTree* program,
 {
     if (p->DesignatorList.pHead != NULL)
     {
-        TDesignatorList_CodePrint(program, options, &p->DesignatorList, fp);
+        TDesignatorList_CodePrint(pSyntaxTree, options, &p->DesignatorList, fp);
     }
 
-    TInitializer_CodePrint(program,
+    TInitializer_CodePrint(pSyntaxTree,
                            options,
                            pDeclarator,
                            pDeclarationSpecifiers,
@@ -3329,59 +3329,59 @@ void SyntaxTree_PrintCodeToString(struct SyntaxTree* pSyntaxTree,
 }
 
 
-static const char* GetFreeStr(struct SyntaxTree* program)
+static const char* GetFreeStr(struct SyntaxTree* pSyntaxTree)
 {
     bool bCustomFree =
-        SymbolMap_FindFunction(&program->GlobalScope, "Free") != NULL ||
-        MacroMap_Find(&program->Defines, "Free") != NULL;
+        SymbolMap_FindFunction(&pSyntaxTree->GlobalScope, "Free") != NULL ||
+        MacroMap_Find(&pSyntaxTree->Defines, "Free") != NULL;
 
     return bCustomFree ? "Free" : "free";
 }
 
-static const char* GetMallocStr(struct SyntaxTree* program)
+static const char* GetMallocStr(struct SyntaxTree* pSyntaxTree)
 {
     bool bCustomMalloc =
-        SymbolMap_FindFunction(&program->GlobalScope, "Malloc") != NULL ||
-        MacroMap_Find(&program->Defines, "Malloc") != NULL;
+        SymbolMap_FindFunction(&pSyntaxTree->GlobalScope, "Malloc") != NULL ||
+        MacroMap_Find(&pSyntaxTree->Defines, "Malloc") != NULL;
 
     return bCustomMalloc ? "Malloc" : "malloc";
 }
 
-static const char* GetReallocStr(struct SyntaxTree* program)
+static const char* GetReallocStr(struct SyntaxTree* pSyntaxTree)
 {
     bool bCustomMalloc =
-        SymbolMap_FindFunction(&program->GlobalScope, "Realloc") != NULL ||
-        MacroMap_Find(&program->Defines, "Realloc") != NULL;
+        SymbolMap_FindFunction(&pSyntaxTree->GlobalScope, "Realloc") != NULL ||
+        MacroMap_Find(&pSyntaxTree->Defines, "Realloc") != NULL;
 
     return bCustomMalloc ? "Realloc" : "realloc";
 }
 
 
-static const char* GetFalseStr(struct SyntaxTree* program)
+static const char* GetFalseStr(struct SyntaxTree* pSyntaxTree)
 {
     bool bHasFalse =
-        MacroMap_Find(&program->Defines, "false") != NULL;
+        MacroMap_Find(&pSyntaxTree->Defines, "false") != NULL;
 
     return bHasFalse ? "false" : "0";
 }
 
-static const char* GetNullStr(struct SyntaxTree* program)
+static const char* GetNullStr(struct SyntaxTree* pSyntaxTree)
 {
     bool bHasFalse =
-        MacroMap_Find(&program->Defines, "NULL") != NULL;
+        MacroMap_Find(&pSyntaxTree->Defines, "NULL") != NULL;
 
     return bHasFalse ? "NULL" : "0";
 }
 
 
 
-static void PrintIfNotNullLn(struct SyntaxTree* program,
+static void PrintIfNotNullLn(struct SyntaxTree* pSyntaxTree,
                              struct PrintCodeOptions* options,
                              const char* pInitExpressionText, //(x->p->i = 0)    
                              struct StrBuilder* fp)
 {
     bool bHasNULL =
-        MacroMap_Find(&program->Defines, "NULL") != NULL;
+        MacroMap_Find(&pSyntaxTree->Defines, "NULL") != NULL;
 
     if (bHasNULL)
     {
@@ -3485,7 +3485,7 @@ static struct TDeclaration* FindHighLevelFunctionCore(struct SymbolMap* pMap,
     return pResult;
 }
 
-static bool FindHighLevelFunction(struct SyntaxTree* program,
+static bool FindHighLevelFunction(struct SyntaxTree* pSyntaxTree,
                                   struct PrintCodeOptions* options,
                                   struct TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
                                   struct TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
@@ -3532,7 +3532,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
                 {
                     //vamos procurar pela funcao conceito _Delete
                     struct TDeclaration* pDeclarationDestroy =
-                        FindHighLevelFunctionCore(&program->GlobalScope,
+                        FindHighLevelFunctionCore(&pSyntaxTree->GlobalScope,
                                                   pSpecifierQualifierList,
                                                   pDeclatator,
                                                   "delete");
@@ -3567,7 +3567,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
 
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                        "%s((void*)%s);",
-                                                       GetFreeStr(program),
+                                                       GetFreeStr(pSyntaxTree),
                                                        pInitExpressionText);
                             }
                             else
@@ -3580,7 +3580,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
 
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                        "%s((void*)%s);",
-                                                       GetFreeStr(program),
+                                                       GetFreeStr(pSyntaxTree),
                                                        pInitExpressionText);
                             }
 
@@ -3595,7 +3595,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
                             //se nao achou delete procura a destroy 
                             //e depois chama free
                             struct TDeclaration* pDeclarationDestroy2 =
-                                FindHighLevelFunctionCore(&program->GlobalScope,
+                                FindHighLevelFunctionCore(&pSyntaxTree->GlobalScope,
                                                           pSpecifierQualifierList,
                                                           pDeclatator,
                                                           "destroy");
@@ -3612,7 +3612,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
 
                                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                            "%s((void*)%s);",
-                                                           GetFreeStr(program),
+                                                           GetFreeStr(pSyntaxTree),
                                                            pInitExpressionText);
                                 }
                                 else if (bIsAutoPointerToAutoPointer)
@@ -3631,7 +3631,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                                "%s((void*)%s[i]);",
-                                                               GetFreeStr(program),
+                                                               GetFreeStr(pSyntaxTree),
                                                                pInitExpressionText);
 
                                         options->IdentationLevel--;
@@ -3639,7 +3639,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                                "%s((void*)%s);",
-                                                               GetFreeStr(program),
+                                                               GetFreeStr(pSyntaxTree),
                                                                pInitExpressionText);
                                     }
                                     else
@@ -3653,12 +3653,12 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                                "%s((void*)%s[0]);",
-                                                               GetFreeStr(program),
+                                                               GetFreeStr(pSyntaxTree),
                                                                pInitExpressionText);
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                                "%s((void*)%s);",
-                                                               GetFreeStr(program),
+                                                               GetFreeStr(pSyntaxTree),
                                                                pInitExpressionText);
                                     }
 
@@ -3686,7 +3686,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                                "%s((void*)%s);",
-                                                               GetFreeStr(program),
+                                                               GetFreeStr(pSyntaxTree),
                                                                pInitExpressionText);
                                     }
                                     else
@@ -3704,7 +3704,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
 
                                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                                "%s((void*)%s);",
-                                                               GetFreeStr(program),
+                                                               GetFreeStr(pSyntaxTree),
                                                                pInitExpressionText);
                                     }
                                 }
@@ -3719,7 +3719,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
             {
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                        "%s((void*)%s);",
-                                       GetFreeStr(program),
+                                       GetFreeStr(pSyntaxTree),
                                        pInitExpressionText);
 
                 //nada
@@ -3744,7 +3744,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
                     search == SearchDestroy)
                 {
                     struct TDeclaration* pDeclarationDestroy =
-                        FindHighLevelFunctionCore(&program->GlobalScope,
+                        FindHighLevelFunctionCore(&pSyntaxTree->GlobalScope,
                                                   pSpecifierQualifierList,
                                                   pDeclatator,
                                                   "destroy"
@@ -3752,7 +3752,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
 
                     //vamos procurar pela funcao conceito _Destroy
                     //struct TDeclaration* pDeclarationDestroy =
-                      //  SymbolMap_FindObjFunction(&program->GlobalScope,
+                      //  SymbolMap_FindObjFunction(&pSyntaxTree->GlobalScope,
                         //    nameToFind,
                           //  "Destroy");
                     if (pDeclarationDestroy)
@@ -3790,7 +3790,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
         {
             //vamos procurar pela funcao conceito _Delete
             struct TDeclaration* pDeclarationDestroy =
-                FindHighLevelFunctionCore(&program->GlobalScope,
+                FindHighLevelFunctionCore(&pSyntaxTree->GlobalScope,
                                           pSpecifierQualifierList,
                                           pDeclatator,
                                           "delete");
@@ -3811,7 +3811,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
                     //se nao achou delete procura a destroy 
                     //e depois chama free
                     struct TDeclaration* pDeclarationDestroy2 =
-                        FindHighLevelFunctionCore(&program->GlobalScope,
+                        FindHighLevelFunctionCore(&pSyntaxTree->GlobalScope,
                                                   pSpecifierQualifierList,
                                                   pDeclatator,
                                                   "destroy");
@@ -3825,7 +3825,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
 
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                "%s((void*)%s);",
-                                               GetFreeStr(program),
+                                               GetFreeStr(pSyntaxTree),
                                                pInitExpressionText);
                         bComplete = true;
                     }
@@ -3843,7 +3843,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
                 search == SearchDestroy)
             {
                 struct TDeclaration* pDeclarationDestroy =
-                    FindHighLevelFunctionCore(&program->GlobalScope,
+                    FindHighLevelFunctionCore(&pSyntaxTree->GlobalScope,
                                               pSpecifierQualifierList,
                                               pDeclatator,
                                               "destroy");
@@ -3851,7 +3851,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
                 {
                     const char* funcName = TDeclaration_GetFunctionName(pDeclarationDestroy);
 
-                    PrintIfNotNullLn(program, options, pInitExpressionText, fp);
+                    PrintIfNotNullLn(pSyntaxTree, options, pInitExpressionText, fp);
 
 
 
@@ -3865,7 +3865,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
                                            pInitExpressionText);
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                            "%s((void*)%s);",
-                                           GetFreeStr(program),
+                                           GetFreeStr(pSyntaxTree),
                                            pInitExpressionText);
                     options->IdentationLevel--;
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
@@ -3885,7 +3885,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                    "%s = %s;",
                                    pInitExpressionText,
-                                   GetNullStr(program));
+                                   GetNullStr(pSyntaxTree));
             bComplete = true;
         }
         else
@@ -3898,7 +3898,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
 
 
                 struct TDeclaration* pDeclarationInit =
-                    FindHighLevelFunctionCore(&program->GlobalScope,
+                    FindHighLevelFunctionCore(&pSyntaxTree->GlobalScope,
                                               pSpecifierQualifierList,
                                               pDeclatator,
                                               "init");
@@ -3927,7 +3927,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
             search == SearchInit)
         {
             struct TDeclaration* pDeclarationInit =
-                FindHighLevelFunctionCore(&program->GlobalScope,
+                FindHighLevelFunctionCore(&pSyntaxTree->GlobalScope,
                                           pSpecifierQualifierList,
                                           pDeclatator,
                                           "init");
@@ -3960,7 +3960,7 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
             search == SearchInit)
         {
             struct TDeclaration* pDeclarationInit =
-                FindHighLevelFunctionCore(&program->GlobalScope,
+                FindHighLevelFunctionCore(&pSyntaxTree->GlobalScope,
                                           pSpecifierQualifierList,
                                           pDeclatator,
                                           "init");
@@ -3973,10 +3973,10 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
                                        "struct %s *p = (struct %s *) %s(sizeof * p);",
                                        nameToFind,
                                        nameToFind,
-                                       GetMallocStr(program));
+                                       GetMallocStr(pSyntaxTree));
 
 
-                PrintIfNotNullLn(program, options, "p", fp);
+                PrintIfNotNullLn(pSyntaxTree, options, "p", fp);
 
 
                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
@@ -4015,12 +4015,12 @@ static bool FindHighLevelFunction(struct SyntaxTree* program,
         {
             StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "/*%s=*/", pInitExpressionText);
             struct PrintCodeOptions options2 = *options;
-            TInitializer_CodePrint(program, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
+            TInitializer_CodePrint(pSyntaxTree, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
             bComplete = true;
         }
         else if (bIsPointer)
         {
-            StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(program));
+            StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(pSyntaxTree));
             bComplete = true;
         }
 
@@ -4086,7 +4086,7 @@ static bool IsVector(struct TStructUnionSpecifier* pStructUnionSpecifier)
     return bHasSize && bHasCapacity&& bHasVector;
 }
 
-void UnionTypeDefault(struct SyntaxTree* program,
+void UnionTypeDefault(struct SyntaxTree* pSyntaxTree,
                       struct PrintCodeOptions* options,
                       const char* structName,
                       struct TParameterTypeList* pArgsOpt, //parametros
@@ -4095,10 +4095,10 @@ void UnionTypeDefault(struct SyntaxTree* program,
                       struct StrBuilder* fp)
 {
     struct Map2 map = MAPSTRINGTOPTR_INIT;
-    FindUnionSetOf(program, structName, &map);
+    FindUnionSetOf(pSyntaxTree, structName, &map);
 
     struct StrBuilder strid = STRBUILDER_INIT;
-    FindRuntimeID(program, structName, &strid);
+    FindRuntimeID(pSyntaxTree, structName, &strid);
 
     struct StrBuilder args = STRBUILDER_INIT;
 
@@ -4132,7 +4132,7 @@ void UnionTypeDefault(struct SyntaxTree* program,
         {
             struct StrBuilder idvalue = STRBUILDER_INIT;
 
-            FindIDValue(program,
+            FindIDValue(pSyntaxTree,
                 (const char*)map.pHashTable[i]->Key,
                         &idvalue);
 
@@ -4182,7 +4182,7 @@ void UnionTypeDefault(struct SyntaxTree* program,
     Map2_Destroy(&map, NULL); //LEAK?
 }
 
-void InstanciateDestroy2(struct SyntaxTree* program,
+void InstanciateDestroy2(struct SyntaxTree* pSyntaxTree,
                          struct PrintCodeOptions* options,
                          struct TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
                          struct TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
@@ -4233,7 +4233,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
             //enquanto ele vai andando ele vai tentando
             //algo com o nome do typedef
             struct TDeclarationSpecifiers* pDeclarationSpecifiers =
-                SymbolMap_FindTypedefFirstTarget(&program->GlobalScope,
+                SymbolMap_FindTypedefFirstTarget(&pSyntaxTree->GlobalScope,
                                                  pSingleTypeSpecifier->TypedefName,
                                                  &declarator);
             if (pDeclarationSpecifiers)
@@ -4261,9 +4261,9 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                                            "%s *p = (%s*) %s(sizeof * p);",
                                            pSingleTypeSpecifier->TypedefName,
                                            pSingleTypeSpecifier->TypedefName,
-                                           GetMallocStr(program));
+                                           GetMallocStr(pSyntaxTree));
 
-                    PrintIfNotNullLn(program, options, "p", fp);
+                    PrintIfNotNullLn(pSyntaxTree, options, "p", fp);
 
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                            "{");
@@ -4274,13 +4274,13 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                     //vou ver se tem init para typedef
 
                     struct TDeclaration* pDeclarationInit =
-                        FindHighLevelFunctionCore(&program->GlobalScope,
+                        FindHighLevelFunctionCore(&pSyntaxTree->GlobalScope,
                                                   pSpecifierQualifierList,
                                                   pDeclatator,
                                                   "init");
 
                     //struct TDeclaration * pDeclarationInit =
-                      //  SymbolMap_FindObjFunctionByType(&program->GlobalScope,
+                      //  SymbolMap_FindObjFunctionByType(&pSyntaxTree->GlobalScope,
                         //    pSingleTypeSpecifier->TypedefName,
                           //  "init");
 
@@ -4314,7 +4314,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                     {
 
                         //passa a informacao do tipo correto agora
-                        InstanciateDestroy2(program,
+                        InstanciateDestroy2(pSyntaxTree,
                                             options,
                                             (struct TSpecifierQualifierList*)pDeclarationSpecifiers,
                                             &declarator,
@@ -4338,7 +4338,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                 }
                 else
                 {
-                    bComplete = FindHighLevelFunction(program,
+                    bComplete = FindHighLevelFunction(pSyntaxTree,
                                                       options,
                                                       pSpecifierQualifierList,//<-dupla para entender o tipo
                                                       pDeclatator,                        //<-dupla para entender o tipo
@@ -4357,7 +4357,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                         enum Action action2 = action;
 
                         //passa a informacao do tipo correto agora
-                        InstanciateDestroy2(program,
+                        InstanciateDestroy2(pSyntaxTree,
                                             options,
                                             (struct TSpecifierQualifierList*)pDeclarationSpecifiers,
                                             &declarator,
@@ -4389,7 +4389,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
             //Indica se consegui fazer sem entrar na struct
             bool bComplete = false;
 
-            bComplete = FindHighLevelFunction(program,
+            bComplete = FindHighLevelFunction(pSyntaxTree,
                                               options,
                                               pSpecifierQualifierList,//<-dupla para entender o tipo
                                               pDeclatator,                        //<-dupla para entender o tipo
@@ -4415,7 +4415,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                     //se nao eh completa tenta achar
                     //vou procurar a definicao completa da struct
                     pStructUnionSpecifier =
-                        SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pSingleTypeSpecifier->TypedefName);
+                        SymbolMap_FindCompleteStructUnionSpecifier(&pSyntaxTree->GlobalScope, pSingleTypeSpecifier->TypedefName);
                 }
 
                 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -4429,7 +4429,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                 {
                     if (action == ActionDelete)
                     {
-                        PrintIfNotNullLn(program, options, pInitExpressionText, fp);
+                        PrintIfNotNullLn(pSyntaxTree, options, pInitExpressionText, fp);
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{", pInitExpressionText);
                         options->IdentationLevel++;
                     }
@@ -4437,14 +4437,14 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                     {
                         if (bIsAutoPointerToObject)
                         {
-                            PrintIfNotNullLn(program, options, pInitExpressionText, fp);
+                            PrintIfNotNullLn(pSyntaxTree, options, pInitExpressionText, fp);
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
                             options->IdentationLevel++;
                         }
                         else if (bIsAutoPointerToAutoPointer)
                         {
 
-                            PrintIfNotNullLn(program, options, pInitExpressionText, fp);
+                            PrintIfNotNullLn(pSyntaxTree, options, pInitExpressionText, fp);
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
                             options->IdentationLevel++;
 
@@ -4472,9 +4472,9 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                                                "struct %s* p = (struct %s*) %s(sizeof * p);",
                                                pStructUnionSpecifier->Tag,
                                                pStructUnionSpecifier->Tag,
-                                               GetMallocStr(program));
+                                               GetMallocStr(pSyntaxTree));
 
-                        PrintIfNotNullLn(program, options, pInitExpressionText, fp);
+                        PrintIfNotNullLn(pSyntaxTree, options, pInitExpressionText, fp);
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                                "{");
                         options->IdentationLevel++;
@@ -4489,7 +4489,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                         if (action == ActionDelete)
                         {
                             options->IdentationLevel++;
-                            UnionTypeDefault(program,
+                            UnionTypeDefault(pSyntaxTree,
                                              options,
                                              pStructUnionSpecifier->Tag,
                                              NULL, /*args*/
@@ -4502,7 +4502,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                                  action == ActionDestroy)
                         {
                             options->IdentationLevel++;
-                            UnionTypeDefault(program,
+                            UnionTypeDefault(pSyntaxTree,
                                              options,
                                              pStructUnionSpecifier->Tag,
                                              NULL, /*args*/
@@ -4674,7 +4674,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                                     }
 
                                     //Se for destroy e sor 
-                                    InstanciateDestroy2(program,
+                                    InstanciateDestroy2(pSyntaxTree,
                                                         options,
                                                         &pStructDeclaration->SpecifierQualifierList,
                                                         pStructDeclarator->pDeclarator,
@@ -4706,7 +4706,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                     {
                         if (bIsAutoPointerToObject)
                         {
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                             options->IdentationLevel--;
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
@@ -4717,13 +4717,13 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                             {
                                 options->IdentationLevel--;
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}"); //fecha  for
-                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                                 options->IdentationLevel--;
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
                             }
                             else
                             {
-                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                                 options->IdentationLevel--;
                                 StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
                             }
@@ -4750,7 +4750,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                         }
                         else
                         {
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                         }
                         options->IdentationLevel--;
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
@@ -4795,7 +4795,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
             {
                 if (bIsAutoPointerToObject)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                 }
                 else if (bIsAutoPointerToAutoPointer)
                 {
@@ -4805,15 +4805,15 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
 
                         options->IdentationLevel++;
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s[i]);", GetFreeStr(program), pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s[i]);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                         options->IdentationLevel--;
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                     }
                     else
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s[0]);", GetFreeStr(program), pInitExpressionText);
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s[0]);", GetFreeStr(pSyntaxTree), pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                     }
 
                     //StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
@@ -4829,7 +4829,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                 {
                     StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "%s = ", pInitExpressionText);
                     struct PrintCodeOptions options2 = *options;
-                    TInitializer_CodePrint(program, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
+                    TInitializer_CodePrint(pSyntaxTree, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
                     StrBuilder_Append(fp, ";\n");
                 }
                 else
@@ -4838,13 +4838,13 @@ void InstanciateDestroy2(struct SyntaxTree* program,
 
                     if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetNullStr(program));
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetNullStr(pSyntaxTree));
                     }
                     else
                     {
                         if (TSpecifierQualifierList_IsBool(pSpecifierQualifierList))
                         {
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetFalseStr(program));
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetFalseStr(pSyntaxTree));
                         }
                         else
                         {
@@ -4860,13 +4860,13 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                 {
                     StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "/*%s=*/", pInitExpressionText);
                     struct PrintCodeOptions options2 = *options;
-                    TInitializer_CodePrint(program, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
+                    TInitializer_CodePrint(pSyntaxTree, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
                 }
                 else
                 {
                     if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                     {
-                        StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(program));
+                        StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(pSyntaxTree));
                     }
                     else
                     {
@@ -4885,7 +4885,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
         bool bComplete = false;
 
 
-        bComplete = FindHighLevelFunction(program,
+        bComplete = FindHighLevelFunction(pSyntaxTree,
                                           options,
                                           pSpecifierQualifierList,//<-dupla para entender o tipo
                                           pDeclatator,                        //<-dupla para entender o tipo
@@ -4911,7 +4911,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                 //se nao eh completa tenta achar
                 //vou procurar a definicao completa da struct
                 pStructUnionSpecifier =
-                    SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pStructUnionSpecifier->Tag);
+                    SymbolMap_FindCompleteStructUnionSpecifier(&pSyntaxTree->GlobalScope, pStructUnionSpecifier->Tag);
             }
 
             bool bIsUnionTypes = pStructUnionSpecifier &&
@@ -4923,7 +4923,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
             {
                 if (action == ActionDelete)
                 {
-                    PrintIfNotNullLn(program, options, pInitExpressionText, fp);
+                    PrintIfNotNullLn(pSyntaxTree, options, pInitExpressionText, fp);
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{", pInitExpressionText);
                     options->IdentationLevel++;
                 }
@@ -4931,14 +4931,14 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                 {
                     if (bIsAutoPointerToObject)
                     {
-                        PrintIfNotNullLn(program, options, pInitExpressionText, fp);
+                        PrintIfNotNullLn(pSyntaxTree, options, pInitExpressionText, fp);
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
                         options->IdentationLevel++;
                     }
                     else if (bIsAutoPointerToAutoPointer)
                     {
 
-                        PrintIfNotNullLn(program, options, pInitExpressionText, fp);
+                        PrintIfNotNullLn(pSyntaxTree, options, pInitExpressionText, fp);
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "{");
                         options->IdentationLevel++;
 
@@ -4966,9 +4966,9 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                                            "struct %s* p = (struct %s*) %s(sizeof * p);",
                                            pStructUnionSpecifier->Tag,
                                            pStructUnionSpecifier->Tag,
-                                           GetMallocStr(program));
+                                           GetMallocStr(pSyntaxTree));
 
-                    PrintIfNotNullLn(program, options, pInitExpressionText, fp);
+                    PrintIfNotNullLn(pSyntaxTree, options, pInitExpressionText, fp);
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel,
                                            "{");
                     options->IdentationLevel++;
@@ -4990,7 +4990,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                     if (action == ActionDelete)
                     {
                         options->IdentationLevel++;
-                        UnionTypeDefault(program,
+                        UnionTypeDefault(pSyntaxTree,
                                          options,
                                          pStructUnionSpecifier->Tag,
                                          NULL, /*args*/
@@ -5003,7 +5003,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                              action == ActionDestroy)
                     {
                         options->IdentationLevel++;
-                        UnionTypeDefault(program,
+                        UnionTypeDefault(pSyntaxTree,
                                          options,
                                          pStructUnionSpecifier->Tag,
                                          NULL, /*args*/
@@ -5175,7 +5175,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                                 }
 
                                 //Se for destroy e sor 
-                                InstanciateDestroy2(program,
+                                InstanciateDestroy2(pSyntaxTree,
                                                     options,
                                                     &pStructDeclaration->SpecifierQualifierList,
                                                     pStructDeclarator->pDeclarator,
@@ -5207,7 +5207,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                 {
                     if (bIsAutoPointerToObject)
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                         options->IdentationLevel--;
                         StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
 
@@ -5218,13 +5218,13 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                         {
                             options->IdentationLevel--;
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}"); //fecha  for
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                             options->IdentationLevel--;
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
                         }
                         else
                         {
-                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                            StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                             options->IdentationLevel--;
                             StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");//fecha or for
                         }
@@ -5251,7 +5251,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
                     }
                     else
                     {
-                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                        StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
                     }
                     options->IdentationLevel--;
                     StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "}");
@@ -5291,7 +5291,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
             TDeclarationSpecifier_As_TEnumSpecifier(pMainSpecifier);
 
         pEnumSpecifier =
-            SymbolMap_FindCompleteEnumSpecifier(&program->GlobalScope, pEnumSpecifier->Tag);
+            SymbolMap_FindCompleteEnumSpecifier(&pSyntaxTree->GlobalScope, pEnumSpecifier->Tag);
 
         if (pEnumSpecifier == NULL)
         {
@@ -5305,12 +5305,12 @@ void InstanciateDestroy2(struct SyntaxTree* program,
         {
             if (bIsAutoPointerToObject)
             {
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
             }
             else if (bIsAutoPointerToAutoPointer)
             {
                 //assert(false);
-                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(program), pInitExpressionText);
+                StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s((void*)%s);", GetFreeStr(pSyntaxTree), pInitExpressionText);
             }
             else
             {
@@ -5323,7 +5323,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
             {
                 StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "%s = ", pInitExpressionText);
                 struct PrintCodeOptions options2 = *options;
-                TInitializer_CodePrint(program, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
+                TInitializer_CodePrint(pSyntaxTree, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
                 StrBuilder_Append(fp, ";\n");
             }
             else
@@ -5337,7 +5337,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
 
                 if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetNullStr(program));
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "%s = %s;", pInitExpressionText, GetNullStr(pSyntaxTree));
                 }
                 else
                 {
@@ -5352,7 +5352,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
             {
                 StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "%s = ", pInitExpressionText);
                 struct PrintCodeOptions options2 = *options;
-                TInitializer_CodePrint(program, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
+                TInitializer_CodePrint(pSyntaxTree, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
                 StrBuilder_Append(fp, ";");
             }
             else
@@ -5364,7 +5364,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
 
                 if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                 {
-                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "*%s = %s;", pInitExpressionText, GetNullStr(program));
+                    StrBuilder_AppendFmtLn(fp, 4 * options->IdentationLevel, "*%s = %s;", pInitExpressionText, GetNullStr(pSyntaxTree));
                 }
                 else
                 {
@@ -5379,7 +5379,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
             {
                 StrBuilder_AppendFmtIdent(fp, 4 * options->IdentationLevel, "%s = ", pInitExpressionText);
                 struct PrintCodeOptions options2 = *options;
-                TInitializer_CodePrint(program, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
+                TInitializer_CodePrint(pSyntaxTree, &options2, pDeclatator, (struct TDeclarationSpecifiers*)pSpecifierQualifierList, pInitializerOpt, fp);
             }
             else
             {
@@ -5390,7 +5390,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
 
                 if (bIsPointerToObject || bIsAutoPointerToObject || bIsAutoPointerToAutoPointer)
                 {
-                    StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(program));
+                    StrBuilder_AppendFmt(fp, "/*%s=*/%s", pInitExpressionText, GetNullStr(pSyntaxTree));
                 }
                 else
                 {
@@ -5407,7 +5407,7 @@ void InstanciateDestroy2(struct SyntaxTree* program,
 }
 
 
-struct TStructUnionSpecifier* GetStructSpecifier(struct SyntaxTree* program, struct TDeclarationSpecifiers* specifiers)
+struct TStructUnionSpecifier* GetStructSpecifier(struct SyntaxTree* pSyntaxTree, struct TDeclarationSpecifiers* specifiers)
 {
     if (specifiers == NULL)
         return NULL;
@@ -5425,7 +5425,7 @@ struct TStructUnionSpecifier* GetStructSpecifier(struct SyntaxTree* program, str
         {
             const char* typedefName = pSingleTypeSpecifier->TypedefName;
 
-            struct TDeclaration* pDeclaration = SyntaxTree_GetFinalTypeDeclaration(program, typedefName);
+            struct TDeclaration* pDeclaration = SyntaxTree_GetFinalTypeDeclaration(pSyntaxTree, typedefName);
             if (pDeclaration)
             {
                 if (pDeclaration->Specifiers.Size > 1)
@@ -5442,14 +5442,14 @@ struct TStructUnionSpecifier* GetStructSpecifier(struct SyntaxTree* program, str
         pTStructUnionSpecifier->Tag != NULL)
     {
         pTStructUnionSpecifier =
-            SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pTStructUnionSpecifier->Tag);
+            SymbolMap_FindCompleteStructUnionSpecifier(&pSyntaxTree->GlobalScope, pTStructUnionSpecifier->Tag);
     }
     else  if (pSingleTypeSpecifier != NULL &&
               pSingleTypeSpecifier->Token2 == TK_STRUCT)
     {
         //Modelo C++ que o nome da struct ja eh suficiente
         pTStructUnionSpecifier =
-            SymbolMap_FindCompleteStructUnionSpecifier(&program->GlobalScope, pSingleTypeSpecifier->TypedefName);
+            SymbolMap_FindCompleteStructUnionSpecifier(&pSyntaxTree->GlobalScope, pSingleTypeSpecifier->TypedefName);
     }
 
     return pTStructUnionSpecifier;

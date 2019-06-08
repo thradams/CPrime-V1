@@ -21,13 +21,13 @@ int Compile(const char* configFileName,
             bool bPrintASTFile)
 {
     int bSuccess = 0;
-    struct SyntaxTree program;
-    SyntaxTree_Init(&program);
+    struct SyntaxTree pSyntaxTree;
+    SyntaxTree_Init(&pSyntaxTree);
 
     clock_t tstart = clock();
 
     printf("Parsing...\n");
-    if (GetAST(inputFileName, configFileName, options, &program))
+    if (GetAST(inputFileName, configFileName, options, &pSyntaxTree))
     {
         bSuccess = 1;
 
@@ -44,12 +44,12 @@ int Compile(const char* configFileName,
         {
             if (bPrintASTFile)
             {
-                //SyntaxTree_PrintAstToFile(&program, outputFileName, inputFileName);
-                SyntaxTree_PrintAstToXML(&program, outputFileName, inputFileName);
+                //SyntaxTree_PrintAstToFile(&pSyntaxTree, outputFileName, inputFileName);
+                SyntaxTree_PrintAstToXML(&pSyntaxTree, outputFileName, inputFileName);
             }
             else
             {
-                SyntaxTree_PrintCodeToFile(&program, options, outputFileName, inputFileName);
+                SyntaxTree_PrintCodeToFile(&pSyntaxTree, options, outputFileName, inputFileName);
             }
         }
         else
@@ -60,15 +60,15 @@ int Compile(const char* configFileName,
             {
                 //faz um  arquivo com extensao json
                 //MakePath(outc, drive, dir, fname, ".json");
-                //SyntaxTree_PrintAstToFile(&program, outc, inputFileName);
+                //SyntaxTree_PrintAstToFile(&pSyntaxTree, outc, inputFileName);
                 MakePath(outc, drive, dir, fname, ".xml");
-                SyntaxTree_PrintAstToXML(&program, outc, inputFileName);
+                SyntaxTree_PrintAstToXML(&pSyntaxTree, outc, inputFileName);
             }
             else
             {
                 //gera em cima do proprio arquivo
                 MakePath(outc, drive, dir, fname, ext);
-                SyntaxTree_PrintCodeToFile(&program, options, outc, inputFileName);
+                SyntaxTree_PrintCodeToFile(&pSyntaxTree, options, outc, inputFileName);
             }
         }
 
@@ -76,7 +76,7 @@ int Compile(const char* configFileName,
         printf("Completed in %d second(s)\n", (int)((tend - tstart) / CLOCKS_PER_SEC));
 
     }
-    SyntaxTree_Destroy(&program);
+    SyntaxTree_Destroy(&pSyntaxTree);
     return bSuccess;
 }
 
@@ -123,9 +123,9 @@ char* CompileText(int type, int bNoImplicitTag, char* input)
     options2.Target = (enum CompilerTarget) type;
     options2.bNoImplicitTag = bNoImplicitTag;
 
-    struct SyntaxTree program;
-    SyntaxTree_Init(&program);
-    if (GetASTFromString(input, &options2, &program))
+    struct SyntaxTree pSyntaxTree;
+    SyntaxTree_Init(&pSyntaxTree);
+    if (GetASTFromString(input, &options2, &pSyntaxTree))
     {
 
 
@@ -137,7 +137,7 @@ char* CompileText(int type, int bNoImplicitTag, char* input)
         }
         else
         {
-            SyntaxTree_PrintCodeToString(&program, &options2, &sb);
+            SyntaxTree_PrintCodeToString(&pSyntaxTree, &options2, &sb);
         }
         output = sb.c_str;
     }

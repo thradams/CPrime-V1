@@ -13,7 +13,7 @@ struct FileNode* FileNode_Create(const char* key)
     struct FileNode* p = (struct FileNode*) Malloc(sizeof * p);
     if (p)
     {
-        int len = strlen(key);
+        int len = (int)strlen(key);
         p->Key = Malloc(len + 1);
         if (p->Key)
         {
