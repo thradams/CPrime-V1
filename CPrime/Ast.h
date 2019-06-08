@@ -1228,30 +1228,6 @@ struct TGroupDeclaration* TGroupDeclaration_Create();
 void TGroupDeclaration_Delete(struct TGroupDeclaration* p);
 
 
-struct SyntaxTree
-{
-    //declaracoes
-    struct TDeclarations Declarations;
-
-    //arquivos na qual declaracao tem indice
-    struct TFileArray Files2;
-
-    //multimap dos simbolos
-    //DeclarationsMap Symbols;
-    struct SymbolMap GlobalScope;
-
-    //Defines
-    struct MacroMap Defines;
-};
-
-
-void SyntaxTree_Init(struct SyntaxTree* p);
-void SyntaxTree_Destroy(struct SyntaxTree* p);
-struct TDeclaration* SyntaxTree_GetFinalTypeDeclaration(struct SyntaxTree* p, const char* typeName);
-struct TDeclaration* SyntaxTree_FindDeclaration(struct SyntaxTree* p, const char* name);
-
-
-
 struct TTypeName
 {
     /*
@@ -1472,4 +1448,28 @@ struct TPrimaryExpressionLambda
 
 struct TPrimaryExpressionLambda* TPrimaryExpressionLambda_Create();
 void TPrimaryExpressionLambda_Delete(struct TPrimaryExpressionLambda* p);
+
+
+struct SyntaxTree
+{
+    //declaracoes
+    struct TDeclarations Declarations;
+
+    //arquivos na qual declaracao tem indice
+    struct TFileArray Files2;
+
+    //multimap dos simbolos
+    //DeclarationsMap Symbols;
+    struct SymbolMap GlobalScope;
+
+    //Defines
+    struct MacroMap Defines;
+};
+
+
+void SyntaxTree_Init(struct SyntaxTree* p);
+void SyntaxTree_Destroy(struct SyntaxTree* p);
+struct TDeclaration* SyntaxTree_GetFinalTypeDeclaration(struct SyntaxTree* p, const char* typeName);
+struct TDeclaration* SyntaxTree_FindDeclaration(struct SyntaxTree* p, const char* name);
+
 

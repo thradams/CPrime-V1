@@ -3244,8 +3244,6 @@ void TInitializerListItem_Delete(struct TInitializerListItem* p) /*@default*/
 }
 
 
-
-
 struct TDeclaration* SyntaxTree_FindDeclaration(struct SyntaxTree* p, const char* name)
 {
     struct TTypePointer* pt = SymbolMap_Find(&p->GlobalScope, name);
@@ -3255,7 +3253,6 @@ struct TDeclaration* SyntaxTree_FindDeclaration(struct SyntaxTree* p, const char
         return (struct TDeclaration*)pt;
     }
     return NULL;
-    //return DeclarationsMap_FindDeclaration(&p->Symbols, name);
 }
 
 struct TDeclaration* SyntaxTree_FindFunctionDeclaration(struct SyntaxTree* p, const char* name)
