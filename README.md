@@ -1,292 +1,55 @@
-# C'
-
-![robot](/robots.jpg)
-(Picture courtesy of my niece Bethina)
 
 ## Description
 
-Have you ever imagined in do pair programming with an robot? Now you can.
+C' (cprime) is a C compiler that generates readably C code.
 
-C' (pronounced c prime) is C language transpiler that read comments in your code and can be responsable to implement and maintain some parts of your code.
+It is like a CFront following a new path.  
+This new path is closer to C and cprime can be used to try new ideas that could be added into C language or borrowed from C++.
+It also can be used to convert C99, C11, CXX to previous versions of C.
 
-* It can generate constructors and destructors 
-* it can generate the operator new and delete (similarly of C++).
-* It can generate polimorphic functions.
-* It can generate containers like vector, list
-* It can help with lamddas and initialization
 
-The best introduction is to try the samples online.
+
+See it online:
 http://www.thradams.com/web/cprime.html
 
-CPrime is written using itself. Some files are 60% generated, see Ast.h and Ast.c.
+## C language extensions tour
 
-## Why?
-
-Using this tool you achieve **decoupling** because you don´t have to implement the mechanical relationship between objects.
-
-This mechanical relatioship also makes possible a **new kind of polimorphism where the coupling is much smaller** than the traditional interface (virtual) methodoly.
-
-You can compare this code generation with C++ explicity template instantiation.
-But C' instanciates just one function and always explicity.
-
-
-## Features 
-
-### Especial functions
-The compiler can generate something similar of C++ constructor,destructor, operator new and operator delete.
-
-To generate these functions use the comment /*default*/ at the end of function declaration. 
-
-The name of the functions and signature are used to undestand what you want to generate. 
-
-Use XXX_Create for "operator new", XXX_Init for constructor, XXX_Destroy for destructor and XXX_Delete for operator delete. 
-
-
-Sample input with comments:
+### Struct members with initializers
 
 ```c
-
-typedef char * /*auto*/ String;
-
-struct X
-{
-    String Name;
-    int i;
-};
-
-struct X * X_Create() /*default*/
-{
-    struct X *p = (struct X *) malloc(sizeof * p);
-    if (p)
-    {
-        X_Init(p);
-    }
-    return p;
-}
-
-void X_Init(struct X * p) /*default*/
-{
-    p->Name = 0;
-    p->i = 0;
-}
-
-void X_Destroy(struct X * p) /*default*/
-{
-    free((void*)p->Name);
-}
-
-void X_Delete(struct X * p) /*default*/
-{
-    if (p)
-    {
-        X_Destroy(p);
-        free((void*)p);
-    }
-}
-
-int main()
-{
-    struct X x = /*default*/{0};
-    return 1;
-}
-
-
-```
-The **/*auto*/** type qualifier is a qualifier that can be applied to pointers. When a pointer has auto it means that the pointer
-is the **owner of the pointed object**. This information is used to generate destructors.
-See the declaration of String and the generated destructor X_Destroy.
-
-
-### Dynamic Arrays (like std::vector)
-Instead of using templates, we define a concrete data structure.
-Two functions can be created 'PushBack' and 'Reserve' and the normal 'Destroy'.
-
-When the algorithm 'PushBack' is instaciated it will check the type. If the type looks like an vector (pointer, size and capacity) then the function will be instaciated having that in mind. The same function, let´s say PushBack can be instanciated for list.
-
-Differently from C++, one instanciation will not instantiate another one.
-But one instantion can use another one if present. Comment 'Reserve' and compare.
-```c
-
-struct Items
-{
-	int * /*auto [Size]*/ pData;
-	int Size;
-	int Capacity;
-};
-
-
-void Items_Reserve(Items* pItems, int n) /*default*/;
-void Items_PushBack(Items* pItems, int i) /*default*/;
-
-void Items_Destroy(Items* pItems) /*default*/;
-
-
-int main(int argc, char **argv)
-{
-	Items items = /*default*/{0};
-
-	Items_PushBack(&items, 1);
-	Items_PushBack(&items, 2);
-	Items_PushBack(&items, 3);
-
-	for (int i = 0; i < items.Size; i++)
-	{
-		printf("%d\n", items.pData[i]);
-	}
-
-	Items_Destroy(&items);
-	return 0;
-}
-
-```
-
-### Initialization
-Struct data members can have initializers. This initializers are used to generate special functions and for the default initialization.
-
-```c
-
 struct Point
 {
-  int x /*= 1*/;
-  int y /*= 2*/;
+  int x = 1;
+  int y = 2;
 };
+```
 
-struct Line
-{
-  struct Point start, end;
-};
-
+### Default initializer
+```c
 int main()
 {
-  struct Point pt = /*default*/{/*.x=*/ 1, /*.y=*/ 2};
-  struct Line ln = /*default*/{{/*.x=*/ 1, /*.y=*/ 2}, {/*.x=*/ 1, /*.y=*/ 2}};
-}
-
-
-```
-### Polimorphism
-
-```c
-
-
-struct Box
-{
-    int id /*= 1*/;
-};
-
-struct Box* Box_Create() /*default*/
-{
-    struct Box* p = (struct Box*) malloc(sizeof * p);
-    if (p)
-    {
-        p->id =  1;
-    }
-    return p;
-}
-void Box_Delete(struct Box* pBox) /*default*/
-{
-    if (pBox)
-    {
-        free((void*)pBox);
-    }
-}
-
-void Box_Draw(struct Box* pBox)
-{
-    printf("Box");
-}
-
-struct Circle
-{
-    int id /*= 2*/;
-};
-struct Circle* Circle_Create() /*default*/
-{
-    struct Circle* p = (struct Circle*) malloc(sizeof * p);
-    if (p)
-    {
-        p->id =  2;
-    }
-    return p;
-}
-void Circle_Delete(struct Circle* pCircle) /*default*/
-{
-    if (pCircle)
-    {
-        free((void*)pCircle);
-    }
-}
-
-void Circle_Draw(struct Circle* pCircle)
-{
-    printf("Circle");
-}
-
-//Shape is a pointer to Box or Circle
-struct /*Box | Circle*/ Shape
-{
-    int id;
-};
-
-void Shape_Delete(struct Shape* pShape) /*default*/
-{
-    if (pShape)
-    {
-            switch (pShape->id)
-            {
-                case  2:
-                    Circle_Delete((struct Circle*)pShape);
-                break;
-                case  1:
-                    Box_Delete((struct Box*)pShape);
-                break;
-                default:
-                break;
-            }
-    }
-}
-
-void Shape_Draw(struct Shape* pShape) /*default*/
-{
-    switch (pShape->id)
-    {
-        case  2:
-            Circle_Draw((struct Circle*)pShape);
-        break;
-        case  1:
-            Box_Draw((struct Box*)pShape);
-        break;
-        default:
-        break;
-    }
+  struct Point pt = {}; //same as {.x = 1, .y = 2}
 }
 ```
 
+### Lambda Expression
 
-### Lambdas 
-Lambdas without capture are implemented using C++ syntax.
-This is one way operation.
-
-Input
+This is similar of C++. The diference is that we don't capture and the result of the lambdas expression is always a pointer to function.
 
 ```c
-
 void Run(void (*callback)(void*), void* data);
-
 int main()
 {  
-  Run([](void* data){
-  
+  Run([](void* data) {
     printf("first");
     Run([](void* data){
       printf("second");
     }, 0);     
   }, 0);
 }
-
 ```
 
-Output
+the generated code is :
 ```c
 
 void Run(void (*callback)(void*), void* data);
@@ -307,13 +70,301 @@ int main()
 }
 
 ```
+### Function tags
 
-## Next steps
+Functions can have a extra identifier that is called function tag.
 
-[Using](usingcp.md) the compiler.
+```c
+void FunctionName(int) : functionTag;
+```
+Function can be tagged in one place
+
+```c
+void FunctionName(int) : functionTag;
+
+//this is the same function with the same tag
+void FunctionName(int); 
+```
+### Explicit function instantiation 
+The compiler knows how to implement some functions for any struct.
+
+They are:
+* init     - initialize structs with default values
+* destroy  - free resources used by structs
+* create   - Allocates and initialize the object on the heap (malloc)
+* delete   - Destroy a object created on heap and frees the memory
+
+Any of these functions can be implemented automaticaly for any struct.
+
+It is called  explicit instantiation because declaration and point of instantiation is given by the programmer.
+
+Declaration sample:
+```c
+//file X.h
+struct X {
+    int i = 3;
+};
+
+struct X * makeX() : create;
+```
+
+Instantiation sample:
+
+The compiler will understand that makeX is instance of 'create' reading the function tag.
+The instantiation point is defined with the keyword default. 
+
+```c
+//file X.c
+#include "X.h"
+
+//this is the point of instantiation
+struct X * makeX() default;
+```
+
+### Auto pointer qualifier
+
+Pointers can be qualified with the 'auto' keyword.
+
+This tells the compiler that the pointer is the owner of the pointed object.
+
+In pratice this is used for destroy and delete instantiation:
+
+For instance:
+
+```c
+struct X {
+    char * auto Text;
+};
+
+void DestroyX(struct X *) : destroy;
+```
+
+The destroyX instantiation will be
+
+```c
+void DestroyX(struct X *) default
+{
+    free((void*)->Text);
+}
+```
+
+### Pointer qualifier [size]
+Structures member pointers can be qualified with '[size]' .
+
+This tells the compiler that the pointer is pointing size objects where size is also a member of the struct.
+
+```c
+struct Item {
+	char * auto Text;
+};
+
+struct Items {
+	struct Item * auto * auto [Size] pData;
+	int Size;	
+};
 
 
-## Background & Motives
+void Items_Destroy(struct Items* pItems) : destroy;
+```
+
+This 'struct Item * auto * auto [Size] pData;' can be read as "pData is a onwer pointer of Size onwer pointers of struct Item".
+
+Items_Destroy is instanciated as:
+
+```c
+void Items_Destroy(struct Items* pItems) default
+{
+    if (pItems->pData)
+    {
+        for (int i = 0; i < pItems->Size; i++)
+        {
+            free((void*)pItems->pData[i]->Text);
+        }
+        free((void*)pItems->pData);
+    }
+}
+```
+
+## Automatic function tags
+This is an optional feature controled by compiler flags. We can define that functions with the aproprieted signature and know suffixes like create, init, destroy and delete (case insensitive) will be automatically tagged.
+
+For instance:
+
+```c
+void Items_Destroy(struct Items* pItems);
+```
+Is automatically tagged as
+
+```c
+void Items_Destroy(struct Items* pItems) : destroy;
+```
+## Automatic instanciation of Push
+Push is a function that adds a new item inside a known data structure. 
+
+It cannot be instanciated for any type. The current implementation allow the instanciation of push for vector and linked list only.
+
+```c
+struct Item {
+    int i;
+    struct Item* pNext;
+};
+
+struct Items {
+    struct Item* pHead,* pTail;
+};
+
+void Items_Push(struct Items* pItems, struct Item* pItem) : push;
+```
+Instantiation for linked list with pHead and pTail
+
+```c
+void Items_Push(struct Items* pItems, struct Item* pItem) default
+{
+    if (pItems->pHead == 0)
+    {
+        pItems->pHead = pItem;
+    }
+    else
+    {
+        pItems->pTail->pNext = pItem;
+    }
+    pItems->pTail = pItem; 
+}
+```
+```c
+struct Item {
+    int i;
+    struct Item* pNext;
+};
+
+struct Items {
+    struct Item** pData;
+    int Size;
+    int Capacity;
+};
+
+void Items_Push(struct Items* pItems, struct Item* pItem) : push default;
+
+```
+
+```c
+
+void Items_Push(struct Items* pItems, struct Item* pItem) default
+{
+    if (pItems->Size + 1 > pItems->Capacity)
+    {
+        int n = pItems->Capacity * 2;
+        if (n == 0)
+        {
+            n = 1;
+        }
+        struct Item** pnew = pItems->pData;
+        pnew = (struct Item**)realloc(pnew, n * sizeof(struct Item*));
+        if (pnew)
+        {
+            pItems->pData = pnew;
+            pItems->Capacity = n;
+        }
+    }
+    pItems->pData[pItems->Size] = pItem;
+    pItems->Size++;
+}
+
+
+```
+### Especial comments
+CPrime has especial comments that are ignored.
+
+```c
+/*@   and   */
+```
+These two sequences will be interprted as spaces.
+
+These special comments where created to allow C language extensions be created using normal C syntax.
+
+For instance, this C code parsed by C compiler will see comments
+
+```c
+//file X.h
+struct X {
+    int i /*@= 3*/;
+};
+
+struct X * makeX() /*@: create*/;
+```
+but cprime compiler will see:
+
+```c
+//file X.h
+struct X {
+    int i = 3;
+};
+
+struct X * makeX() : create;
+```
+>
+> CPrime is compiled using itself. I use VC++ compiler and IDE with this annotation method.
+> Without this method I would need a IDE plugin, and this is something I dont have at this time.
+>
+
+### Runtime polymorphism
+
+In C we have void * that means a pointer to any object.
+In C' we can espcify a list of possible pointed objects.
+
+Sample:
+
+```c
+struct Box {
+    int id = 1;
+};
+
+struct Circle {
+    int id = 2;
+};
+
+struct <Box | Circle> Shape {
+    int id;
+};
+
+struct Shape * p ...;
+```
+
+Here, p is a pointer to Box or Circle.
+The struct Shape is manually (at this point) defined with the comom initial member of Box and Circle and this member is called discriminant.
+
+Having the discriminant we can instanciate functions for Shape.
+
+```c
+void Shape_Draw(struct Shape* pShape) default;
+```
+resulting in:
+
+```c
+void Shape_Draw(struct Shape* pShape) default
+{
+    switch (pShape->id)
+    {
+        case  2:
+            Circle_Draw((struct Circle*)pShape);
+        break;
+        case  1:
+            Box_Draw((struct Box*)pShape);
+        break;
+        default:
+        break;
+    }
+}
+```
+
+
+## Using the compiler
+The compiler can be used together with traditional C compilers like VC++, clang or gcc.
+
+## Grammar changes
+
+
+## Background
 
 I work professionally with C++ since 2000 keeping my knowledge about C++ updated. After 2014 I noticed that my interest for the C language was gradually increasing. 
 
@@ -324,15 +375,4 @@ During the development of this parser and static analysis, I had some difficulti
 At some point I decided that I should address the problem to work better with C before to do the static analysis and then I renamed the project to C’ cprime.  Because I want a tool to be useful now (not something experimental) I spent some time to solve the problem of generating C code from C code including the preprocessed parts. This allowed me to use existing C compilers and IDEs.
 C’ can generate destructors for structs and can have owner pointers in the type system. The motivation for static analysis still there and it is also related with code generation. More motivations like containers and polymorphism are included in the C’ as well.
 
-## Current status
-
-I still having some problem to parse (see issues)  and I am fixing these problems parsing existing code like oppenssl, sqlite, duktape, opcua ansi stack, tiny c threads. (Basicaly libs I use)
-
-I also need to make the code compatible with VC++ to parse some code, for instance, integer suffixes i64 etc.
-
-## Roadmap
-
-At some point I want to include static analysis again and check the onwership and null pointers as part of the type system. 
  
-See:
-https://github.com/isocpp/CppCoreGuidelines/blob/master/docs/Lifetime.pdf
