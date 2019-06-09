@@ -2531,7 +2531,7 @@ struct TStructUnionSpecifier* TDeclarationSpecifiers_GetCompleteStructUnionSpeci
 
                     if (p2)
                     {
-                        pStructUnionSpecifier =
+                        pStructUnionSpecifier = (struct TStructUnionSpecifier*)
                             TDeclarationSpecifiers_GetMainSpecifier(p2, TStructUnionSpecifier_ID);
 
                         if (pStructUnionSpecifier &&
