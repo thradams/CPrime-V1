@@ -175,6 +175,26 @@ void Parser_Test6(void)
     Parser_Destroy(&parser);
 }
 
+void Parser_Test7(void)
+{
+    const char* code =
+        "#define false 0\n"
+        "int main()\n"
+        "{\n"
+        "return (false);\n"
+        "}\n";
+
+    struct Parser parser;
+    Parser_InitString(&parser, "a", code);
+    struct Options options = OPTIONS_INIT;
+    struct SyntaxTree syntaxTree;
+    SyntaxTree_Init(&syntaxTree);
+    GetASTFromString(code, &options, &syntaxTree);
+    SyntaxTree_Destroy(&syntaxTree);
+    
+    Parser_Destroy(&parser);
+}
+
 
 int main()
 {
@@ -187,7 +207,7 @@ int main()
     Parser_Test4();
     Parser_Test5();
     Parser_Test6();
-
+    Parser_Test7();
     if (error_count == 0)
     {
         printf("ALL TESTS OK\n");

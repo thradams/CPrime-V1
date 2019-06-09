@@ -155,7 +155,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Array.c" />
     <ClCompile Include="..\..\Ast.c" />
     <ClCompile Include="..\..\AstPrint.c" />
     <ClCompile Include="..\..\BasicScanner.c" />
@@ -170,6 +169,7 @@
     <ClCompile Include="..\..\Path.c" />
     <ClCompile Include="..\..\PPToken.c" />
     <ClCompile Include="..\..\Scanner.c" />
+    <ClCompile Include="..\..\StrArray.c" />
     <ClCompile Include="..\..\StrBuilder.c" />
     <ClCompile Include="..\..\Stream.c" />
     <ClCompile Include="..\..\StringEx.c" />
@@ -178,7 +178,6 @@
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Array.h" />
     <ClInclude Include="..\..\Ast.h" />
     <ClInclude Include="..\..\AstPrint.h" />
     <ClInclude Include="..\..\BasicScanner.h" />
@@ -194,6 +193,7 @@
     <ClInclude Include="..\..\Path.h" />
     <ClInclude Include="..\..\PPToken.h" />
     <ClInclude Include="..\..\Scanner.h" />
+    <ClInclude Include="..\..\StrArray.h" />
     <ClInclude Include="..\..\StrBuilder.h" />
     <ClInclude Include="..\..\Stream.h" />
     <ClInclude Include="..\..\StringEx.h" />

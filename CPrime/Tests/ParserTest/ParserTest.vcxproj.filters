@@ -18,9 +18,6 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Array.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Ast.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -78,11 +75,11 @@
     <ClCompile Include="..\..\Options.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\StrArray.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Array.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Ast.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -141,6 +138,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Options.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\StrArray.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
