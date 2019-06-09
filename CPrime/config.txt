@@ -24,4 +24,4 @@
 #pragma dir "C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um"
 #pragma dir "C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt"
 
-#pragma dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.20.27508\include"
+#pragma dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include"
