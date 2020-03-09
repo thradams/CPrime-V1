@@ -552,6 +552,7 @@ void TBlockItem_Delete(struct TBlockItem* p) /*@default*/
 
 void TPrimaryExpressionValue_Init(struct TPrimaryExpressionValue* p) /*@default*/
 {
+    p->pDeclaration = NULL;
     p->Type = TPrimaryExpressionValue_ID;
     p->token = TK_NONE;
     p->lexeme = NULL;

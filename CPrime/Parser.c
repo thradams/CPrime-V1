@@ -596,7 +596,8 @@ void PrimaryExpression(struct Parser* ctx, struct TExpression** ppPrimaryExpress
 
         case TK_IDENTIFIER:
         {
-            if (SymbolMap_Find(ctx->pCurrentScope, lexeme) == NULL)
+          struct TTypePointer* pTypePointer = SymbolMap_Find(ctx->pCurrentScope, lexeme);
+            if (pTypePointer == NULL)
             {
                 if (!ctx->bPreprocessorEvalFlag)
                 {
@@ -610,14 +611,21 @@ void PrimaryExpression(struct Parser* ctx, struct TExpression** ppPrimaryExpress
                     }
                 }
             }
+            
+          
 
             struct TPrimaryExpressionValue* pPrimaryExpressionValue
                 = TPrimaryExpressionValue_Create();
 
             pPrimaryExpressionValue->token = token;
             PTR_STRING_REPLACE(pPrimaryExpressionValue->lexeme, lexeme);
-
-
+            
+            if (pTypePointer && pTypePointer->Type == TDeclaration_ID)
+            {
+              //eh uma variavel
+              pPrimaryExpressionValue->pDeclaration = (struct TDeclaration*) pTypePointer;
+            }
+            
             Parser_Match(ctx,
                          &pPrimaryExpressionValue->ClueList0);
             *ppPrimaryExpression = (struct TExpression*)pPrimaryExpressionValue;

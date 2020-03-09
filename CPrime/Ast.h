@@ -1288,6 +1288,7 @@ struct TPrimaryExpressionValue
     enum Tokens token;
     char* /*@auto*/ lexeme;
     struct TExpression* /*@auto*/ pExpressionOpt; //( expression )
+    struct TDeclaration* pDeclaration; //se for identificador aponta para a declaracao dele
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
 };
