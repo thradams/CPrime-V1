@@ -622,10 +622,16 @@ void PrimaryExpression(struct Parser* ctx, struct TExpression** ppPrimaryExpress
             
             if (pTypePointer && pTypePointer->Type == TDeclaration_ID)
             {
-              //eh uma variavel
+              //eh uma variavel que aponta para uma declaracao
               pPrimaryExpressionValue->pDeclaration = (struct TDeclaration*) pTypePointer;
             }
             
+            if (pTypePointer && pTypePointer->Type == TParameter_ID)
+            {
+                //eh uma variavel que aponta para um  parametro
+                pPrimaryExpressionValue->pParameter = (struct TParameter*) pTypePointer;
+            }
+
             Parser_Match(ctx,
                          &pPrimaryExpressionValue->ClueList0);
             *ppPrimaryExpression = (struct TExpression*)pPrimaryExpressionValue;
@@ -3864,6 +3870,12 @@ void Direct_Declarator(struct Parser* ctx, bool bAbstract, struct TDirectDeclara
                 token = Parser_MatchToken(ctx, TK_LEFT_SQUARE_BRACKET, &pDirectDeclarator->ClueList2);
                 if (token == TK_STATIC)
                 {
+                }
+                else if (token == TK_AUTO)
+                {
+                    //int a[auto];
+                    pDirectDeclarator->DeclaratorType = TDirectDeclaratorTypeAutoArray;
+                    Parser_MatchToken(ctx, TK_AUTO, &pDirectDeclarator->ClueList3);
                 }
                 else
                 {

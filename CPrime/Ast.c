@@ -552,6 +552,7 @@ void TBlockItem_Delete(struct TBlockItem* p) /*@default*/
 
 void TPrimaryExpressionValue_Init(struct TPrimaryExpressionValue* p) /*@default*/
 {
+    p->pParameter = NULL;
     p->pDeclaration = NULL;
     p->Type = TPrimaryExpressionValue_ID;
     p->token = TK_NONE;
@@ -1196,6 +1197,11 @@ void TDeclarator_Destroy(struct TDeclarator* p) /*@default*/
     TPointerList_Destroy(&p->PointerList);
     TDirectDeclarator_Delete(p->pDirectDeclarator);
     TScannerItemList_Destroy(&p->ClueList);
+}
+
+bool TDeclarator_IsAutoArray(struct TDeclarator* pDeclarator)
+{
+    return pDeclarator->pDirectDeclarator->DeclaratorType == TDirectDeclaratorTypeAutoArray;
 }
 
 void TDeclarator_Swap(struct TDeclarator* a, struct TDeclarator* b)
@@ -2854,6 +2860,12 @@ const char* TParameter_GetName(struct TParameter* p)
     return TDeclarator_GetName(&p->Declarator);
 }
 
+bool TParameter_IsAutoArray(struct TParameter* pParameter)
+{
+    bool b = pParameter->Declarator.pDirectDeclarator->DeclaratorType == TDirectDeclaratorTypeAutoArray;
+    return b;
+}
+
 const char* TParameter_GetTypedefName(struct TParameter* p)
 {
     return TDeclarationSpecifier_GetTypedefName(&p->Specifiers);
@@ -2886,6 +2898,7 @@ struct TParameter* TParameter_Create() /*@default*/
     struct TParameter* p = (struct TParameter*) Malloc(sizeof * p);
     if (p != NULL)
     {
+        p->Type = TParameter_ID;
         p->pNext = NULL;
         TDeclarationSpecifiers_Init(&p->Specifiers);
         TDeclarator_Init(&p->Declarator);

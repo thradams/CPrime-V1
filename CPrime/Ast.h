@@ -888,6 +888,7 @@ void TDeclarator_Init(struct TDeclarator* p);
 void TDeclarator_Destroy(struct TDeclarator* p);
 const char* TDeclarator_GetName(struct TDeclarator* p);
 void TDeclarator_Swap(struct TDeclarator* a, struct TDeclarator* b);
+bool TDeclarator_IsAutoArray(struct TDeclarator* pDeclarator);
 
 enum TDirectDeclaratorType
 {
@@ -896,7 +897,7 @@ enum TDirectDeclaratorType
     TDirectDeclaratorTypeDeclarator,
     TDirectDeclaratorTypeFunction,
     TDirectDeclaratorTypeArray,
-
+    TDirectDeclaratorTypeAutoArray,
 };
 
 struct TDirectDeclarator
@@ -1177,6 +1178,7 @@ int TAnyDeclaration_GetFileIndex(struct TAnyDeclaration* pDeclaration);
 
 struct TParameter
 {
+    enum Type Type  /*@=TParameter_ID*/;
     /*
     parameter-declaration:
     declaration-specifiers declarator
@@ -1196,7 +1198,7 @@ void TParameter_Delete(struct TParameter* p);
 void TParameter_Swap(struct TParameter* a, struct TParameter* b);
 const char* TParameter_GetName(struct TParameter* p);
 const char* TParameter_GetTypedefName(struct TParameter* p);
-
+bool TParameter_IsAutoArray(struct TParameter* pParameter);
 
 struct TDeclarations
 {
@@ -1289,6 +1291,8 @@ struct TPrimaryExpressionValue
     char* /*@auto*/ lexeme;
     struct TExpression* /*@auto*/ pExpressionOpt; //( expression )
     struct TDeclaration* pDeclaration; //se for identificador aponta para a declaracao dele
+    struct TParameter* pParameter; //se for identificador pode apontar para parametro funcao
+
     struct TScannerItemList ClueList0;
     struct TScannerItemList ClueList1;
 };
