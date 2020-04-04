@@ -1,13 +1,7 @@
 
 ## Description
 
-C' (cprime) is a C compiler that generates readably C code.
-
-It is like a CFront following a new path.  
-This new path is closer to C and cprime can be used to try new ideas that could be added into C language or borrowed from C++.
-It also can be used to convert C99, C11, CXX to previous versions of C.
-
-
+C' is a extended C compiler that generates readably C code.
 
 See it online:
 http://www.thradams.com/web/cprime.html
