@@ -13,7 +13,7 @@ void StrArray_Init(struct StrArray* p) /*@default*/
     p->Capacity = 0;
 }
 
-void StrArray_PushCore(struct StrArray* p, const char* text) /*@: push*/ /*@default*/
+void StrArray_PushCore(struct StrArray* p, const char* text) 
 {
     if (p->Size + 1 > p->Capacity)
     {

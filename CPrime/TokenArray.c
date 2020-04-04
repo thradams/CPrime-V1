@@ -289,7 +289,7 @@ void TokenArrayMap_Swap(struct TokenArrayMap* pA, struct TokenArrayMap* pB)
     *pB = t;
 }
 
-static void TokenSet_Push(struct TokenSet* p, struct PPToken* pItem) /*@:push*/ /*@default*/
+static void TokenSet_Push(struct TokenSet* p, struct PPToken* pItem)
 {
     if (p->Size + 1 > p->Capacity)
     {
