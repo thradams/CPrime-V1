@@ -113,9 +113,8 @@ struct X {
 int main()
 {  
   struct X x = {};
-  x.Text = strdup("test");
-  destroy x; //calls free(x.Text)
-}
+  x.Text = strdup("test"); 
+} //destroy is called and free(x.Text) is called
 ```
 
 ```
@@ -161,23 +160,22 @@ void F(int ar[auto])
 
 int main()
 {
-int ar[auto];
+  int ar[auto];
 
-reserve(ar, 2);
+  reserve(ar, 2);
 
-push(ar, 1);
-push(ar, 2);
+  push(ar, 1);
+  push(ar, 2);
 
-for (int i = 0 ; i < ar.size; i++)
-{
+ for (int i = 0 ; i < ar.size; i++)
+ {
    printf("%d\n", ar[i]);
-}
+ }
 
-printf("size = %d, capacity=%d\n", (int) ar.size, (int) ar.capacity);
+ printf("size = %d, capacity=%d\n", (int) ar.size, (int) ar.capacity);
 
-F(ar); //always passed as "reference"
+ F(ar); //always passed as "reference"
 
-destroy ar;
 }
 ```
 
