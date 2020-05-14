@@ -51,7 +51,8 @@ int main()
   struct X* pX = new (struct X) {};
 }
 ```
-Allocates the memory using malloc and initialize the object using the compound literal notation or default initializer.
+Allocates the memory using malloc and initializes the object.
+Returns null on error.
 
 ### Operator delete
 
@@ -65,12 +66,32 @@ int main()
 
 ### Operator destroy
 
+Operator destroy is called at the end of scope, unless you modifiy the type unsing 'view'.
+
 ```c
 int main()
 {
-  struct X x;
-  destroy pX;
+  struct X * pX = new (struct X){};
+  if (pX)
+  {
+    destroy *pX;
+    free(pX);
+  }
 }
+
+int main()
+{
+  struct X x1 = {};
+  view struct X x = x1;    
+}//only destroy if x1 is called
+
+
+int main()
+{
+  view struct X x1 = {};  
+  destroy x1; //explict  
+}//destroy is not called here
+
 ```
 See auto for the behaviour of default destroy.
 
