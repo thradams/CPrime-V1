@@ -150,6 +150,37 @@ struct X {
 > CPrime is compiled using itself. I use VC++ compiler and IDE with this annotation method.
 > Without this method I would need a IDE plugin, and this is something I dont have at this time.
 >
+### Resizeble Arrays
+
+```c
+
+
+void F(int ar[auto])
+{
+}
+
+int main()
+{
+int ar[auto];
+
+reserve(ar, 2);
+
+push(ar, 1);
+push(ar, 2);
+
+for (int i = 0 ; i < ar.size; i++)
+{
+   printf("%d\n", ar[i]);
+}
+
+printf("size = %d, capacity=%d\n", (int) ar.size, (int) ar.capacity);
+
+F(ar); //always passed as "reference"
+
+destroy ar;
+}
+```
+
 
 ### Runtime polymorphism
 
