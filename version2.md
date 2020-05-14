@@ -200,7 +200,15 @@ int main()
 }
 ```
 
+### If with initializer (same of C++)
 
+```c
+   
+    if (struct X* auto pX = new (struct X){}, pX)
+    {
+    }
+
+```
 ### Runtime polymorphism
 
 In C we have void * that means a pointer to any object.
@@ -232,4 +240,27 @@ struct Shape * p ...;
 
 draw(p); //calls the correct overloaded function
 
+```
+## Template functions
+
+A function with some type auto is automatially template and automatically overload.
+
+Arguments are always passed as "reference" (There is no C++ references & here)
+```c
+void swap(auto a, auto b)
+{
+  decltype(a) temp = a;
+  a = b;
+  b = a;
+}
+```
+
+## Parametrized types
+
+```c
+template<class T>
+struct X
+{
+  T a;
+}
 ```
