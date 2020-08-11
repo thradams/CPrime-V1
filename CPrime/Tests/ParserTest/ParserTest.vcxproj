@@ -156,7 +156,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Ast.c" />
-    <ClCompile Include="..\..\AstPrint.c" />
     <ClCompile Include="..\..\BasicScanner.c" />
     <ClCompile Include="..\..\CodePrint.c" />
     <ClCompile Include="..\..\LocalStrBuilder.c" />
@@ -179,7 +178,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Ast.h" />
-    <ClInclude Include="..\..\AstPrint.h" />
     <ClInclude Include="..\..\BasicScanner.h" />
     <ClInclude Include="..\..\CodePrint.h" />
     <ClInclude Include="..\..\List.h" />

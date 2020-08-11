@@ -21,8 +21,6 @@
   <ItemGroup>
     <ClCompile Include="StrArray.c" />
     <ClCompile Include="Ast.c" />
-    <ClCompile Include="AstPrint.c" />
-    <ClCompile Include="AstPrint2.c" />
     <ClCompile Include="BasicScanner.c" />
     <ClCompile Include="CodePrint.c" />
     <ClCompile Include="LocalStrBuilder.c" />
@@ -45,8 +43,6 @@
   <ItemGroup>
     <ClInclude Include="StrArray.h" />
     <ClInclude Include="Ast.h" />
-    <ClInclude Include="AstPrint.h" />
-    <ClInclude Include="AstPrint2.h" />
     <ClInclude Include="BasicScanner.h" />
     <ClInclude Include="CodePrint.h" />
     <ClInclude Include="LocalStrBuilder.h" />

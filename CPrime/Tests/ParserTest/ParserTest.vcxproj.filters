@@ -21,9 +21,6 @@
     <ClCompile Include="..\..\Ast.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\AstPrint.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\BasicScanner.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -81,9 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Ast.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\AstPrint.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\BasicScanner.h">

@@ -3,13 +3,12 @@
 
 #include <stdio.h>
 #include <time.h>  
-#include "AstPrint.h"
 #include "Parser.h"
 #include "CodePrint.h"
 #include "Path.h"
 #include "Mem.h"
 #include "Options.h"
-#include "AstPrint2.h"
+
 
 #define CONFIG_FILE_NAME "config.txt"
 #define EXECUTABLE_NAME "cpc"
@@ -17,8 +16,7 @@
 int Compile(const char* configFileName,
             const char* inputFileName,
             const char* outputFileName,
-            struct Options* options,
-            bool bPrintASTFile)
+            struct Options* options)
 {
     int bSuccess = 0;
     struct SyntaxTree pSyntaxTree;
@@ -42,34 +40,18 @@ int Compile(const char* configFileName,
         printf("Generating code for %s...\n", inputFileName);
         if (outputFileName[0] != '\0')
         {
-            if (bPrintASTFile)
-            {
-                //SyntaxTree_PrintAstToFile(&pSyntaxTree, outputFileName, inputFileName);
-                SyntaxTree_PrintAstToXML(&pSyntaxTree, outputFileName, inputFileName);
-            }
-            else
-            {
-                SyntaxTree_PrintCodeToFile(&pSyntaxTree, options, outputFileName, inputFileName);
-            }
+
+            SyntaxTree_PrintCodeToFile(&pSyntaxTree, options, outputFileName, inputFileName);
+
         }
         else
         {
             char outc[CPRIME_MAX_DRIVE + CPRIME_MAX_DIR + CPRIME_MAX_FNAME + CPRIME_MAX_EXT + 1];
 
-            if (bPrintASTFile)
-            {
-                //faz um  arquivo com extensao json
-                //MakePath(outc, drive, dir, fname, ".json");
-                //SyntaxTree_PrintAstToFile(&pSyntaxTree, outc, inputFileName);
-                MakePath(outc, drive, dir, fname, ".xml");
-                SyntaxTree_PrintAstToXML(&pSyntaxTree, outc, inputFileName);
-            }
-            else
-            {
-                //gera em cima do proprio arquivo
-                MakePath(outc, drive, dir, fname, ext);
-                SyntaxTree_PrintCodeToFile(&pSyntaxTree, options, outc, inputFileName);
-            }
+
+            //gera em cima do proprio arquivo
+            MakePath(outc, drive, dir, fname, ext);
+            SyntaxTree_PrintCodeToFile(&pSyntaxTree, options, outc, inputFileName);
         }
 
         clock_t tend = clock();
@@ -98,8 +80,7 @@ void PrintHelp()
     printf("-help                                 Print this message.\n");
     printf("-o FILE                               Sets ouput file name.\n");
     printf("-E                                    Preprocess to console.\n");
-    printf("-P                                    Preprocess to file.\n");
-    printf("-A                                    Output AST to file.\n");
+    printf("-P                                    Preprocess to file.\n");    
     printf("-cx                                   Generate C'.\n");
     printf("-ca                                   Generated C annotated\n");
     printf("-removeComments                       Remove comments from output\n");
@@ -120,7 +101,7 @@ char* CompileText(int type, int bNoImplicitTag, char* input)
     char* output = NULL;
 
     struct Options options2 = OPTIONS_INIT;
-    options2.Target = (enum CompilerTarget) type;
+    options2.Target = (enum CompilerTarget)type;
     options2.bNoImplicitTag = bNoImplicitTag;
 
     struct SyntaxTree pSyntaxTree;
@@ -160,7 +141,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    char outputDirFullPath[CPRIME_MAX_PATH] = {0};
+    char outputDirFullPath[CPRIME_MAX_PATH] = { 0 };
 
     char cxconfigFileFullPath[CPRIME_MAX_PATH];
     GetFullDirS(argv[0], cxconfigFileFullPath, CPRIME_MAX_PATH);
@@ -178,8 +159,8 @@ int main(int argc, char* argv[])
     }
 
 
-    char outputFileFullPath[CPRIME_MAX_PATH] = {0};
-    char inputFileFullPath[CPRIME_MAX_PATH] = {0};
+    char outputFileFullPath[CPRIME_MAX_PATH] = { 0 };
+    char inputFileFullPath[CPRIME_MAX_PATH] = { 0 };
 
 
     struct Options options = OPTIONS_INIT;
@@ -187,13 +168,13 @@ int main(int argc, char* argv[])
 
     bool bPrintPreprocessedToFile = false;
     bool bPrintPreprocessedToConsole = false;
-    bool bPrintASTFile = false;
+    
     bool bBuildFile = false;
     bool bBuild = false;
     bool bSources = false;
 
     clock_t tstart = clock();
-    struct FileNodeList sources = {0};
+    struct FileNodeList sources = { 0 };
 
 
     for (int i = 1; i < argc; i++)
@@ -212,11 +193,7 @@ int main(int argc, char* argv[])
         else if (strcmp(option, "-r") == 0)
         {
             bPrintPreprocessedToConsole = true;
-        }
-        else if (strcmp(option, "-A") == 0)
-        {
-            bPrintASTFile = true;
-        }
+        }        
         else if (strcmp(option, "-a") == 0)
         {
             options.bAmalgamate = true;
@@ -333,7 +310,7 @@ int main(int argc, char* argv[])
                 MkDir(outputDirFullPath);
             }
 
-            char outputItemPath[2000] = {0};
+            char outputItemPath[2000] = { 0 };
             struct FileNode* pCurrent = sources.pHead;
             while (pCurrent != NULL)
             {
@@ -345,7 +322,7 @@ int main(int argc, char* argv[])
                 }
                 strcat(outputItemPath, pCurrent->Key + inputFullDirLength);
 
-                if (!Compile(cxconfigFileFullPath, pCurrent->Key, outputItemPath, &options, bPrintASTFile))
+                if (!Compile(cxconfigFileFullPath, pCurrent->Key, outputItemPath, &options))
                 {
                     numberOfFiles++;
                     break;
@@ -385,7 +362,7 @@ int main(int argc, char* argv[])
             //-build with -o is amalgamate
             options.bAmalgamate = bBuild && outputFileFullPath[0] != '\0';
 
-            Compile(cxconfigFileFullPath, inputFileFullPath, outputFileFullPath, &options, bPrintASTFile);
+            Compile(cxconfigFileFullPath, inputFileFullPath, outputFileFullPath, &options);
             numberOfFiles++;
         }
     }
