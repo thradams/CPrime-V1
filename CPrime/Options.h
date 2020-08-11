@@ -2,6 +2,8 @@
 #pragma source
 #include <stdbool.h>
 
+# //BEGIN_EXPORT
+
 enum CompilerTarget
 {
     CompilerTarget_Annotated,
@@ -26,3 +28,5 @@ struct Options
 
 #define OPTIONS_INIT {false, true, CompilerTarget_Annotated,  false, false, false}
 void Options_Destroy(struct Options* options);
+
+# //END_EXPORT

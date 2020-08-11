@@ -1,10 +1,14 @@
 #pragma once
 #pragma source
 
-
+# //BEGIN_EXPORT
 #include <inttypes.h>
+# //END_EXPORT
+
 #include <stdbool.h>
 #include "StringEx.h"
+
+# //BEGIN_EXPORT
 
 struct BucketItem
 {
@@ -82,3 +86,4 @@ struct Bucket* MultiMap_FindBucket(MultiMap* map, const char* key);
 void MultiMap_Swap(MultiMap* map, MultiMap* map2);
 
 
+# //END_EXPORT

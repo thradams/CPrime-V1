@@ -3,6 +3,10 @@
 
 #include <stdlib.h>
 
+
+
+# //BEGIN_EXPORT
+
 #define LOCALSTRBUILDER_NCHARS 7
 
 struct LocalStrBuilder
@@ -32,4 +36,6 @@ void LocalStrBuilder_Grow(struct LocalStrBuilder* p, int nelements);
 void LocalStrBuilder_Append(struct LocalStrBuilder* p, const char* source);
 void LocalStrBuilder_AppendChar(struct LocalStrBuilder* p, char ch);
 void LocalStrBuilder_Set(struct LocalStrBuilder* p, const char* source);
+
+// #END_EXPORT
 

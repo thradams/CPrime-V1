@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "StringEx.h"
 
+# //BEGIN_EXPORT
 
 struct TDeclarator;
 struct TDeclarationSpecifiers;
@@ -87,3 +88,5 @@ struct TDeclarationSpecifiers* SymbolMap_FindTypedefTarget(struct SymbolMap* pMa
 struct TDeclarationSpecifiers* SymbolMap_FindTypedefFirstTarget(struct SymbolMap* pMap,
     const char* typedefName,
                                                                 struct TDeclarator* declarator);
+
+# //END_EXPORT

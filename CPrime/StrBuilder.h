@@ -3,11 +3,16 @@
 #pragma once
 #pragma source
 
+
+
+
+
+# //BEGIN_EXPORT
+
+#include <stdbool.h>
 #include <string.h>
 #include <stdarg.h>
 #include <wchar.h>
-
-#include <stdbool.h>
 
 struct StrBuilder
 {
@@ -69,3 +74,7 @@ void StrBuilder_AppendFmtLn(struct StrBuilder* p,
                             const char* fmt,
                             ...);
 void StrBuilder_AppendFmtV(struct StrBuilder* p, const char* fmt, va_list va);
+
+# //END_EXPORT
+
+

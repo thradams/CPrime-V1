@@ -6,6 +6,7 @@
 #include <wchar.h>
 #include <stdbool.h>
 
+# //BEGIN_EXPORT
 
 struct Stream
 {
@@ -39,3 +40,4 @@ wchar_t Stream_LookAhead(struct Stream* pStream);
 void Stream_Match(struct Stream* pStream);
 bool Stream_MatchChar(struct Stream* pStream, wchar_t ch);
 
+# //END_EXPORT

@@ -2,6 +2,10 @@
 #pragma once
 #pragma source
 
+
+
+# //BEGIN_EXPORT
+
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -15,7 +19,12 @@ struct StrArray
 
 #define STRARRAY_INIT { NULL , 0 , 0 }
 
+# //END_EXPORT
+
+
 void StrArray_Push(struct StrArray* p, const char* pItem);
 void StrArray_Init(struct StrArray* p);
 void StrArray_Destroy(struct StrArray* st);
 void StrArray_Swap(struct StrArray* p1, struct StrArray* p2);
+
+

@@ -8,6 +8,7 @@
 #include "Scanner.h"
 #include "CodePrint.h"
 
+# //BEGIN_EXPORT
 
 struct ParserOptions
 {
@@ -59,3 +60,6 @@ enum Tokens Parser_LookAheadToken(struct Parser* parser);
 bool GetASTFromString(const char* sourceCode,
                       struct Options* options,
                       struct SyntaxTree* pSyntaxTree);
+
+# //END_EXPORT
+

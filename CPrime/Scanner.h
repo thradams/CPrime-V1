@@ -10,6 +10,9 @@
 #include "Options.h"
 #include "StrArray.h"
 
+# //BEGIN_EXPORT
+#include <stdbool.h>
+
 struct TFile
 {
     char* /*@auto*/ FullPath;
@@ -204,4 +207,6 @@ void Scanner_PrintItems(struct Scanner * pScanner);
 
 void Scanner_Match(struct Scanner * pScanner);
 bool Scanner_MatchToken(struct Scanner * pScanner, enum Tokens token, bool bActive);
+
+# //END_EXPORT
 

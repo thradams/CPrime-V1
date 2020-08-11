@@ -8,6 +8,7 @@
 #define LANGUAGE_EXTENSIONS
 //
 
+# //BEGIN_EXPORT 
 
 enum Tokens
 {
@@ -277,4 +278,6 @@ void BasicScannerStack_Destroy(struct BasicScannerStack* stack);
     for (struct BasicScanner* pItem = stack;\
       pItem;\
       pItem = pItem->pPrevious)
+
+# //END_EXPORT 
 

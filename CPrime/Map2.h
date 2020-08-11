@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include "StringEx.h"
 
+# //BEGIN_EXPORT
+
 struct MapItem2
 {
     struct MapItem2* pNext;
@@ -44,3 +46,5 @@ struct Map2* Map2_Create(void);
 
 void Map2_Swap(struct Map2* pA, struct Map2* pB);
 void Map2_Delete(struct Map2* p, void(*DeleteFunc)(void*));
+
+# //END_EXPORT

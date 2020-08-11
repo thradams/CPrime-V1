@@ -7,6 +7,8 @@
 #include "StrBuilder.h"
 #include "Map2.h"
 
+# //BEGIN_EXPORT
+
 struct Macro
 {
     char* /*@auto*/ Name;
@@ -72,4 +74,7 @@ void ExpandMacroToText(const struct TokenArray* pTokenSequence,
                        bool evalmode,
                        struct Macro* caller,
                        struct StrBuilder* strBuilder);
+
+
+# //END_EXPORT
 

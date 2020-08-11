@@ -4,6 +4,7 @@
 #include "StringEx.h"
 #include "StrBuilder.h"
 
+# //BEGIN_EXPORT
 
 struct TokenArray
 {
@@ -95,3 +96,5 @@ void TokenSet_Destroy(struct TokenSet* pArray);
 void SetIntersection(const struct TokenSet* p1,
                      const struct TokenSet* p2,
                      struct TokenSet* pResult);
+
+# //END_EXPORT

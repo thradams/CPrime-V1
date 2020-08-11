@@ -9,6 +9,7 @@
 #include "Map.h"
 #include "Options.h"
 
+# //BEGIN_EXPORT
 
 struct IntegerStack
 {
@@ -95,3 +96,5 @@ void InstanciateDestroy2(struct SyntaxTree* pSyntaxTree,
                          enum Search search,
                          bool* pbHasInitializers,
                          struct StrBuilder* fp);
+
+# //END_EXPORT
