@@ -2494,7 +2494,7 @@ bool Parser_HasError(struct Parser* pParser);
 
 const char* GetCompletationMessage(struct Parser* parser);
 
-bool GetAST(const char* filename,
+bool BuildSyntaxTreeFromFile(const char* filename,
             const char* configFileName,
             struct Options* options,
             struct SyntaxTree* pSyntaxTree);
@@ -2504,7 +2504,7 @@ enum Tokens Parser_MatchToken(struct Parser* parser, enum Tokens tk, struct TSca
 
 enum Tokens Parser_LookAheadToken(struct Parser* parser);
 
-bool GetASTFromString(const char* sourceCode,
+bool BuildSyntaxTreeFromString(const char* sourceCode,
                       struct Options* options,
                       struct SyntaxTree* pSyntaxTree);
 

@@ -13,9 +13,6 @@
     <ClCompile Include="..\..\BasicScanner.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Map.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Macro.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -67,9 +64,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\BasicScanner.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Map.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\List.h">

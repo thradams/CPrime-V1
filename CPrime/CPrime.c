@@ -22,7 +22,7 @@ int Compile(const char* configFileName,
     clock_t tstart = clock();
 
     printf("Parsing...\n");
-    if (GetAST(inputFileName, configFileName, options, &pSyntaxTree))
+    if (BuildSyntaxTreeFromFile(inputFileName, configFileName, options, &pSyntaxTree))
     {
         bSuccess = 1;
 
@@ -103,7 +103,7 @@ char* CompileText(int type, int bNoImplicitTag, char* input)
 
     struct SyntaxTree pSyntaxTree;
     SyntaxTree_Init(&pSyntaxTree);
-    if (GetASTFromString(input, &options2, &pSyntaxTree))
+    if (BuildSyntaxTreeFromString(input, &options2, &pSyntaxTree))
     {
 
 

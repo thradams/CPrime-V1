@@ -5161,10 +5161,10 @@ static void TFileMapToStrArray(TFileMap* map, struct TFileArray* arr)
     }
 }
 
-bool GetAST(const char* filename,
-            const char* configFileName /*optional*/,
-            struct Options* options,
-            struct SyntaxTree* pSyntaxTree)
+bool BuildSyntaxTreeFromFile(const char* filename,
+                             const char* configFileName /*optional*/,
+                             struct Options* options,
+                             struct SyntaxTree* pSyntaxTree)
 {
     bool bResult = false;
 
@@ -5292,9 +5292,9 @@ bool GetAST(const char* filename,
 
 
 
-bool GetASTFromString(const char* sourceCode,
-                      struct Options* options,
-                      struct SyntaxTree* pSyntaxTree)
+bool BuildSyntaxTreeFromString(const char* sourceCode,
+                               struct Options* options,
+                               struct SyntaxTree* pSyntaxTree)
 {
     bool bResult = false;
 

@@ -3289,6 +3289,8 @@ void SyntaxTree_PrintCodeToFile(struct SyntaxTree* pSyntaxTree,
     }
     StrBuilder_Destroy(&sb);
     fclose(fp);
+
+    PrintCodeOptions_Destroy(&options);
 }
 
 void SyntaxTree_PrintCodeToString(struct SyntaxTree* pSyntaxTree,

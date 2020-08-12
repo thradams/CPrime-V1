@@ -189,7 +189,7 @@ void Parser_Test7(void)
     struct Options options = OPTIONS_INIT;
     struct SyntaxTree syntaxTree;
     SyntaxTree_Init(&syntaxTree);
-    GetASTFromString(code, &options, &syntaxTree);
+    BuildSyntaxTreeFromString(code, &options, &syntaxTree);
     SyntaxTree_Destroy(&syntaxTree);
     
     Parser_Destroy(&parser);
@@ -204,7 +204,7 @@ void AstTest()
 
     struct SyntaxTree syntaxTree;
     SyntaxTree_Init(&syntaxTree);
-    if (GetASTFromString("int i = 1;", &options2, &syntaxTree))
+    if (BuildSyntaxTreeFromString("int i = 1;", &options2, &syntaxTree))
     {
         struct StrBuilder sb = STRBUILDER_INIT;
         StrBuilder_Reserve(&sb, 500);        

@@ -79,5 +79,10 @@ int main()
     BasicScanner_Test3();
     BasicScanner_Test4();
     //BasicScanner_Test5();
+
+    if (error_count == 0)
+    {
+        printf("BasicScanner TEST PASSED\n");
+    }
     return error_count;
 }

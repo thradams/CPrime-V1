@@ -23,7 +23,7 @@ void AstTest()
 
     struct SyntaxTree syntaxTree;
     SyntaxTree_Init(&syntaxTree);
-    if (GetASTFromString("int i = 1;", &options2, &syntaxTree))
+    if (BuildSyntaxTreeFromString("int i = 1;", &options2, &syntaxTree))
     {
         struct StrBuilder sb = STRBUILDER_INIT;
         StrBuilder_Reserve(&sb, 500);
@@ -51,7 +51,7 @@ void TestStruct()
 
     struct SyntaxTree syntaxTree;
     SyntaxTree_Init(&syntaxTree);
-    if (GetASTFromString(code, &options2, &syntaxTree))
+    if (BuildSyntaxTreeFromString(code, &options2, &syntaxTree))
     {
         
         struct TStructUnionSpecifier* pDeclaration = 
