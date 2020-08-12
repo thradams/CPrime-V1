@@ -6674,7 +6674,7 @@ enum Action
     ActionStaticInit,
 };
 
-void InstanciateDestroy2(struct SyntaxTree* pSyntaxTree,
+void InstanciateEspecialFunction(struct SyntaxTree* pSyntaxTree,
                          struct PrintCodeOptions* options,
                          struct TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
                          struct TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
@@ -12170,7 +12170,7 @@ static void TInitializerList_CodePrint(struct SyntaxTree* pSyntaxTree,
         //a partir de {} e um tipo consegue gerar o final  
         struct StrBuilder sb = STRBUILDER_INIT;
         bool bHasInitializers = false;
-        InstanciateDestroy2(pSyntaxTree,
+        InstanciateEspecialFunction(pSyntaxTree,
                             options,
                             (struct TSpecifierQualifierList*)(pDeclarationSpecifiers),
                             pDeclatator,                        //<-dupla para entender o tipo
@@ -12265,7 +12265,7 @@ static void TInitializerListType_CodePrint(struct SyntaxTree* pSyntaxTree,
 
             struct StrBuilder sb = STRBUILDER_INIT;
             bool bHasInitializers = false;
-            InstanciateDestroy2(pSyntaxTree,
+            InstanciateEspecialFunction(pSyntaxTree,
                                 options,
                                 (struct TSpecifierQualifierList*)(pDeclarationSpecifiers),
                                 pDeclarator,                        //<-dupla para entender o tipo
@@ -13339,7 +13339,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* pSyntaxTree,
     {
         options->IdentationLevel++;
 
-        InstanciateDestroy2(pSyntaxTree,
+        InstanciateEspecialFunction(pSyntaxTree,
                             options,
                             (struct TSpecifierQualifierList*)(pSpecifiers),
                             p->InitDeclaratorList.pHead->pDeclarator,
@@ -13356,7 +13356,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* pSyntaxTree,
     else if (functionTagName && strcmp(functionTagName, "init") == 0 && pFirstParameter != NULL)
     {
         options->IdentationLevel++;
-        InstanciateDestroy2(pSyntaxTree,
+        InstanciateEspecialFunction(pSyntaxTree,
                             options,
                             (struct TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
                             &pFirstParameter->Declarator,
@@ -13374,7 +13374,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* pSyntaxTree,
     {
 
         options->IdentationLevel++;
-        InstanciateDestroy2(pSyntaxTree,
+        InstanciateEspecialFunction(pSyntaxTree,
                             options,
                             (struct TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
                             &pFirstParameter->Declarator,
@@ -13392,7 +13392,7 @@ static void DefaultFunctionDefinition_CodePrint(struct SyntaxTree* pSyntaxTree,
     {
 
         options->IdentationLevel++;
-        InstanciateDestroy2(pSyntaxTree,
+        InstanciateEspecialFunction(pSyntaxTree,
                             options,
                             (struct TSpecifierQualifierList*)(&pFirstParameter->Specifiers),
                             &pFirstParameter->Declarator,
@@ -14934,7 +14934,7 @@ void UnionTypeDefault(struct SyntaxTree* pSyntaxTree,
     Map2_Destroy(&map, NULL); //LEAK?
 }
 
-void InstanciateDestroy2(struct SyntaxTree* pSyntaxTree,
+void InstanciateEspecialFunction(struct SyntaxTree* pSyntaxTree,
                          struct PrintCodeOptions* options,
                          struct TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
                          struct TDeclarator* pDeclatator,                        //<-dupla para entender o tipo
@@ -15066,7 +15066,7 @@ void InstanciateDestroy2(struct SyntaxTree* pSyntaxTree,
                     {
 
                         //passa a informacao do tipo correto agora
-                        InstanciateDestroy2(pSyntaxTree,
+                        InstanciateEspecialFunction(pSyntaxTree,
                                             options,
                                             (struct TSpecifierQualifierList*)pDeclarationSpecifiers,
                                             &declarator,
@@ -15109,7 +15109,7 @@ void InstanciateDestroy2(struct SyntaxTree* pSyntaxTree,
                         enum Action action2 = action;
 
                         //passa a informacao do tipo correto agora
-                        InstanciateDestroy2(pSyntaxTree,
+                        InstanciateEspecialFunction(pSyntaxTree,
                                             options,
                                             (struct TSpecifierQualifierList*)pDeclarationSpecifiers,
                                             &declarator,
@@ -15426,7 +15426,7 @@ void InstanciateDestroy2(struct SyntaxTree* pSyntaxTree,
                                     }
 
                                     //Se for destroy e sor 
-                                    InstanciateDestroy2(pSyntaxTree,
+                                    InstanciateEspecialFunction(pSyntaxTree,
                                                         options,
                                                         &pStructDeclaration->SpecifierQualifierList,
                                                         pStructDeclarator->pDeclarator,
@@ -15927,7 +15927,7 @@ void InstanciateDestroy2(struct SyntaxTree* pSyntaxTree,
                                 }
 
                                 //Se for destroy e sor 
-                                InstanciateDestroy2(pSyntaxTree,
+                                InstanciateEspecialFunction(pSyntaxTree,
                                                     options,
                                                     &pStructDeclaration->SpecifierQualifierList,
                                                     pStructDeclarator->pDeclarator,

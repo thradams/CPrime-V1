@@ -2671,7 +2671,7 @@ enum Action
     ActionStaticInit,
 };
 
-void InstanciateDestroy2(struct SyntaxTree* pSyntaxTree,
+void InstanciateEspecialFunction(struct SyntaxTree* pSyntaxTree,
                          struct PrintCodeOptions* options,
                          struct TSpecifierQualifierList* pSpecifierQualifierList,//<-dupla para entender o tipo
                          struct TDeclarator* pDeclatator,                        //<-dupla para entender o tipo

@@ -57,15 +57,69 @@ void TestStruct()
         struct TStructUnionSpecifier* pDeclaration = 
             SymbolMap_FindCompleteStructUnionSpecifier(&syntaxTree.GlobalScope, "X");
 
+        struct TSpecifierQualifierList list = { 0 };
+        struct TStructUnionSpecifier* a[1];
+        a[0] = pDeclaration;
+        list.pData = a;
+        list.Size = 1;
+        list.Capacity = 1;
+
+        struct TDeclarator declarator = {0};
+        struct TPointer pointer = { 0 };
+        
+        declarator.PointerList.pHead = &pointer;
+        declarator.PointerList.pTail = declarator.PointerList.pHead;
+
+        struct TDirectDeclarator directDeclarator = { 0 };
+        directDeclarator.Identifier = "p";
+        directDeclarator.DeclaratorType = TDirectDeclaratorTypeIdentifier;
+
+        declarator.pDirectDeclarator = &directDeclarator;
         
         struct StrBuilder sb = STRBUILDER_INIT;
         StrBuilder_Reserve(&sb, 500);
 
         
+        struct PrintCodeOptions printOptions = CODE_PRINT_OPTIONS_INIT;
+        
 
 
-      
-       
+        InstanciateEspecialFunction(&syntaxTree,
+                            &printOptions,
+                            &list,
+                            &declarator,
+                            NULL,
+                            NULL,/*args*/
+                            "p",
+                            NULL /*not used*/,
+                            ActionDestroyContent,
+                            SearchNone,
+                            NULL,
+                            &sb);
+
+        
+        printf("%s", sb.c_str);
+
+        StrBuilder_Clear(&sb);
+        
+        declarator.PointerList.pHead = NULL;
+        declarator.PointerList.pTail = NULL;
+
+        bool bHasInitializers = false;
+        InstanciateEspecialFunction(&syntaxTree,
+                            &printOptions,
+                            &list,
+                            &declarator,                        //<-dupla para entender o tipo
+                            NULL,
+                            NULL,/*args*/
+                            "",
+                            NULL /*not used*/,
+                            ActionStaticInit,
+                            SearchNone,
+                            &bHasInitializers,
+                            &sb);
+
+        printf("%s", sb.c_str);
 
         StrBuilder_Destroy(&sb);
     }
