@@ -38,3 +38,5 @@
 /CPrime/Tests/StreamTest/Release
 /CPrime/obj/x86/Debug
 /CPrime/build/Debug
+/CPrime/Tests/LibTest/Debug
+/CPrime/Tests/LibTest/.vs/LibTest/v16

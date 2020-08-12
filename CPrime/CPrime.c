@@ -3,11 +3,8 @@
 
 #include <stdio.h>
 #include <time.h>  
-#include "Parser.h"
-#include "CodePrint.h"
 #include "Path.h"
-#include "Mem.h"
-#include "Options.h"
+#include "cpr.h"
 
 
 #define CONFIG_FILE_NAME "config.txt"
@@ -131,6 +128,8 @@ int main(int argc, char* argv[])
     printf("\n");
     printf("C' Version " __DATE__ "\n");
     printf("https://github.com/thradams/CPrime\n\n");
+
+    //char * includes = getenv("INCLUDES");
 
 #ifdef _DEBUG
     //AllTests();
@@ -375,6 +374,7 @@ int main(int argc, char* argv[])
     FileNodeList_Destroy(&sources);
 
 
+    void PrintMemory();
     PrintMemory();
     return 0;
 }

@@ -151,11 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\cpr.c" />
     <ClCompile Include="Hello.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\cpr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

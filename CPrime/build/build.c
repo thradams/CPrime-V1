@@ -6,13 +6,15 @@
 #endif
 
 #include "build.h"
-
+#include <stdio.h>
 
 /*
 Este projeto cria a versao amalgamated do c e do header
 */
 int main()
 {
+    printf("Building the amalgamation...\n");
+
     //vai para diretorio do cprime
     chdir("../");
 
@@ -69,4 +71,6 @@ int main()
 
 
     amalgamate("cpr.h",  /*bHeaderMode*/true, headers, (sizeof(headers) / sizeof(headers[0])));
+
+    printf("amalgamation completed!\n");
 }
