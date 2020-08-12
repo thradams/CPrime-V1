@@ -4,7 +4,7 @@
 
 
 #include "BasicScanner.h"
-#include "Map.h"
+
 
 #include "Macro.h"
 #include "Options.h"
@@ -25,7 +25,7 @@ struct TFile
 
 void TFile_Delete(struct TFile * p);
 
-typedef struct Map TFileMap;
+typedef struct Map2 TFileMap;
 
 void TFileMap_Destroy(TFileMap * p);
 bool TFileMap_Set(TFileMap * map, const char * key, struct TFile * data);

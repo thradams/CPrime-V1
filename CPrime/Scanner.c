@@ -380,7 +380,7 @@ void TFile_DeleteVoid(void* p)
 
 void TFileMap_Destroy(TFileMap * p)
 {
-    Map_Destroy(p, TFile_DeleteVoid);
+    Map2_Destroy(p, TFile_DeleteVoid);
 }
 
 void TFileArray_Init(struct TFileArray * p) /*@default*/
@@ -433,8 +433,10 @@ bool TFileMap_Set(TFileMap * map, const char* key, struct TFile * pFile)
     //assert(IsFullPath(key));
     // converter
     // Ajusta o file index de acordo com a entrada dele no mapa
-    pFile->FileIndex = map->Size;
-    bool result = Map_Set(map, key, pFile);
+    pFile->FileIndex = map->nCount;
+    struct TFile* pFileOld = 0;
+    bool result = Map2_SetAt(map, key, pFile, &pFileOld);
+    assert(pFileOld == 0);
     PTR_STRING_REPLACE(pFile->FullPath, key);
     return result;
 }
@@ -442,12 +444,22 @@ bool TFileMap_Set(TFileMap * map, const char* key, struct TFile * pFile)
 struct TFile* TFileMap_Find(TFileMap * map, const char* key)
 {
     // tem que ser case insensitive!
-    return (struct TFile*)Map_Find2(map, key);
+    void* pFile = 0;
+    bool b = Map2_Lookup(map, key, &pFile);
+    return b ? pFile : 0;
 }
 
 bool TFileMap_DeleteItem(TFileMap * map, const char* key)
 {
-    return Map_DeleteItem(map, key, TFile_DeleteVoid);
+    
+    void* p = 0;
+    bool b = Map2_RemoveKey(map, key, &p);
+    
+    if (b)
+    {
+        TFile_Delete(p);
+    }
+    return b;
 }
 
 
@@ -616,7 +628,7 @@ static bool Scanner_InitCore(struct Scanner * pScanner)
     pScanner->pOptions = NULL;
     // TFileMap_init
     // pScanner->IncludeDir
-    Map_Init(&pScanner->FilesIncluded, 100);
+    Map2_Init(&pScanner->FilesIncluded);
     MacroMap_Init(&pScanner->Defines2);
     StrBuilder_Init(&pScanner->DebugString);
 
@@ -2765,14 +2777,17 @@ void GetSources(const char* configFile,
         }
 
 
-        for (int j = 0; j < scanner.FilesIncluded.buckets.size; j++)
+        for (int j = 0; j < (int)scanner.FilesIncluded.nHashTableSize; j++)
         {
-            struct Bucket* pBucket = scanner.FilesIncluded.buckets.data[j];
+            struct MapItem2* pBucket = scanner.FilesIncluded.pHashTable[j];
             if (pBucket)
             {
-                for (int i = 0; i < pBucket->size; i++)
+                
+                for (struct MapItem2* pCurrent = pBucket;
+                     pCurrent; 
+                     pCurrent = pCurrent->pNext)
                 {
-                    struct TFile* pFile = (struct TFile*)pBucket->data[i];
+                    struct TFile* pFile = (struct TFile*)pBucket->pValue;
 
                     bool bIncludeDir = false;
                     for (int k = 0; k < scanner.IncludeDir.Size; k++)

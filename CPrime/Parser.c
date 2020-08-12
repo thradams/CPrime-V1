@@ -94,7 +94,7 @@ bool Parser_InitString(struct Parser* parser,
     Scanner_InitString(&parser->Scanner, name, Text);
 
     //sair do BOF
-    struct TScannerItemList clueList0 = {0};
+    struct TScannerItemList clueList0 = { 0 };
     Parser_Match(parser, &clueList0);
     TScannerItemList_Destroy(&clueList0);
 
@@ -127,7 +127,7 @@ bool Parser_InitFile(struct Parser* parser, const char* fileName)
 
     //Scanner_Match(&parser->Scanner);
     //sair do BOF
-    struct TScannerItemList clueList0 = {0};
+    struct TScannerItemList clueList0 = { 0 };
     Parser_Match(parser, &clueList0);
     TScannerItemList_Destroy(&clueList0);
 
@@ -139,7 +139,7 @@ void Parser_PushFile(struct Parser* parser, const char* fileName)
     Scanner_IncludeFile(&parser->Scanner, fileName, FileIncludeTypeFullPath, false);
 
 
-    struct TScannerItemList clueList0 = {0};
+    struct TScannerItemList clueList0 = { 0 };
     Parser_Match(parser, &clueList0);
     //assert(clueList0.pHead == NULL);
     TScannerItemList_Destroy(&clueList0);
@@ -551,7 +551,7 @@ void LambdaExpression(struct Parser* ctx, struct TExpression** ppPrimaryExpressi
                           &pPrimaryExpressionLambda->ClueList3);
     }
 
-    Compound_Statement(ctx, (struct TStatement**) & pPrimaryExpressionLambda->pCompoundStatement);
+    Compound_Statement(ctx, (struct TStatement**)&pPrimaryExpressionLambda->pCompoundStatement);
 }
 
 void PrimaryExpression(struct Parser* ctx, struct TExpression** ppPrimaryExpression)
@@ -596,7 +596,7 @@ void PrimaryExpression(struct Parser* ctx, struct TExpression** ppPrimaryExpress
 
         case TK_IDENTIFIER:
         {
-          struct TTypePointer* pTypePointer = SymbolMap_Find(ctx->pCurrentScope, lexeme);
+            struct TTypePointer* pTypePointer = SymbolMap_Find(ctx->pCurrentScope, lexeme);
             if (pTypePointer == NULL)
             {
                 if (!ctx->bPreprocessorEvalFlag)
@@ -611,25 +611,25 @@ void PrimaryExpression(struct Parser* ctx, struct TExpression** ppPrimaryExpress
                     }
                 }
             }
-            
-          
+
+
 
             struct TPrimaryExpressionValue* pPrimaryExpressionValue
                 = TPrimaryExpressionValue_Create();
 
             pPrimaryExpressionValue->token = token;
             PTR_STRING_REPLACE(pPrimaryExpressionValue->lexeme, lexeme);
-            
+
             if (pTypePointer && pTypePointer->Type == TDeclaration_ID)
             {
-              //eh uma variavel que aponta para uma declaracao
-              pPrimaryExpressionValue->pDeclaration = (struct TDeclaration*) pTypePointer;
+                //eh uma variavel que aponta para uma declaracao
+                pPrimaryExpressionValue->pDeclaration = (struct TDeclaration*)pTypePointer;
             }
-            
+
             if (pTypePointer && pTypePointer->Type == TParameter_ID)
             {
                 //eh uma variavel que aponta para um  parametro
-                pPrimaryExpressionValue->pParameter = (struct TParameter*) pTypePointer;
+                pPrimaryExpressionValue->pParameter = (struct TParameter*)pTypePointer;
             }
 
             Parser_Match(ctx,
@@ -1350,14 +1350,14 @@ void CastExpression(struct Parser* ctx, struct TExpression** ppExpression)
 
         if (IsTypeName(ctx, lookAheadToken, lookAheadlexeme))
         {
-            struct TScannerItemList tempList0 = {0, 0};
+            struct TScannerItemList tempList0 = { 0, 0 };
             Parser_MatchToken(ctx, TK_LEFT_PARENTHESIS, &tempList0);
 
             struct TTypeName typeName;
             TTypeName_Init(&typeName);
             TypeName(ctx, &typeName);
 
-            struct TScannerItemList tempList1 = {0, 0};
+            struct TScannerItemList tempList1 = { 0, 0 };
             token = Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &tempList1);
 
             if (token == TK_LEFT_CURLY_BRACKET)
@@ -4227,7 +4227,7 @@ bool TTypeSpecifier_IsFirst(struct Parser* ctx, enum Tokens token, const char* l
 
 
 void AtomicTypeSpecifier(struct Parser* ctx,
-                         struct TTypeSpecifier * *ppTypeSpecifier)
+                         struct TTypeSpecifier** ppTypeSpecifier)
 {
     //assert(false); //tODO criar struct TAtomicTypeSpecifier
                    /*
@@ -4248,7 +4248,7 @@ void AtomicTypeSpecifier(struct Parser* ctx,
     Parser_MatchToken(ctx, TK_RIGHT_PARENTHESIS, &pAtomicTypeSpecifier->ClueList2);
 }
 
-void Type_Specifier(struct Parser* ctx, struct TTypeSpecifier * *ppTypeSpecifier)
+void Type_Specifier(struct Parser* ctx, struct TTypeSpecifier** ppTypeSpecifier)
 {
     /*
     type-specifier:
@@ -4906,9 +4906,9 @@ bool  Declaration(struct Parser* ctx,
 
                 //colocar os declaradores nos simbolos
                 //agora ele monta a tabela com a declaracao toda
-                for (struct TInitDeclarator *  pInitDeclarator = pFuncVarDeclaration->InitDeclaratorList.pHead;
+                for (struct TInitDeclarator* pInitDeclarator = pFuncVarDeclaration->InitDeclaratorList.pHead;
                      pInitDeclarator != NULL;
-                     pInitDeclarator =  pInitDeclarator->pNext)
+                     pInitDeclarator = pInitDeclarator->pNext)
                 {
                     const char* declaratorName = TInitDeclarator_FindName(pInitDeclarator);
 
@@ -5006,9 +5006,9 @@ bool  Declaration(struct Parser* ctx,
                     struct TInitDeclarator* pDeclarator3 =
                         pFuncVarDeclaration->InitDeclaratorList.pHead;
 
-                    for (struct TParameter *  pParameter = pDeclarator3->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
+                    for (struct TParameter* pParameter = pDeclarator3->pDeclarator->pDirectDeclarator->Parameters.ParameterList.pHead;
                          pParameter != NULL;
-                         pParameter =  pParameter->pNext)
+                         pParameter = pParameter->pNext)
                     {
                         const char* parameterName = TDeclarator_GetName(&pParameter->Declarator);
                         if (parameterName != NULL)
@@ -5136,28 +5136,26 @@ void Parser_Main(struct Parser* ctx, struct TDeclarations* declarations)
     Parse_Declarations(ctx, declarations);
 }
 
-static void TFileMapToStrArray(TFileMap * map, struct TFileArray * arr)
+static void TFileMapToStrArray(TFileMap* map, struct TFileArray* arr)
 {
-    TFileArray_Reserve(arr, map->Size);
-    arr->Size = map->Size;
+    TFileArray_Reserve(arr, map->nCount);
+    arr->Size = map->nCount;
 
-    for (int i = 0; i < map->buckets.size; i++)
+    for (int i = 0; i < map->nHashTableSize; i++)
     {
-        struct Bucket* data = map->buckets.data[i];
+        struct MapItem2* data = map->pHashTable[i];
 
-        if (data != NULL)
+        for (struct MapItem2* pCurrent = data;
+             pCurrent;
+             pCurrent = pCurrent->pNext)
         {
-            for (int k = 0; k < data->size; k++)
-            {
-                struct BucketItem* node = data->data[k];
-                struct TFile* pFile = (struct TFile*)node->data;
+            struct TFile* pFile = (struct TFile*)pCurrent->pValue;
 
-                if (pFile->FileIndex >= 0 &&
-                    pFile->FileIndex < (int)arr->Size)
-                {
-                    arr->pItems[pFile->FileIndex] = pFile;
-                    node->data = NULL; //movido para array
-                }
+            if (pFile->FileIndex >= 0 &&
+                pFile->FileIndex < (int)arr->Size)
+            {
+                arr->pItems[pFile->FileIndex] = pFile;
+                pCurrent->pValue = NULL; //movido para array
             }
         }
     }
@@ -5218,7 +5216,7 @@ bool GetAST(const char* filename,
     //all sources...
     if (options->bAmalgamate)
     {
-        struct FileNodeMap map = {0};
+        struct FileNodeMap map = { 0 };
 
         //Inserts the initial file
         FileNodeMap_Insert(&map, FileNode_Create(fullFileNamePath));
