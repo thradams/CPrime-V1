@@ -1,5 +1,5 @@
 
-## Description (Version 1)
+## Description (Version 1 - not maintained anymore)
 
 C' is a extended C compiler that generates readably C code.
 
